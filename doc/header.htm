@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Header</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>Header</H2>
+<TT>Header()</TT>
+<H4 CLASS='st'>Versione</H4>
+1.0
+<H4 CLASS='st'>Descrizione</H4>
+Questo metodo viene utilizzato per disegnare l'intestazione della pagina. Viene chiamato automaticamente
+da AddPage() e non dovrebbe venire chiamato direttamente dall'applicazione. L'implementazione in FPDF
+è lasciata vuota, quindi bisogna subclassarla e sovrascriverne il metodo se si desidera un processo particolare.
+<H4 CLASS='st'>Esempio</H4>
+<DIV STYLE="background-color:#E0E0E0; padding:3px; margin-top:1.2em; margin-bottom:1.2em">
+<TT>
+class PDF extends FPDF<BR>
+{<BR>
+function Header()<BR>
+{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Seleziona Arial grassetto 15<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetFont('Arial','B',15);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Muove verso destra<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;Cell(80);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Titolo in riquadro<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;Cell(30,10,'Title',1,0,'C');<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Interruzione di linea<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;Ln(20);<BR>
+}<BR>
+}
+</TT>
+</DIV>
+<H4 CLASS='st'>Vedi anche</H4>
+<A HREF="footer.htm">Footer()</A>.
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

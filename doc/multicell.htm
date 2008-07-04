@@ -1,0 +1,77 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>MultiCell</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>MultiCell</H2>
+<TT>MultiCell(<B>float</B> w, <B>float</B> h, <B>string</B> txt [, <B>mixed</B> border [, <B>string</B> align [, <B>int</B> fill]]])</TT>
+<H4 CLASS='st'>Versione</H4>
+1.3
+<H4 CLASS='st'>Descrizione</H4>
+Questo metodo permette di stampare del testo con interruzioni di linea. Possono essere automatiche
+(non appena il testo raggiunge il margine destro della cella) o esplicite (tramite il carattere \n).
+Vengono inserite tante celle quante necessarie, una sotto l'altra.
+<BR>
+Il testo può essere allineato, centrato o giustificato. E' possibile inserire i bordi e lo sfondo al
+blocco di celle.
+<H4 CLASS='st'>Parametri</H4>
+<TT><U>w</U></TT>
+<BLOCKQUOTE>
+Larghezza delle celle. Se <TT>0</TT>, si estendono dalla parte del margine destro della pagina.
+</BLOCKQUOTE>
+<TT><U>h</U></TT>
+<BLOCKQUOTE>
+Altezza delle celle.
+</BLOCKQUOTE>
+<TT><U>txt</U></TT>
+<BLOCKQUOTE>
+Stringa da stampare.
+</BLOCKQUOTE>
+<TT><U>border</U></TT>
+<BLOCKQUOTE>
+Indica se bisogna disegnare i bordi attorno al blocco di celle. Il valore può essere sia un numero:
+<UL>
+<LI><TT>0</TT>: nessun bordo
+<LI><TT>1</TT>: cornice
+</UL>
+o una stringa contenente alcuni o tutti i seguenti caratteri (in qualsiasi ordine):
+<UL>
+<LI><TT>L</TT>: sinistro
+<LI><TT>T</TT>: superiore
+<LI><TT>R</TT>: destro
+<LI><TT>B</TT>: inferiore
+</UL>
+Valore di default: <TT>0</TT>.
+</BLOCKQUOTE>
+<TT><U>align</U></TT>
+<BLOCKQUOTE>
+Imposta l'allineamento del testo. Possibili valori sono:
+<UL>
+<LI><TT>L</TT>: allineamento a sinistra
+<LI><TT>C</TT>: centrato
+<LI><TT>R</TT>: allienamento a destra
+<LI><TT>J</TT>: giustificazione (valore di default)
+</UL>
+</BLOCKQUOTE>
+<TT><U>fill</U></TT>
+<BLOCKQUOTE>
+Indica se lo sfondo della cella deve essere disegnato (<TT>1</TT>) o deve essere
+trasparente (<TT>0</TT>).
+Valore di default: <TT>0</TT>.
+</BLOCKQUOTE>
+<H4 CLASS='st'>Vedi anche</H4>
+<A HREF="setfont.htm">SetFont()</A>,
+<A HREF="setdrawcolor.htm">SetDrawColor()</A>,
+<A HREF="setfillcolor.htm">SetFillColor()</A>,
+<A HREF="settextcolor.htm">SetTextColor()</A>,
+<A HREF="setlinewidth.htm">SetLineWidth()</A>,
+<A HREF="cell.htm">Cell()</A>,
+<A HREF="write.htm">Write()</A>,
+<A HREF="setautopagebreak.htm">SetAutoPageBreak()</A>.
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>SetFont</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>SetFont</H2>
+<TT>SetFont(<B>string</B> family [, <B>string</B> style [, <B>float</B> size]])</TT>
+<H4 CLASS='st'>Versione</H4>
+1.0
+<H4 CLASS='st'>Descrizione</H4>
+Imposta il font utilizzato per stampare stringhe di caratteri. E' obbligatorio chiamare questo
+metodo almeno una volta prima di stampare del testo oppure il documento risultante potrebbe non
+essere valido.
+<BR>
+Il font può essere sia uno standard oppure uno aggiunto tramite il metodo AddFont(). I fonts
+Standard utilizzano la codifica Windows cp1252 (Western Europe).
+<BR>
+Il metodo può essere chiamato prima della creazione della prima pagina per mantenere il font di
+pagina in pagina.
+<BR>
+Se si vuole solo cambiare la dimensione del font, è più semplice chiamare SetFontSize().
+<BR>
+<BR>
+<B>Nota: </B>i files con la metrica dei fonts devono essere accessibili. Vengono ricercati rispettivamente:
+<UL>
+<LI>Nella directory definita dalla costante <TT>FPDF_FONTPATH</TT> (se la costante esiste)
+<LI>Nella directory delle fonts che si trova nella stessa directory del file fpdf.php (se la directory esiste)
+<LI>In tutte le directories accessibili tramite la direttiva <TT>include()</TT>
+</UL>
+Esempio per il caso in cui venga definita la costante <TT>FPDF_FONTPATH</TT> (notare lo slash di chiusura):
+<DIV STYLE="background-color:#E0E0E0; padding:3px; margin-top:1.2em; margin-bottom:1.2em">
+<TT>
+define('FPDF_FONTPATH','/home/www/font/');<BR>
+require('fpdf.php');
+</TT>
+</DIV>
+Se non viene trovato il file corrispondente a quello richiesto, verrà generato l'errore
+"Could not include font metric file".
+<H4 CLASS='st'>Parametri</H4>
+<TT><U>family</U></TT>
+<BLOCKQUOTE>
+Famiglia del font. Può essere sia un nome definito da AddFont() o una delle famiglie standard (case
+insensitive):
+<UL>
+<LI><TT>Courier</TT> (fixed-width)
+<LI><TT>Helvetica</TT> o <TT>Arial</TT> (sinonimi; sans serif)
+<LI><TT>Times</TT> (serif)
+<LI><TT>Symbol</TT> (symbolic)
+<LI><TT>ZapfDingbats</TT> (symbolic)
+</UL>
+E' anche possibile passare una stringa vuota. In questo caso, viene conservata la famiglia corrente.
+</BLOCKQUOTE>
+<TT><U>style</U></TT>
+<BLOCKQUOTE>
+Stile del font. Possibili valori sono (case insensitive):
+<UL>
+<LI>stringa vuota: normale
+<LI><TT>B</TT>: grassetto
+<LI><TT>I</TT>: corsivo
+<LI><TT>U</TT>: sottolineato
+</UL>
+o qualsiasi combinazione. Il valore di default è normale.
+Non è possibile applicare gli stili grassetto e corsivo a <TT>Symbol</TT> e <TT>ZapfDingbats</TT>.
+</BLOCKQUOTE>
+<TT><U>size</U></TT>
+<BLOCKQUOTE>
+Dimensione del font in punti.
+<BR>
+Il valore di default è la dimensione corrente. Se non è stata specificata nessuna dimensione dall'inizio
+del documento, viene preso il valore 12.
+</BLOCKQUOTE>
+<H4 CLASS='st'>Esempio</H4>
+<DIV STYLE="background-color:#E0E0E0; padding:3px; margin-top:1.2em; margin-bottom:1.2em">
+<TT>
+//Times normale 12<BR>
+$pdf-&gt;SetFont('Times');<BR>
+//Arial grassetto 14<BR>
+$pdf-&gt;SetFont('Arial','B',14);<BR>
+//Rimuove il grassetto<BR>
+$pdf-&gt;SetFont('');<BR>
+//Times grassetto, corsivo e sottolineato 14<BR>
+$pdf-&gt;SetFont('Times','BIU');
+</TT>
+</DIV>
+<H4 CLASS='st'>Vedi anche</H4>
+<A HREF="addfont.htm">AddFont()</A>,
+<A HREF="setfontsize.htm">SetFontSize()</A>,
+<A HREF="cell.htm">Cell()</A>,
+<A HREF="multicell.htm">MultiCell()</A>,
+<A HREF="write.htm">Write()</A>.
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

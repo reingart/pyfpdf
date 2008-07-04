@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>AcceptPageBreak</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>AcceptPageBreak</H2>
+<TT><B>boolean</B> AcceptPageBreak()</TT>
+<H4 CLASS='st'>Versione</H4>
+1.4
+<H4 CLASS='st'>Descrizione</H4>
+Quando viene raggiunta la condizione per un'interruzione di pagina, viene chiamato il metodo e,
+a seconda del valore restituito, l'interruzione viene eseguita o meno. L'implementazione di
+default restituisce un valore secondo la modalità selezionata in SetAutoPageBreak().
+<BR>
+Questo metodo viene chiamato automaticamente e non dovrebbe venire chiamato direttamente
+dall'applicazione.
+<H4 CLASS='st'>Esempio</H4>
+Il metodo viene sovrascritto in una classe ereditata allo scopo di ottenere un layout su 3 colonne:
+<DIV STYLE="background-color:#E0E0E0; padding:3px; margin-top:1.2em; margin-bottom:1.2em">
+<TT>
+class PDF extends FPDF<BR>
+{<BR>
+var $col=0;<BR>
+<BR>
+function SetCol($col)<BR>
+{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Muove la posizione ad una colonna<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;col=$col;<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$x=10+$col*65;<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetLeftMargin($x);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetX($x);<BR>
+}<BR>
+<BR>
+function AcceptPageBreak()<BR>
+{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;if($this-&gt;col&lt;2)<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//Va alla colonna successiva<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetCol($this-&gt;col+1);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetY(10);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return false;<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;}<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;else<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;//Ritorna alla prima colonna ed esegue una interruzione di pagina<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetCol(0);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;return true;<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;}<BR>
+}<BR>
+}<BR>
+<BR>
+$pdf=new PDF();<BR>
+$pdf-&gt;AddPage();<BR>
+$pdf-&gt;SetFont('Arial','',12);<BR>
+for($i=1;$i&lt;=300;$i++)<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$pdf-&gt;Cell(0,5,&quot;Line $i&quot;,0,1);<BR>
+$pdf-&gt;Output();
+</TT>
+</DIV>
+<H4 CLASS='st'>Vedi anche</H4>
+<A HREF="setautopagebreak.htm">SetAutoPageBreak()</A>.
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

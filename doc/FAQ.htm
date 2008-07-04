@@ -1,0 +1,238 @@
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>FAQ</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="fpdf.css">
+</HEAD>
+<BODY>
+<H2>FAQ</H2>
+<B>1.</B> <A HREF='#1'>Esattamente qual'è la licenza di FPDF? Ci sono limitazioni all'utilizzo?</A><BR>
+<B>2.</B> <A HREF='#2'>Quando tento di creare un PDF, molti strani caratteri vengono visualizzati sullo schermo. Perché?</A><BR>
+<B>3.</B> <A HREF='#3'>Quando provo a generare un PDF IE visualizza una pagina vuota. Che succede?</A><BR>
+<B>4.</B> <A HREF='#4'>Invio i parametri utilizzando il metodo POST e i valori non appaiono nel PDF.</A><BR>
+<B>5.</B> <A HREF='#5'>Quando uso una sessione PHP, IE non visualizza il mio PDF ma mi chiede di scaricarlo.</A><BR>
+<B>6.</B> <A HREF='#6'>Quando sono su SSL, IE non riesce ad aprire il PDF.</A><BR>
+<B>7.</B> <A HREF='#7'>Quando eseguo uno script viene visualizzato il messaggio "FPDF error: Don't alter the locale before including class file".</A><BR>
+<B>8.</B> <A HREF='#8'>Provo ad inserire una immagine PNG e Acrobat dice "There was an error processing a page. A drawing error occurred".</A><BR>
+<B>9.</B> <A HREF='#9'>Incontro il seguente errore quando tento di generare un PDF: Warning: Cannot add header information - headers already sent by (output started at script.php:X).</A><BR>
+<B>10.</B> <A HREF='#10'>Provo a visualizzare una variabile nel metodo Header, ma non viene stampato nulla.</A><BR>
+<B>11.</B> <A HREF='#11'>Ho definito i metodi Header e Footer nella mia classe PDF ma non appare nulla.</A><BR>
+<B>12.</B> <A HREF='#12'>Non riesco a far funzionare le interruzioni di linea. Inserisco i \n nella stringa stampata da MultiCell ma non funziona.</A><BR>
+<B>13.</B> <A HREF='#13'>Tento di inserire il simbolo dell'Euro ma non funziona.</A><BR>
+<B>14.</B> <A HREF='#14'>Ho disegnato un frame di dimensioni molto precise, ma quando viene stampato noto alcune differenze.</A><BR>
+<B>15.</B> <A HREF='#15'>Vorrei utilizzare l'intera superficie della pagina, ma quando stampo restano sempre alcuni margini. Come posso eliminarli?</A><BR>
+<B>16.</B> <A HREF='#16'>Qual'è il limite delle dimensioni dei file che posso generare con FPDF?</A><BR>
+<B>17.</B> <A HREF='#17'>Posso modificare un PDF con FPDF?</A><BR>
+<B>18.</B> <A HREF='#18'>Vorrei creare un motore di ricerca in PHP e indicizzare i file PDF. Posso farlo utilizzando FPDF?</A><BR>
+<B>19.</B> <A HREF='#19'>Posso convertire una pagina HTML in PDF con FPDF?</A><BR>
+<B>20.</B> <A HREF='#20'>Posso concatenare files PDF con FPDF?</A><BR>
+<BR><BR>
+<P><A NAME='1'></A><B>1.</B> <FONT CLASS='st'>Esattamente qual'è la licenza di FPDF? Ci sono limitazioni all'utilizzo?</FONT></P>
+FPDF è Freeware (come specificato all'inizio del file sorgente). Non ci sono limitazioni all'utilizzo. Può essere utilizzato liberamete all'interno delle proprie applicazioni (commerciali e non), con o senza modifiche.
+<P><A NAME='2'></A><B>2.</B> <FONT CLASS='st'>Quando tento di creare un PDF, molti strani caratteri vengono visualizzati sullo schermo. Perché?</FONT></P>
+Questi "strani" caratteri sono appunto il contenuto del tuo PDF. Questo comportamento è un difetto di IE. Quando esso riceve una pagina HTML, e successivamente un file PDF dallo stesso indirizzo, visualizza quest'ultimo direttamente, senza lanciare Acrobat. Questo accade frequentemente durante lo sviluppo: all'ultimo errore dello script viene inviata una pagina HTML e, dopo la correzione, arriva il PDF.
+<BR>
+Per risolvere il problema, semplicemente chiudi e riavvia IE. Oppure vai ad un altro indirizzo e poi torna indietro.
+<BR>
+Per evitare questo tipo di inconvenienti durante lo sviluppo, puoi generare il PDF direttamente come file, aprendolo poi da explorer.
+<P><A NAME='3'></A><B>3.</B> <FONT CLASS='st'>Quando provo a generare un PDF IE visualizza una pagina vuota. Che succede?</FONT></P>
+Anzitutto verifica di non aver inviato nulla al browser dopo il PDF (nemmeno uno spazio o un ritorno a capo). Puoi inserire  la funzione exit() subito dopo la chiamata alla funzione Output() per essere sicuro.
+<BR>
+Se ancora non funziona, significa che sei una vittima della "sindrome della pagina vuota". IE utilizzata assieme al plug-in di Acrobat soffre di numerosi bugs, in tutte le versioni. Dovresti testare la tua applicazione con il maggior numero possibile di versioni di IE (in ultimo se sei su Internet). Il problema si manifesta specialmente con il metodo POST, quindi è caldamente raccomandato di evitarlo (anche perché spesso causa altri problemi, vedi la domanda seguente). Il metodo GET lavora meglio, ma potrebbe non funzionare se l'indirizzo diventa troppo lungo: non utilizzare una query string con più di 45 caratteri. In ogni caso, esiste un trucco per superare questo limite: terminare l'indirizzo con l'estensione .pdf, che inganna IE. Se utilizzi un form puoi inserire un campo nascosto alla fine:
+<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+&lt;INPUT TYPE=&quot;HIDDEN&quot; NAME=&quot;ext&quot; VALUE=&quot;.pdf&quot;&gt;
+</TT>
+</TD></TR></TABLE><BR>
+Anche l'uso delle sessioni causa spesso problemi (evita di usare gli headers HTTP per impedire il caricamento da cache). Vedi la domanda 5 per una possibile soluzione.
+<BR>
+<BR>
+Per evitare questi problemi esistono due tecniche:
+<BR>
+<BR>
+- Disabilitare il plug-in ed usare Acrobat come applicazione di supporto. Per fare questo, lancia Acrobat; nel menu File, Preferences, General, deseleziona l'opzione "Web Browser Integration" (per Acrobat 5: Edit, Preferences, Options, "Display PDF in Browser"). La prossima volta che caricherai un PDF da IE, ti verrà mostrata la finestra di dialogo con le opzioni "Apri il file dal percorso corrente" e "Salva il file su disco". Deseleziona l'opzione "Avvisa sempre prima di aprire questo tipo di file" e seleziona Apri. D'ora in poi, i file PDF verranno automaticametne aperti in una finestra di Acrobat.
+<BR>
+Lo svantaggio di questo sistema è la necessità di alterare la configurazione del client, cosa fattibile in una rete privata, ma non su Internet.
+<BR>
+<BR>
+- Utilizzare una tecnica di reindirizzamento. Consiste nel generare il PDF in un file temporaneo sul server e reindirizzare il client a esso (utilizzando JavaScript, non l'header HTTP Location che causa altri problemi). Per esempio, alla fine dello script, puoi inserire quanto segue:
+<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+//Determina il nome del file temporaneo nella directory corrente<BR>
+$file=basename(tempnam(getcwd(),'tmp'));<BR>
+//Salva il PDF come file<BR>
+$pdf-&gt;Output($file);<BR>
+//Reindirizzamento JavaScript<BR>
+echo &quot;&lt;HTML&gt;&lt;SCRIPT&gt;document.location='getpdf.php?f=$file';&lt;/SCRIPT&gt;&lt;/HTML&gt;&quot;;
+</TT>
+</TD></TR></TABLE><BR>
+Poi creare un file getpdf.php con questo codice:
+<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+&lt;?php<BR>
+$f=$HTTP_GET_VARS['f'];<BR>
+//Controlla il file (don't skip it!)<BR>
+if(substr($f,0,3)!='tmp' or strpos($f,'/') or strpos($f,'\\'))<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;die('Incorrect file name');<BR>
+if(!file_exists($f))<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;die('File does not exist');<BR>
+//Handle special IE request if needed<BR>
+if($HTTP_SERVER_VARS['HTTP_USER_AGENT']=='contype')<BR>
+{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;Header('Content-Type: application/pdf');<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;exit;<BR>
+}<BR>
+//Output PDF<BR>
+Header('Content-Type: application/pdf');<BR>
+Header('Content-Length: '.filesize($f));<BR>
+readfile($f);<BR>
+//Cancella il file<BR>
+unlink($f);<BR>
+exit;<BR>
+?&gt;
+</TT>
+</TD></TR></TABLE><BR>
+Questo metodo funziona nella maggior parte dei casi, ma IE6 potrebbe ancora causare problemi. La soluzione "definitiva" consiste nel reindirizzare direttamente al file temporaneo. Il nome del file deve pertanto terminare con .pdf:
+<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+//Determina il nome del file temporaneo nella directory corrente<BR>
+$file=basename(tempnam(getcwd(),'tmp'));<BR>
+rename($file,$file.'.pdf');<BR>
+$file.='.pdf';<BR>
+//Salva il PDF come file<BR>
+$pdf-&gt;Output($file);<BR>
+//Reindirizzamento JavaScript<BR>
+echo &quot;&lt;HTML&gt;&lt;SCRIPT&gt;document.location='$file';&lt;/SCRIPT&gt;&lt;/HTML&gt;&quot;;
+</TT>
+</TD></TR></TABLE><BR>
+Questo metodo converte il PDF dinamico in uno statico ed evita ogni problema. E' tuttavia necessario eliminare i file temporanei. Per esempio in questo modo:
+<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+function CleanFiles($dir)<BR>
+{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Cancella i files temporanei<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$t=time();<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$h=opendir($dir);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;while($file=readdir($h))<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if(substr($file,0,3)=='tmp' and substr($file,-4)=='.pdf')<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;$path=$dir.'/'.$file;<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if($t-filemtime($path)&gt;3600)<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;@unlink($path);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;}<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;closedir($h);<BR>
+}
+</TT>
+</TD></TR></TABLE><BR>
+Questa funzione cancella tutti i files il cui nome sia nel formato tmp*.pdf (dove * rappresenta una stringa qualsiasi) più vecchi di un'ora dalla directory specificata. Puoi chiamarla dove vuoi, ad esempio nello script che genera il PDF.
+<BR>
+<BR>
+Nota bene: è necessario aprire il PDF in una nuova finestra, in modo che non sia possibile tornare alla pagina che reindirizza.
+<P><A NAME='4'></A><B>4.</B> <FONT CLASS='st'>Invio i parametri utilizzando il metodo POST e i valori non appaiono nel PDF.</FONT></P>
+E' un problema che affligge alcune versioni di IE (specialmente la 5.5). Vedi la domanda precedente per sapere come aggirarlo.
+<P><A NAME='5'></A><B>5.</B> <FONT CLASS='st'>Quando uso una sessione PHP, IE non visualizza il mio PDF ma mi chiede di scaricarlo.</FONT></P>
+E' un problema che affligge alcune versioni di IE. Per aggirarlo, aggiungi il seguente codice prima di session_start():
+<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+session_cache_limiter('private');
+</TT>
+</TD></TR></TABLE><BR>
+o utilizza un reindirizzamento come spiegato nella domanda 3.
+<P><A NAME='6'></A><B>6.</B> <FONT CLASS='st'>Quando sono su SSL, IE non riesce ad aprire il PDF.</FONT></P>
+Il problema può essere risolto aggiungendo questo codice:<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+Header('Pragma: public');
+</TT>
+</TD></TR></TABLE><BR>
+
+<P><A NAME='7'></A><B>7.</B> <FONT CLASS='st'>Quando eseguo uno script viene visualizzato il messaggio "FPDF error: Don't alter the locale before including class file".</FONT></P>
+Quando il separatore decimale è configurato come una virgola prima di includere un file, c'è un <A HREF="http://bugs.php.net/bug.php?id=17105" TARGET="_blank">bug</A> in PHP e i numeri decimali vengono troncati. Quindi non è possibile effettuare una chiamata a setlocale() prima di includere la classe. Su Unix, non è possibile nemmeno impostare la variabile di ambiente LC_ALL, in quanto equivalente ad una chiamata a setlocale().
+<P><A NAME='8'></A><B>8.</B> <FONT CLASS='st'>Provo ad inserire una immagine PNG e Acrobat dice "There was an error processing a page. A drawing error occurred".</FONT></P>
+Acrobat 5 soffre di un bug e non è in grado di visualizzare immagini trasparenti monocromatiche (ad esempio con 1 bit per pixel). Rimuovi la trasparenza oppure salva l'immagine in 16 colori (4 bits per pixel) o di più.
+<P><A NAME='9'></A><B>9.</B> <FONT CLASS='st'>Incontro il seguente errore quando tento di generare un PDF: Warning: Cannot add header information - headers already sent by (output started at script.php:X).</FONT></P>
+E' indispensabile non inviare niente al browser eccetto il PDF stesso: niente HTML, niente spazi, niente ritorni a capo, nè prima nè dopo. Lo script invia qualcosa alla linea X.
+<P><A NAME='10'></A><B>10.</B> <FONT CLASS='st'>Provo a visualizzare una variabile nel metodo Header, ma non viene stampato nulla.</FONT></P>
+Devi usare le variabili <TT>globali</TT>, ad esempio;<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+function Header()<BR>
+{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;global $title;<BR>
+<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetFont('Arial','B',15);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;Cell(0,10,$title,1,1,'C');<BR>
+}
+</TT>
+</TD></TR></TABLE><BR>
+
+<P><A NAME='11'></A><B>11.</B> <FONT CLASS='st'>Ho definito i metodi Header e Footer nella mia classe PDF ma non appare nulla.</FONT></P>
+Devi creare un oggetto dalla classe PDF, non FPDF:<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+$pdf=new PDF();
+</TT>
+</TD></TR></TABLE><BR>
+
+<P><A NAME='12'></A><B>12.</B> <FONT CLASS='st'>Non riesco a far funzionare le interruzioni di linea. Inserisco i \n nella stringa stampata da MultiCell ma non funziona.</FONT></P>
+Devi chiudere la stringa tra virgolette, non tra apici singoli.
+<P><A NAME='13'></A><B>13.</B> <FONT CLASS='st'>Tento di inserire il simbolo dell'Euro ma non funziona.</FONT></P>
+I font standard hanno il simbolo dell'euro alla posizione 128. Puoi definire per convenienza una costante come questa:
+<BR>
+<BR>
+<TABLE WIDTH="100%" BGCOLOR="#E0E0E0"><TR><TD>
+<TT>
+define('EURO',chr(128));
+</TT>
+</TD></TR></TABLE><BR>
+
+<P><A NAME='14'></A><B>14.</B> <FONT CLASS='st'>Ho disegnato un frame di dimensioni molto precise, ma quando viene stampato noto alcune differenze.</FONT></P>
+Per rispettare le dimensioni, devi desekezionare l'opzione "Fit to page" nella finestra di dialogo di stampa.
+<P><A NAME='15'></A><B>15.</B> <FONT CLASS='st'>Vorrei utilizzare l'intera superficie della pagina, ma quando stampo restano sempre alcuni margini. Come posso eliminarli?</FONT></P>
+Tutte le stampanti hanno dei margini fisici (diversi a seconda del modello), ed è quindi impossibile rimuoverli e stampare su tutta la superficie della carta.
+<P><A NAME='16'></A><B>16.</B> <FONT CLASS='st'>Qual'è il limite delle dimensioni dei file che posso generare con FPDF?</FONT></P>
+Non c'è un limite particolare. Ci sono comunque alcune restrizioni:
+<BR>
+<BR>
+- La massima dimensione di memoria allocata per gli script PHP è impostata di default a 8 MB. Per documenti molto grandi, specialmetne con immagini, questo limite potrebbe essere raggiunto (il file viene generato nella memoria). Questo parametro è configurabile nel file php.ini.
+<BR>
+<BR>
+- Il tempo massimo di esecuzione è impostato di default a 30 secondi. Questo limite può naturalmente essere raggiunto con facilità. E' configurato nel file php.ini e può essere alterato dinamicamente con la funzione set_time_limit().
+<BR>
+<BR>
+- I browser hanno generalmente un timeout di 5 minuti. Se il PDF viene inviato direttamente al browser e il limite viene raggiunto, il file verrà perduto. E' quindi consigliabile generare i documenti di grandi dimensioni come files, e inviare i dati al browser poco a poco (per esempio, pagina 1, pagina 2... con la funzione flush() per forzare l'output). Quando il documento è completo, è possibile reindirizzare ad esso con JavaScript o creando un link.
+<BR>
+Nota bene: anche se il browser va in timeout, lo script continuerà a girare sul server.
+<P><A NAME='17'></A><B>17.</B> <FONT CLASS='st'>Posso modificare un PDF con FPDF?</FONT></P>
+No.
+<P><A NAME='18'></A><B>18.</B> <FONT CLASS='st'>Vorrei creare un motore di ricerca in PHP e indicizzare i file PDF. Posso farlo utilizzando FPDF?</FONT></P>
+No, ma esiste una utility scritta in C e rilasciata sotto licenza GPL, pdftotext, che consente di estrarre il contenuto testuale da un PDF. E' fornita col il pacchetto Xpdf:<BR>
+<BR>
+<A HREF="http://www.foolabs.com/xpdf/" TARGET="_blank">http://www.foolabs.com/xpdf/</A>
+<P><A NAME='19'></A><B>19.</B> <FONT CLASS='st'>Posso convertire una pagina HTML in PDF con FPDF?</FONT></P>
+htmldoc, che permette di farlo ottenendo buoni risultati:<BR>
+<BR>
+<A HREF="http://www.htmldoc.org" TARGET="_blank">http://www.htmldoc.org</A>
+<P><A NAME='20'></A><B>20.</B> <FONT CLASS='st'>Posso concatenare files PDF con FPDF?</FONT></P>
+No, ma esiste una utility freeware scritta in C per farlo:<BR>
+<BR>
+<A HREF="http://thierry.schmit.free.fr/dev/mbtPdfAsm/enMbtPdfAsm2.html" TARGET="_blank">http://thierry.schmit.free.fr/dev/mbtPdfAsm/enMbtPdfAsm2.html</A>
+</BODY>
+</HTML>

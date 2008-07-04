@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>AddFont</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>AddFont</H2>
+<TT>AddFont(<B>string</B> family [, <B>string</B> style [, <B>string</B> file]])</TT>
+<H4 CLASS='st'>Versione</H4>
+1.5
+<H4 CLASS='st'>Descrizione</H4>
+Importa un font TrueType o Type1 e lo rende disponibile. E' necessario generare prima un file di
+definizione di font con la utility makefont.php.
+<BR>
+Il file di definizione (e lo stesso file del font quando compreso) deve essere presente nella directory delle fonts.
+Se non può essere trovato, viene generato l'errore "Could not include font definition file".
+<H4 CLASS='st'>Parametri</H4>
+<TT><U>family</U></TT>
+<BLOCKQUOTE>
+Famiglia del font. Il nome può essere scelto arbitrariamente. Se viene indicato un nome di una famiglia
+standard, verrà sovrascritto il font corrispondente.
+</BLOCKQUOTE>
+<TT><U>style</U></TT>
+<BLOCKQUOTE>
+Stile del font. Possibili valori sono (case insensitive):
+<UL>
+<LI>stringa vuota: normale
+<LI><TT>B</TT>: grassetto
+<LI><TT>I</TT>: corsivo
+<LI><TT>BI</TT> o <TT>IB</TT>: grassetto corsivo
+</UL>
+Il valore di default è normale.
+</BLOCKQUOTE>
+<TT><U>file</U></TT>
+<BLOCKQUOTE>
+Il file di definizione del font.
+<BR>
+Per default, il nome viene costruito dalla famiglia e dallo stile, in minuscolo e senza spazi.
+</BLOCKQUOTE>
+<H4 CLASS='st'>Esempio</H4>
+<DIV STYLE="background-color:#E0E0E0; padding:3px; margin-top:1.2em; margin-bottom:1.2em">
+<TT>
+$pdf-&gt;AddFont('Comic','I');
+</TT>
+</DIV>
+è equivalente a:
+<DIV STYLE="background-color:#E0E0E0; padding:3px; margin-top:1.2em; margin-bottom:1.2em">
+<TT>
+$pdf-&gt;AddFont('Comic','I','comici.php');
+</TT>
+</DIV>
+<H4 CLASS='st'>Vedi anche</H4>
+<A HREF="setfont.htm">SetFont()</A>.
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

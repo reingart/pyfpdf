@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>SetDisplayMode</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>SetDisplayMode</H2>
+<TT>SetDisplayMode(<B>mixed</B> zoom [, <B>string</B> layout])</TT>
+<H4 CLASS='st'>Versione</H4>
+1.2
+<H4 CLASS='st'>Descrizione</H4>
+Definisce la modalità in cui il documento verrà mostrato sul viewer. E' possibile impostare il
+livello dello zoom: le pagine possono essere mostrate interamente sullo schermo, a tutta pagina,
+utilizzare le dimensioni reali, rappresentate in scala con un fattore dello zoom specifico oppure
+utilizzare i valori di default del viewer (come configurato nel menu Preferences di Acrobat).
+E' possibile specificare anche il layout di pagina: una per volta, visualizzazione continua, due
+colonne o default del viewer.
+<BR>
+Per default, i documenti utilizzano la modalità a tutta pagina e a visualizzazione continua.
+<H4 CLASS='st'>Parametri</H4>
+<TT><U>zoom</U></TT>
+<BLOCKQUOTE>
+Lo zoom da usare. Può essere uno dei seguenti valori di stringa:
+<UL>
+<LI><TT>fullpage</TT>: mostra a schermo l'intera pagina
+<LI><TT>fullwidth</TT>: a tutta pagina
+<LI><TT>real</TT>: utilizza le dimensioni reali (equivalente a zoom=100%)
+<LI><TT>default</TT>: utilizza la modalità di default del viewer
+</UL>
+o un numero indicante il livello dello zoom da usare.
+</BLOCKQUOTE>
+<TT><U>layout</U></TT>
+<BLOCKQUOTE>
+Il layout di pagina. Possibili valori sono:
+<UL>
+<LI><TT>single</TT>: mostra una pagina per volta
+<LI><TT>continuous</TT>: mostra le pagine in modo continuo
+<LI><TT>two</TT>: mostra due pagine su due colonne
+<LI><TT>default</TT>: utilizza la modalità di default del viewer
+</UL>
+Il valore di default è <TT>continuous</TT>.
+</BLOCKQUOTE>
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

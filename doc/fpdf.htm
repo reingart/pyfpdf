@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>FPDF</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>FPDF</H2>
+<TT>FPDF([<B>string</B> orientation [, <B>string</B> unit [, <B>mixed</B> format]]])</TT>
+<H4 CLASS='st'>Versione</H4>
+1.0
+<H4 CLASS='st'>Descrizione</H4>
+Si tratta del costruttore della classe. Permette di impostare il formato pagina,
+l'orientamento e l'unità di misura utilizzata in tutti i metodi (eccetto per la
+dimensione dei font).
+<H4 CLASS='st'>Parametri</H4>
+<TT><U>orientation</U></TT>
+<BLOCKQUOTE>
+Orientamento pagina di default. Possibili valori sono (case insensitive):
+<UL>
+<LI><TT>P</TT> o <TT>Portrait</TT>
+<LI><TT>L</TT> o <TT>Landscape</TT>
+</UL>
+Il valore di default è <TT>P</TT>.
+</BLOCKQUOTE>
+<TT><U>unit</U></TT>
+<BLOCKQUOTE>
+Unità di misura. Possibili valori sono:
+<UL>
+<LI><TT>pt</TT>: punti
+<LI><TT>mm</TT>: millimetri
+<LI><TT>cm</TT>: centimetri
+<LI><TT>in</TT>: pollici
+</UL>
+Un punto equivale a 1/72 di pollice, cioè circa 0.35 mm (un pollice corrisponde a
+2.54 cm). Si tratta di una misura molto comune in tipografia; la dimensione dei font
+è espressa in questa unità.
+<BR>
+<BR>
+Il valore di default è <TT>mm</TT>.
+</BLOCKQUOTE>
+<TT><U>format</U></TT>
+<BLOCKQUOTE>
+Il formato utilizzato per la pagina. Può essere uno dei seguenti valori (case insensitive):
+<UL>
+<LI><TT>A3</TT>
+<LI><TT>A4</TT>
+<LI><TT>A5</TT>
+<LI><TT>Letter</TT>
+<LI><TT>Legal</TT>
+</UL>
+o un formato personalizzato nella forma di array bidimensionale contenente la larghezza e
+l'altezza (espressa nell'unità di misura data da <TT>unit</TT>).
+</BLOCKQUOTE>
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

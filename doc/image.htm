@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Image</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>Image</H2>
+<TT>Image(<B>string</B> file, <B>float</B> x, <B>float</B> y [, <B>float</B> w [, <B>float</B> h [, <B>string</B> type [, <B>mixed</B> link]]]])</TT>
+<H4 CLASS='st'>Versione</H4>
+1.1
+<H4 CLASS='st'>Descrizione</H4>
+Permette di inserire un immagine nella pagina. L'angolo superiore-sinistro è obbligatorio.
+Le dimensioni possono essere specificate nei seguenti modi:
+<UL>
+<LI>specificando larghezza e altezza (espresse nell'unità di misura scelte)
+<LI>specificando una sola dimensione, l'altra sarà calcolata automaticamente
+in maniera da mantenere le proporzioni originali
+<LI>senza specificare le dimensioni, in questo caso l'immagine sarà inserita a 72 dpi
+</UL>
+I formati inseribili sono JPEG and PNG.
+<BR>
+<BR>
+Per le JPEG, sono consentiti i seguenti colori:
+<UL>
+<LI>scala di grigio
+<LI>true colors (24 bits)
+<LI>CMYK (32 bits)
+</UL>
+Per le PNG, sono consentiti:
+<UL>
+<LI>scala di grigio a  8 bits (256 livelli)
+<LI>indexed colors
+<LI>true colors (24 bits)
+</UL>
+ma non sono supportati:
+<UL>
+<LI>Interlacing
+<LI>Alpha channel
+</UL>
+Può essere presente un colore trasparente ma sarà interpretato solo dall'Acrobat
+4 e superiori).
+<BR>
+Se il formato dell'immagine non viene specificato sarà preso dall'estensione
+del file.
+<BR>
+E' possibile inserire un link sull'immagine.
+<BR>
+<BR>
+Osservazione: se un immagine è usata più volte, solo una copia sarà inserita
+nel file.
+<H4 CLASS='st'>Parametri</H4>
+<TT><U>file</U></TT>
+<BLOCKQUOTE>
+Nome del file che contiene l'immagine.
+</BLOCKQUOTE>
+<TT><U>x</U></TT>
+<BLOCKQUOTE>
+Ascissa dell'angolo superiore-sinistro.
+</BLOCKQUOTE>
+<TT><U>y</U></TT>
+<BLOCKQUOTE>
+Ordinata dell'angolo superiore-sinistro.
+</BLOCKQUOTE>
+<TT><U>w</U></TT>
+<BLOCKQUOTE>
+Larghezza dell'immagine nella pagina. Se non viene specificata o uguale a zero,
+sarà calcolata automaticamente.
+</BLOCKQUOTE>
+<TT><U>h</U></TT>
+<BLOCKQUOTE>
+Altezza dell'immagine nella pagina. Se non viene specificata o uguale a zero,
+sarà calcolata automaticamente.
+</BLOCKQUOTE>
+<TT><U>type</U></TT>
+<BLOCKQUOTE>
+Formato immagine. I valori possibili sono (case insensitive): <TT>JPG</TT>, <TT>JPEG</TT>, <TT>PNG</TT>.
+Se non specificato, il tipo sarà riferito all'estensione del file.
+</BLOCKQUOTE>
+<TT><U>link</U></TT>
+<BLOCKQUOTE>
+URL o identificatore generato da AddLink().
+</BLOCKQUOTE>
+<H4 CLASS='st'>Vedi anche</H4>
+<A HREF="addlink.htm">AddLink()</A>.
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

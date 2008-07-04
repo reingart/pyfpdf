@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>Output</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>Output</H2>
+<TT><B>string</B> Output([<B>string</B> name [, <B>string</B> dest]])</TT>
+<H4 CLASS='st'>Versione</H4>
+1.0
+<H4 CLASS='st'>Descrizione</H4>
+Passa il documento a una destinazione: stringa, file locale o browser. Nell'ultimo
+caso, verrà usato il plug-in (se presente), oppure sarà forzata l'apertura di una
+finestra di download ("Salva con nome").<BR>
+Se necessario, il metodo richiama prima Close() per chiudere il documento.
+<H4 CLASS='st'>Parametri</H4>
+<TT><U>name</U></TT>
+<BLOCKQUOTE>
+Il nome del file. Se non viene specificato, il documento sarà inviato al browser
+(destinazione <TT>I</TT>) con il nome <TT>doc.pdf</TT>.
+</BLOCKQUOTE>
+<TT><U>dest</U></TT>
+<BLOCKQUOTE>
+Destinazione dove mandare il documento. Può essere specificato uno dei seguenti valori:
+<UL>
+<LI><TT>I</TT>: manda il 'file inline' al  browser. Il plug-in sarà utilizzato se
+presente. Il nome specificato con <TT>name</TT> sarà utilizzato quando l'utente
+selezionerà l'opzione "Salva con nome" sul link generato sul PDF.
+<LI><TT>D</TT>: manda al browser e forza il download del file con il nome dato
+con <TT>name</TT>.
+<LI><TT>F</TT>: salva il file in locale con il nome dato con <TT>name</TT>.
+<LI><TT>S</TT>: ritorna il documento come stringa. <TT>name</TT> is ignored.
+</UL>
+Se il parametro non viene specificato ma viene specificato un nome, la destinazione
+sarà <TT>F</TT>. Se non viene specificato alcun parametro, la destinazione sarà
+<TT>I</TT>.<BR>
+<BR>
+Nota: per mantenere la compatibilità con versioni precedenti, viene anche accettato
+un valore booleano (<TT>false</TT> per <TT>F</TT> and <TT>true</TT> per <TT>D</TT>).
+</BLOCKQUOTE>
+<H4 CLASS='st'>Vedi anche</H4>
+<A HREF="close.htm">Close()</A>.
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>

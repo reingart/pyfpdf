@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=ISO-8859-1">
+<TITLE>AliasNbPages</TITLE>
+<LINK TYPE="text/css" REL="stylesheet" HREF="../fpdf.css">
+</HEAD>
+<BODY>
+<H2>AliasNbPages</H2>
+<TT>AliasNbPages([<B>string</B> alias])</TT>
+<H4 CLASS='st'>Versione</H4>
+1.4
+<H4 CLASS='st'>Descrizione</H4>
+Definisce un alias per il numero totale di pagine. Sarà sostituito alla chiusura del documento.
+<H4 CLASS='st'>Parametri</H4>
+<TT><U>alias</U></TT>
+<BLOCKQUOTE>
+L'alias. Valore di default: <TT>{nb}</TT>.
+</BLOCKQUOTE>
+<H4 CLASS='st'>Esempio</H4>
+<DIV STYLE="background-color:#E0E0E0; padding:3px; margin-top:1.2em; margin-bottom:1.2em">
+<TT>
+class PDF extends FPDF<BR>
+{<BR>
+function Footer()<BR>
+{<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Va a 1.5 cm dal fondo della pagina<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetY(-15);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Seleziona Arial corsivo 8<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;SetFont('Arial','I',8);<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;//Stampa il numero di pagina corrente e totale<BR>
+&nbsp;&nbsp;&nbsp;&nbsp;$this-&gt;Cell(0,10,'Page '.$this-&gt;PageNo().'/{nb}',0,0,'C');<BR>
+}<BR>
+}<BR>
+<BR>
+$pdf=new PDF();<BR>
+$pdf-&gt;AliasNbPages();
+</TT>
+</DIV>
+<H4 CLASS='st'>Vedi anche</H4>
+<A HREF="pageno.htm">PageNo()</A>,
+<A HREF="footer.htm">Footer()</A>.
+<HR STYLE="margin-top:1.5em">
+<DIV STYLE="text-align:center"><A HREF="index.htm">Indice</A></DIV>
+</BODY>
+</HTML>
