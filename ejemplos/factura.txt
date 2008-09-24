@@ -1,0 +1,20 @@
+100, 10, 'FACTURA A'
+10, 46, 'Condición IVA:'
+53, 46, cliente['inscripto'] and 'X' or ''
+63, 46, not cliente['inscripto'] and 'X' or ''
+10, 20, cliente['nombre']
+100, 20, cliente['cuit']
+10, 60, items[0]['cantidad']
+40, 60, items[0]['descripcion']
+150, 60, items[0]['precio']
+190, 60, items[0]['cantidad']*items[0]['precio']
+10, 65, items[1]['cantidad']
+40, 65, items[1]['descripcion']
+150, 65, items[1]['precio']
+190, 65, items[1]['cantidad']*items[1]['precio']
+10, 70, items[2]['cantidad']
+40, 70, items[2]['descripcion']
+150, 70, items[2]['precio']
+190, 70, items[2]['cantidad']*items[2]['precio']
+100,100, 'Total:'
+120,100, sum([item['cantidad']*item['precio'] for item in items])
