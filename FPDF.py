@@ -1,3 +1,4 @@
+# -*- coding: iso-8859-1 -*-
 # ******************************************************************************
 # * Software: FPDF                                                               *
 # * Version:  1.53                                                               *
@@ -934,7 +935,7 @@ class FPDF:
 			this._out('endobj')
 			#Page content
 			if this.compress:
-				p = zlib.compress(this.pages[n])
+				p = zlib.compress(this.pages[n].encode("latin1"))
 			else:
 				p = this.pages[n]
 			this._newobj()

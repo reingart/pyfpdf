@@ -1,3 +1,5 @@
+# -*- coding: iso-8859-1 -*-
+
 """
 A few rough Python equivalents of PHP internal functions (=lazy port).
 
@@ -44,7 +46,7 @@ def basename(p):
 
 def is_bool(x):	return type(x)==type(bool())
 def empty(s): return len(s)==0
-def is_string(s): return type(s) == type('')
+def is_string(s): return isinstance(s,basestring)
 def strtolower(s): return s.lower()
 def strtoupper(s): return s.upper()
 def str_replace(sc, rp, s): return s.replace(sc,rp)
