@@ -1,5 +1,5 @@
 100, 10, 'FACTURA A'
-10, 46, 'Condición IVA:'
+10, 46, 'IVA:'
 53, 46, cliente['inscripto'] and 'X' or ''
 63, 46, not cliente['inscripto'] and 'X' or ''
 10, 20, cliente['nombre']

@@ -13,7 +13,7 @@ items = [
 pdf = FPDF.FPDF()
 pdf.AddPage();
 pdf.SetFont('Arial','B',16);
-for linea in open("factura.txt").readlines():
+for linea in open("factura-csv-simple.txt").readlines():
    args = eval(linea)
    print linea
    pdf.Text(x=args[0],y=args[1],txt=str(args[2]).decode('latin1'));
