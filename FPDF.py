@@ -9,7 +9,6 @@
 # * You may use and modify this software as you wish.                            *
 # * Ported to Python 2.4 by Max (maxpat78@yahoo.it) on 2006-05                   *
 # * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT      *
-# * ALSO IT CAN'T HANDLE JPEG FILES, SINCE WE HAVEN'T PHP'S GetImageSize()	 *
 # *******************************************************************************/
 
 from PHPutils import *
@@ -17,8 +16,14 @@ from datetime import datetime
 import math
 import os, sys, zlib, struct
 
+try:
+    # Check if PIL is available, necessary for JPEG support.
+    import Image
+except ImportError:
+    Image = None
+
 # Global variables
-FPDF_VERSION='1.53'
+FPDF_VERSION='1.54'
 FPDF_FONT_DIR=os.path.join(os.path.dirname(__file__),'font')
 fpdf_charwidths = {}
 
@@ -1257,28 +1262,29 @@ class FPDF:
         return sprintf('%.2f %.2f %.2f %.2f re f',x*this.k,(this.h-(y-up/1000.0*this.FontSize))*this.k,w*this.k,-ut/1000.0*this.FontSizePt)
 
     def _parsejpg(this, filename):
-        #Extract info from a JPEG file
-        a=GetImageSize(filename)
-        if(not a):
-            this.Error('Missing or incorrect image file: '+filename)
-        if(a[2]!=2):
-            this.Error('Not a JPEG file: '+filename)
-        if(not isset(a['channels']) or a['channels']==3):
+        # Extract info from a JPEG file
+        if Image is None:
+            this.Error('PIL not installed')
+        try:
+            f = open(filename, 'rb')
+            im = Image.open(f)
+        except Exception, e:
+            this.Error('Missing or incorrect image file: %s. Error: %s' % (filename, str(e)))
+        else:
+            a = im.size
+        # We shouldn't get into here, as Jpeg is RGB=8bpp right(?), but, just in case...
+        bpc=8
+        if im.mode == 'RGB':
             colspace='DeviceRGB'
-        elif(a['channels']==4):
+        elif im.mode == 'CMYK':
             colspace='DeviceCMYK'
         else:
             colspace='DeviceGray'
-        if isset(a['bits']):
-            bpc=a['bits']
-        else:
-            bpc=8
-        #Read whole file
-        f=fopen(filename,'rb')
-        data=''
-        while(not feof(f)):
-            data+=f.read(4096)
-        fclose(f)
+
+        # Read whole file from the start
+        f.seek(0)
+        data = f.read()
+        f.close()
         return {'w':a[0],'h':a[1],'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
 
     def _parsepng(this, name):
