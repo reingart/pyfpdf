@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 # ******************************************************************************
 # * Software: FPDF                                                               *
 # * Version:  1.53                                                               *
@@ -1446,6 +1446,83 @@ class FPDF:
                     self.Rect(x, y, lineWidth, h, 'F')
 
                 x += lineWidth
+
+
+    def code39(self, txt, x, y, w=1.5, h=5.0):
+        wide = w
+        narrow = w /3.0
+        gap = narrow
+
+        barChar={}
+        barChar['0'] = 'nnnwwnwnn'
+        barChar['1'] = 'wnnwnnnnw'
+        barChar['2'] = 'nnwwnnnnw'
+        barChar['3'] = 'wnwwnnnnn'
+        barChar['4'] = 'nnnwwnnnw'
+        barChar['5'] = 'wnnwwnnnn'
+        barChar['6'] = 'nnwwwnnnn'
+        barChar['7'] = 'nnnwnnwnw'
+        barChar['8'] = 'wnnwnnwnn'
+        barChar['9'] = 'nnwwnnwnn'
+        barChar['A'] = 'wnnnnwnnw'
+        barChar['B'] = 'nnwnnwnnw'
+        barChar['C'] = 'wnwnnwnnn'
+        barChar['D'] = 'nnnnwwnnw'
+        barChar['E'] = 'wnnnwwnnn'
+        barChar['F'] = 'nnwnwwnnn'
+        barChar['G'] = 'nnnnnwwnw'
+        barChar['H'] = 'wnnnnwwnn'
+        barChar['I'] = 'nnwnnwwnn'
+        barChar['J'] = 'nnnnwwwnn'
+        barChar['K'] = 'wnnnnnnww'
+        barChar['L'] = 'nnwnnnnww'
+        barChar['M'] = 'wnwnnnnwn'
+        barChar['N'] = 'nnnnwnnww'
+        barChar['O'] = 'wnnnwnnwn'
+        barChar['P'] = 'nnwnwnnwn'
+        barChar['Q'] = 'nnnnnnwww'
+        barChar['R'] = 'wnnnnnwwn'
+        barChar['S'] = 'nnwnnnwwn'
+        barChar['T'] = 'nnnnwnwwn'
+        barChar['U'] = 'wwnnnnnnw'
+        barChar['V'] = 'nwwnnnnnw'
+        barChar['W'] = 'wwwnnnnnn'
+        barChar['X'] = 'nwnnwnnnw'
+        barChar['Y'] = 'wwnnwnnnn'
+        barChar['Z'] = 'nwwnwnnnn'
+        barChar['-'] = 'nwnnnnwnw'
+        barChar['.'] = 'wwnnnnwnn'
+        barChar[' '] = 'nwwnnnwnn'
+        barChar['*'] = 'nwnnwnwnn'
+        barChar['$'] = 'nwnwnwnnn'
+        barChar['/'] = 'nwnwnnnwn'
+        barChar['+'] = 'nwnnnwnwn'
+        barChar['%'] = 'nnnwnwnwn'
+
+        self.SetFillColor(0)
+        code = txt	
+            
+        code = code.upper()
+        for i in xrange (0, len(code), 2):
+            charBar = code[i];
+
+            if not charBar in barChar.keys():
+                raise RuntimeError ('Caracter "%s" inválido para el código de barras' % charBar)
+
+            seq= ''
+            for s in xrange(0, len(barChar[charBar])):
+                seq += barChar[charBar][s] 
+
+            for bar in xrange(0, len(seq)):
+                if seq[bar] == 'n':
+                    lineWidth = narrow
+                else:
+                    lineWidth = wide
+
+                if bar % 2 == 0:
+                    self.Rect(x,y,lineWidth,h,'F')
+                x += lineWidth
+        x += gap
 
 #End of class
 
