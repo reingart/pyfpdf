@@ -1,0 +1,185 @@
+#summary Los diferentes ejemplos muestran rapidamente como usar PyFPDF. Encontrará todas las características principales explicadas.
+#labels Featured,Phase-Support
+
+= Ejemplo Mínimo =
+
+Empecemos con el ejemplo clásico: 
+
+{{{
+from FPDF import *
+
+pdf=FPDF()
+pdf.AddPage()
+pdf.SetFont('Arial','B',16)
+pdf.Cell(40,10,'Hola mundo!')
+pdf.Output('tuto1.pdf','F')
+}}}
+
+[Demo]
+
+Luego de incluir la biblioteca, creamos un objeto FPDF. El constructor [FPDF]() es usado aqui con los valores predeterminados: páginas en A4 portrait -vertical- y la unidad de medida en milimetros. Podría haberlos especificado explicitamente: 
+
+{{{
+pdf=FPDF('P','mm','A4')
+}}}
+
+Es posible usar landscape -apaisado- (L), otros formatos de página (como Letter -carta- y Legal -oficio-) y únidad de medida (pt, cm, in). 
+
+Por el momento no hay una página, entonces tenemos que agregar una con AddPage(). El origen es la esquina superior-izquierda y la posición actual está ubicada a 1 cm de los bordes; los margenes pueden ser cambiados con SetMargins(). 
+
+Antes de que podámos imprimir texto, es obligatorio seleccionar una fuente con SetFont(), de lo contrario el documento será inválido. Elegimos Arial bold 16: 
+
+{{{
+pdf.SetFont('Arial','B',16)
+}}}
+
+Podríamos haber especificado italic -cursiva- con I, underline -subrayado- con U o fuente regular con string vacio (o cualquier combinación). Noar que el tamaño de la fuente es dado en puntos, no milimetros (u otra unidad de medida del usuario); esta es la única excepción. Las otras fuentes estándar son Times, Courier, Symbol y ZapfDingbats. 
+
+Podemos ahora imprimir una celda con [Cell](). Una celda es un área rectangular, posiblemente enmarcada, que contiene algún texto. Se imprime en la posición actual. Especificamos sus dimensiones, su texto (centrado o alineado), si los bordes deberían ser dibujados, y donde la posición actual se mueve después (a la derecha, abajo o al principio de la próxima linea). Para agregar un marco, haremos: 
+
+{{{
+pdf.Cell(40,10,'Hola mundo !',1)
+}}}
+
+Para agregar una nueva celda próxima a ella con texto centrada y luego ir a la siguiente línea, haríamos: 
+
+{{{
+pdf.Cell(60,10,'Hecho con FPDF.',0,1,'C')
+}}}
+
+*Nota*: el salto de línea puede hacerse también con [Ln](). Este método permite especificar adicionalmente la altura del salto. 
+
+Finalmente, el documento es cerrado y enviado al explorador con [Output](). Podemos haberlo grabado a un fichero al pasarle el nombre de archivo. 
+
+*Precaución*: en caso cuando el PDF es enviado al explorador, nada más debe ser enviádo a la salida, ni antes ni después (el mínimo caracter importa). 
+
+
+= Header, footer, page break and image =
+
+Here is a two page example with header, footer and logo: 
+
+{{{
+from FPDF import *
+
+class PDF(FPDF):
+        def Header(this):
+                # Logo
+                this.Image('logo_pb.png',10,8,33)
+                # Arial bold 15
+                this.SetFont('Arial','B',15)
+                # Move to the right
+                this.Cell(80)
+                # Title
+                this.Cell(30,10,'Title',1,0,'C')
+                # Line break
+                this.Ln(20)
+
+        # Page footer
+        def Footer(this):
+                # Position at 1.5 cm from bottom
+                this.SetY(-15)
+                # Arial italic 8
+                this.SetFont('Arial','I',8)
+                # Page number
+                this.Cell(0,10,'Page '+str(this.PageNo())+'/{nb}',0,0,'C')
+
+# Instanciation of inherited class
+pdf=PDF()
+pdf.AliasNbPages()
+pdf.AddPage()
+pdf.SetFont('Times','',12)
+for i in range(1,41):
+        pdf.Cell(0,10,'Printing line number '+str(i),0,1)
+pdf.Output('tuto2.pdf','F')
+}}}
+[Demo]
+
+This example makes use of the [Header]() and [Footer]() methods to process page headers and footers. They are called automatically. They already exist in the FPDF class but do nothing, therefore we have to extend the class and override them. 
+
+The logo is printed with the [Image]() method by specifying its upper-left corner and its width. The height is calculated automatically to respect the image proportions. 
+
+To print the page number, a null value is passed as the cell width. It means that the cell should extend up to the right margin of the page; it is handy to center text. The current page number is returned by the PageNo() method; as for the total number of pages, it is obtained by means of the special value {nb} which will be substituted on document closure (provided you first called AliasNbPages()). 
+Note the use of the [SetY]() method which allows to set position at an absolute location in the page, starting from the top or the bottom. 
+
+Another interesting feature is used here: the automatic page breaking. As soon as a cell would cross a limit in the page (at 2 centimeters from the bottom by default), a break is performed and the font restored. Although the header and footer select their own font (Arial), the body continues with Times. This mechanism of automatic restoration also applies to colors and line width. The limit which triggers page breaks can be set with SetAutoPageBreak().
+
+
+= Line breaks and colors =
+
+Let's continue with an example which prints justified paragraphs. It also illustrates the use of colors.
+{{{
+from FPDF import *
+
+title='20000 Leagues Under the Seas'
+
+class PDF(FPDF):
+        def Header(this):
+                #Arial bold 15
+                this.SetFont('Arial','B',15)
+                #Calculate width of title and position
+                w=this.GetStringWidth(title)+6
+                this.SetX((210-w)/2)
+                #Colors of frame, background and text
+                this.SetDrawColor(0,80,180)
+                this.SetFillColor(230,230,0)
+                this.SetTextColor(220,50,50)
+                #Thickness of frame (1 mm)
+                this.SetLineWidth(1)
+                #Title
+                this.Cell(w,9,title,1,1,'C',1)
+                #Line break
+                this.Ln(10)
+
+        def Footer(this):
+                #Position at 1.5 cm from bottom
+                this.SetY(-15)
+                #Arial italic 8
+                this.SetFont('Arial','I',8)
+                #Text color in gray
+                this.SetTextColor(128)
+                #Page number
+                this.Cell(0,10,'Page '+str(this.PageNo()),0,0,'C')
+
+        def ChapterTitle(this,num,label):
+                #Arial 12
+                this.SetFont('Arial','',12)
+                #Background color
+                this.SetFillColor(200,220,255)
+                #Title
+                this.Cell(0,6,"Chapter %d : %s"%(num,label),0,1,'L',1)
+                #Line break
+                this.Ln(4)
+
+        def ChapterBody(this,name):
+                #Read text file
+                txt=file(name).read()
+                #Times 12
+                this.SetFont('Times','',12)
+                #Output justified text
+                this.MultiCell(0,5,txt)
+                #Line break
+                this.Ln()
+                #Mention in italics
+                this.SetFont('','I')
+                this.Cell(0,5,'(end of excerpt)')
+
+        def PrintChapter(this,num,title,name):
+                this.AddPage()
+                this.ChapterTitle(num,title)
+                this.ChapterBody(name)
+
+
+pdf=PDF()
+pdf.SetTitle(title)
+pdf.SetAuthor('Jules Verne')
+pdf.PrintChapter(1,'A RUNAWAY REEF','20k_c1.txt')
+pdf.PrintChapter(2,'THE PROS AND CONS','20k_c2.txt')
+pdf.Output('tuto3.pdf','F')
+}}}
+[Demo]
+
+The GetStringWidth() method allows to determine the length of a string in the current font, which is used here to calculate the position and the width of the frame surrounding the title. Then colors are set (via SetDrawColor(), SetFillColor() and SetTextColor()) and the thickness of the line is set to 1 mm (against 0.2 by default) with SetLineWidth(). Finally, we output the cell (the last parameter to true indicates that the background must be filled). 
+
+The method used to print the paragraphs is MultiCell(). Each time a line reaches the right extremity of the cell or a carriage return character is met, a line break is issued and a new cell automatically created under the current one. Text is justified by default. 
+
+Two document properties are defined: the title (SetTitle()) and the author (SetAuthor()). Properties can be viewed by two means. First is to open the document directly with Acrobat Reader, go to the File menu and choose the Document Properties option. The second, also available from the plug-in, is to right-click and select Document Properties.
