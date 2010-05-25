@@ -1,9 +1,9 @@
-#summary Los diferentes ejemplos muestran rapidamente como usar PyFPDF. Encontrar· todas las caracterÌsticas principales explicadas.
+Ôªø#summary Los diferentes ejemplos muestran rapidamente como usar PyFPDF. Encontrar√° todas las caracter√≠sticas principales explicadas.
 #labels Featured,Phase-Support
 
-= Ejemplo MÌnimo =
+= Ejemplo M√≠nimo =
 
-Empecemos con el ejemplo cl·sico: 
+Empecemos con el ejemplo cl√°sico: 
 
 {{{
 from FPDF import *
@@ -17,41 +17,41 @@ pdf.Output('tuto1.pdf','F')
 
 [Demo]
 
-Luego de incluir la biblioteca, creamos un objeto FPDF. El constructor [FPDF]() es usado aqui con los valores predeterminados: p·ginas en A4 portrait -vertical- y la unidad de medida en milimetros. PodrÌa haberlos especificado explicitamente: 
+Luego de incluir la biblioteca, creamos un objeto FPDF. El constructor [FPDF]() es usado aqui con los valores predeterminados: p√°ginas en A4 portrait -vertical- y la unidad de medida en milimetros. Podr√≠a haberlos especificado explicitamente: 
 
 {{{
 pdf=FPDF('P','mm','A4')
 }}}
 
-Es posible usar landscape -apaisado- (L), otros formatos de p·gina (como Letter -carta- y Legal -oficio-) y ˙nidad de medida (pt, cm, in). 
+Es posible usar landscape -apaisado- (L), otros formatos de p√°gina (como Letter -carta- y Legal -oficio-) y √∫nidad de medida (pt, cm, in). 
 
-Por el momento no hay una p·gina, entonces tenemos que agregar una con AddPage(). El origen es la esquina superior-izquierda y la posiciÛn actual est· ubicada a 1 cm de los bordes; los margenes pueden ser cambiados con SetMargins(). 
+Por el momento no hay una p√°gina, entonces tenemos que agregar una con AddPage(). El origen es la esquina superior-izquierda y la posici√≥n actual est√° ubicada a 1 cm de los bordes; los margenes pueden ser cambiados con SetMargins(). 
 
-Antes de que pod·mos imprimir texto, es obligatorio seleccionar una fuente con SetFont(), de lo contrario el documento ser· inv·lido. Elegimos Arial bold 16: 
+Antes de que pod√°mos imprimir texto, es obligatorio seleccionar una fuente con SetFont(), de lo contrario el documento ser√° inv√°lido. Elegimos Arial bold 16: 
 
 {{{
 pdf.SetFont('Arial','B',16)
 }}}
 
-PodrÌamos haber especificado italic -cursiva- con I, underline -subrayado- con U o fuente regular con string vacio (o cualquier combinaciÛn). Noar que el tamaÒo de la fuente es dado en puntos, no milimetros (u otra unidad de medida del usuario); esta es la ˙nica excepciÛn. Las otras fuentes est·ndar son Times, Courier, Symbol y ZapfDingbats. 
+Podr√≠amos haber especificado italic -cursiva- con I, underline -subrayado- con U o fuente regular con string vacio (o cualquier combinaci√≥n). Noar que el tama√±o de la fuente es dado en puntos, no milimetros (u otra unidad de medida del usuario); esta es la √∫nica excepci√≥n. Las otras fuentes est√°ndar son Times, Courier, Symbol y ZapfDingbats. 
 
-Podemos ahora imprimir una celda con [Cell](). Una celda es un ·rea rectangular, posiblemente enmarcada, que contiene alg˙n texto. Se imprime en la posiciÛn actual. Especificamos sus dimensiones, su texto (centrado o alineado), si los bordes deberÌan ser dibujados, y donde la posiciÛn actual se mueve despuÈs (a la derecha, abajo o al principio de la prÛxima linea). Para agregar un marco, haremos: 
+Podemos ahora imprimir una celda con [Cell](). Una celda es un √°rea rectangular, posiblemente enmarcada, que contiene alg√∫n texto. Se imprime en la posici√≥n actual. Especificamos sus dimensiones, su texto (centrado o alineado), si los bordes deber√≠an ser dibujados, y donde la posici√≥n actual se mueve despu√©s (a la derecha, abajo o al principio de la pr√≥xima linea). Para agregar un marco, haremos: 
 
 {{{
 pdf.Cell(40,10,'Hola mundo !',1)
 }}}
 
-Para agregar una nueva celda prÛxima a ella con texto centrada y luego ir a la siguiente lÌnea, harÌamos: 
+Para agregar una nueva celda pr√≥xima a ella con texto centrada y luego ir a la siguiente l√≠nea, har√≠amos: 
 
 {{{
 pdf.Cell(60,10,'Hecho con FPDF.',0,1,'C')
 }}}
 
-*Nota*: el salto de lÌnea puede hacerse tambiÈn con [Ln](). Este mÈtodo permite especificar adicionalmente la altura del salto. 
+*Nota*: el salto de l√≠nea puede hacerse tambi√©n con [Ln](). Este m√©todo permite especificar adicionalmente la altura del salto. 
 
 Finalmente, el documento es cerrado y enviado al explorador con [Output](). Podemos haberlo grabado a un fichero al pasarle el nombre de archivo. 
 
-*PrecauciÛn*: en caso cuando el PDF es enviado al explorador, nada m·s debe ser envi·do a la salida, ni antes ni despuÈs (el mÌnimo caracter importa). 
+*Precauci√≥n*: en caso cuando el PDF es enviado al explorador, nada m√°s debe ser envi√°do a la salida, ni antes ni despu√©s (el m√≠nimo caracter importa). 
 
 
 = Header, footer, page break and image =
