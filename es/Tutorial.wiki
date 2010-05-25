@@ -54,9 +54,9 @@ Finalmente, el documento es cerrado y enviado al explorador con [Output](). Pode
 *Precaución*: en caso cuando el PDF es enviado al explorador, nada más debe ser enviádo a la salida, ni antes ni después (el mínimo caracter importa). 
 
 
-= Header, footer, page break and image =
+= Encabezado, pie de página, salto de página e imágen =
 
-Here is a two page example with header, footer and logo: 
+Aquí hay un ejemplo de dos páginas con encabezado, pie y logo: 
 
 {{{
 from FPDF import *
@@ -83,7 +83,7 @@ class PDF(FPDF):
                 # Page number
                 this.Cell(0,10,'Page '+str(this.PageNo())+'/{nb}',0,0,'C')
 
-# Instanciation of inherited class
+# Instanciar clase redefinida
 pdf=PDF()
 pdf.AliasNbPages()
 pdf.AddPage()
@@ -94,14 +94,14 @@ pdf.Output('tuto2.pdf','F')
 }}}
 [http://pyfpdf.googlecode.com/hg/tutorial/tuto2.pdf Demo]
 
-This example makes use of the [Header]() and [Footer]() methods to process page headers and footers. They are called automatically. They already exist in the FPDF class but do nothing, therefore we have to extend the class and override them. 
+Este ejemplo hace uso de métodos  [Header]() y  [Footer]() para procesar el encabezado y pie. Son llamados automáticamente. Ya existen en la clase FPDF pero no hacen nada, por lo tanto tenemos que extender la clase y sobreescribirlos. 
 
-The logo is printed with the [Image]() method by specifying its upper-left corner and its width. The height is calculated automatically to respect the image proportions. 
+El log es impreso con el método [Image]() especificando su esquina superior izquierda y su ancho. La altura es calculada automáticamente para respetar las proporciones de la imágen. 
 
-To print the page number, a null value is passed as the cell width. It means that the cell should extend up to the right margin of the page; it is handy to center text. The current page number is returned by the PageNo() method; as for the total number of pages, it is obtained by means of the special value {nb} which will be substituted on document closure (provided you first called AliasNbPages()). 
-Note the use of the [SetY]() method which allows to set position at an absolute location in the page, starting from the top or the bottom. 
+Para imprimir el número de página, un valor nulo es pasado como ancho de celda. Significa que la celda deberá ser extendida hasta el margen derecho de la página; es útil centrar texto. El número de página actual es devuelto por  el método PageNo(); y para el número total de páginas, será obtenido mediante el valor especial {nb} que será sustituido al cerrar el documento (si de antemano se llamó AliasNbPages()). 
+Notar el uso del método [SetY]() que permite establecer la posición en una ubicación absoluta en la página, empezando desde arriba hacia abajo. 
 
-Another interesting feature is used here: the automatic page breaking. As soon as a cell would cross a limit in the page (at 2 centimeters from the bottom by default), a break is performed and the font restored. Although the header and footer select their own font (Arial), the body continues with Times. This mechanism of automatic restoration also applies to colors and line width. The limit which triggers page breaks can be set with SetAutoPageBreak().
+Otra característica interesante es usada aquí: el salto de página automático. Tan pronto una celda cruza el límite de una página (por defecto a 2 centimetros desde abajo), un salto es realizado y la fuente es restaurada. Aunque el encabezado y pie de página tienen su propia fuente (Arial), el cuerpo continua en Times. Este mecanismo de restauración automática tambien se aplica a los colores y el ancho de la línea. El límite que dispara los saltos de página puede establecerce con SetAutoPageBreak().
 
 
 = Line breaks and colors =
