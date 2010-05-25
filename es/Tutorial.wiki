@@ -15,7 +15,7 @@ pdf.Cell(40,10,'Hola mundo!')
 pdf.Output('tuto1.pdf','F')
 }}}
 
-[Demo]
+[http://pyfpdf.googlecode.com/hg/tutorial/tuto1.pdf Demo]
 
 Luego de incluir la biblioteca, creamos un objeto FPDF. El constructor [FPDF]() es usado aqui con los valores predeterminados: páginas en A4 portrait -vertical- y la unidad de medida en milimetros. Podría haberlos especificado explicitamente: 
 
@@ -92,7 +92,7 @@ for i in range(1,41):
         pdf.Cell(0,10,'Printing line number '+str(i),0,1)
 pdf.Output('tuto2.pdf','F')
 }}}
-[Demo]
+[http://pyfpdf.googlecode.com/hg/tutorial/tuto2.pdf Demo]
 
 This example makes use of the [Header]() and [Footer]() methods to process page headers and footers. They are called automatically. They already exist in the FPDF class but do nothing, therefore we have to extend the class and override them. 
 
@@ -176,7 +176,7 @@ pdf.PrintChapter(1,'A RUNAWAY REEF','20k_c1.txt')
 pdf.PrintChapter(2,'THE PROS AND CONS','20k_c2.txt')
 pdf.Output('tuto3.pdf','F')
 }}}
-[Demo]
+[http://pyfpdf.googlecode.com/hg/tutorial/tuto3.pdf Demo]
 
 The GetStringWidth() method allows to determine the length of a string in the current font, which is used here to calculate the position and the width of the frame surrounding the title. Then colors are set (via SetDrawColor(), SetFillColor() and SetTextColor()) and the thickness of the line is set to 1 mm (against 0.2 by default) with SetLineWidth(). Finally, we output the cell (the last parameter to true indicates that the background must be filled). 
 
