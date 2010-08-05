@@ -615,8 +615,9 @@ class FPDF:
         else:
             this.x+=w
 
-    def MultiCell(this, w,h,txt,border=0,align='J',fill=0):
+    def MultiCell(this, w,h,txt,border=0,align='J',fill=0, split_only=False):
         #Output text with automatic or explicit line breaks
+        ret = [] # if split_only = True, returns splited text cells
         cw=this.CurrentFont['cw']
         if(w==0):
             w=this.w-this.rMargin-this.x
@@ -655,7 +656,10 @@ class FPDF:
                 if(this.ws>0):
                     this.ws=0
                     this._out('0 Tw')
-                this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+                if not split_only:
+                    this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+                else:
+                    ret.append(substr(s,j,i-j))
                 i+=1
                 sep=-1
                 j=i
@@ -678,7 +682,10 @@ class FPDF:
                     if(this.ws>0):
                         this.ws=0
                         this._out('0 Tw')
-                    this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+                    if not split_only:
+                        this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+                    else:
+                        ret.append(substr(s,j,i-j))
                 else:
                     if(align=='J'):
                         if ns>1:
@@ -686,7 +693,10 @@ class FPDF:
                         else:
                             this.ws=0
                         this._out(sprintf('%.3f Tw',this.ws*this.k))
-                    this.Cell(w,h,substr(s,j,sep-j),b,2,align,fill)
+                    if not split_only:
+                        this.Cell(w,h,substr(s,j,sep-j),b,2,align,fill)
+                    else:
+                        ret.append(substr(s,j,sep-j))
                     i=sep+1
                 sep=-1
                 j=i
@@ -703,8 +713,12 @@ class FPDF:
             this._out('0 Tw')
         if(border and strpos(border,'B')!=-1):
             b+='B'
-        this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+        if not split_only:
+            this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+        else:
+            ret.append(substr(s,j,i-j))
         this.x=this.lMargin
+        return ret
 
     def Write(this, h,txt,link=''):
         #Output text in flowing mode
@@ -1143,7 +1157,7 @@ class FPDF:
         this._out('endobj')
 
     def _putinfo(this):
-        this._out('/Producer '+this._textstring('FPDF '+FPDF_VERSION+' for Python'))
+        this._out('/Producer '+this._textstring('PyFPDF '+FPDF_VERSION+' http://pyfpdf.googlecode.com/'))
         if hasattr(this,'title'):
             this._out('/Title '+this._textstring(this.title))
         if hasattr(this,'subject'):
