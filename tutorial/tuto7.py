@@ -1,8 +1,8 @@
-from FPDF import *
+from fpdf import *
 
 pdf=FPDF()
-pdf.AddFont('Calligrapher','','calligra.py')
-pdf.AddPage()
-pdf.SetFont('Calligrapher','',35)
-pdf.Cell(0,10,'Enjoy new fonts with FPDF!')
-pdf.Output('tuto7.pdf','F')
+pdf.add_font('Calligrapher','','calligra.py')
+pdf.add_page()
+pdf.set_font('Calligrapher','',35)
+pdf.cell(0,10,'Enjoy new fonts with FPDF!')
+pdf.output('tuto7.pdf','F')

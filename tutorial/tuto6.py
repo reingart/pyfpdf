@@ -1,32 +1,32 @@
-from FPDF import *
+from fpdf import *
 import re
 
 class PDF(FPDF):
-		def __init__(this, orientation='P',unit='mm',format='A4'):
+		def __init__(self, orientation='P',unit='mm',format='A4'):
 			#Call parent constructor
-			FPDF.__init__(this,orientation,unit,format) # is this right?
+			FPDF.__init__(self,orientation,unit,format)
 			#Initialization
-			this.B=0
-			this.I=0
-			this.U=0
-			this.HREF=''
-			this.PageLinks={}
+			self.b=0
+			self.i=0
+			self.u=0
+			self.href=''
+			self.page_links={}
 
-		def WriteHTML(this, html):
+		def write_html(self, html):
 			#HTML parser
 			html=str_replace("\n",' ',html)
 			a=re.split('<(.*?)>',html)
 			for i,e in enumerate(a):
 				if(i%2==0):
 					#Text
-					if(this.HREF):
-						this.PutLink(this.HREF,e)
+					if(self.href):
+						self.put_link(self.href,e)
 					else:
-						this.Write(5,e)
+						self.write(5,e)
 				else:
 					#Tag
 					if(e[0]=='/'):
-						this.CloseTag(strtoupper(substr(e,1)))
+						self.close_tag(strtoupper(substr(e,1)))
 					else:
 						#Extract attributes
 						attr={}
@@ -36,45 +36,45 @@ class PDF(FPDF):
 							a3 = re.findall('''^([^=]*)=["']?([^"']*)["']?''',v)[0]
 							if a3:
 								attr[strtoupper(a3[0])]=a3[1]
-						this.OpenTag(tag,attr)
+						self.open_tag(tag,attr)
 
-		def OpenTag(this, tag,attr):
+		def open_tag(self, tag,attr):
 			#Opening tag
 			if(tag=='B' or tag=='I' or tag=='U'):
-				this.SetStyle(tag,1)
+				self.set_style(tag,1)
 			if(tag=='A'):
-				this.HREF=attr['HREF']
+				self.href=attr['HREF']
 			if(tag=='BR'):
-				this.Ln(5)
+				self.ln(5)
 
-		def CloseTag(this, tag):
+		def close_tag(self, tag):
 			#Closing tag
 			if(tag=='B' or tag=='I' or tag=='U'):
-				this.SetStyle(tag,0)
+				self.set_style(tag,0)
 			if(tag=='A'):
-				this.HREF=''
+				self.href=''
 
-		def SetStyle(this, tag,enable):
+		def set_style(self, tag,enable):
 			#Modify style and select corresponding font
-			T = getattr(this,tag)
+			t = getattr(self,tag.lower())
 			if enable:
-				T+=1
+				t+=1
 			else:
-				T+=-1
-			setattr(this,tag,T)
+				t+=-1
+			setattr(self,tag.lower(),t)
 			style=''
 			for s in ('B','I','U'):
-				if(getattr(this,s)>0):
+				if(getattr(self,s.lower())>0):
 					style+=s
-			this.SetFont('',style)
+			self.set_font('',style)
 
-		def PutLink(this, URL,txt):
+		def put_link(self, url, txt):
 			#Put a hyperlink
-			this.SetTextColor(0,0,255)
-			this.SetStyle('U',1)
-			this.Write(5,txt,URL)
-			this.SetStyle('U',0)
-			this.SetTextColor(0)
+			self.set_text_color(0,0,255)
+			self.set_style('U',1)
+			self.write(5,txt,url)
+			self.set_style('U',0)
+			self.set_text_color(0)
 
 html="""You can now easily print text mixing different
 styles : <B>bold</B>, <I>italic</I>, <U>underlined</U>, or
@@ -84,18 +84,18 @@ or on an image: click on the logo."""
 
 pdf=PDF()
 #First page
-pdf.AddPage()
-pdf.SetFont('Arial','',20)
-pdf.Write(5,'To find out what\'s new in this tutorial, click ')
-pdf.SetFont('','U')
-link=pdf.AddLink()
-pdf.Write(5,'here',link)
-pdf.SetFont('')
+pdf.add_page()
+pdf.set_font('Arial','',20)
+pdf.write(5,'To find out what\'s new in self tutorial, click ')
+pdf.set_font('','U')
+link=pdf.add_link()
+pdf.write(5,'here',link)
+pdf.set_font('')
 #Second page
-pdf.AddPage()
-pdf.SetLink(link)
-pdf.Image('logo.png',10,10,30,0,'','http:#www.fpdf.org')
-pdf.SetLeftMargin(45)
-pdf.SetFontSize(14)
-pdf.WriteHTML(html)
-pdf.Output('tuto6.pdf','F')
+pdf.add_page()
+pdf.set_link(link)
+pdf.image('logo.png',10,10,30,0,'','http:#www.fpdf.org')
+pdf.set_left_margin(45)
+pdf.set_font_size(14)
+pdf.write_html(html)
+pdf.output('tuto6.pdf','F')

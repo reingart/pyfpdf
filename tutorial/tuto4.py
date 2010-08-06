@@ -1,86 +1,86 @@
-from FPDF import *
+from fpdf import *
 
 class PDF(FPDF):
 #Current column
 	col=0
 #Ordinate of column start
 	y0=0
-	def Header(this):
+	def header(self):
 		#Page header
-		this.SetFont('Arial','B',15)
-		w=this.GetStringWidth(title)+6
-		this.SetX((210-w)/2.0)
-		this.SetDrawColor(0,80,180)
-		this.SetFillColor(230,230,0)
-		this.SetTextColor(220,50,50)
-		this.SetLineWidth(1)
-		this.Cell(w,9,title,1,1,'C',1)
-		this.Ln(10)
+		self.set_font('Arial','B',15)
+		w=self.get_string_width(title)+6
+		self.set_x((210-w)/2.0)
+		self.set_draw_color(0,80,180)
+		self.set_fill_color(230,230,0)
+		self.set_text_color(220,50,50)
+		self.set_line_width(1)
+		self.cell(w,9,title,1,1,'C',1)
+		self.ln(10)
 		#Save ordinate
-		this.y0=this.GetY()
+		self.y0=self.get_y()
 
-	def Footer(this):
+	def footer(self):
 		#Page footer
-		this.SetY(-15)
-		this.SetFont('Arial','I',8)
-		this.SetTextColor(128)
-		this.Cell(0,10,'Page '+str(this.PageNo()),0,0,'C')
+		self.set_y(-15)
+		self.set_font('Arial','I',8)
+		self.set_text_color(128)
+		self.cell(0,10,'Page '+str(self.page_no()),0,0,'C')
 
-	def SetCol(this, col):
+	def set_col(self, col):
 		#Set position at a given column
-		this.col=col
+		self.col=col
 		x=10+col*65.0
-		this.SetLeftMargin(x)
-		this.SetX(x)
+		self.set_left_margin(x)
+		self.set_x(x)
 
-	def AcceptPageBreak(this):
+	def accept_page_break(self):
 		#Method accepting or not automatic page break
-		if(this.col<2):
+		if(self.col<2):
 			#Go to next column
-			this.SetCol(this.col+1)
+			self.set_col(self.col+1)
 			#Set ordinate to top
-			this.SetY(this.y0)
+			self.set_y(self.y0)
 			#Keep on page
 			return 0
 		else:
 			#Go back to first column
-			this.SetCol(0)
+			self.set_col(0)
 			#Page break
 			return 1
 
-	def ChapterTitle(this,num,label):
+	def chapter_title(self,num,label):
 		#Title
-		this.SetFont('Arial','',12)
-		this.SetFillColor(200,220,255)
-		this.Cell(0,6,"Chapter %d : %s"%(num,label),0,1,'L',1)
-		this.Ln(4)
+		self.set_font('Arial','',12)
+		self.set_fill_color(200,220,255)
+		self.cell(0,6,"Chapter %d : %s"%(num,label),0,1,'L',1)
+		self.ln(4)
 		#Save ordinate
-		this.y0=this.GetY()
+		self.y0=self.get_y()
 
-	def ChapterBody(this, fichier):
+	def chapter_body(self, fichier):
 		#Read text file
 		txt=file(fichier).read()
 		#Font
-		this.SetFont('Times','',12)
+		self.set_font('Times','',12)
 		#Output text in a 6 cm width column
-		this.MultiCell(60,5,txt)
-		this.Ln()
+		self.multi_cell(60,5,txt)
+		self.ln()
 		#Mention
-		this.SetFont('','I')
-		this.Cell(0,5,'(end of excerpt)')
+		self.set_font('','I')
+		self.cell(0,5,'(end of excerpt)')
 		#Go back to first column
-		this.SetCol(0)
+		self.set_col(0)
 
-	def PrintChapter(this,num,title,name):
+	def print_chapter(self,num,title,name):
 		#Add chapter
-		this.AddPage()
-		this.ChapterTitle(num,title)
-		this.ChapterBody(name)
+		self.add_page()
+		self.chapter_title(num,title)
+		self.chapter_body(name)
 
 pdf=PDF()
 title='20000 Leagues Under the Seas'
-pdf.SetTitle(title)
-pdf.SetAuthor('Jules Verne')
-pdf.PrintChapter(1,'A RUNAWAY REEF','20k_c1.txt')
-pdf.PrintChapter(2,'THE PROS AND CONS','20k_c2.txt')
-pdf.Output('tuto4.pdf','F')
+pdf.set_title(title)
+pdf.set_author('Jules Verne')
+pdf.print_chapter(1,'A RUNAWAY REEF','20k_c1.txt')
+pdf.print_chapter(2,'THE PROS AND CONS','20k_c2.txt')
+pdf.output('tuto4.pdf','F')

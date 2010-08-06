@@ -1,1 +1,1 @@
-from FPDF import *
+from fpdf import *

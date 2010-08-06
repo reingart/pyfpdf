@@ -1,4 +1,5 @@
-# -*- coding: iso-8859-1 -*-
+#!/usr/bin/env python
+# -*- coding: latin-1 -*-
 # ******************************************************************************
 # * Software: FPDF                                                               *
 # * Version:  1.53                                                               *
@@ -6,7 +7,7 @@
 # * Author:   Olivier PLATHEY                                                    *
 # * License:  Freeware                                                           *
 # *                                                                              *
-# * You may use and modify this software as you wish.                            *
+# * You may use and modify self software as you wish.                            *
 # * Ported to Python 2.4 by Max (maxpat78@yahoo.it) on 2006-05                   *
 # * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT      *
 # *******************************************************************************/
@@ -36,104 +37,104 @@ class FPDF:
 #~ pages;              #array containing pages
 #~ state;              #current document state
 #~ compress;           #compression flag
-#~ DefOrientation;     #default orientation
-#~ CurOrientation;     #current orientation
-#~ OrientationChanges; #array indicating orientation changes
+#~ def_orientation;     #default orientation
+#~ cur_orientation;     #current orientation
+#~ orientation_changes; #array indicating orientation changes
 #~ k;                  #scale factor (number of points in user unit)
-#~ fwPt,fhPt;         #dimensions of page format in points
+#~ fw_pt,fh_pt;         #dimensions of page format in points
 #~ fw,fh;             #dimensions of page format in user unit
-#~ wPt,hPt;           #current dimensions of page in points
+#~ w_pt,h_pt;           #current dimensions of page in points
 #~ w,h;               #current dimensions of page in user unit
-#~ lMargin;            #left margin
-#~ tMargin;            #top margin
-#~ rMargin;            #right margin
-#~ bMargin;            #page break margin
-#~ cMargin;            #cell margin
+#~ l_margin;            #left margin
+#~ t_margin;            #top margin
+#~ r_margin;            #right margin
+#~ b_margin;            #page break margin
+#~ c_margin;            #cell margin
 #~ x,y;               #current position in user unit for cell positioning
 #~ lasth;              #height of last cell printed
-#~ LineWidth;          #line width in user unit
-#~ CoreFonts;          #array of standard font names
+#~ line_width;          #line width in user unit
+#~ core_fonts;          #array of standard font names
 #~ fonts;              #array of used fonts
-#~ FontFiles;          #array of font files
+#~ font_files;          #array of font files
 #~ diffs;              #array of encoding differences
 #~ images;             #array of used images
-#~ PageLinks;          #array of links in pages
+#~ page_links;          #array of links in pages
 #~ links;              #array of internal links
-#~ FontFamily;         #current font family
-#~ FontStyle;          #current font style
+#~ font_family;         #current font family
+#~ font_style;          #current font style
 #~ underline;          #underlining flag
-#~ CurrentFont;        #current font info
-#~ FontSizePt;         #current font size in points
-#~ FontSize;           #current font size in user unit
-#~ DrawColor;          #commands for drawing color
-#~ FillColor;          #commands for filling color
-#~ TextColor;          #commands for text color
-#~ ColorFlag;          #indicates whether fill and text colors are different
+#~ current_font;        #current font info
+#~ font_size_pt;         #current font size in points
+#~ font_size;           #current font size in user unit
+#~ draw_color;          #commands for drawing color
+#~ fill_color;          #commands for filling color
+#~ text_color;          #commands for text color
+#~ color_flag;          #indicates whether fill and text colors are different
 #~ ws;                 #word spacing
-#~ AutoPageBreak;      #automatic page breaking
-#~ PageBreakTrigger;   #threshold used to trigger page breaks
-#~ InFooter;           #flag set when processing footer
-#~ ZoomMode;           #zoom display mode
-#~ LayoutMode;         #layout display mode
+#~ auto_page_break;      #automatic page breaking
+#~ page_break_trigger;   #threshold used to trigger page breaks
+#~ in_footer;           #flag set when processing footer
+#~ zoom_mode;           #zoom display mode
+#~ layout_mode;         #layout display mode
 #~ title;              #title
 #~ subject;            #subject
 #~ author;             #author
 #~ keywords;           #keywords
 #~ creator;            #creator
-#~ AliasNbPages;       #alias for total number of pages
-#~ PDFVersion;         #PDF version number
+#~ alias_nb_pages;       #alias for total number of pages
+#~ pdf_version;         #PDF version number
 
 # ******************************************************************************
 # *                                                                              *
 # *                               Public methods                                 *
 # *                                                                              *
 # *******************************************************************************/
-    def __init__(this, orientation='P',unit='mm',format='A4'):
+    def __init__(self, orientation='P',unit='mm',format='A4'):
         #Some checks
-        this._dochecks()
+        self._dochecks()
         #Initialization of properties
-        this.offsets={}
-        this.page=0
-        this.n=2
-        this.buffer=''
-        this.pages={}
-        this.OrientationChanges={}
-        this.state=0
-        this.fonts={}
-        this.FontFiles={}
-        this.diffs=[]
-        this.images={}
-        this.PageLinks={}
-        this.links={}
-        this.InFooter=0
-        this.lastw=0
-        this.lasth=0
-        this.FontFamily=''
-        this.FontStyle=''
-        this.FontSizePt=12
-        this.underline=0
-        this.DrawColor='0 G'
-        this.FillColor='0 g'
-        this.TextColor='0 g'
-        this.ColorFlag=0
-        this.ws=0
-        this.angle=0
+        self.offsets={}
+        self.page=0
+        self.n=2
+        self.buffer=''
+        self.pages={}
+        self.orientation_changes={}
+        self.state=0
+        self.fonts={}
+        self.font_files={}
+        self.diffs=[]
+        self.images={}
+        self.page_links={}
+        self.links={}
+        self.in_footer=0
+        self.lastw=0
+        self.lasth=0
+        self.font_family=''
+        self.font_style=''
+        self.font_size_pt=12
+        self.underline=0
+        self.draw_color='0 G'
+        self.fill_color='0 g'
+        self.text_color='0 g'
+        self.color_flag=0
+        self.ws=0
+        self.angle=0
         #Standard fonts
-        this.CoreFonts={'courier':'Courier','courierB':'Courier-Bold','courierI':'Courier-Oblique','courierBI':'Courier-BoldOblique',
+        self.core_fonts={'courier':'Courier','courierB':'Courier-Bold','courierI':'Courier-Oblique','courierBI':'Courier-BoldOblique',
             'helvetica':'Helvetica','helveticaB':'Helvetica-Bold','helveticaI':'Helvetica-Oblique','helveticaBI':'Helvetica-BoldOblique',
             'times':'Times-Roman','timesB':'Times-Bold','timesI':'Times-Italic','timesBI':'Times-BoldItalic',
             'symbol':'Symbol','zapfdingbats':'ZapfDingbats'}
         #Scale factor
         if(unit=='pt'):
-            this.k=1
+            self.k=1
         elif(unit=='mm'):
-            this.k=72/25.4
+            self.k=72/25.4
         elif(unit=='cm'):
-            this.k=72/2.54
+            self.k=72/2.54
         elif(unit=='in'):
-            this.k=72
+            self.k=72
         else:
-            this.Error('Incorrect unit: '+unit)
+            self.error('Incorrect unit: '+unit)
         #Page format
         if(is_string(format)):
             format=strtolower(format)
@@ -148,254 +149,254 @@ class FPDF:
             elif(format=='legal'):
                 format=(612,1008)
             else:
-                this.Error('Unknown page format: '+format)
-            this.fwPt=format[0]
-            this.fhPt=format[1]
+                self.error('Unknown page format: '+format)
+            self.fw_pt=format[0]
+            self.fh_pt=format[1]
         else:
-            this.fwPt=format[0]*this.k
-            this.fhPt=format[1]*this.k
-        this.fw=this.fwPt/this.k
-        this.fh=this.fhPt/this.k
+            self.fw_pt=format[0]*self.k
+            self.fh_pt=format[1]*self.k
+        self.fw=self.fw_pt/self.k
+        self.fh=self.fh_pt/self.k
         #Page orientation
         orientation=strtolower(orientation)
         if(orientation=='p' or orientation=='portrait'):
-            this.DefOrientation='P'
-            this.wPt=this.fwPt
-            this.hPt=this.fhPt
+            self.def_orientation='P'
+            self.w_pt=self.fw_pt
+            self.h_pt=self.fh_pt
         elif(orientation=='l' or orientation=='landscape'):
-            this.DefOrientation='L'
-            this.wPt=this.fhPt
-            this.hPt=this.fwPt
+            self.def_orientation='L'
+            self.w_pt=self.fh_pt
+            self.h_pt=self.fw_pt
         else:
-            this.Error('Incorrect orientation: '+orientation)
-        this.CurOrientation=this.DefOrientation
-        this.w=this.wPt/this.k
-        this.h=this.hPt/this.k
+            self.error('Incorrect orientation: '+orientation)
+        self.cur_orientation=self.def_orientation
+        self.w=self.w_pt/self.k
+        self.h=self.h_pt/self.k
         #Page margins (1 cm)
-        margin=28.35/this.k
-        this.SetMargins(margin,margin)
+        margin=28.35/self.k
+        self.set_margins(margin,margin)
         #Interior cell margin (1 mm)
-        this.cMargin=margin/10.0
-        #Line width (0.2 mm)
-        this.LineWidth=.567/this.k
+        self.c_margin=margin/10.0
+        #line width (0.2 mm)
+        self.line_width=.567/self.k
         #Automatic page break
-        this.SetAutoPageBreak(1,2*margin)
+        self.set_auto_page_break(1,2*margin)
         #Full width display mode
-        this.SetDisplayMode('fullwidth')
+        self.set_display_mode('fullwidth')
         #Enable compression
-        this.SetCompression(1)
+        self.set_compression(1)
         #Set default PDF version number
-        this.PDFVersion='1.3'
+        self.pdf_version='1.3'
 
-    def SetMargins(this, left,top,right=-1):
+    def set_margins(self, left,top,right=-1):
         #Set left, top and right margins
-        this.lMargin=left
-        this.tMargin=top
+        self.l_margin=left
+        self.t_margin=top
         if(right==-1):
             right=left
-        this.rMargin=right
+        self.r_margin=right
 
-    def SetLeftMargin(this, margin):
+    def set_left_margin(self, margin):
         #Set left margin
-        this.lMargin=margin
-        if(this.page>0 and this.x<margin):
-            this.x=margin
+        self.l_margin=margin
+        if(self.page>0 and self.x<margin):
+            self.x=margin
 
-    def SetTopMargin(this, margin):
+    def set_top_margin(self, margin):
         #Set top margin
-        this.tMargin=margin
+        self.t_margin=margin
 
-    def SetRightMargin(this, margin):
+    def set_right_margin(self, margin):
         #Set right margin
-        this.rMargin=margin
+        self.r_margin=margin
 
-    def SetAutoPageBreak(this, auto,margin=0):
+    def set_auto_page_break(self, auto,margin=0):
         #Set auto page break mode and triggering margin
-        this.AutoPageBreak=auto
-        this.bMargin=margin
-        this.PageBreakTrigger=this.h-margin
+        self.auto_page_break=auto
+        self.b_margin=margin
+        self.page_break_trigger=self.h-margin
 
-    def SetDisplayMode(this, zoom,layout='continuous'):
+    def set_display_mode(self, zoom,layout='continuous'):
         #Set display mode in viewer
         if(zoom=='fullpage' or zoom=='fullwidth' or zoom=='real' or zoom=='default' or not is_string(zoom)):
-            this.ZoomMode=zoom
+            self.zoom_mode=zoom
         else:
-            this.Error('Incorrect zoom display mode: '+zoom)
+            self.error('Incorrect zoom display mode: '+zoom)
         if(layout=='single' or layout=='continuous' or layout=='two' or layout=='default'):
-            this.LayoutMode=layout
+            self.layout_mode=layout
         else:
-            this.Error('Incorrect layout display mode: '+layout)
+            self.error('Incorrect layout display mode: '+layout)
 
-    def SetCompression(this, compress):
+    def set_compression(self, compress):
         #Set page compression
-        this.compress=compress
+        self.compress=compress
 
-    def SetTitle(this, title):
+    def set_title(self, title):
         #Title of document
-        this.title=title
+        self.title=title
 
-    def SetSubject(this, subject):
+    def set_subject(self, subject):
         #Subject of document
-        this.subject=subject
+        self.subject=subject
 
-    def SetAuthor(this, author):
+    def set_author(self, author):
         #Author of document
-        this.author=author
+        self.author=author
 
-    def SetKeywords(this, keywords):
+    def set_keywords(self, keywords):
         #Keywords of document
-        this.keywords=keywords
+        self.keywords=keywords
 
-    def SetCreator(this, creator):
+    def set_creator(self, creator):
         #Creator of document
-        this.creator=creator
+        self.creator=creator
 
-    def AliasNbPages(this, alias='{nb}'):
+    def alias_nb_pages(self, alias='{nb}'):
         #Define an alias for total number of pages
-        this.StrAliasNbPages=alias
+        self.StrAliasNbPages=alias
 
-    def Error(this, msg):
+    def error(self, msg):
         #Fatal error
         raise RuntimeError('FPDF error: '+msg)
 
-    def Open(this):
+    def open(self):
         #Begin document
-        this.state=1
+        self.state=1
 
-    def Close(this):
+    def close(self):
         #Terminate document
-        if(this.state==3):
+        if(self.state==3):
             return
-        if(this.page==0):
-            this.AddPage()
+        if(self.page==0):
+            self.add_page()
         #Page footer
-        this.InFooter=1
-        this.Footer()
-        this.InFooter=0
-        #Close page
-        this._endpage()
-        #Close document
-        this._enddoc()
+        self.in_footer=1
+        self.footer()
+        self.in_footer=0
+        #close page
+        self._endpage()
+        #close document
+        self._enddoc()
 
-    def AddPage(this, orientation=''):
+    def add_page(self, orientation=''):
         #Start a new page
-        if(this.state==0):
-            this.Open()
-        family=this.FontFamily
-        if this.underline:
-            style = this.FontStyle + 'U'
+        if(self.state==0):
+            self.open()
+        family=self.font_family
+        if self.underline:
+            style = self.font_style + 'U'
         else:
-            style = this.FontStyle
-        size=this.FontSizePt
-        lw=this.LineWidth
-        dc=this.DrawColor
-        fc=this.FillColor
-        tc=this.TextColor
-        cf=this.ColorFlag
-        if(this.page>0):
+            style = self.font_style
+        size=self.font_size_pt
+        lw=self.line_width
+        dc=self.draw_color
+        fc=self.fill_color
+        tc=self.text_color
+        cf=self.color_flag
+        if(self.page>0):
             #Page footer
-            this.InFooter=1
-            this.Footer()
-            this.InFooter=0
-            #Close page
-            this._endpage()
+            self.in_footer=1
+            self.footer()
+            self.in_footer=0
+            #close page
+            self._endpage()
         #Start new page
-        this._beginpage(orientation)
+        self._beginpage(orientation)
         #Set line cap style to square
-        this._out('2 J')
+        self._out('2 J')
         #Set line width
-        this.LineWidth=lw
-        this._out(sprintf('%.2f w',lw*this.k))
+        self.line_width=lw
+        self._out(sprintf('%.2f w',lw*self.k))
         #Set font
         if(family):
-            this.SetFont(family,style,size)
+            self.set_font(family,style,size)
         #Set colors
-        this.DrawColor=dc
+        self.draw_color=dc
         if(dc!='0 G'):
-            this._out(dc)
-        this.FillColor=fc
+            self._out(dc)
+        self.fill_color=fc
         if(fc!='0 g'):
-            this._out(fc)
-        this.TextColor=tc
-        this.ColorFlag=cf
+            self._out(fc)
+        self.text_color=tc
+        self.color_flag=cf
         #Page header
-        this.Header()
+        self.header()
         #Restore line width
-        if(this.LineWidth!=lw):
-            this.LineWidth=lw
-            this._out(sprintf('%.2f w',lw*this.k))
+        if(self.line_width!=lw):
+            self.line_width=lw
+            self._out(sprintf('%.2f w',lw*self.k))
         #Restore font
         if(family):
-            this.SetFont(family,style,size)
+            self.set_font(family,style,size)
         #Restore colors
-        if(this.DrawColor!=dc):
-            this.DrawColor=dc
-            this._out(dc)
-        if(this.FillColor!=fc):
-            this.FillColor=fc
-            this._out(fc)
-        this.TextColor=tc
-        this.ColorFlag=cf
+        if(self.draw_color!=dc):
+            self.draw_color=dc
+            self._out(dc)
+        if(self.fill_color!=fc):
+            self.fill_color=fc
+            self._out(fc)
+        self.text_color=tc
+        self.color_flag=cf
 
-    def Header(this):
+    def header(self):
         #To be implemented in your own inherited class
         pass
 
-    def Footer(this):
+    def footer(self):
         #To be implemented in your own inherited class
         pass
 
-    def PageNo(this):
+    def page_no(self):
         #Get current page number
-        return this.page
+        return self.page
 
-    def SetDrawColor(this, r,g=-1,b=-1):
+    def set_draw_color(self, r,g=-1,b=-1):
         #Set color for all stroking operations
         if((r==0 and g==0 and b==0) or g==-1):
-            this.DrawColor=sprintf('%.3f G',r/255.0)
+            self.draw_color=sprintf('%.3f G',r/255.0)
         else:
-            this.DrawColor=sprintf('%.3f %.3f %.3f RG',r/255.0,g/255.0,b/255.0)
-        if(this.page>0):
-            this._out(this.DrawColor)
+            self.draw_color=sprintf('%.3f %.3f %.3f RG',r/255.0,g/255.0,b/255.0)
+        if(self.page>0):
+            self._out(self.draw_color)
 
-    def SetFillColor(this,r,g=-1,b=-1):
+    def set_fill_color(self,r,g=-1,b=-1):
         #Set color for all filling operations
         if((r==0 and g==0 and b==0) or g==-1):
-            this.FillColor=sprintf('%.3f g',r/255.0)
+            self.fill_color=sprintf('%.3f g',r/255.0)
         else:
-            this.FillColor=sprintf('%.3f %.3f %.3f rg',r/255.0,g/255.0,b/255.0)
-        this.ColorFlag=(this.FillColor!=this.TextColor)
-        if(this.page>0):
-            this._out(this.FillColor)
+            self.fill_color=sprintf('%.3f %.3f %.3f rg',r/255.0,g/255.0,b/255.0)
+        self.color_flag=(self.fill_color!=self.text_color)
+        if(self.page>0):
+            self._out(self.fill_color)
 
-    def SetTextColor(this, r,g=-1,b=-1):
+    def set_text_color(self, r,g=-1,b=-1):
         #Set color for text
         if((r==0 and g==0 and b==0) or g==-1):
-            this.TextColor=sprintf('%.3f g',r/255.0)
+            self.text_color=sprintf('%.3f g',r/255.0)
         else:
-            this.TextColor=sprintf('%.3f %.3f %.3f rg',r/255.0,g/255.0,b/255.0)
-        this.ColorFlag=(this.FillColor!=this.TextColor)
+            self.text_color=sprintf('%.3f %.3f %.3f rg',r/255.0,g/255.0,b/255.0)
+        self.color_flag=(self.fill_color!=self.text_color)
 
-    def GetStringWidth(this, s):
+    def get_string_width(self, s):
         #Get width of a string in the current font
-        cw=this.CurrentFont['cw']
+        cw=self.current_font['cw']
         w=0
         l=len(s)
         for i in xrange(0, l):
             w += cw.get(s[i],0)
-        return w*this.FontSize/1000.0
+        return w*self.font_size/1000.0
 
-    def SetLineWidth(this, width):
+    def set_line_width(self, width):
         #Set line width
-        this.LineWidth=width
-        if(this.page>0):
-            this._out(sprintf('%.2f w',width*this.k))
+        self.line_width=width
+        if(self.page>0):
+            self._out(sprintf('%.2f w',width*self.k))
 
-    def Line(this, x1,y1,x2,y2):
+    def line(self, x1,y1,x2,y2):
         #Draw a line
-        this._out(sprintf('%.2f %.2f m %.2f %.2f l S',x1*this.k,(this.h-y1)*this.k,x2*this.k,(this.h-y2)*this.k))
+        self._out(sprintf('%.2f %.2f m %.2f %.2f l S',x1*self.k,(self.h-y1)*self.k,x2*self.k,(self.h-y2)*self.k))
 
-    def Rect(this, x,y,w,h,style=''):
+    def rect(self, x,y,w,h,style=''):
         #Draw a rectangle
         if(style=='F'):
             op='f'
@@ -403,9 +404,9 @@ class FPDF:
             op='B'
         else:
             op='S'
-        this._out(sprintf('%.2f %.2f %.2f %.2f re %s',x*this.k,(this.h-y)*this.k,w*this.k,-h*this.k,op))
+        self._out(sprintf('%.2f %.2f %.2f %.2f re %s',x*self.k,(self.h-y)*self.k,w*self.k,-h*self.k,op))
 
-    def AddFont(this, family,style='',fname=''):
+    def add_font(self, family,style='',fname=''):
         #Add a TrueType or Type1 font
         family=strtolower(family)
         if(fname==''):
@@ -417,58 +418,58 @@ class FPDF:
         if(style=='IB'):
             style='BI'
         fontkey=family+style
-        if fontkey in this.fonts:
-            this.Error('Font already added: '+family+' '+style)
+        if fontkey in self.fonts:
+            self.error('Font already added: '+family+' '+style)
         execfile(fname, globals(), globals())
         if 'name' not in globals():
-            this.Error('Could not include font definition file')
-        i=len(this.fonts)+1
-        this.fonts[fontkey]={'i':i,'type':type,'name':name,'desc':desc,'up':up,'ut':ut,'cw':cw,'enc':enc,'file':filename}
+            self.error('Could not include font definition file')
+        i=len(self.fonts)+1
+        self.fonts[fontkey]={'i':i,'type':type,'name':name,'desc':desc,'up':up,'ut':ut,'cw':cw,'enc':enc,'file':filename}
         if(diff):
             #Search existing encodings
             d=0
-            nb=len(this.diffs)
+            nb=len(self.diffs)
             for i in xrange(1,nb+1):
-                if(this.diffs[i]==diff):
+                if(self.diffs[i]==diff):
                     d=i
                     break
             if(d==0):
                 d=nb+1
-                this.diffs[d]=diff
-            this.fonts[fontkey]['diff']=d
+                self.diffs[d]=diff
+            self.fonts[fontkey]['diff']=d
         if(filename):
             if(type=='TrueType'):
-                this.FontFiles[filename]={'length1':originalsize}
+                self.font_files[filename]={'length1':originalsize}
             else:
-                this.FontFiles[filename]={'length1':size1,'length2':size2}
+                self.font_files[filename]={'length1':size1,'length2':size2}
 
-    def SetFont(this, family,style='',size=0):
+    def set_font(self, family,style='',size=0):
         #Select a font; size given in points
         family=strtolower(family)
         if(family==''):
-            family=this.FontFamily
+            family=self.font_family
         if(family=='arial'):
             family='helvetica'
         elif(family=='symbol' or family=='zapfdingbats'):
             style=''
         style=strtoupper(style)
         if(strpos(style,'U')!=-1):
-            this.underline=1
+            self.underline=1
             style=str_replace('U','',style)
         else:
-            this.underline=0
+            self.underline=0
         if(style=='IB'):
             style='BI'
         if(size==0):
-            size=this.FontSizePt
+            size=self.font_size_pt
         #Test if font is already selected
-        if(this.FontFamily==family and this.FontStyle==style and this.FontSizePt==size):
+        if(self.font_family==family and self.font_style==style and self.font_size_pt==size):
             return
         #Test if used for the first time
         fontkey=family+style
-        if fontkey not in this.fonts:
+        if fontkey not in self.fonts:
             #Check if one of the standard fonts
-            if fontkey in this.CoreFonts:
+            if fontkey in self.core_fonts:
                 if fontkey not in fpdf_charwidths:
                     #Load metric file
                     name=os.path.join(FPDF_FONT_DIR,family)
@@ -476,96 +477,96 @@ class FPDF:
                         name+=strtolower(style)
                     execfile(name+'.font')
                     if fontkey not in fpdf_charwidths:
-                        this.Error('Could not include font metric file for'+fontkey)
-                i=len(this.fonts)+1
-                this.fonts[fontkey]={'i':i,'type':'core','name':this.CoreFonts[fontkey],'up':-100,'ut':50,'cw':fpdf_charwidths[fontkey]}
+                        self.error('Could not include font metric file for'+fontkey)
+                i=len(self.fonts)+1
+                self.fonts[fontkey]={'i':i,'type':'core','name':self.core_fonts[fontkey],'up':-100,'ut':50,'cw':fpdf_charwidths[fontkey]}
             else:
-                this.Error('Undefined font: '+family+' '+style)
+                self.error('Undefined font: '+family+' '+style)
         #Select it
-        this.FontFamily=family
-        this.FontStyle=style
-        this.FontSizePt=size
-        this.FontSize=size/this.k
-        this.CurrentFont=this.fonts[fontkey]
-        if(this.page>0):
-            this._out(sprintf('BT /F%d %.2f Tf ET',this.CurrentFont['i'],this.FontSizePt))
+        self.font_family=family
+        self.font_style=style
+        self.font_size_pt=size
+        self.font_size=size/self.k
+        self.current_font=self.fonts[fontkey]
+        if(self.page>0):
+            self._out(sprintf('BT /F%d %.2f Tf ET',self.current_font['i'],self.font_size_pt))
 
-    def SetFontSize(this, size):
+    def set_font_size(self, size):
         #Set font size in points
-        if(this.FontSizePt==size):
+        if(self.font_size_pt==size):
             return
-        this.FontSizePt=size
-        this.FontSize=size/this.k
-        if(this.page>0):
-            this._out(sprintf('BT /F%d %.2f Tf ET',this.CurrentFont['i'],this.FontSizePt))
+        self.font_size_pt=size
+        self.font_size=size/self.k
+        if(self.page>0):
+            self._out(sprintf('BT /F%d %.2f Tf ET',self.current_font['i'],self.font_size_pt))
 
-    def AddLink(this):
+    def add_link(self):
         #Create a new internal link
-        n=len(this.links)+1
-        this.links[n]=(0,0)
+        n=len(self.links)+1
+        self.links[n]=(0,0)
         return n
 
-    def SetLink(this, link,y=0,page=-1):
+    def set_link(self, link,y=0,page=-1):
         #Set destination of internal link
         if(y==-1):
-            y=this.y
+            y=self.y
         if(page==-1):
-            page=this.page
-        this.links[link]=[page,y]
+            page=self.page
+        self.links[link]=[page,y]
 
-    def Link(this, x,y,w,h,link):
+    def link(self, x,y,w,h,link):
         #Put a link on the page
-        if not this.page in this.PageLinks:
-            this.PageLinks[this.page] = []
-        this.PageLinks[this.page] += [(x*this.k,this.hPt-y*this.k,w*this.k,h*this.k,link),]
+        if not self.page in self.page_links:
+            self.page_links[self.page] = []
+        self.page_links[self.page] += [(x*self.k,self.h_pt-y*self.k,w*self.k,h*self.k,link),]
 
-    def Text(this, x,y,txt):
-        #Output a string
-        s=sprintf('BT %.2f %.2f Td (%s) Tj ET',x*this.k,(this.h-y)*this.k,this._escape(txt))
-        if(this.underline and txt!=''):
-            s+=' '+this._dounderline(x,y,txt)
-        if(this.ColorFlag):
-            s='q '+this.TextColor+' '+s+' Q'
-        this._out(s)
+    def text(self, x,y,txt):
+        #output a string
+        s=sprintf('BT %.2f %.2f Td (%s) Tj ET',x*self.k,(self.h-y)*self.k,self._escape(txt))
+        if(self.underline and txt!=''):
+            s+=' '+self._dounderline(x,y,txt)
+        if(self.color_flag):
+            s='q '+self.text_color+' '+s+' Q'
+        self._out(s)
 
-    def Rotate(this, angle, x=None, y=None):
+    def rotate(self, angle, x=None, y=None):
         if x is None:
-            x = this.x
+            x = self.x
         if y is None:
-            y = this.y;
-        if this.angle!=0:
-            this._out('Q')
-        this.angle = angle
+            y = self.y;
+        if self.angle!=0:
+            self._out('Q')
+        self.angle = angle
         if angle!=0:
             angle *= math.pi/180;
             c = math.cos(angle);
             s = math.sin(angle);
-            cx = x*this.k;
-            cy = (this.h-y)*this.k
+            cx = x*self.k;
+            cy = (self.h-y)*self.k
             s = sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',c,s,-s,c,cx,cy,-cx,-cy)
-            this._out(s)
+            self._out(s)
 
-    def AcceptPageBreak(this):
+    def accept_page_break(self):
         #Accept automatic page break or not
-        return this.AutoPageBreak
+        return self.auto_page_break
 
-    def Cell(this, w,h=0,txt='',border=0,ln=0,align='',fill=0,link=''):
-        #Output a cell
-        k=this.k
-        if(this.y+h>this.PageBreakTrigger and not this.InFooter and this.AcceptPageBreak()):
+    def cell(self, w,h=0,txt='',border=0,ln=0,align='',fill=0,link=''):
+        #output a cell
+        k=self.k
+        if(self.y+h>self.page_break_trigger and not self.in_footer and self.accept_page_break()):
             #Automatic page break
-            x=this.x
-            ws=this.ws
+            x=self.x
+            ws=self.ws
             if(ws>0):
-                this.ws=0
-                this._out('0 Tw')
-            this.AddPage(this.CurOrientation)
-            this.x=x
+                self.ws=0
+                self._out('0 Tw')
+            self.add_page(self.cur_orientation)
+            self.x=x
             if(ws>0):
-                this.ws=ws
-                this._out(sprintf('%.3f Tw',ws*k))
+                self.ws=ws
+                self._out(sprintf('%.3f Tw',ws*k))
         if(w==0):
-            w=this.w-this.rMargin-this.x
+            w=self.w-self.r_margin-self.x
         s=''
         if(fill==1 or border==1):
             if(fill==1):
@@ -575,53 +576,53 @@ class FPDF:
                     op='f'
             else:
                 op='S'
-            s=sprintf('%.2f %.2f %.2f %.2f re %s ',this.x*k,(this.h-this.y)*k,w*k,-h*k,op)
+            s=sprintf('%.2f %.2f %.2f %.2f re %s ',self.x*k,(self.h-self.y)*k,w*k,-h*k,op)
         if(is_string(border)):
-            x=this.x
-            y=this.y
+            x=self.x
+            y=self.y
             if(strpos(border,'L')!=-1):
-                s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(this.h-y)*k,x*k,(this.h-(y+h))*k)
+                s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(self.h-y)*k,x*k,(self.h-(y+h))*k)
             if(strpos(border,'T')!=-1):
-                s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(this.h-y)*k,(x+w)*k,(this.h-y)*k)
+                s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(self.h-y)*k,(x+w)*k,(self.h-y)*k)
             if(strpos(border,'R')!=-1):
-                s+=sprintf('%.2f %.2f m %.2f %.2f l S ',(x+w)*k,(this.h-y)*k,(x+w)*k,(this.h-(y+h))*k)
+                s+=sprintf('%.2f %.2f m %.2f %.2f l S ',(x+w)*k,(self.h-y)*k,(x+w)*k,(self.h-(y+h))*k)
             if(strpos(border,'B')!=-1):
-                s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(this.h-(y+h))*k,(x+w)*k,(this.h-(y+h))*k)
+                s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(self.h-(y+h))*k,(x+w)*k,(self.h-(y+h))*k)
         if(txt!=''):
             if(align=='R'):
-                dx=w-this.cMargin-this.GetStringWidth(txt)
+                dx=w-self.c_margin-self.get_string_width(txt)
             elif(align=='C'):
-                dx=(w-this.GetStringWidth(txt))/2.0
+                dx=(w-self.get_string_width(txt))/2.0
             else:
-                dx=this.cMargin
-            if(this.ColorFlag):
-                s+='q '+this.TextColor+' '
+                dx=self.c_margin
+            if(self.color_flag):
+                s+='q '+self.text_color+' '
             txt2=str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',txt)))
-            s+=sprintf('BT %.2f %.2f Td (%s) Tj ET',(this.x+dx)*k,(this.h-(this.y+.5*h+.3*this.FontSize))*k,txt2)
-            if(this.underline):
-                s+=' '+this._dounderline(this.x+dx,this.y+.5*h+.3*this.FontSize,txt)
-            if(this.ColorFlag):
+            s+=sprintf('BT %.2f %.2f Td (%s) Tj ET',(self.x+dx)*k,(self.h-(self.y+.5*h+.3*self.font_size))*k,txt2)
+            if(self.underline):
+                s+=' '+self._dounderline(self.x+dx,self.y+.5*h+.3*self.font_size,txt)
+            if(self.color_flag):
                 s+=' Q'
             if(link):
-                this.Link(this.x+dx,this.y+.5*h-.5*this.FontSize,this.GetStringWidth(txt),this.FontSize,link)
+                self.link(self.x+dx,self.y+.5*h-.5*self.font_size,self.get_string_width(txt),self.font_size,link)
         if(s):
-            this._out(s)
-        this.lasth=h
+            self._out(s)
+        self.lasth=h
         if(ln>0):
             #Go to next line
-            this.y+=h
+            self.y+=h
             if(ln==1):
-                this.x=this.lMargin
+                self.x=self.l_margin
         else:
-            this.x+=w
+            self.x+=w
 
-    def MultiCell(this, w,h,txt,border=0,align='J',fill=0, split_only=False):
-        #Output text with automatic or explicit line breaks
+    def multi_cell(self, w,h,txt,border=0,align='J',fill=0, split_only=False):
+        #output text with automatic or explicit line breaks
         ret = [] # if split_only = True, returns splited text cells
-        cw=this.CurrentFont['cw']
+        cw=self.current_font['cw']
         if(w==0):
-            w=this.w-this.rMargin-this.x
-        wmax=(w-2*this.cMargin)*1000.0/this.FontSize
+            w=self.w-self.r_margin-self.x
+        wmax=(w-2*self.c_margin)*1000.0/self.font_size
         s=str_replace("\r",'',txt)
         nb=len(s)
         if(nb>0 and s[nb-1]=="\n"):
@@ -653,11 +654,11 @@ class FPDF:
             c=s[i]
             if(c=="\n"):
                 #Explicit line break
-                if(this.ws>0):
-                    this.ws=0
-                    this._out('0 Tw')
+                if(self.ws>0):
+                    self.ws=0
+                    self._out('0 Tw')
                 if not split_only:
-                    this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+                    self.cell(w,h,substr(s,j,i-j),b,2,align,fill)
                 else:
                     ret.append(substr(s,j,i-j))
                 i+=1
@@ -679,22 +680,22 @@ class FPDF:
                 if(sep==-1):
                     if(i==j):
                         i+=1
-                    if(this.ws>0):
-                        this.ws=0
-                        this._out('0 Tw')
+                    if(self.ws>0):
+                        self.ws=0
+                        self._out('0 Tw')
                     if not split_only:
-                        this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+                        self.cell(w,h,substr(s,j,i-j),b,2,align,fill)
                     else:
                         ret.append(substr(s,j,i-j))
                 else:
                     if(align=='J'):
                         if ns>1:
-                            this.ws=(wmax-ls)/1000.0*this.FontSize/(ns-1)
+                            self.ws=(wmax-ls)/1000.0*self.font_size/(ns-1)
                         else:
-                            this.ws=0
-                        this._out(sprintf('%.3f Tw',this.ws*this.k))
+                            self.ws=0
+                        self._out(sprintf('%.3f Tw',self.ws*self.k))
                     if not split_only:
-                        this.Cell(w,h,substr(s,j,sep-j),b,2,align,fill)
+                        self.cell(w,h,substr(s,j,sep-j),b,2,align,fill)
                     else:
                         ret.append(substr(s,j,sep-j))
                     i=sep+1
@@ -708,23 +709,23 @@ class FPDF:
             else:
                 i+=1
         #Last chunk
-        if(this.ws>0):
-            this.ws=0
-            this._out('0 Tw')
+        if(self.ws>0):
+            self.ws=0
+            self._out('0 Tw')
         if(border and strpos(border,'B')!=-1):
             b+='B'
         if not split_only:
-            this.Cell(w,h,substr(s,j,i-j),b,2,align,fill)
+            self.cell(w,h,substr(s,j,i-j),b,2,align,fill)
         else:
             ret.append(substr(s,j,i-j))
-        this.x=this.lMargin
+        self.x=self.l_margin
         return ret
 
-    def Write(this, h,txt,link=''):
-        #Output text in flowing mode
-        cw=this.CurrentFont['cw']
-        w=this.w-this.rMargin-this.x
-        wmax=(w-2*this.cMargin)*1000.0/this.FontSize
+    def write(self, h,txt,link=''):
+        #output text in flowing mode
+        cw=self.current_font['cw']
+        w=self.w-self.r_margin-self.x
+        wmax=(w-2*self.c_margin)*1000.0/self.font_size
         s=str_replace("\r",'',txt)
         nb=len(s)
         sep=-1
@@ -737,15 +738,15 @@ class FPDF:
             c=s[i]
             if(c=="\n"):
                 #Explicit line break
-                this.Cell(w,h,substr(s,j,i-j),0,2,'',0,link)
+                self.cell(w,h,substr(s,j,i-j),0,2,'',0,link)
                 i+=1
                 sep=-1
                 j=i
                 l=0
                 if(nl==1):
-                    this.x=this.lMargin
-                    w=this.w-this.rMargin-this.x
-                    wmax=(w-2*this.cMargin)*1000.0/this.FontSize
+                    self.x=self.l_margin
+                    w=self.w-self.r_margin-self.x
+                    wmax=(w-2*self.c_margin)*1000.0/self.font_size
                 nl+=1
                 continue
             if(c==' '):
@@ -754,113 +755,113 @@ class FPDF:
             if(l>wmax):
                 #Automatic line break
                 if(sep==-1):
-                    if(this.x>this.lMargin):
+                    if(self.x>self.l_margin):
                         #Move to next line
-                        this.x=this.lMargin
-                        this.y+=h
-                        w=this.w-this.rMargin-this.x
-                        wmax=(w-2*this.cMargin)*1000.0/this.FontSize
+                        self.x=self.l_margin
+                        self.y+=h
+                        w=self.w-self.r_margin-self.x
+                        wmax=(w-2*self.c_margin)*1000.0/self.font_size
                         i+=1
                         nl+=1
                         continue
                     if(i==j):
                         i+=1
-                    this.Cell(w,h,substr(s,j,i-j),0,2,'',0,link)
+                    self.cell(w,h,substr(s,j,i-j),0,2,'',0,link)
                 else:
-                    this.Cell(w,h,substr(s,j,sep-j),0,2,'',0,link)
+                    self.cell(w,h,substr(s,j,sep-j),0,2,'',0,link)
                     i=sep+1
                 sep=-1
                 j=i
                 l=0
                 if(nl==1):
-                    this.x=this.lMargin
-                    w=this.w-this.rMargin-this.x
-                    wmax=(w-2*this.cMargin)*1000.0/this.FontSize
+                    self.x=self.l_margin
+                    w=self.w-self.r_margin-self.x
+                    wmax=(w-2*self.c_margin)*1000.0/self.font_size
                 nl+=1
             else:
                 i+=1
         #Last chunk
         if(i!=j):
-            this.Cell(l/1000.0*this.FontSize,h,substr(s,j),0,0,'',0,link)
+            self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
-    def Image(this, name,x,y,w=0,h=0,type='',link=''):
+    def image(self, name,x,y,w=0,h=0,type='',link=''):
         #Put an image on the page
-        if not name in this.images:
+        if not name in self.images:
             #First use of image, get info
             if(type==''):
                 pos=strrpos(name,'.')
                 if(not pos):
-                    this.Error('Image file has no extension and no type was specified: '+name)
+                    self.error('image file has no extension and no type was specified: '+name)
                 type=substr(name,pos+1)
             type=strtolower(type)
             if(type=='jpg' or type=='jpeg'):
-                info=this._parsejpg(name)
+                info=self._parsejpg(name)
             elif(type=='png'):
-                info=this._parsepng(name)
+                info=self._parsepng(name)
             else:
                 #Allow for additional formats
                 mtd='_parse'+type
-                if not hasattr(this,mtd):
-                    this.Error('Unsupported image type: '+type)
-                info=this.mtd(name)
-            info['i']=len(this.images)+1
-            this.images[name]=info
+                if not hasattr(self,mtd):
+                    self.error('Unsupported image type: '+type)
+                info=self.mtd(name)
+            info['i']=len(self.images)+1
+            self.images[name]=info
         else:
-            info=this.images[name]
+            info=self.images[name]
         #Automatic width and height calculation if needed
         if(w==0 and h==0):
             #Put image at 72 dpi
-            w=info['w']/this.k
-            h=info['h']/this.k
+            w=info['w']/self.k
+            h=info['h']/self.k
         if(w==0):
             w=h*info['w']/info['h']
         if(h==0):
             h=w*info['h']/info['w']
-        this._out(sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',w*this.k,h*this.k,x*this.k,(this.h-(y+h))*this.k,info['i']))
+        self._out(sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',w*self.k,h*self.k,x*self.k,(self.h-(y+h))*self.k,info['i']))
         if(link):
-            this.Link(x,y,w,h,link)
+            self.link(x,y,w,h,link)
 
-    def Ln(this, h=''):
-        #Line feed; default value is last cell height
-        this.x=this.lMargin
+    def ln(self, h=''):
+        #line feed; default value is last cell height
+        self.x=self.l_margin
         if(is_string(h)):
-            this.y+=this.lasth
+            self.y+=self.lasth
         else:
-            this.y+=h
+            self.y+=h
 
-    def GetX(this):
+    def get_x(self):
         #Get x position
-        return this.x
+        return self.x
 
-    def SetX(this, x):
+    def set_x(self, x):
         #Set x position
         if(x>=0):
-            this.x=x
+            self.x=x
         else:
-            this.x=this.w+x
+            self.x=self.w+x
 
-    def GetY(this):
+    def get_y(self):
         #Get y position
-        return this.y
+        return self.y
 
-    def SetY(this, y):
+    def set_y(self, y):
         #Set y position and reset x
-        this.x=this.lMargin
+        self.x=self.l_margin
         if(y>=0):
-            this.y=y
+            self.y=y
         else:
-            this.y=this.h+y
+            self.y=self.h+y
 
-    def SetXY(this, x,y):
+    def set_xy(self, x,y):
         #Set x and y positions
-        this.SetY(y)
-        this.SetX(x)
+        self.set_y(y)
+        self.set_x(x)
 
-    def Output(this, name='',dest=''):
-        #Output PDF to some destination
+    def output(self, name='',dest=''):
+        #output PDF to some destination
         #Finish document if necessary
-        if(this.state<3):
-            this.Close()
+        if(self.state<3):
+            self.close()
         #Normalize parameters
         if(is_bool(dest)):
             if dest:
@@ -877,40 +878,40 @@ class FPDF:
         if dest=='I':
             #Send to standard output
             #~ if(ob_get_contents()):
-                #~ this.Error('Some data has already been output, can\'t send PDF file')
+                #~ self.error('Some data has already been output, can\'t send PDF file')
             #~ if(php_sapi_name()!='cli'):
                 #~ #We send to a browser
                 #~ header('Content-Type: application/pdf')
                 #~ if(headers_sent()):
-                    #~ this.Error('Some data has already been output to browser, can\'t send PDF file')
-                #~ header('Content-Length: '+len(this.buffer))
+                    #~ self.error('Some data has already been output to browser, can\'t send PDF file')
+                #~ header('Content-Length: '+len(self.buffer))
                 #~ header('Content-disposition: inline; filename="'+name+'"')
-            print this.buffer
+            print self.buffer
         elif dest=='D':
             #Download file
             #~ if(ob_get_contents()):
-                #~ this.Error('Some data has already been output, can\'t send PDF file')
+                #~ self.error('Some data has already been output, can\'t send PDF file')
             #~ if(isset(_SERVER['HTTP_USER_AGENT']) and strpos(_SERVER['HTTP_USER_AGENT'],'MSIE')):
                 #~ header('Content-Type: application/force-download')
             #~ else:
                 #~ header('Content-Type: application/octet-stream')
             #~ if(headers_sent()):
-                #~ this.Error('Some data has already been output to browser, can\'t send PDF file')
-            #~ header('Content-Length: '+len(this.buffer))
+                #~ self.error('Some data has already been output to browser, can\'t send PDF file')
+            #~ header('Content-Length: '+len(self.buffer))
             #~ header('Content-disposition: attachment; filename="'+name+'"')
-            print this.buffer
+            print self.buffer
         elif dest=='F':
             #Save to local file
             f=file(name,'wb')
             if(not f):
-                this.Error('Unable to create output file: '+name)
-            f.write(this.buffer)
+                self.error('Unable to create output file: '+name)
+            f.write(self.buffer)
             f.close()
         elif dest=='S':
             #Return as a string
-            return this.buffer
+            return self.buffer
         else:
-            this.Error('Incorrect output destination: '+dest)
+            self.error('Incorrect output destination: '+dest)
         return ''
 
 # ******************************************************************************
@@ -918,97 +919,97 @@ class FPDF:
 # *                              Protected methods                               *
 # *                                                                              *
 # *******************************************************************************/
-    def _dochecks(this):
+    def _dochecks(self):
         #Check for locale-related bug
 #        if(1.1==1):
-#            this.Error("Don\'t alter the locale before including class file");
+#            self.error("Don\'t alter the locale before including class file");
         #Check for decimal separator
         if(sprintf('%.1f',1.0)!='1.0'):
             import locale
             locale.setlocale(locale.LC_NUMERIC,'C')
 
-    def _getfontpath(this):
+    def _getfontpath(self):
         return FPDF_FONT_DIR+'/'
 
-    def _putpages(this):
-        nb=this.page
-        if hasattr(this,'StrAliasNbPages'):
+    def _putpages(self):
+        nb=self.page
+        if hasattr(self,'StrAliasNbPages'):
             #Replace number of pages
             for n in xrange(1,nb+1):
-                this.pages[n]=str_replace(this.StrAliasNbPages,str(nb),this.pages[n])
-        if(this.DefOrientation=='P'):
-            wPt=this.fwPt
-            hPt=this.fhPt
+                self.pages[n]=str_replace(self.StrAliasNbPages,str(nb),self.pages[n])
+        if(self.def_orientation=='P'):
+            w_pt=self.fw_pt
+            h_pt=self.fh_pt
         else:
-            wPt=this.fhPt
-            hPt=this.fwPt
-        if this.compress:
+            w_pt=self.fh_pt
+            h_pt=self.fw_pt
+        if self.compress:
             filter='/Filter /FlateDecode '
         else:
             filter=''
         for n in xrange(1,nb+1):
             #Page
-            this._newobj()
-            this._out('<</Type /Page')
-            this._out('/Parent 1 0 R')
-            if n in this.OrientationChanges:
-                this._out(sprintf('/MediaBox [0 0 %.2f %.2f]',hPt,wPt))
-            this._out('/Resources 2 0 R')
-            if this.PageLinks and n in this.PageLinks:
+            self._newobj()
+            self._out('<</Type /Page')
+            self._out('/Parent 1 0 R')
+            if n in self.orientation_changes:
+                self._out(sprintf('/MediaBox [0 0 %.2f %.2f]',h_pt,w_pt))
+            self._out('/Resources 2 0 R')
+            if self.page_links and n in self.page_links:
                 #Links
                 annots='/Annots ['
-                for pl in this.PageLinks[n]:
+                for pl in self.page_links[n]:
                     rect=sprintf('%.2f %.2f %.2f %.2f',pl[0],pl[1],pl[0]+pl[2],pl[1]-pl[3])
                     annots+='<</Type /Annot /Subtype /Link /Rect ['+rect+'] /Border [0 0 0] '
                     if(is_string(pl[4])):
-                        annots+='/A <</S /URI /URI '+this._textstring(pl[4])+'>>>>'
+                        annots+='/A <</S /URI /URI '+self._textstring(pl[4])+'>>>>'
                     else:
-                        l=this.links[pl[4]]
-                        if l[0] in this.OrientationChanges:
-                            h=wPt
+                        l=self.links[pl[4]]
+                        if l[0] in self.orientation_changes:
+                            h=w_pt
                         else:
-                            h=hPt
-                        annots+=sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',1+2*l[0],h-l[1]*this.k)
-                this._out(annots+']')
-            this._out('/Contents '+str(this.n+1)+' 0 R>>')
-            this._out('endobj')
+                            h=h_pt
+                        annots+=sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',1+2*l[0],h-l[1]*self.k)
+                self._out(annots+']')
+            self._out('/Contents '+str(self.n+1)+' 0 R>>')
+            self._out('endobj')
             #Page content
-            if this.compress:
-                p = zlib.compress(this.pages[n])
+            if self.compress:
+                p = zlib.compress(self.pages[n])
             else:
-                p = this.pages[n]
-            this._newobj()
-            this._out('<<'+filter+'/Length '+str(len(p))+'>>')
-            this._putstream(p)
-            this._out('endobj')
+                p = self.pages[n]
+            self._newobj()
+            self._out('<<'+filter+'/Length '+str(len(p))+'>>')
+            self._putstream(p)
+            self._out('endobj')
         #Pages root
-        this.offsets[1]=len(this.buffer)
-        this._out('1 0 obj')
-        this._out('<</Type /Pages')
+        self.offsets[1]=len(self.buffer)
+        self._out('1 0 obj')
+        self._out('<</Type /Pages')
         kids='/Kids ['
         for i in xrange(0,nb):
             kids+=str(3+2*i)+' 0 R '
-        this._out(kids+']')
-        this._out('/Count '+str(nb))
-        this._out(sprintf('/MediaBox [0 0 %.2f %.2f]',wPt,hPt))
-        this._out('>>')
-        this._out('endobj')
+        self._out(kids+']')
+        self._out('/Count '+str(nb))
+        self._out(sprintf('/MediaBox [0 0 %.2f %.2f]',w_pt,h_pt))
+        self._out('>>')
+        self._out('endobj')
 
-    def _putfonts(this):
-        nf=this.n
-        for diff in this.diffs:
+    def _putfonts(self):
+        nf=self.n
+        for diff in self.diffs:
             #Encodings
-            this._newobj()
-            this._out('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+diff+']>>')
-            this._out('endobj')
-        for name,info in this.FontFiles.iteritems():
+            self._newobj()
+            self._out('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+diff+']>>')
+            self._out('endobj')
+        for name,info in self.font_files.iteritems():
             #Font file embedding
-            this._newobj()
-            this.FontFiles[name]['n']=this.n
+            self._newobj()
+            self.font_files[name]['n']=self.n
             font=''
-            f=file(this._getfontpath()+name,'rb',1)
+            f=file(self._getfontpath()+name,'rb',1)
             if(not f):
-                this.Error('Font file not found')
+                self.error('Font file not found')
             font=f.read()
             f.close()
             compressed=(substr(name,-2)=='.z')
@@ -1020,57 +1021,57 @@ class FPDF:
                 if(header and ord(font[info['length1']])==128):
                     #Strip second binary header
                     font=substr(font,0,info['length1'])+substr(font,info['length1']+6)
-            this._out('<</Length '+str(len(font)))
+            self._out('<</Length '+str(len(font)))
             if(compressed):
-                this._out('/Filter /FlateDecode')
-            this._out('/Length1 '+str(info['length1']))
+                self._out('/Filter /FlateDecode')
+            self._out('/Length1 '+str(info['length1']))
             if('length2' in info):
-                this._out('/Length2 '+str(info['length2'])+' /Length3 0')
-            this._out('>>')
-            this._putstream(font)
-            this._out('endobj')
-        for k,font in this.fonts.iteritems():
+                self._out('/Length2 '+str(info['length2'])+' /Length3 0')
+            self._out('>>')
+            self._putstream(font)
+            self._out('endobj')
+        for k,font in self.fonts.iteritems():
             #Font objects
-            this.fonts[k]['n']=this.n+1
+            self.fonts[k]['n']=self.n+1
             type=font['type']
             name=font['name']
             if(type=='core'):
                 #Standard font
-                this._newobj()
-                this._out('<</Type /Font')
-                this._out('/BaseFont /'+name)
-                this._out('/Subtype /Type1')
+                self._newobj()
+                self._out('<</Type /Font')
+                self._out('/BaseFont /'+name)
+                self._out('/Subtype /Type1')
                 if(name!='Symbol' and name!='ZapfDingbats'):
-                    this._out('/Encoding /WinAnsiEncoding')
-                this._out('>>')
-                this._out('endobj')
+                    self._out('/Encoding /WinAnsiEncoding')
+                self._out('>>')
+                self._out('endobj')
             elif(type=='Type1' or type=='TrueType'):
                 #Additional Type1 or TrueType font
-                this._newobj()
-                this._out('<</Type /Font')
-                this._out('/BaseFont /'+name)
-                this._out('/Subtype /'+type)
-                this._out('/FirstChar 32 /LastChar 255')
-                this._out('/Widths '+str(this.n+1)+' 0 R')
-                this._out('/FontDescriptor '+str(this.n+2)+' 0 R')
+                self._newobj()
+                self._out('<</Type /Font')
+                self._out('/BaseFont /'+name)
+                self._out('/Subtype /'+type)
+                self._out('/FirstChar 32 /LastChar 255')
+                self._out('/Widths '+str(self.n+1)+' 0 R')
+                self._out('/FontDescriptor '+str(self.n+2)+' 0 R')
                 if(font['enc']):
                     if('diff' in font):
-                        this._out('/Encoding '+(nf+font['diff'])+' 0 R')
+                        self._out('/Encoding '+(nf+font['diff'])+' 0 R')
                     else:
-                        this._out('/Encoding /WinAnsiEncoding')
-                this._out('>>')
-                this._out('endobj')
+                        self._out('/Encoding /WinAnsiEncoding')
+                self._out('>>')
+                self._out('endobj')
                 #Widths
-                this._newobj()
+                self._newobj()
                 cw=font['cw']
                 s='['
                 for i in xrange(32,256):
                     # Get doesn't rise exception; returns 0 instead of None if not set
                     s+=str(cw.get(chr(i)) or 0)+' '
-                this._out(s+']')
-                this._out('endobj')
+                self._out(s+']')
+                self._out('endobj')
                 #Descriptor
-                this._newobj()
+                self._newobj()
                 s='<</Type /FontDescriptor /FontName /'+name
                 for k,v in font['desc'].iteritems():
                     s+=' /'+str(k)+' '+str(v)
@@ -1079,211 +1080,211 @@ class FPDF:
                     s+=' /FontFile'
                     if type!='Type1':
                         s+='2'
-                    s+=' '+str(this.FontFiles[filename]['n'])+' 0 R'
-                this._out(s+'>>')
-                this._out('endobj')
+                    s+=' '+str(self.font_files[filename]['n'])+' 0 R'
+                self._out(s+'>>')
+                self._out('endobj')
             else:
                 #Allow for additional types
                 mtd='_put'+strtolower(type)
-                if(not method_exists(this,mtd)):
-                    this.Error('Unsupported font type: '+type)
-                this.mtd(font)
+                if(not method_exists(self,mtd)):
+                    self.error('Unsupported font type: '+type)
+                self.mtd(font)
 
-    def _putimages(this):
+    def _putimages(self):
         filter=''
-        if this.compress:
+        if self.compress:
             filter='/Filter /FlateDecode '
-        for filename,info in this.images.iteritems():
-            this._newobj()
-            this.images[filename]['n']=this.n
-            this._out('<</Type /XObject')
-            this._out('/Subtype /Image')
-            this._out('/Width '+str(info['w']))
-            this._out('/Height '+str(info['h']))
+        for filename,info in self.images.iteritems():
+            self._newobj()
+            self.images[filename]['n']=self.n
+            self._out('<</Type /XObject')
+            self._out('/Subtype /Image')
+            self._out('/Width '+str(info['w']))
+            self._out('/Height '+str(info['h']))
             if(info['cs']=='Indexed'):
-                this._out('/ColorSpace [/Indexed /DeviceRGB '+str(len(info['pal'])/3-1)+' '+str(this.n+1)+' 0 R]')
+                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(len(info['pal'])/3-1)+' '+str(self.n+1)+' 0 R]')
             else:
-                this._out('/ColorSpace /'+info['cs'])
+                self._out('/ColorSpace /'+info['cs'])
                 if(info['cs']=='DeviceCMYK'):
-                    this._out('/Decode [1 0 1 0 1 0 1 0]')
-            this._out('/BitsPerComponent '+str(info['bpc']))
+                    self._out('/Decode [1 0 1 0 1 0 1 0]')
+            self._out('/BitsPerComponent '+str(info['bpc']))
             if 'f' in info:
-                this._out('/Filter /'+info['f'])
+                self._out('/Filter /'+info['f'])
             if 'parms' in info:
-                this._out(info['parms'])
+                self._out(info['parms'])
             if('trns' in info and type([])==info['trns']):
                 trns=''
                 for i in xrange(0,len(info['trns'])):
                     trns+=str(info['trns'][i])+' '+str(info['trns'][i])+' '
-                this._out('/Mask ['+trns+']')
-            this._out('/Length '+str(len(info['data']))+'>>')
-            this._putstream(info['data'])
-            this.images[filename]['data'] = None
-            this._out('endobj')
+                self._out('/Mask ['+trns+']')
+            self._out('/Length '+str(len(info['data']))+'>>')
+            self._putstream(info['data'])
+            self.images[filename]['data'] = None
+            self._out('endobj')
             #Palette
             if(info['cs']=='Indexed'):
-                this._newobj()
-                if this.compress:
+                self._newobj()
+                if self.compress:
                     pal=zlib.compress(info['pal'])
                 else:
                     pal=info['pal']
-                this._out('<<'+filter+'/Length '+str(len(pal))+'>>')
-                this._putstream(pal)
-                this._out('endobj')
+                self._out('<<'+filter+'/Length '+str(len(pal))+'>>')
+                self._putstream(pal)
+                self._out('endobj')
 
-    def _putxobjectdict(this):
-        for image in this.images.values():
-            this._out('/I'+str(image['i'])+' '+str(image['n'])+' 0 R')
+    def _putxobjectdict(self):
+        for image in self.images.values():
+            self._out('/I'+str(image['i'])+' '+str(image['n'])+' 0 R')
 
-    def _putresourcedict(this):
-        this._out('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]')
-        this._out('/Font <<')
-        for font in this.fonts.values():
-            this._out('/F'+str(font['i'])+' '+str(font['n'])+' 0 R')
-        this._out('>>')
-        this._out('/XObject <<')
-        this._putxobjectdict()
-        this._out('>>')
+    def _putresourcedict(self):
+        self._out('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]')
+        self._out('/Font <<')
+        for font in self.fonts.values():
+            self._out('/F'+str(font['i'])+' '+str(font['n'])+' 0 R')
+        self._out('>>')
+        self._out('/XObject <<')
+        self._putxobjectdict()
+        self._out('>>')
 
-    def _putresources(this):
-        this._putfonts()
-        this._putimages()
+    def _putresources(self):
+        self._putfonts()
+        self._putimages()
         #Resource dictionary
-        this.offsets[2]=len(this.buffer)
-        this._out('2 0 obj')
-        this._out('<<')
-        this._putresourcedict()
-        this._out('>>')
-        this._out('endobj')
+        self.offsets[2]=len(self.buffer)
+        self._out('2 0 obj')
+        self._out('<<')
+        self._putresourcedict()
+        self._out('>>')
+        self._out('endobj')
 
-    def _putinfo(this):
-        this._out('/Producer '+this._textstring('PyFPDF '+FPDF_VERSION+' http://pyfpdf.googlecode.com/'))
-        if hasattr(this,'title'):
-            this._out('/Title '+this._textstring(this.title))
-        if hasattr(this,'subject'):
-            this._out('/Subject '+this._textstring(this.subject))
-        if hasattr(this,'author'):
-            this._out('/Author '+this._textstring(this.author))
-        if hasattr (this,'keywords'):
-            this._out('/Keywords '+this._textstring(this.keywords))
-        if hasattr(this,'creator'):
-            this._out('/Creator '+this._textstring(this.creator))
-        this._out('/CreationDate '+this._textstring('D:'+datetime.now().strftime('%Y%m%d%H%M%S')))
+    def _putinfo(self):
+        self._out('/Producer '+self._textstring('PyFPDF '+FPDF_VERSION+' http://pyfpdf.googlecode.com/'))
+        if hasattr(self,'title'):
+            self._out('/Title '+self._textstring(self.title))
+        if hasattr(self,'subject'):
+            self._out('/Subject '+self._textstring(self.subject))
+        if hasattr(self,'author'):
+            self._out('/Author '+self._textstring(self.author))
+        if hasattr (self,'keywords'):
+            self._out('/Keywords '+self._textstring(self.keywords))
+        if hasattr(self,'creator'):
+            self._out('/Creator '+self._textstring(self.creator))
+        self._out('/CreationDate '+self._textstring('D:'+datetime.now().strftime('%Y%m%d%H%M%S')))
 
-    def _putcatalog(this):
-        this._out('/Type /Catalog')
-        this._out('/Pages 1 0 R')
-        if(this.ZoomMode=='fullpage'):
-            this._out('/OpenAction [3 0 R /Fit]')
-        elif(this.ZoomMode=='fullwidth'):
-            this._out('/OpenAction [3 0 R /FitH null]')
-        elif(this.ZoomMode=='real'):
-            this._out('/OpenAction [3 0 R /XYZ null null 1]')
-        elif(not is_string(this.ZoomMode)):
-            this._out('/OpenAction [3 0 R /XYZ null null '+(this.ZoomMode/100)+']')
-        if(this.LayoutMode=='single'):
-            this._out('/PageLayout /SinglePage')
-        elif(this.LayoutMode=='continuous'):
-            this._out('/PageLayout /OneColumn')
-        elif(this.LayoutMode=='two'):
-            this._out('/PageLayout /TwoColumnLeft')
+    def _putcatalog(self):
+        self._out('/Type /Catalog')
+        self._out('/Pages 1 0 R')
+        if(self.zoom_mode=='fullpage'):
+            self._out('/OpenAction [3 0 R /Fit]')
+        elif(self.zoom_mode=='fullwidth'):
+            self._out('/OpenAction [3 0 R /FitH null]')
+        elif(self.zoom_mode=='real'):
+            self._out('/OpenAction [3 0 R /XYZ null null 1]')
+        elif(not is_string(self.zoom_mode)):
+            self._out('/OpenAction [3 0 R /XYZ null null '+(self.zoom_mode/100)+']')
+        if(self.layout_mode=='single'):
+            self._out('/PageLayout /SinglePage')
+        elif(self.layout_mode=='continuous'):
+            self._out('/PageLayout /OneColumn')
+        elif(self.layout_mode=='two'):
+            self._out('/PageLayout /TwoColumnLeft')
 
-    def _putheader(this):
-        this._out('%PDF-'+this.PDFVersion)
+    def _putheader(self):
+        self._out('%PDF-'+self.pdf_version)
 
-    def _puttrailer(this):
-        this._out('/Size '+str(this.n+1))
-        this._out('/Root '+str(this.n)+' 0 R')
-        this._out('/Info '+str(this.n-1)+' 0 R')
+    def _puttrailer(self):
+        self._out('/Size '+str(self.n+1))
+        self._out('/Root '+str(self.n)+' 0 R')
+        self._out('/Info '+str(self.n-1)+' 0 R')
 
-    def _enddoc(this):
-        this._putheader()
-        this._putpages()
-        this._putresources()
+    def _enddoc(self):
+        self._putheader()
+        self._putpages()
+        self._putresources()
         #Info
-        this._newobj()
-        this._out('<<')
-        this._putinfo()
-        this._out('>>')
-        this._out('endobj')
+        self._newobj()
+        self._out('<<')
+        self._putinfo()
+        self._out('>>')
+        self._out('endobj')
         #Catalog
-        this._newobj()
-        this._out('<<')
-        this._putcatalog()
-        this._out('>>')
-        this._out('endobj')
+        self._newobj()
+        self._out('<<')
+        self._putcatalog()
+        self._out('>>')
+        self._out('endobj')
         #Cross-ref
-        o=len(this.buffer)
-        this._out('xref')
-        this._out('0 '+(str(this.n+1)))
-        this._out('0000000000 65535 f ')
-        for i in xrange(1,this.n+1):
-            this._out(sprintf('%010d 00000 n ',this.offsets[i]))
+        o=len(self.buffer)
+        self._out('xref')
+        self._out('0 '+(str(self.n+1)))
+        self._out('0000000000 65535 f ')
+        for i in xrange(1,self.n+1):
+            self._out(sprintf('%010d 00000 n ',self.offsets[i]))
         #Trailer
-        this._out('trailer')
-        this._out('<<')
-        this._puttrailer()
-        this._out('>>')
-        this._out('startxref')
-        this._out(o)
-        this._out('%%EOF')
-        this.state=3
+        self._out('trailer')
+        self._out('<<')
+        self._puttrailer()
+        self._out('>>')
+        self._out('startxref')
+        self._out(o)
+        self._out('%%EOF')
+        self.state=3
 
-    def _beginpage(this, orientation):
-        this.page+=1
-        this.pages[this.page]=''
-        this.state=2
-        this.x=this.lMargin
-        this.y=this.tMargin
-        this.FontFamily=''
+    def _beginpage(self, orientation):
+        self.page+=1
+        self.pages[self.page]=''
+        self.state=2
+        self.x=self.l_margin
+        self.y=self.t_margin
+        self.font_family=''
         #Page orientation
         if(not orientation):
-            orientation=this.DefOrientation
+            orientation=self.def_orientation
         else:
             orientation=strtoupper(orientation[0])
-            if(orientation!=this.DefOrientation):
-                this.OrientationChanges[this.page]=1
-        if(orientation!=this.CurOrientation):
+            if(orientation!=self.def_orientation):
+                self.orientation_changes[self.page]=1
+        if(orientation!=self.cur_orientation):
             #Change orientation
             if(orientation=='P'):
-                this.wPt=this.fwPt
-                this.hPt=this.fhPt
-                this.w=this.fw
-                this.h=this.fh
+                self.w_pt=self.fw_pt
+                self.h_pt=self.fh_pt
+                self.w=self.fw
+                self.h=self.fh
             else:
-                this.wPt=this.fhPt
-                this.hPt=this.fwPt
-                this.w=this.fh
-                this.h=this.fw
-            this.PageBreakTrigger=this.h-this.bMargin
-            this.CurOrientation=orientation
+                self.w_pt=self.fh_pt
+                self.h_pt=self.fw_pt
+                self.w=self.fh
+                self.h=self.fw
+            self.page_break_trigger=self.h-self.b_margin
+            self.cur_orientation=orientation
 
-    def _endpage(this):
+    def _endpage(self):
         #End of page contents
-        this.state=1
+        self.state=1
 
-    def _newobj(this):
+    def _newobj(self):
         #Begin a new object
-        this.n+=1
-        this.offsets[this.n]=len(this.buffer)
-        this._out(str(this.n)+' 0 obj')
+        self.n+=1
+        self.offsets[self.n]=len(self.buffer)
+        self._out(str(self.n)+' 0 obj')
 
-    def _dounderline(this, x,y,txt):
+    def _dounderline(self, x,y,txt):
         #Underline text
-        up=this.CurrentFont['up']
-        ut=this.CurrentFont['ut']
-        w=this.GetStringWidth(txt)+this.ws*substr_count(txt,' ')
-        return sprintf('%.2f %.2f %.2f %.2f re f',x*this.k,(this.h-(y-up/1000.0*this.FontSize))*this.k,w*this.k,-ut/1000.0*this.FontSizePt)
+        up=self.current_font['up']
+        ut=self.current_font['ut']
+        w=self.get_string_width(txt)+self.ws*substr_count(txt,' ')
+        return sprintf('%.2f %.2f %.2f %.2f re f',x*self.k,(self.h-(y-up/1000.0*self.font_size))*self.k,w*self.k,-ut/1000.0*self.font_size_pt)
 
-    def _parsejpg(this, filename):
+    def _parsejpg(self, filename):
         # Extract info from a JPEG file
         if Image is None:
-            this.Error('PIL not installed')
+            self.error('PIL not installed')
         try:
             f = open(filename, 'rb')
             im = Image.open(f)
         except Exception, e:
-            this.Error('Missing or incorrect image file: %s. Error: %s' % (filename, str(e)))
+            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(e)))
         else:
             a = im.size
         # We shouldn't get into here, as Jpeg is RGB=8bpp right(?), but, just in case...
@@ -1301,23 +1302,23 @@ class FPDF:
         f.close()
         return {'w':a[0],'h':a[1],'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
 
-    def _parsepng(this, name):
+    def _parsepng(self, name):
         #Extract info from a PNG file
         f=file(name,'rb')
         if(not f):
-            this.Error("Can't open image file: "+name)
+            self.error("Can't open image file: "+name)
         #Check signature
         if(f.read(8)!='\x89'+'PNG'+'\r'+'\n'+'\x1a'+'\n'):
-            this.Error('Not a PNG file: '+name)
+            self.error('Not a PNG file: '+name)
         #Read header chunk
         f.read(4)
         if(f.read(4)!='IHDR'):
-            this.Error('Incorrect PNG file: '+name)
-        w=this._freadint(f)
-        h=this._freadint(f)
+            self.error('Incorrect PNG file: '+name)
+        w=self._freadint(f)
+        h=self._freadint(f)
         bpc=ord(f.read(1))
         if(bpc>8):
-            this.Error('16-bit depth not supported: '+name)
+            self.error('16-bit depth not supported: '+name)
         ct=ord(f.read(1))
         if(ct==0):
             colspace='DeviceGray'
@@ -1326,13 +1327,13 @@ class FPDF:
         elif(ct==3):
             colspace='Indexed'
         else:
-            this.Error('Alpha channel not supported: '+name)
+            self.error('Alpha channel not supported: '+name)
         if(ord(f.read(1))!=0):
-            this.Error('Unknown compression method: '+name)
+            self.error('Unknown compression method: '+name)
         if(ord(f.read(1))!=0):
-            this.Error('Unknown filter method: '+name)
+            self.error('Unknown filter method: '+name)
         if(ord(f.read(1))!=0):
-            this.Error('Interlacing not supported: '+name)
+            self.error('Interlacing not supported: '+name)
         f.read(4)
         parms='/DecodeParms <</Predictor 15 /Colors '
         if ct==2:
@@ -1346,7 +1347,7 @@ class FPDF:
         data=''
         n=1
         while n != None:
-            n=this._freadint(f)
+            n=self._freadint(f)
             type=f.read(4)
             if(type=='PLTE'):
                 #Read palette
@@ -1373,36 +1374,36 @@ class FPDF:
             else:
                 f.read(n+4)
         if(colspace=='Indexed' and not pal):
-            this.Error('Missing palette in '+name)
+            self.error('Missing palette in '+name)
         f.close()
         return {'w':w,'h':h,'cs':colspace,'bpc':bpc,'f':'FlateDecode','parms':parms,'pal':pal,'trns':trns,'data':data}
 
-    def _freadint(this, f):
+    def _freadint(self, f):
         #Read a 4-byte integer from file
         try:
             return struct.unpack('>HH',f.read(4))[1]
         except:
             return None
 
-    def _textstring(this, s):
+    def _textstring(self, s):
         #Format a text string
-        return '('+this._escape(s)+')'
+        return '('+self._escape(s)+')'
 
-    def _escape(this, s):
+    def _escape(self, s):
         #Add \ before \, ( and )
         return str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',s)))
 
-    def _putstream(this, s):
-        this._out('stream')
-        this._out(s)
-        this._out('endstream')
+    def _putstream(self, s):
+        self._out('stream')
+        self._out(s)
+        self._out('endstream')
 
-    def _out(this, s):
+    def _out(self, s):
         #Add a line to the document
-        if(this.state==2):
-            this.pages[this.page]+=s+"\n"
+        if(self.state==2):
+            self.pages[self.page]+=s+"\n"
         else:
-            this.buffer+=str(s)+"\n"
+            self.buffer+=str(s)+"\n"
 
     def Interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
         "Código Entrelazado 2 de 5 (numérico), la longitud debe ser par, sino agrega un 0"
@@ -1410,21 +1411,21 @@ class FPDF:
         wide = w
         
         # wide/narrow codes for the digits
-        barChar={}
-        barChar['0'] = 'nnwwn'
-        barChar['1'] = 'wnnnw'
-        barChar['2'] = 'nwnnw'
-        barChar['3'] = 'wwnnn'
-        barChar['4'] = 'nnwnw'
-        barChar['5'] = 'wnwnn'
-        barChar['6'] = 'nwwnn'
-        barChar['7'] = 'nnnww'
-        barChar['8'] = 'wnnwn'
-        barChar['9'] = 'nwnwn'
-        barChar['A'] = 'nn'
-        barChar['Z'] = 'wn'
+        bar_char={}
+        bar_char['0'] = 'nnwwn'
+        bar_char['1'] = 'wnnnw'
+        bar_char['2'] = 'nwnnw'
+        bar_char['3'] = 'wwnnn'
+        bar_char['4'] = 'nnwnw'
+        bar_char['5'] = 'wnwnn'
+        bar_char['6'] = 'nwwnn'
+        bar_char['7'] = 'nnnww'
+        bar_char['8'] = 'wnnwn'
+        bar_char['9'] = 'nwnwn'
+        bar_char['A'] = 'nn'
+        bar_char['Z'] = 'wn'
            
-        self.SetFillColor(0)
+        self.set_fill_color(0)
         code = txt
         # add leading zero if code-length is odd
         if len(code) % 2 != 0:
@@ -1435,31 +1436,31 @@ class FPDF:
 
         for i in xrange(0, len(code), 2):
             # choose next pair of digits
-            charBar = code[i];
-            charSpace = code[i+1];
+            char_bar = code[i];
+            char_space = code[i+1];
             # check whether it is a valid digit
-            if not charBar in barChar.keys():
-                raise RuntimeError ('Caractér "%s" inválido para el código de barras I25: ' % charBar)
-            if not charSpace in barChar.keys():
-                raise RuntimeError ('Caractér "%s" inválido para el código de barras I25: ' % charSpace)
+            if not char_bar in bar_char.keys():
+                raise RuntimeError ('Caractér "%s" inválido para el código de barras I25: ' % char_bar)
+            if not char_space in bar_char.keys():
+                raise RuntimeError ('Caractér "%s" inválido para el código de barras I25: ' % char_space)
 
             # create a wide/narrow-sequence (first digit=bars, second digit=spaces)
             seq = ''
-            for s in xrange(0, len(barChar[charBar])):
-                seq += barChar[charBar][s] + barChar[charSpace][s]
+            for s in xrange(0, len(bar_char[char_bar])):
+                seq += bar_char[char_bar][s] + bar_char[char_space][s]
 
             for bar in xrange(0, len(seq)):
-                # set lineWidth depending on value
+                # set line_width depending on value
                 if seq[bar] == 'n':
-                    lineWidth = narrow
+                    line_width = narrow
                 else:
-                    lineWidth = wide
+                    line_width = wide
 
                 # draw every second value, because the second digit of the pair is represented by the spaces
                 if bar % 2 == 0:
-                    self.Rect(x, y, lineWidth, h, 'F')
+                    self.rect(x, y, line_width, h, 'F')
 
-                x += lineWidth
+                x += line_width
 
 
     def code39(self, txt, x, y, w=1.5, h=5.0):
@@ -1467,75 +1468,75 @@ class FPDF:
         narrow = w /3.0
         gap = narrow
 
-        barChar={}
-        barChar['0'] = 'nnnwwnwnn'
-        barChar['1'] = 'wnnwnnnnw'
-        barChar['2'] = 'nnwwnnnnw'
-        barChar['3'] = 'wnwwnnnnn'
-        barChar['4'] = 'nnnwwnnnw'
-        barChar['5'] = 'wnnwwnnnn'
-        barChar['6'] = 'nnwwwnnnn'
-        barChar['7'] = 'nnnwnnwnw'
-        barChar['8'] = 'wnnwnnwnn'
-        barChar['9'] = 'nnwwnnwnn'
-        barChar['A'] = 'wnnnnwnnw'
-        barChar['B'] = 'nnwnnwnnw'
-        barChar['C'] = 'wnwnnwnnn'
-        barChar['D'] = 'nnnnwwnnw'
-        barChar['E'] = 'wnnnwwnnn'
-        barChar['F'] = 'nnwnwwnnn'
-        barChar['G'] = 'nnnnnwwnw'
-        barChar['H'] = 'wnnnnwwnn'
-        barChar['I'] = 'nnwnnwwnn'
-        barChar['J'] = 'nnnnwwwnn'
-        barChar['K'] = 'wnnnnnnww'
-        barChar['L'] = 'nnwnnnnww'
-        barChar['M'] = 'wnwnnnnwn'
-        barChar['N'] = 'nnnnwnnww'
-        barChar['O'] = 'wnnnwnnwn'
-        barChar['P'] = 'nnwnwnnwn'
-        barChar['Q'] = 'nnnnnnwww'
-        barChar['R'] = 'wnnnnnwwn'
-        barChar['S'] = 'nnwnnnwwn'
-        barChar['T'] = 'nnnnwnwwn'
-        barChar['U'] = 'wwnnnnnnw'
-        barChar['V'] = 'nwwnnnnnw'
-        barChar['W'] = 'wwwnnnnnn'
-        barChar['X'] = 'nwnnwnnnw'
-        barChar['Y'] = 'wwnnwnnnn'
-        barChar['Z'] = 'nwwnwnnnn'
-        barChar['-'] = 'nwnnnnwnw'
-        barChar['.'] = 'wwnnnnwnn'
-        barChar[' '] = 'nwwnnnwnn'
-        barChar['*'] = 'nwnnwnwnn'
-        barChar['$'] = 'nwnwnwnnn'
-        barChar['/'] = 'nwnwnnnwn'
-        barChar['+'] = 'nwnnnwnwn'
-        barChar['%'] = 'nnnwnwnwn'
+        bar_char={}
+        bar_char['0'] = 'nnnwwnwnn'
+        bar_char['1'] = 'wnnwnnnnw'
+        bar_char['2'] = 'nnwwnnnnw'
+        bar_char['3'] = 'wnwwnnnnn'
+        bar_char['4'] = 'nnnwwnnnw'
+        bar_char['5'] = 'wnnwwnnnn'
+        bar_char['6'] = 'nnwwwnnnn'
+        bar_char['7'] = 'nnnwnnwnw'
+        bar_char['8'] = 'wnnwnnwnn'
+        bar_char['9'] = 'nnwwnnwnn'
+        bar_char['A'] = 'wnnnnwnnw'
+        bar_char['B'] = 'nnwnnwnnw'
+        bar_char['C'] = 'wnwnnwnnn'
+        bar_char['D'] = 'nnnnwwnnw'
+        bar_char['E'] = 'wnnnwwnnn'
+        bar_char['F'] = 'nnwnwwnnn'
+        bar_char['G'] = 'nnnnnwwnw'
+        bar_char['H'] = 'wnnnnwwnn'
+        bar_char['I'] = 'nnwnnwwnn'
+        bar_char['J'] = 'nnnnwwwnn'
+        bar_char['K'] = 'wnnnnnnww'
+        bar_char['L'] = 'nnwnnnnww'
+        bar_char['M'] = 'wnwnnnnwn'
+        bar_char['N'] = 'nnnnwnnww'
+        bar_char['O'] = 'wnnnwnnwn'
+        bar_char['P'] = 'nnwnwnnwn'
+        bar_char['Q'] = 'nnnnnnwww'
+        bar_char['R'] = 'wnnnnnwwn'
+        bar_char['S'] = 'nnwnnnwwn'
+        bar_char['T'] = 'nnnnwnwwn'
+        bar_char['U'] = 'wwnnnnnnw'
+        bar_char['V'] = 'nwwnnnnnw'
+        bar_char['W'] = 'wwwnnnnnn'
+        bar_char['X'] = 'nwnnwnnnw'
+        bar_char['Y'] = 'wwnnwnnnn'
+        bar_char['Z'] = 'nwwnwnnnn'
+        bar_char['-'] = 'nwnnnnwnw'
+        bar_char['.'] = 'wwnnnnwnn'
+        bar_char[' '] = 'nwwnnnwnn'
+        bar_char['*'] = 'nwnnwnwnn'
+        bar_char['$'] = 'nwnwnwnnn'
+        bar_char['/'] = 'nwnwnnnwn'
+        bar_char['+'] = 'nwnnnwnwn'
+        bar_char['%'] = 'nnnwnwnwn'
 
-        self.SetFillColor(0)
+        self.set_fill_color(0)
         code = txt	
             
         code = code.upper()
         for i in xrange (0, len(code), 2):
-            charBar = code[i];
+            char_bar = code[i];
 
-            if not charBar in barChar.keys():
-                raise RuntimeError ('Caracter "%s" inválido para el código de barras' % charBar)
+            if not char_bar in bar_char.keys():
+                raise RuntimeError ('Caracter "%s" inválido para el código de barras' % char_bar)
 
             seq= ''
-            for s in xrange(0, len(barChar[charBar])):
-                seq += barChar[charBar][s] 
+            for s in xrange(0, len(bar_char[char_bar])):
+                seq += bar_char[char_bar][s] 
 
             for bar in xrange(0, len(seq)):
                 if seq[bar] == 'n':
-                    lineWidth = narrow
+                    line_width = narrow
                 else:
-                    lineWidth = wide
+                    line_width = wide
 
                 if bar % 2 == 0:
-                    self.Rect(x,y,lineWidth,h,'F')
-                x += lineWidth
+                    self.rect(x,y,line_width,h,'F')
+                x += line_width
         x += gap
 
 #End of class
