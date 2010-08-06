@@ -27,9 +27,6 @@ def substr(s, start, length=-1):
 		length=len(s)-start
 	return s[start:start+length]
 
-def substr_count(haystack, needle, offset=0, length=None):
-	return haystack.count(needle,offset)
-
 def sprintf(fmt, *args): return fmt % args
 
 # Global variables
@@ -198,7 +195,7 @@ class FPDF:
         self.pdf_version='1.3'
 
     def set_margins(self, left,top,right=-1):
-        #Set left, top and right margins
+        "Set left, top and right margins"
         self.l_margin=left
         self.t_margin=top
         if(right==-1):
@@ -206,27 +203,27 @@ class FPDF:
         self.r_margin=right
 
     def set_left_margin(self, margin):
-        #Set left margin
+        "Set left margin"
         self.l_margin=margin
         if(self.page>0 and self.x<margin):
             self.x=margin
 
     def set_top_margin(self, margin):
-        #Set top margin
+        "Set top margin"
         self.t_margin=margin
 
     def set_right_margin(self, margin):
-        #Set right margin
+        "Set right margin"
         self.r_margin=margin
 
     def set_auto_page_break(self, auto,margin=0):
-        #Set auto page break mode and triggering margin
+        "Set auto page break mode and triggering margin"
         self.auto_page_break=auto
         self.b_margin=margin
         self.page_break_trigger=self.h-margin
 
     def set_display_mode(self, zoom,layout='continuous'):
-        #Set display mode in viewer
+        "Set display mode in viewer"
         if(zoom=='fullpage' or zoom=='fullwidth' or zoom=='real' or zoom=='default' or not isinstance(zoom,basestring)):
             self.zoom_mode=zoom
         else:
@@ -237,43 +234,43 @@ class FPDF:
             self.error('Incorrect layout display mode: '+layout)
 
     def set_compression(self, compress):
-        #Set page compression
+        "Set page compression"
         self.compress=compress
 
     def set_title(self, title):
-        #Title of document
+        "Title of document"
         self.title=title
 
     def set_subject(self, subject):
-        #Subject of document
+        "Subject of document"
         self.subject=subject
 
     def set_author(self, author):
-        #Author of document
+        "Author of document"
         self.author=author
 
     def set_keywords(self, keywords):
-        #Keywords of document
+        "Keywords of document"
         self.keywords=keywords
 
     def set_creator(self, creator):
-        #Creator of document
+        "Creator of document"
         self.creator=creator
 
     def alias_nb_pages(self, alias='{nb}'):
-        #Define an alias for total number of pages
+        "Define an alias for total number of pages"
         self.str_alias_nb_pages=alias
 
     def error(self, msg):
-        #Fatal error
+        "Fatal error"
         raise RuntimeError('FPDF error: '+msg)
 
     def open(self):
-        #Begin document
+        "Begin document"
         self.state=1
 
     def close(self):
-        #Terminate document
+        "Terminate document"
         if(self.state==3):
             return
         if(self.page==0):
@@ -288,7 +285,7 @@ class FPDF:
         self._enddoc()
 
     def add_page(self, orientation=''):
-        #Start a new page
+        "Start a new page"
         if(self.state==0):
             self.open()
         family=self.font_family
@@ -348,19 +345,19 @@ class FPDF:
         self.color_flag=cf
 
     def header(self):
-        #To be implemented in your own inherited class
+        "Header to be implemented in your own inherited class"
         pass
 
     def footer(self):
-        #To be implemented in your own inherited class
+        "Footer to be implemented in your own inherited class"
         pass
 
     def page_no(self):
-        #Get current page number
+        "Get current page number"
         return self.page
 
     def set_draw_color(self, r,g=-1,b=-1):
-        #Set color for all stroking operations
+        "Set color for all stroking operations"
         if((r==0 and g==0 and b==0) or g==-1):
             self.draw_color=sprintf('%.3f G',r/255.0)
         else:
@@ -369,7 +366,7 @@ class FPDF:
             self._out(self.draw_color)
 
     def set_fill_color(self,r,g=-1,b=-1):
-        #Set color for all filling operations
+        "Set color for all filling operations"
         if((r==0 and g==0 and b==0) or g==-1):
             self.fill_color=sprintf('%.3f g',r/255.0)
         else:
@@ -379,7 +376,7 @@ class FPDF:
             self._out(self.fill_color)
 
     def set_text_color(self, r,g=-1,b=-1):
-        #Set color for text
+        "Set color for text"
         if((r==0 and g==0 and b==0) or g==-1):
             self.text_color=sprintf('%.3f g',r/255.0)
         else:
@@ -387,7 +384,7 @@ class FPDF:
         self.color_flag=(self.fill_color!=self.text_color)
 
     def get_string_width(self, s):
-        #Get width of a string in the current font
+        "Get width of a string in the current font"
         cw=self.current_font['cw']
         w=0
         l=len(s)
@@ -396,17 +393,17 @@ class FPDF:
         return w*self.font_size/1000.0
 
     def set_line_width(self, width):
-        #Set line width
+        "Set line width"
         self.line_width=width
         if(self.page>0):
             self._out(sprintf('%.2f w',width*self.k))
 
     def line(self, x1,y1,x2,y2):
-        #Draw a line
+        "Draw a line"
         self._out(sprintf('%.2f %.2f m %.2f %.2f l S',x1*self.k,(self.h-y1)*self.k,x2*self.k,(self.h-y2)*self.k))
 
     def rect(self, x,y,w,h,style=''):
-        #Draw a rectangle
+        "Draw a rectangle"
         if(style=='F'):
             op='f'
         elif(style=='FD' or style=='DF'):
@@ -416,7 +413,7 @@ class FPDF:
         self._out(sprintf('%.2f %.2f %.2f %.2f re %s',x*self.k,(self.h-y)*self.k,w*self.k,-h*self.k,op))
 
     def add_font(self, family,style='',fname=''):
-        #Add a TrueType or Type1 font
+        "Add a TrueType or Type1 font"
         family=family.lower()
         if(fname==''):
             fname=family.replace(' ','')+style.lower()+'.font'
@@ -453,7 +450,7 @@ class FPDF:
                 self.font_files[filename]={'length1':size1,'length2':size2}
 
     def set_font(self, family,style='',size=0):
-        #Select a font; size given in points
+        "Select a font; size given in points"
         family=family.lower()
         if(family==''):
             family=self.font_family
@@ -501,7 +498,7 @@ class FPDF:
             self._out(sprintf('BT /F%d %.2f Tf ET',self.current_font['i'],self.font_size_pt))
 
     def set_font_size(self, size):
-        #Set font size in points
+        "Set font size in points"
         if(self.font_size_pt==size):
             return
         self.font_size_pt=size
@@ -510,13 +507,13 @@ class FPDF:
             self._out(sprintf('BT /F%d %.2f Tf ET',self.current_font['i'],self.font_size_pt))
 
     def add_link(self):
-        #Create a new internal link
+        "Create a new internal link"
         n=len(self.links)+1
         self.links[n]=(0,0)
         return n
 
     def set_link(self, link,y=0,page=-1):
-        #Set destination of internal link
+        "Set destination of internal link"
         if(y==-1):
             y=self.y
         if(page==-1):
@@ -524,13 +521,13 @@ class FPDF:
         self.links[link]=[page,y]
 
     def link(self, x,y,w,h,link):
-        #Put a link on the page
+        "Put a link on the page"
         if not self.page in self.page_links:
             self.page_links[self.page] = []
         self.page_links[self.page] += [(x*self.k,self.h_pt-y*self.k,w*self.k,h*self.k,link),]
 
     def text(self, x,y,txt):
-        #output a string
+        "Output a string"
         s=sprintf('BT %.2f %.2f Td (%s) Tj ET',x*self.k,(self.h-y)*self.k,self._escape(txt))
         if(self.underline and txt!=''):
             s+=' '+self._dounderline(x,y,txt)
@@ -556,11 +553,11 @@ class FPDF:
             self._out(s)
 
     def accept_page_break(self):
-        #Accept automatic page break or not
+        "Accept automatic page break or not"
         return self.auto_page_break
 
     def cell(self, w,h=0,txt='',border=0,ln=0,align='',fill=0,link=''):
-        #output a cell
+        "Output a cell"
         k=self.k
         if(self.y+h>self.page_break_trigger and not self.in_footer and self.accept_page_break()):
             #Automatic page break
@@ -626,7 +623,7 @@ class FPDF:
             self.x+=w
 
     def multi_cell(self, w,h,txt,border=0,align='J',fill=0, split_only=False):
-        #output text with automatic or explicit line breaks
+        "Output text with automatic or explicit line breaks"
         ret = [] # if split_only = True, returns splited text cells
         cw=self.current_font['cw']
         if(w==0):
@@ -731,7 +728,7 @@ class FPDF:
         return ret
 
     def write(self, h,txt,link=''):
-        #output text in flowing mode
+        "Output text in flowing mode"
         cw=self.current_font['cw']
         w=self.w-self.r_margin-self.x
         wmax=(w-2*self.c_margin)*1000.0/self.font_size
@@ -794,7 +791,7 @@ class FPDF:
             self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
     def image(self, name,x,y,w=0,h=0,type='',link=''):
-        #Put an image on the page
+        "Put an image on the page"
         if not name in self.images:
             #First use of image, get info
             if(type==''):
@@ -831,7 +828,7 @@ class FPDF:
             self.link(x,y,w,h,link)
 
     def ln(self, h=''):
-        #line feed; default value is last cell height
+        "Line Feed; default value is last cell height"
         self.x=self.l_margin
         if(isinstance(h, basestring)):
             self.y+=self.lasth
@@ -839,22 +836,22 @@ class FPDF:
             self.y+=h
 
     def get_x(self):
-        #Get x position
+        "Get x position"
         return self.x
 
     def set_x(self, x):
-        #Set x position
+        "Set x position"
         if(x>=0):
             self.x=x
         else:
             self.x=self.w+x
 
     def get_y(self):
-        #Get y position
+        "Get y position"
         return self.y
 
     def set_y(self, y):
-        #Set y position and reset x
+        "Set y position and reset x"
         self.x=self.l_margin
         if(y>=0):
             self.y=y
@@ -862,12 +859,12 @@ class FPDF:
             self.y=self.h+y
 
     def set_xy(self, x,y):
-        #Set x and y positions
+        "Set x and y positions"
         self.set_y(y)
         self.set_x(x)
 
     def output(self, name='',dest=''):
-        #output PDF to some destination
+        "Output PDF to some destination"
         #Finish document if necessary
         if(self.state<3):
             self.close()
@@ -1261,7 +1258,7 @@ class FPDF:
         #Underline text
         up=self.current_font['up']
         ut=self.current_font['ut']
-        w=self.get_string_width(txt)+self.ws*substr_count(txt,' ')
+        w=self.get_string_width(txt)+self.ws*txt.count(' ')
         return sprintf('%.2f %.2f %.2f %.2f re f',x*self.k,(self.h-(y-up/1000.0*self.font_size))*self.k,w*self.k,-ut/1000.0*self.font_size_pt)
 
     def _parsejpg(self, filename):
@@ -1393,8 +1390,8 @@ class FPDF:
         else:
             self.buffer+=str(s)+"\n"
 
-    def Interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
-        "Código Entrelazado 2 de 5 (numérico), la longitud debe ser par, sino agrega un 0"
+    def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
+        "Barcode I2of5 (numeric), adds a 0 if odd lenght"
         narrow = w / 3.0 
         wide = w
         
@@ -1452,6 +1449,7 @@ class FPDF:
 
 
     def code39(self, txt, x, y, w=1.5, h=5.0):
+        "Barcode 3of9"
         wide = w
         narrow = w /3.0
         gap = narrow
