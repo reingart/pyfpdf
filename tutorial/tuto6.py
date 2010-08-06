@@ -14,7 +14,7 @@ class PDF(FPDF):
 
 		def write_html(self, html):
 			#HTML parser
-			html=str_replace("\n",' ',html)
+			html=html.replace("\n",' ')
 			a=re.split('<(.*?)>',html)
 			for i,e in enumerate(a):
 				if(i%2==0):
@@ -26,16 +26,16 @@ class PDF(FPDF):
 				else:
 					#Tag
 					if(e[0]=='/'):
-						self.close_tag(strtoupper(substr(e,1)))
+						self.close_tag(substr(e,1).upper())
 					else:
 						#Extract attributes
 						attr={}
 						a2=e.split(' ')
-						tag=strtoupper(a2.pop(0))
+						tag=a2.pop(0).upper()
 						for v in a2:
 							a3 = re.findall('''^([^=]*)=["']?([^"']*)["']?''',v)[0]
 							if a3:
-								attr[strtoupper(a3[0])]=a3[1]
+								attr[a3[0].upper()]=a3[1]
 						self.open_tag(tag,attr)
 
 		def open_tag(self, tag,attr):

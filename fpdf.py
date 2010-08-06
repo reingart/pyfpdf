@@ -12,7 +12,6 @@
 # * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT      *
 # *******************************************************************************/
 
-from PHPutils import *
 from datetime import datetime
 import math
 import os, sys, zlib, struct
@@ -22,6 +21,16 @@ try:
     import Image
 except ImportError:
     Image = None
+
+def substr(s, start, length=-1):
+	if length < 0:
+		length=len(s)-start
+	return s[start:start+length]
+
+def substr_count(haystack, needle, offset=0, length=None):
+	return haystack.count(needle,offset)
+
+def sprintf(fmt, *args): return fmt % args
 
 # Global variables
 FPDF_VERSION='1.54'
@@ -136,8 +145,8 @@ class FPDF:
         else:
             self.error('Incorrect unit: '+unit)
         #Page format
-        if(is_string(format)):
-            format=strtolower(format)
+        if(isinstance(format,basestring)):
+            format=format.lower()
             if(format=='a3'):
                 format=(841.89,1190.55)
             elif(format=='a4'):
@@ -158,7 +167,7 @@ class FPDF:
         self.fw=self.fw_pt/self.k
         self.fh=self.fh_pt/self.k
         #Page orientation
-        orientation=strtolower(orientation)
+        orientation=orientation.lower()
         if(orientation=='p' or orientation=='portrait'):
             self.def_orientation='P'
             self.w_pt=self.fw_pt
@@ -218,7 +227,7 @@ class FPDF:
 
     def set_display_mode(self, zoom,layout='continuous'):
         #Set display mode in viewer
-        if(zoom=='fullpage' or zoom=='fullwidth' or zoom=='real' or zoom=='default' or not is_string(zoom)):
+        if(zoom=='fullpage' or zoom=='fullwidth' or zoom=='real' or zoom=='default' or not isinstance(zoom,basestring)):
             self.zoom_mode=zoom
         else:
             self.error('Incorrect zoom display mode: '+zoom)
@@ -253,7 +262,7 @@ class FPDF:
 
     def alias_nb_pages(self, alias='{nb}'):
         #Define an alias for total number of pages
-        self.StrAliasNbPages=alias
+        self.str_alias_nb_pages=alias
 
     def error(self, msg):
         #Fatal error
@@ -408,13 +417,13 @@ class FPDF:
 
     def add_font(self, family,style='',fname=''):
         #Add a TrueType or Type1 font
-        family=strtolower(family)
+        family=family.lower()
         if(fname==''):
-            fname=str_replace(' ','',family).lower(style)+'.font'
+            fname=family.replace(' ','')+style.lower()+'.font'
         fname=os.path.join(FPDF_FONT_DIR,fname)
         if(family=='arial'):
             family='helvetica'
-        style=strtoupper(style)
+        style=style.upper()
         if(style=='IB'):
             style='BI'
         fontkey=family+style
@@ -445,17 +454,17 @@ class FPDF:
 
     def set_font(self, family,style='',size=0):
         #Select a font; size given in points
-        family=strtolower(family)
+        family=family.lower()
         if(family==''):
             family=self.font_family
         if(family=='arial'):
             family='helvetica'
         elif(family=='symbol' or family=='zapfdingbats'):
             style=''
-        style=strtoupper(style)
-        if(strpos(style,'U')!=-1):
+        style=style.upper()
+        if('U' in style):
             self.underline=1
-            style=str_replace('U','',style)
+            style=style.replace('U','')
         else:
             self.underline=0
         if(style=='IB'):
@@ -474,7 +483,7 @@ class FPDF:
                     #Load metric file
                     name=os.path.join(FPDF_FONT_DIR,family)
                     if(family=='times' or family=='helvetica'):
-                        name+=strtolower(style)
+                        name+=style.lower()
                     execfile(name+'.font')
                     if fontkey not in fpdf_charwidths:
                         self.error('Could not include font metric file for'+fontkey)
@@ -577,16 +586,16 @@ class FPDF:
             else:
                 op='S'
             s=sprintf('%.2f %.2f %.2f %.2f re %s ',self.x*k,(self.h-self.y)*k,w*k,-h*k,op)
-        if(is_string(border)):
+        if(isinstance(border,basestring)):
             x=self.x
             y=self.y
-            if(strpos(border,'L')!=-1):
+            if('L' in border):
                 s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(self.h-y)*k,x*k,(self.h-(y+h))*k)
-            if(strpos(border,'T')!=-1):
+            if('T' in border):
                 s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(self.h-y)*k,(x+w)*k,(self.h-y)*k)
-            if(strpos(border,'R')!=-1):
+            if('R' in border):
                 s+=sprintf('%.2f %.2f m %.2f %.2f l S ',(x+w)*k,(self.h-y)*k,(x+w)*k,(self.h-(y+h))*k)
-            if(strpos(border,'B')!=-1):
+            if('B' in border):
                 s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(self.h-(y+h))*k,(x+w)*k,(self.h-(y+h))*k)
         if(txt!=''):
             if(align=='R'):
@@ -597,7 +606,7 @@ class FPDF:
                 dx=self.c_margin
             if(self.color_flag):
                 s+='q '+self.text_color+' '
-            txt2=str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',txt)))
+            txt2=txt.replace(')','\\)').replace('(','\\(').replace('\\','\\\\')
             s+=sprintf('BT %.2f %.2f Td (%s) Tj ET',(self.x+dx)*k,(self.h-(self.y+.5*h+.3*self.font_size))*k,txt2)
             if(self.underline):
                 s+=' '+self._dounderline(self.x+dx,self.y+.5*h+.3*self.font_size,txt)
@@ -623,7 +632,7 @@ class FPDF:
         if(w==0):
             w=self.w-self.r_margin-self.x
         wmax=(w-2*self.c_margin)*1000.0/self.font_size
-        s=str_replace("\r",'',txt)
+        s=txt.replace("\r",'')
         nb=len(s)
         if(nb>0 and s[nb-1]=="\n"):
             nb-=1
@@ -635,11 +644,11 @@ class FPDF:
                 b2='LR'
             else:
                 b2=''
-                if(strpos(border,'L')!=-1):
+                if('L' in border):
                     b2+='L'
-                if(strpos(border,'R')!=-1):
+                if('R' in border):
                     b2+='R'
-                if (strpos(border,'T')!=-1):
+                if ('T' in border):
                     b=b2+'T'
                 else:
                     b=b2
@@ -712,7 +721,7 @@ class FPDF:
         if(self.ws>0):
             self.ws=0
             self._out('0 Tw')
-        if(border and strpos(border,'B')!=-1):
+        if(border and 'B' in border):
             b+='B'
         if not split_only:
             self.cell(w,h,substr(s,j,i-j),b,2,align,fill)
@@ -726,7 +735,7 @@ class FPDF:
         cw=self.current_font['cw']
         w=self.w-self.r_margin-self.x
         wmax=(w-2*self.c_margin)*1000.0/self.font_size
-        s=str_replace("\r",'',txt)
+        s=txt.replace("\r",'')
         nb=len(s)
         sep=-1
         i=0
@@ -789,11 +798,11 @@ class FPDF:
         if not name in self.images:
             #First use of image, get info
             if(type==''):
-                pos=strrpos(name,'.')
+                pos=name.rfind('.')
                 if(not pos):
                     self.error('image file has no extension and no type was specified: '+name)
                 type=substr(name,pos+1)
-            type=strtolower(type)
+            type=type.lower()
             if(type=='jpg' or type=='jpeg'):
                 info=self._parsejpg(name)
             elif(type=='png'):
@@ -824,7 +833,7 @@ class FPDF:
     def ln(self, h=''):
         #line feed; default value is last cell height
         self.x=self.l_margin
-        if(is_string(h)):
+        if(isinstance(h, basestring)):
             self.y+=self.lasth
         else:
             self.y+=h
@@ -863,12 +872,12 @@ class FPDF:
         if(self.state<3):
             self.close()
         #Normalize parameters
-        if(is_bool(dest)):
+        if(type(dest)==type(bool())):
             if dest:
                 dest='D'
             else:
                 dest='F'
-        dest=strtoupper(dest)
+        dest=dest.upper()
         if(dest==''):
             if(name==''):
                 name='doc.pdf'
@@ -876,29 +885,8 @@ class FPDF:
             else:
                 dest='F'
         if dest=='I':
-            #Send to standard output
-            #~ if(ob_get_contents()):
-                #~ self.error('Some data has already been output, can\'t send PDF file')
-            #~ if(php_sapi_name()!='cli'):
-                #~ #We send to a browser
-                #~ header('Content-Type: application/pdf')
-                #~ if(headers_sent()):
-                    #~ self.error('Some data has already been output to browser, can\'t send PDF file')
-                #~ header('Content-Length: '+len(self.buffer))
-                #~ header('Content-disposition: inline; filename="'+name+'"')
             print self.buffer
         elif dest=='D':
-            #Download file
-            #~ if(ob_get_contents()):
-                #~ self.error('Some data has already been output, can\'t send PDF file')
-            #~ if(isset(_SERVER['HTTP_USER_AGENT']) and strpos(_SERVER['HTTP_USER_AGENT'],'MSIE')):
-                #~ header('Content-Type: application/force-download')
-            #~ else:
-                #~ header('Content-Type: application/octet-stream')
-            #~ if(headers_sent()):
-                #~ self.error('Some data has already been output to browser, can\'t send PDF file')
-            #~ header('Content-Length: '+len(self.buffer))
-            #~ header('Content-disposition: attachment; filename="'+name+'"')
             print self.buffer
         elif dest=='F':
             #Save to local file
@@ -933,10 +921,10 @@ class FPDF:
 
     def _putpages(self):
         nb=self.page
-        if hasattr(self,'StrAliasNbPages'):
+        if hasattr(self,'str_alias_nb_pages'):
             #Replace number of pages
             for n in xrange(1,nb+1):
-                self.pages[n]=str_replace(self.StrAliasNbPages,str(nb),self.pages[n])
+                self.pages[n]=self.pages[n].replace(self.str_alias_nb_pages,str(nb))
         if(self.def_orientation=='P'):
             w_pt=self.fw_pt
             h_pt=self.fh_pt
@@ -961,7 +949,7 @@ class FPDF:
                 for pl in self.page_links[n]:
                     rect=sprintf('%.2f %.2f %.2f %.2f',pl[0],pl[1],pl[0]+pl[2],pl[1]-pl[3])
                     annots+='<</Type /Annot /Subtype /Link /Rect ['+rect+'] /Border [0 0 0] '
-                    if(is_string(pl[4])):
+                    if(isinstance(pl[4],basestring)):
                         annots+='/A <</S /URI /URI '+self._textstring(pl[4])+'>>>>'
                     else:
                         l=self.links[pl[4]]
@@ -1085,7 +1073,7 @@ class FPDF:
                 self._out('endobj')
             else:
                 #Allow for additional types
-                mtd='_put'+strtolower(type)
+                mtd='_put'+type.lower()
                 if(not method_exists(self,mtd)):
                     self.error('Unsupported font type: '+type)
                 self.mtd(font)
@@ -1180,7 +1168,7 @@ class FPDF:
             self._out('/OpenAction [3 0 R /FitH null]')
         elif(self.zoom_mode=='real'):
             self._out('/OpenAction [3 0 R /XYZ null null 1]')
-        elif(not is_string(self.zoom_mode)):
+        elif(not isinstance(self.zoom_mode,basestring)):
             self._out('/OpenAction [3 0 R /XYZ null null '+(self.zoom_mode/100)+']')
         if(self.layout_mode=='single'):
             self._out('/PageLayout /SinglePage')
@@ -1241,7 +1229,7 @@ class FPDF:
         if(not orientation):
             orientation=self.def_orientation
         else:
-            orientation=strtoupper(orientation[0])
+            orientation=orientation[0].upper()
             if(orientation!=self.def_orientation):
                 self.orientation_changes[self.page]=1
         if(orientation!=self.cur_orientation):
@@ -1361,7 +1349,7 @@ class FPDF:
                 elif(ct==2):
                     trns=[ord(substr(t,1,1)),ord(substr(t,3,1)),ord(substr(t,5,1))]
                 else:
-                    pos=strpos(t,'\x00')
+                    pos=t.find('\x00')
                     if(pos!=-1):
                         trns=[pos,]
                 f.read(4)
@@ -1391,7 +1379,7 @@ class FPDF:
 
     def _escape(self, s):
         #Add \ before \, ( and )
-        return str_replace(')','\\)',str_replace('(','\\(',str_replace('\\','\\\\',s)))
+        return s.replace(')','\\)').replace('(','\\(').replace('\\','\\\\')
 
     def _putstream(self, s):
         self._out('stream')
