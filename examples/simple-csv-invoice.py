@@ -1,7 +1,7 @@
 # -*- coding: iso-8859-1 -*-
 import sys,os
 sys.path.append("..")
-import FPDF
+import pyfpdf
 
 cliente = {'nombre':'juan perez','cuit':'00-0000000-0','inscripto':True}
 items = [
@@ -10,13 +10,13 @@ items = [
     {'cantidad':1,'descripcion':'Varios','precio':0.50},
 ]
 
-pdf = FPDF.FPDF()
-pdf.AddPage();
-pdf.SetFont('Arial','B',16);
-for linea in open("factura-csv-simple.txt").readlines():
+pdf = pyfpdf.FPDF()
+pdf.add_page();
+pdf.set_font('Arial','B',16);
+for linea in open("simple-csv-invoice.txt").readlines():
    args = eval(linea)
    print linea
-   pdf.Text(x=args[0],y=args[1],txt=str(args[2]).decode('latin1'));
+   pdf.text(x=args[0],y=args[1],txt=str(args[2]).decode('latin1'));
 
-pdf.Output(r"c:\factura.pdf","F")
+pdf.output(r"c:\factura.pdf","F")
 os.system(r"c:\factura.pdf")

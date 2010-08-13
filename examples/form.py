@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 import sys,os
-from PyFPDF import FPDF
+from pyfpdf import FPDF
 
 class Form:
     def __init__(self, infile):
@@ -31,13 +31,13 @@ class Form:
 
     def render(self, outfile):
         pdf = FPDF()
-        pdf.AddPage();
-        pdf.SetFont('Arial','B',16);
+        pdf.add_page();
+        pdf.set_font('Arial','B',16);
 
         for field in self.fields.values():
             self.handlers[field['type'].upper()](pdf, **field)
 
-        pdf.Output(outfile,"F")
+        pdf.output(outfile,"F")
         
     def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10, 
              bold=False, italic=False, underline=False, align="", *args, **kwargs):
@@ -50,32 +50,32 @@ class Form:
             if italic: style += "I"
             if underline: style += "U"
             align = {'I':'L','D':'R','C':'C','':'',None:None}[align]
-            pdf.SetFont(font,style,size)
+            pdf.set_font(font,style,size)
             ##m_k = 72 / 2.54
             ##h = (size/m_k)
-            pdf.SetXY(x1,y1)
-            pdf.Cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align)
+            pdf.set_xy(x1,y1)
+            pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align)
             #pdf.Text(x=x1,y=y1,txt=text)
 
     def line(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, *args, **kwargs):
-        pdf.SetLineWidth(size)
-        pdf.Line(x1, y1, x2, y2)
+        pdf.set_line_width(size)
+        pdf.line(x1, y1, x2, y2)
 
     def rect(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, *args, **kwargs):
-        pdf.SetLineWidth(size)
-        pdf.Rect(x1, y1, x2-x1, y2-y1)
+        pdf.set_line_width(size)
+        pdf.rect(x1, y1, x2-x1, y2-y1)
 
     def image(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', *args,**kwargs):
-        pdf.Image(text,x1,y1,w=x2-x1,h=y2-y1,type='',link='')
+        pdf.image(text,x1,y1,w=x2-x1,h=y2-y1,type='',link='')
 
     def barcode(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
              *args, **kwargs):
         font = font.lower().strip()
         if font == 'interleaved 2of5 nt':
-            pdf.Interleaved2of5(text,x1,y1,w=size)
+            pdf.interleaved2of5(text,x1,y1,w=size)
 
 if __name__ == "__main__":
-    f = Form("factura.csv")
+    f = Form("invoice.csv")
     f.set("EMPRESA","Saraza")
     f.set("logo","logo.png")
     f.render("./factura.pdf")
