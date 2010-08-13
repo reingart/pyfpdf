@@ -78,8 +78,8 @@ if __name__ == "__main__":
     f = Form("invoice.csv")
     f.set("EMPRESA","Saraza")
     f.set("logo","logo.png")
-    f.render("./factura.pdf")
+    f.render("./invoice.pdf")
     if sys.platform.startswith("linux"):
-        os.system("evince ./factura.pdf")
+        os.system("evince ./invoice.pdf")
     else:
-        os.system("./factura.pdf")
+        os.system("./invoice.pdf")
