@@ -27,17 +27,27 @@ class HTML2FPDF(HTMLParser):
         self.indent = 0
         self.bullet = []
         self.set_font("times", 12)
+        self.table=None
+        self.td=None
 
-    def handle_data(self, data):
-        if(self.href):
-            self.put_link(self.href,data)
+    def handle_data(self, txt):
+        if self.href:
+            self.put_link(self.href,txt)
+        elif self.td is not None:
+            w = int(self.td.get('width',240)) / 6
+            h = int(self.td.get('height',24)) / 4
+            self.table['h'] = h
+            align = self.td.get('align', 'L')[0].upper()
+            bgcolor = hex2dec(self.td.get('bgcolor', '#FFFFFF'))
+            border = int(self.table.get('border', 0))
+            self.pdf.cell(w,h,txt,border,0,align, bgcolor)
         elif self.align:
-            print "cell", data, "*"
-            self.pdf.cell(0,self.h,data,0,1,self.aling[0].upper())
+            print "cell", txt, "*"
+            self.pdf.cell(0,self.h,txt,0,1,self.aling[0].upper())
         else:
-            data = data.replace("\n"," ")
-            print "write", data, "*"
-            self.pdf.write(self.h,data)
+            txt = txt.replace("\n"," ")
+            print "write", txt, "*"
+            self.pdf.write(self.h,txt)
 
     def handle_starttag(self, tag, attrs):
         if attrs:
@@ -109,6 +119,13 @@ class HTML2FPDF(HTMLParser):
                 face = attrs.get('size')
                 self.pdf.set_font('', size)
                 self.font_size = size
+        if tag=='table':
+            self.table = dict([(k.lower(), v) for k,v in attrs.items()])
+            self.pdf.ln()
+        if tag=='tr':
+            pass
+        if tag=='td':
+            self.td = dict([(k.lower(), v) for k,v in attrs.items()])
         if tag=='img':
             if 'src' in attrs:
                 x = self.pdf.get_x()
@@ -148,6 +165,13 @@ class HTML2FPDF(HTMLParser):
         if tag in ('ul', 'ol'):
             self.indent-=1
             self.bullet.pop()
+        if tag=='table':
+            self.table = None
+        if tag=='tr':
+            h = self.table['h']
+            self.pdf.ln(h)
+        if tag=='td':
+            self.td = None
         if tag=='font':
             if self.color:
                 self.pdf.set_text_color(0,0,0)
@@ -222,7 +246,18 @@ or on an image: click on the logo.<br>
 <li>option 2</li>
 </ol>
 <li>option 3</li>
-</ul>"""
+</ul>
+
+<table border="1">
+<tr>
+<td width="200" height="30">cell 1</td><td width="200" height="30" bgcolor="#D0D0FF">cell 2</td>
+</tr>
+<tr>
+<td width="200" height="30">cell 3</td><td width="200" height="30">cell 4</td>
+</tr>
+</table>
+
+"""
 
 pdf=FPDF()
 #First page
