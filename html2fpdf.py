@@ -6,10 +6,11 @@ def px2mm(px):
     return int(px)*25.4/72.0
 
 def hex2dec(color = "#000000"):
-    r = int(color[1:3], 16)
-    g = int(color[3:5], 16)
-    b = int(color[5:7], 16)
-    return r, g, b
+    if color:
+        r = int(color[1:3], 16)
+        g = int(color[3:5], 16)
+        b = int(color[5:7], 16)
+        return r, g, b
 
 class HTML2FPDF(HTMLParser):
     "Render basic HTML to FPDF"
@@ -27,20 +28,71 @@ class HTML2FPDF(HTMLParser):
         self.indent = 0
         self.bullet = []
         self.set_font("times", 12)
-        self.table=None
-        self.td=None
+        self.table = None           # table attributes
+        self.table_col_width = None # column (header) widths
+        self.table_col_index = None # current column index
+        self.td = None              # cell attributes
+        self.th = False             # header enabled
+        self.tr = None
+        self.theader = None           # table header cells
+        self.tfooter = None           # table footer cells
+        self.thead = None
+        self.tfoot = None
+        self.theader_out = self.tfooter_out = False
+        
+    def width2mm(self, length):
+        if length[-1]=='%':
+            total = self.pdf.w - self.pdf.r_margin - self.pdf.l_margin
+            return int(length[:-1]) * total / 101.0
+        else:
+            return int(length) / 6.0
 
     def handle_data(self, txt):
         if self.href:
             self.put_link(self.href,txt)
         elif self.td is not None:
-            w = int(self.td.get('width',240)) / 6
-            h = int(self.td.get('height',24)) / 4
-            self.table['h'] = h
-            align = self.td.get('align', 'L')[0].upper()
-            bgcolor = hex2dec(self.td.get('bgcolor', '#FFFFFF'))
+            if 'width' not in self.td and 'colspan' not in self.td:
+                l = [self.table_col_width[self.table_col_index]]
+            elif 'colspan' in self.td:
+                i = self.table_col_index
+                colspan = int(self.td['colspan'])
+                l = self.table_col_width[i:i+colspan]
+            else:
+                l = [self.td.get('width','240')]
+            w = sum([self.width2mm(lenght) for lenght in l])
+            h = int(self.td.get('height', 0)) / 4 or self.h*1.30
+            print "h", h
+            self.table_h = h
             border = int(self.table.get('border', 0))
-            self.pdf.cell(w,h,txt,border,0,align, bgcolor)
+            if not self.th:
+                align = self.td.get('align', 'L')[0].upper()
+                border = border and 'LR'
+            else:
+                self.set_style('B',True)
+                align = 'C'
+            bgcolor = hex2dec(self.td.get('bgcolor', self.tr.get('bgcolor', '')))
+            if bgcolor:
+                fill_color = self.pdf.fill_color
+                self.pdf.set_fill_color(*bgcolor)
+                self.pdf.rect(self.pdf.x, self.pdf.y, w, h, 'F')
+                self.pdf.fill_color = fill_color
+            if self.thead is not None:
+                self.theader.append((w,h,txt,border,0,align, bgcolor and 1))
+            if self.tfoot is not None:
+                self.tfooter.append((w,h,txt,border,0,align, bgcolor and 1))            
+            # check if reached end of page, add table footer and header:
+            height = h + (self.tfooter and self.tfooter[0][1] or 0)
+            if self.pdf.y+height>self.pdf.page_break_trigger and not self.th:
+                self.output_table_footer()
+                self.pdf.add_page()
+                self.theader_out = self.tfooter_out = False
+            if self.tfoot is None and self.thead is None:
+                if not self.theader_out: 
+                    self.output_table_header()
+                self.pdf.cell(w,h,txt,border,0,align, bgcolor)
+
+        elif self.table is not None:
+            pass
         elif self.align:
             print "cell", txt, "*"
             self.pdf.cell(0,self.h,txt,0,1,self.aling[0].upper())
@@ -49,9 +101,34 @@ class HTML2FPDF(HTMLParser):
             print "write", txt, "*"
             self.pdf.write(self.h,txt)
 
+    def output_table_header(self):
+        if self.theader:
+            b = self.b
+            self.set_style('B',True)
+            for cell in self.theader:
+                self.pdf.cell(*cell)
+            self.set_style('B',b)
+            self.pdf.ln(self.theader[0][1])
+        self.theader_out = True
+        
+    def output_table_footer(self):
+        if self.tfooter:
+            self.output_table_sep()
+            for cell in self.tfooter:
+                self.pdf.cell(*cell)
+            self.pdf.ln(self.tfooter[0][1])
+            self.output_table_sep()
+        self.tfooter_out = True
+            
+    def output_table_sep(self):
+        x1 = self.pdf.x
+        y1 = self.pdf.y
+        w = sum([self.width2mm(lenght) for lenght in self.table_col_width])
+        self.pdf.line(x1,y1,x1+w,y1)
+
+
     def handle_starttag(self, tag, attrs):
-        if attrs:
-            attrs = dict(attrs)
+        attrs = dict(attrs)
         print "STARTTAG", tag, attrs
         if tag=='b' or tag=='i' or tag=='u':
             self.set_style(tag,1)
@@ -121,11 +198,26 @@ class HTML2FPDF(HTMLParser):
                 self.font_size = size
         if tag=='table':
             self.table = dict([(k.lower(), v) for k,v in attrs.items()])
+            self.table_col_width = []
+            self.theader = []
+            self.tfooter = []
+            self.thead = None
+            self.tfoot = None
             self.pdf.ln()
         if tag=='tr':
-            pass
+            self.tr = dict([(k.lower(), v) for k,v in attrs.items()])
+            self.table_col_index = 0
         if tag=='td':
             self.td = dict([(k.lower(), v) for k,v in attrs.items()])
+        if tag=='th':
+            self.td = dict([(k.lower(), v) for k,v in attrs.items()])
+            self.th = True
+            if self.td['width']:
+                self.table_col_width.append(self.td['width'])
+        if tag=='thead':
+            self.thead = {}
+        if tag=='tfoot':
+            self.tfoot = {}
         if tag=='img':
             if 'src' in attrs:
                 x = self.pdf.get_x()
@@ -166,12 +258,32 @@ class HTML2FPDF(HTMLParser):
             self.indent-=1
             self.bullet.pop()
         if tag=='table':
+            if not self.tfooter_out:
+                self.output_table_footer()
             self.table = None
+            self.th = False
+            self.theader = None
+            self.tfooter = None
+            self.pdf.ln()
+        if tag=='thead':
+            self.thead = None
+        if tag=='tfoot':
+            self.tfoot = None
+        if tag=='tbody':
+            # draw a line separator between table bodies
+            self.output_table_sep()
         if tag=='tr':
-            h = self.table['h']
-            self.pdf.ln(h)
-        if tag=='td':
+            h = self.table_h
+            if self.tfoot is None:
+                self.pdf.ln(h)
+            self.tr = None
+        if tag=='td' or tag=='th':
+            if self.th:
+                print "revert style"
+                self.set_style('B', False) # revert style
+            self.table_col_index += int(self.td.get('colspan','1'))
             self.td = None
+            self.th = False
         if tag=='font':
             if self.color:
                 self.pdf.set_text_color(0,0,0)
@@ -249,14 +361,31 @@ or on an image: click on the logo.<br>
 </ul>
 
 <table border="1">
+<thead>
+<tr><th width="30%">Header 1</th><th width="70%">header 2</th></tr>
+</thead>
+<tfoot>
+<tr><td>footer 1</td><td>footer 2</td></tr>
+</tfoot>
+<tbody>
+<tr><td>cell 1</td><td>cell 2</td></tr>
 <tr>
-<td width="200" height="30">cell 1</td><td width="200" height="30" bgcolor="#D0D0FF">cell 2</td>
+<td width="30%">cell 1</td><td width="70%" bgcolor="#D0D0FF" align='right'>cell 2</td>
 </tr>
+</tbody>
+<tbody>
 <tr>
-<td width="200" height="30">cell 3</td><td width="200" height="30">cell 4</td>
+<td colspan="2">cell spanned</td>
 </tr>
+</tbody>
+<tbody>
+""" + """<tr bgcolor="#F0F0F0">
+<td>cell 3</td><td>cell 4</td>
+</tr><tr bgcolor="#FFFFFF">
+<td>cell 5</td><td>cell 6</td>
+</tr>""" * 200 + """
+</tbody>
 </table>
-
 """
 
 pdf=FPDF()
