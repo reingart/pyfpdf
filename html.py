@@ -1,4 +1,10 @@
 # -*- coding: latin-1 -*-
+
+"HTML Renderer for FPDF.py"
+__author__ = "Mariano Reingart <reingart@gmail.com>"
+
+# Inspired by tuto5.py and several examples from fpdf.org
+
 from fpdf import FPDF
 from HTMLParser import HTMLParser
 
@@ -48,9 +54,7 @@ class HTML2FPDF(HTMLParser):
             return int(length) / 6.0
 
     def handle_data(self, txt):
-        if self.href:
-            self.put_link(self.href,txt)
-        elif self.td is not None:
+        if self.td is not None: # drawing a table?
             if 'width' not in self.td and 'colspan' not in self.td:
                 l = [self.table_col_width[self.table_col_index]]
             elif 'colspan' in self.td:
@@ -71,17 +75,13 @@ class HTML2FPDF(HTMLParser):
                 self.set_style('B',True)
                 align = 'C'
             bgcolor = hex2dec(self.td.get('bgcolor', self.tr.get('bgcolor', '')))
-            if bgcolor:
-                fill_color = self.pdf.fill_color
-                self.pdf.set_fill_color(*bgcolor)
-                self.pdf.rect(self.pdf.x, self.pdf.y, w, h, 'F')
-                self.pdf.fill_color = fill_color
+            # parsing table header/footer (drawn later):
             if self.thead is not None:
-                self.theader.append((w,h,txt,border,0,align, bgcolor and 1))
+                self.theader.append(((w,h,txt,border,0,align), bgcolor))
             if self.tfoot is not None:
-                self.tfooter.append((w,h,txt,border,0,align, bgcolor and 1))            
+                self.tfooter.append(((w,h,txt,border,0,align), bgcolor))
             # check if reached end of page, add table footer and header:
-            height = h + (self.tfooter and self.tfooter[0][1] or 0)
+            height = h + (self.tfooter and self.tfooter[0][0][1] or 0)
             if self.pdf.y+height>self.pdf.page_break_trigger and not self.th:
                 self.output_table_footer()
                 self.pdf.add_page()
@@ -89,34 +89,48 @@ class HTML2FPDF(HTMLParser):
             if self.tfoot is None and self.thead is None:
                 if not self.theader_out: 
                     self.output_table_header()
-                self.pdf.cell(w,h,txt,border,0,align, bgcolor)
-
+                self.box_shadow(w, h, bgcolor)
+                self.pdf.cell(w,h,txt,border,0,align)
         elif self.table is not None:
+            # ignore anything else than td inside a table 
             pass
         elif self.align:
             print "cell", txt, "*"
-            self.pdf.cell(0,self.h,txt,0,1,self.aling[0].upper())
+            self.pdf.cell(0,self.h,txt,0,1,self.aling[0].upper(), self.href)
         else:
             txt = txt.replace("\n"," ")
-            print "write", txt, "*"
-            self.pdf.write(self.h,txt)
+            if self.href:
+                self.put_link(self.href,txt)
+            else:
+                print "write", txt, "*"
+                self.pdf.write(self.h,txt)
+
+    def box_shadow(self, w, h, bgcolor):
+        print "box_shadow", w, h, bgcolor
+        if bgcolor:
+            fill_color = self.pdf.fill_color
+            self.pdf.set_fill_color(*bgcolor)
+            self.pdf.rect(self.pdf.x, self.pdf.y, w, h, 'F')
+            self.pdf.fill_color = fill_color
 
     def output_table_header(self):
         if self.theader:
             b = self.b
             self.set_style('B',True)
-            for cell in self.theader:
+            for cell, bgcolor in self.theader:
+                self.box_shadow(cell[0], cell[1], bgcolor)
                 self.pdf.cell(*cell)
             self.set_style('B',b)
-            self.pdf.ln(self.theader[0][1])
+            self.pdf.ln(self.theader[0][0][1])
         self.theader_out = True
         
     def output_table_footer(self):
         if self.tfooter:
             self.output_table_sep()
-            for cell in self.tfooter:
+            for cell, bgcolor in self.tfooter:
+                self.box_shadow(cell[0], cell[1], bgcolor)
                 self.pdf.cell(*cell)
-            self.pdf.ln(self.tfooter[0][1])
+            self.pdf.ln(self.tfooter[0][0][1])
             self.output_table_sep()
         self.tfooter_out = True
             
@@ -140,22 +154,26 @@ class HTML2FPDF(HTMLParser):
             self.pdf.ln(5)
             if attrs:
                 self.align=attrs['align'].lower()
-        if tag=='h1':
+        if tag 'h1':
             self.pdf.ln(5)
             self.pdf.set_text_color(150,0,0)
             self.pdf.set_font_size(22)
+            if attrs: self.align = attrs.get('align')
         if tag=='h2':
             self.pdf.ln(5)
             self.pdf.set_font_size(18)
             self.set_style('U',True)
+            if attrs: self.align = attrs.get('align')
         if tag=='h3':
             self.pdf.ln(5)
             self.pdf.set_font_size(16)
             self.set_style('U',True)
+            if attrs: self.align = attrs.get('align')
         if tag=='h4':
             self.pdf.ln(5)
             self.pdf.set_text_color(102,0,0)
             self.pdf.set_font_size(14)
+            if attrs: self.align = attrs.get('align')
         if tag=='hr':
             self.put_line()
         if tag=='pre':
@@ -303,7 +321,7 @@ class HTML2FPDF(HTMLParser):
         self.pdf.set_font_size(self.font_size or 12)
         self.set_style('u', False)
         self.set_style('b', False)
-        self.set_style('b', False)
+        self.set_style('i', False)
         self.set_text_color()        
 
     def set_style(self, tag=None, enable=None):
@@ -340,8 +358,8 @@ class HTML2FPDF(HTMLParser):
         self.pdf.line(self.pdf.get_x(),self.pdf.get_y(),self.pdf.get_x()+187,self.pdf.get_y())
         self.pdf.ln(3)
 
-
-html="""
+if __name__=='__main__':
+    html="""
 <H1>html2fpdf</H1>
 <h2>Basic usage</h2>
 <p>You can now easily print text mixing different
@@ -352,32 +370,20 @@ or on an image: click on the logo.<br>
 <A HREF="http://www.fpdf.org">
     <img src="tutorial/logo.png" width="104" height="71"></A>
 <h3>Sample List</h3>
-<ul>
-<li>option 1</li>
-<ol>
-<li>option 2</li>
-</ol>
-<li>option 3</li>
-</ul>
+<ul><li>option 1</li>
+<ol><li>option 2</li></ol>
+<li>option 3</li></ul>
 
 <table border="1">
-<thead>
-<tr><th width="30%">Header 1</th><th width="70%">header 2</th></tr>
-</thead>
-<tfoot>
-<tr><td>footer 1</td><td>footer 2</td></tr>
-</tfoot>
+<thead><tr bgcolor="#A0A0A0"><th width="30%">Header 1</th><th width="70%">header 2</th></tr></thead>
+<tfoot><tr bgcolor="#E0E0E0"><td>footer 1</td><td>footer 2</td></tr></tfoot>
 <tbody>
 <tr><td>cell 1</td><td>cell 2</td></tr>
 <tr>
 <td width="30%">cell 1</td><td width="70%" bgcolor="#D0D0FF" align='right'>cell 2</td>
 </tr>
 </tbody>
-<tbody>
-<tr>
-<td colspan="2">cell spanned</td>
-</tr>
-</tbody>
+<tbody><tr><td colspan="2">cell spanned</td></tr></tbody>
 <tbody>
 """ + """<tr bgcolor="#F0F0F0">
 <td>cell 3</td><td>cell 4</td>
@@ -388,10 +394,10 @@ or on an image: click on the logo.<br>
 </table>
 """
 
-pdf=FPDF()
-#First page
-pdf.add_page()
-h2p = HTML2FPDF(pdf)
-h2p.feed(html)
-pdf.output('html.pdf','F')
+    pdf=FPDF()
+    #First page
+    pdf.add_page()
+    h2p = HTML2FPDF(pdf)
+    h2p.feed(html)
+    pdf.output('html.pdf','F')
 
