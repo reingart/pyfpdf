@@ -96,7 +96,7 @@ class HTML2FPDF(HTMLParser):
             pass
         elif self.align:
             print "cell", txt, "*"
-            self.pdf.cell(0,self.h,txt,0,1,self.aling[0].upper(), self.href)
+            self.pdf.cell(0,self.h,txt,0,1,self.align[0].upper(), self.href)
         else:
             txt = txt.replace("\n"," ")
             if self.href:
@@ -154,25 +154,11 @@ class HTML2FPDF(HTMLParser):
             self.pdf.ln(5)
             if attrs:
                 self.align=attrs['align'].lower()
-        if tag 'h1':
-            self.pdf.ln(5)
+        if tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
+            k = (2, 1.5, 1.17, 1, 0.83, 0.67)[int(tag[1])]
+            self.pdf.ln(5*k)
             self.pdf.set_text_color(150,0,0)
-            self.pdf.set_font_size(22)
-            if attrs: self.align = attrs.get('align')
-        if tag=='h2':
-            self.pdf.ln(5)
-            self.pdf.set_font_size(18)
-            self.set_style('U',True)
-            if attrs: self.align = attrs.get('align')
-        if tag=='h3':
-            self.pdf.ln(5)
-            self.pdf.set_font_size(16)
-            self.set_style('U',True)
-            if attrs: self.align = attrs.get('align')
-        if tag=='h4':
-            self.pdf.ln(5)
-            self.pdf.set_text_color(102,0,0)
-            self.pdf.set_font_size(14)
+            self.pdf.set_font_size(12 * k)
             if attrs: self.align = attrs.get('align')
         if tag=='hr':
             self.put_line()
@@ -242,11 +228,15 @@ class HTML2FPDF(HTMLParser):
                 y = self.pdf.get_y()
                 w = px2mm(attrs.get('width', 0))
                 h = px2mm(attrs.get('height',0))
+                if self.align[0].upper() == 'C':
+                    x = (self.pdf.w-x)/2.0 - w/2.0
                 self.pdf.image(attrs['src'], x, y, w, h, link=self.href)
                 self.pdf.set_x(x+w)
                 self.pdf.set_y(y+h)
         if tag=='b' or tag=='i' or tag=='u':
             self.set_style(tag, True)
+        if tag=='center':
+            self.align = 'Center'
 
     def handle_endtag(self, tag):
         #Closing tag
@@ -255,6 +245,7 @@ class HTML2FPDF(HTMLParser):
             self.pdf.ln(6)
             self.set_font()
             self.set_style()
+            self.align = None
         if tag=='pre':
             self.pdf.set_font(self.font or 'Times','',12)
             self.pdf.set_font_size(12)
@@ -309,6 +300,8 @@ class HTML2FPDF(HTMLParser):
             if self.font:
                 self.SetFont('Times','',12)
                 self.font = None
+        if tag=='center':
+            self.align = None
 
     def set_font(self, face=None, size=None):
         if face:
@@ -360,15 +353,16 @@ class HTML2FPDF(HTMLParser):
 
 if __name__=='__main__':
     html="""
-<H1>html2fpdf</H1>
+<H1 align="center">html2fpdf</H1>
 <h2>Basic usage</h2>
 <p>You can now easily print text mixing different
 styles : <B>bold</B>, <I>italic</I>, <U>underlined</U>, or
 <B><I><U>all at once</U></I></B>!<BR>You can also insert links
 on text, such as <A HREF="http://www.fpdf.org">www.fpdf.org</A>,
 or on an image: click on the logo.<br>
-<A HREF="http://www.fpdf.org">
-    <img src="tutorial/logo.png" width="104" height="71"></A>
+<center>
+<A HREF="http://www.fpdf.org"><img src="tutorial/logo.png" width="104" height="71"></A>
+</center>
 <h3>Sample List</h3>
 <ul><li>option 1</li>
 <ol><li>option 2</li></ol>
