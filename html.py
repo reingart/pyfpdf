@@ -49,6 +49,8 @@ class HTML2FPDF(HTMLParser):
     def width2mm(self, length):
         if length[-1]=='%':
             total = self.pdf.w - self.pdf.r_margin - self.pdf.l_margin
+            if self.table['width'][-1]=='%':
+                total *= int(self.table['width'][:-1])/100.0
             return int(length[:-1]) * total / 101.0
         else:
             return int(length) / 6.0
@@ -65,7 +67,6 @@ class HTML2FPDF(HTMLParser):
                 l = [self.td.get('width','240')]
             w = sum([self.width2mm(lenght) for lenght in l])
             h = int(self.td.get('height', 0)) / 4 or self.h*1.30
-            print "h", h
             self.table_h = h
             border = int(self.table.get('border', 0))
             if not self.th:
@@ -73,6 +74,7 @@ class HTML2FPDF(HTMLParser):
                 border = border and 'LR'
             else:
                 self.set_style('B',True)
+                border = border or 'B'
                 align = 'C'
             bgcolor = hex2dec(self.td.get('bgcolor', self.tr.get('bgcolor', '')))
             # parsing table header/footer (drawn later):
@@ -90,6 +92,7 @@ class HTML2FPDF(HTMLParser):
                 if not self.theader_out: 
                     self.output_table_header()
                 self.box_shadow(w, h, bgcolor)
+                print "td cell", self.pdf.x, w, txt, "*"
                 self.pdf.cell(w,h,txt,border,0,align)
         elif self.table is not None:
             # ignore anything else than td inside a table 
@@ -116,21 +119,25 @@ class HTML2FPDF(HTMLParser):
     def output_table_header(self):
         if self.theader:
             b = self.b
+            x = self.pdf.x
             self.set_style('B',True)
             for cell, bgcolor in self.theader:
                 self.box_shadow(cell[0], cell[1], bgcolor)
                 self.pdf.cell(*cell)
             self.set_style('B',b)
             self.pdf.ln(self.theader[0][0][1])
+            self.pdf.set_x(x)
         self.theader_out = True
         
     def output_table_footer(self):
         if self.tfooter:
+            x = self.pdf.x
             self.output_table_sep()
             for cell, bgcolor in self.tfooter:
                 self.box_shadow(cell[0], cell[1], bgcolor)
                 self.pdf.cell(*cell)
             self.pdf.ln(self.tfooter[0][0][1])
+            self.pdf.set_x(x)
             self.output_table_sep()
         self.tfooter_out = True
             
@@ -202,7 +209,14 @@ class HTML2FPDF(HTMLParser):
                 self.font_size = size
         if tag=='table':
             self.table = dict([(k.lower(), v) for k,v in attrs.items()])
+            if not 'width' in self.table:
+                self.table['width'] = '100%'
+            if self.table['width'][-1]=='%':
+                w = self.pdf.w - self.pdf.r_margin - self.pdf.l_margin
+                w *= int(self.table['width'][:-1])/100.0
+                self.table_offset = (self.pdf.w-w)/2.0
             self.table_col_width = []
+            self.theader_out = self.tfooter_out = False
             self.theader = []
             self.tfooter = []
             self.thead = None
@@ -211,6 +225,7 @@ class HTML2FPDF(HTMLParser):
         if tag=='tr':
             self.tr = dict([(k.lower(), v) for k,v in attrs.items()])
             self.table_col_index = 0
+            self.pdf.set_x(self.table_offset)
         if tag=='td':
             self.td = dict([(k.lower(), v) for k,v in attrs.items()])
         if tag=='th':
@@ -280,6 +295,7 @@ class HTML2FPDF(HTMLParser):
             self.tfoot = None
         if tag=='tbody':
             # draw a line separator between table bodies
+            self.pdf.set_x(self.table_offset)
             self.output_table_sep()
         if tag=='tr':
             h = self.table_h
@@ -367,6 +383,15 @@ or on an image: click on the logo.<br>
 <ul><li>option 1</li>
 <ol><li>option 2</li></ol>
 <li>option 3</li></ul>
+
+<table border="0" align="center" width="50%">
+<thead><tr><th width="30%">Header 1</th><th width="70%">header 2</th></tr></thead>
+<tbody>
+<tr><td>cell 1</td><td>cell 2</td></tr>
+<tr><td>cell 2</td><td>cell 3</td></tr>
+</tbody>
+</table>
+
 
 <table border="1">
 <thead><tr bgcolor="#A0A0A0"><th width="30%">Header 1</th><th width="70%">header 2</th></tr></thead>
