@@ -3,7 +3,7 @@
 "HTML Renderer for FPDF.py"
 __author__ = "Mariano Reingart <reingart@gmail.com>"
 
-# Inspired by tuto5.py and several examples from fpdf.org
+# Inspired by tuto5.py and several examples from fpdf.org, html2fpdf, etc.
 
 from fpdf import FPDF
 from HTMLParser import HTMLParser
