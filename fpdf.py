@@ -603,7 +603,7 @@ class FPDF:
                 dx=self.c_margin
             if(self.color_flag):
                 s+='q '+self.text_color+' '
-            txt2=txt.replace(')','\\)').replace('(','\\(').replace('\\','\\\\')
+            txt2=txt.replace('\\','\\\\').replace(')','\\)').replace('(','\\(')
             s+=sprintf('BT %.2f %.2f Td (%s) Tj ET',(self.x+dx)*k,(self.h-(self.y+.5*h+.3*self.font_size))*k,txt2)
             if(self.underline):
                 s+=' '+self._dounderline(self.x+dx,self.y+.5*h+.3*self.font_size,txt)
@@ -1376,7 +1376,7 @@ class FPDF:
 
     def _escape(self, s):
         #Add \ before \, ( and )
-        return s.replace(')','\\)').replace('(','\\(').replace('\\','\\\\')
+        return s.replace('\\','\\\\').replace(')','\\)').replace('(','\\(')
 
     def _putstream(self, s):
         self._out('stream')
