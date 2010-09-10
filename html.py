@@ -369,6 +369,12 @@ class HTML2FPDF(HTMLParser):
         self.pdf.line(self.pdf.get_x(),self.pdf.get_y(),self.pdf.get_x()+187,self.pdf.get_y())
         self.pdf.ln(3)
 
+class HTMLMixin():
+    def write_html(self, text):
+        "Parse HTML and convert it to PDF"
+        h2p = HTML2FPDF(self)
+        h2p.feed(html)
+
 if __name__=='__main__':
     html="""
 <H1 align="center">html2fpdf</H1>
@@ -415,10 +421,25 @@ or on an image: click on the logo.<br>
 </table>
 """
 
-    pdf=FPDF()
+    class MyFPDF(FPDF, HTMLMixin):
+        def header(self):
+            self.image('tutorial/logo_pb.png',10,8,33)
+            self.set_font('Arial','B',15)
+            self.cell(80)
+            self.cell(30,10,'Title',1,0,'C')
+            self.ln(20)
+            
+        def footer(self):
+            self.set_y(-15)
+            self.set_font('Arial','I',8)
+            txt = 'Page %s of %s' % (self.page_no(), self.alias_nb_pages())
+            self.cell(0,10,txt,0,0,'C')
+        
+    pdf=MyFPDF()
     #First page
     pdf.add_page()
-    h2p = HTML2FPDF(pdf)
-    h2p.feed(html)
+    pdf.write_html(html)
     pdf.output('html.pdf','F')
 
+    import os
+    os.system("evince html.pdf")
