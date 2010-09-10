@@ -1,7 +1,10 @@
 # -*- coding: latin-1 -*-
 
 "HTML Renderer for FPDF.py"
+
 __author__ = "Mariano Reingart <reingart@gmail.com>"
+__copyright__ = "Copyright (C) 2010 Mariano Reingart"
+__license__ = "LGPL 3.0"
 
 # Inspired by tuto5.py and several examples from fpdf.org, html2fpdf, etc.
 
