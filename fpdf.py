@@ -1290,7 +1290,11 @@ class FPDF:
 
     def _parsepng(self, name):
         #Extract info from a PNG file
-        f=file(name,'rb')
+        if name.startswith("http://") or name.startswith("https://"):
+            import urllib
+            f = urllib.urlopen(name)
+        else:
+            f=file(name,'rb')
         if(not f):
             self.error("Can't open image file: "+name)
         #Check signature
