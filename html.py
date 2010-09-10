@@ -373,7 +373,7 @@ class HTMLMixin():
     def write_html(self, text):
         "Parse HTML and convert it to PDF"
         h2p = HTML2FPDF(self)
-        h2p.feed(html)
+        h2p.feed(text)
 
 if __name__=='__main__':
     html="""
