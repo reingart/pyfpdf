@@ -134,13 +134,13 @@ class HTML2FPDF(HTMLParser):
     def output_table_footer(self):
         if self.tfooter:
             x = self.pdf.x
-            self.output_table_sep()
+            #TODO: self.output_table_sep()
             for cell, bgcolor in self.tfooter:
                 self.box_shadow(cell[0], cell[1], bgcolor)
                 self.pdf.cell(*cell)
             self.pdf.ln(self.tfooter[0][0][1])
             self.pdf.set_x(x)
-            self.output_table_sep()
+            #TODO: self.output_table_sep()
         self.tfooter_out = True
             
     def output_table_sep(self):
