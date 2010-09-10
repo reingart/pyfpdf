@@ -245,7 +245,7 @@ class HTML2FPDF(HTMLParser):
                 y = self.pdf.get_y()
                 w = px2mm(attrs.get('width', 0))
                 h = px2mm(attrs.get('height',0))
-                if self.align[0].upper() == 'C':
+                if self.align and self.align[0].upper() == 'C':
                     x = (self.pdf.w-x)/2.0 - w/2.0
                 self.pdf.image(attrs['src'], x, y, w, h, link=self.href)
                 self.pdf.set_x(x+w)
