@@ -13,10 +13,10 @@ def rgb(col):
     return (col // 65536), (col // 256 % 256), (col% 256)
 
 class Template:
-    def __init__(self, infile=None, fields=None, format='A4', 
+    def __init__(self, infile=None, elements=None, format='A4', 
                  title='', author='', subject='', creator='', keywords=''):
-        if fields:
-            self.fields = dict([(v['name'].lower(),v) for v in fields])
+        if elements:
+            self.elements = dict([(v['name'].lower(),v) for v in elements])
         self.handlers = {'T': self.text, 'L': self.line, 'I': self.image, 
                          'B': self.rect, 'BC': self.barcode}
         self.pg_no = 0
@@ -29,11 +29,11 @@ class Template:
         pdf.set_keywords(keywords)
 
     def parse_csv(self, infile, delimiter=",", decimal_sep="."):
-        "Parse template format csv file and create fields dict"
+        "Parse template format csv file and create elements dict"
         keys = ('name','type','x1','y1','x2','y2','font','size',
             'bold','italic','underline','foreground','background',
             'align','text','priority')
-        self.fields = {}
+        self.elements = {}
         for row in csv.reader(open(infile, 'rb'), delimiter=delimiter):
             kargs = {}
             for i,v in enumerate(row):
@@ -46,7 +46,7 @@ class Template:
                 else:
                     v = eval(v.strip())
                 kargs[keys[i]] = v
-            self.fields[kargs['name'].lower()] = kargs
+            self.elements[kargs['name'].lower()] = kargs
 
 
     def add_page(self):
@@ -54,25 +54,25 @@ class Template:
         self.texts[self.pg_no] = {}
         
     def __setitem__(self, name, value):
-        if name.lower() in self.fields:
+        if name.lower() in self.elements:
             if isinstance(value,unicode):
                 value = value.encode("latin1","ignore")
             else:
                 value = str(value)
             self.texts[self.pg_no][name.lower()] = value
 
-    def split_multicell(self, text, field_name):
-        "Divide (\n) a string using a given field width"
+    def split_multicell(self, text, element_name):
+        "Divide (\n) a string using a given element width"
         pdf = self.pdf
-        field = self.fields[field_name.lower()]
+        element = self.elements[element_name.lower()]
         style = ""
-        if field['bold']: style += "B"
-        if field['italic']: style += "I"
-        if field['underline']: style += "U"
-        pdf.set_font(field['font'],style,field['size'])
-        align = {'I':'L','D':'R','C':'C','':'',None:None}[field['align']]
-        return pdf.multi_cell(w=field['x2']-field['x1'],
-                             h=field['y2']-field['y1'],
+        if element['bold']: style += "B"
+        if element['italic']: style += "I"
+        if element['underline']: style += "U"
+        pdf.set_font(element['font'],style,element['size'])
+        align = {'L':'L','R':'R','I':'L','D':'R','C':'C','':''}.get(element['align']) # D/I in spanish
+        return pdf.multi_cell(w=element['x2']-element['x1'],
+                             h=element['y2']-element['y1'],
                              txt=text,align=align,split_only=True)
         
     def render(self, outfile, dest="F"):
@@ -82,11 +82,11 @@ class Template:
             pdf.set_font('Arial','B',16)
             pdf.set_auto_page_break(False,margin=0)
 
-            for field in sorted(self.fields.values(),key=lambda x: x['priority']):
-                #print "dib",field['type'], field['name'], field['x1'], field['y1'], field['x2'], field['y2']
-                field = field.copy()
-                field['text'] = self.texts[pg].get(field['name'].lower(), field['text'])
-                self.handlers[field['type'].upper()](pdf, **field)
+            for element in sorted(self.elements.values(),key=lambda x: x['priority']):
+                #print "dib",element['type'], element['name'], element['x1'], element['y1'], element['x2'], element['y2']
+                element = element.copy()
+                element['text'] = self.texts[pg].get(element['name'].lower(), element['text'])
+                self.handlers[element['type'].upper()](pdf, **element)
 
         return pdf.output(outfile, dest)
         
@@ -111,7 +111,7 @@ class Template:
             if bold: style += "B"
             if italic: style += "I"
             if underline: style += "U"
-            align = {'I':'L','D':'R','C':'C','':'',None:None}[align]
+            align = {'L':'L','R':'R','I':'L','D':'R','C':'C','':''}.get(align) # D/I in spanish
             pdf.set_font(font,style,size)
             ##m_k = 72 / 2.54
             ##h = (size/m_k)
