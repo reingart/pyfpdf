@@ -260,6 +260,7 @@ class FPDF:
     def alias_nb_pages(self, alias='{nb}'):
         "Define an alias for total number of pages"
         self.str_alias_nb_pages=alias
+        return alias
 
     def error(self, msg):
         "Fatal error"
