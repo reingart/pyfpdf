@@ -1,16 +1,16 @@
 #!/usr/bin/env python
 # -*- coding: latin-1 -*-
 # ******************************************************************************
-# * Software: FPDF                                                               *
-# * Version:  1.53                                                               *
-# * Date:     2004-12-31                                                         *
-# * Author:   Olivier PLATHEY                                                    *
-# * License:  Freeware                                                           *
-# *                                                                              *
-# * You may use and modify self software as you wish.                            *
-# * Ported to Python 2.4 by Max (maxpat78@yahoo.it) on 2006-05                   *
-# * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT      *
-# *******************************************************************************/
+# * Software: FPDF for python                                                  *
+# * Version:  1.54b                                                            *
+# * Date:     2010-09-10                                                       *
+# * License:  LGPL v3.0                                                        *
+# *                                                                            *
+# * Original Author (PHP):  Olivier PLATHEY 2004-12-31                         *
+# * Ported to Python 2.4 by Max (maxpat78@yahoo.it) on 2006-05                 *
+# * Maintainer:  Mariano Reingart (reingart@gmail.com) et al since 2008 (est.) *
+# * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT    *
+# *****************************************************************************/
 
 from datetime import datetime
 import math
@@ -30,7 +30,7 @@ def substr(s, start, length=-1):
 def sprintf(fmt, *args): return fmt % args
 
 # Global variables
-FPDF_VERSION='1.54'
+FPDF_VERSION='1.54b'
 FPDF_FONT_DIR=os.path.join(os.path.dirname(__file__),'font')
 fpdf_charwidths = {}
 
