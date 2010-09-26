@@ -125,28 +125,33 @@ class HTML2FPDF(HTMLParser):
         if self.theader:
             b = self.b
             x = self.pdf.x
+            self.pdf.set_x(self.table_offset)
             self.set_style('B',True)
             for cell, bgcolor in self.theader:
                 self.box_shadow(cell[0], cell[1], bgcolor)
                 self.pdf.cell(*cell)
             self.set_style('B',b)
             self.pdf.ln(self.theader[0][0][1])
-            self.pdf.set_x(x)
+            self.pdf.set_x(self.table_offset)
+            #self.pdf.set_x(x)
         self.theader_out = True
         
     def output_table_footer(self):
         if self.tfooter:
             x = self.pdf.x
+            self.pdf.set_x(self.table_offset)
             #TODO: self.output_table_sep()
             for cell, bgcolor in self.tfooter:
                 self.box_shadow(cell[0], cell[1], bgcolor)
                 self.pdf.cell(*cell)
             self.pdf.ln(self.tfooter[0][0][1])
             self.pdf.set_x(x)
-            #TODO: self.output_table_sep()
+        if int(self.table.get('border', 0)):
+            self.output_table_sep()
         self.tfooter_out = True
             
     def output_table_sep(self):
+        self.pdf.set_x(self.table_offset)
         x1 = self.pdf.x
         y1 = self.pdf.y
         w = sum([self.width2mm(lenght) for lenght in self.table_col_width])
