@@ -23,9 +23,9 @@ except ImportError:
     Image = None
 
 def substr(s, start, length=-1):
-	if length < 0:
-		length=len(s)-start
-	return s[start:start+length]
+       if length < 0:
+               length=len(s)-start
+       return s[start:start+length]
 
 def sprintf(fmt, *args): return fmt % args
 
@@ -108,7 +108,7 @@ class FPDF:
         self.state=0
         self.fonts={}
         self.font_files={}
-        self.diffs=[]
+        self.diffs={}
         self.images={}
         self.page_links={}
         self.links={}
@@ -870,11 +870,11 @@ class FPDF:
         if(self.state<3):
             self.close()
         #Normalize parameters
-        if(type(dest)==type(bool())):
-            if dest:
-                dest='D'
-            else:
-                dest='F'
+ #       if(type(dest)==type(bool())):
+ #           if dest:
+ #               dest='D'
+ #           else:
+ #               dest='F'
         dest=dest.upper()
         if(dest==''):
             if(name==''):
@@ -986,7 +986,7 @@ class FPDF:
         for diff in self.diffs:
             #Encodings
             self._newobj()
-            self._out('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+diff+']>>')
+            self._out('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+self.diffs[diff]+']>>')
             self._out('endobj')
         for name,info in self.font_files.iteritems():
             #Font file embedding
@@ -1042,7 +1042,7 @@ class FPDF:
                 self._out('/FontDescriptor '+str(self.n+2)+' 0 R')
                 if(font['enc']):
                     if('diff' in font):
-                        self._out('/Encoding '+(nf+font['diff'])+' 0 R')
+                        self._out('/Encoding '+str(nf+font['diff'])+' 0 R')
                     else:
                         self._out('/Encoding /WinAnsiEncoding')
                 self._out('>>')
@@ -1506,7 +1506,7 @@ class FPDF:
         bar_char['%'] = 'nnnwnwnwn'
 
         self.set_fill_color(0)
-        code = txt	
+        code = txt      
             
         code = code.upper()
         for i in xrange (0, len(code), 2):
