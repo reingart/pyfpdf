@@ -13,15 +13,15 @@ def rgb(col):
     return (col // 65536), (col // 256 % 256), (col% 256)
 
 class Template:
-    def __init__(self, infile=None, elements=None, format='A4', 
+    def __init__(self, infile=None, elements=None, format='A4', orientation='portrait',
                  title='', author='', subject='', creator='', keywords=''):
         if elements:
             self.elements = dict([(v['name'].lower(),v) for v in elements])
         self.handlers = {'T': self.text, 'L': self.line, 'I': self.image, 
-                         'B': self.rect, 'BC': self.barcode}
+                         'B': self.rect, 'BC': self.barcode, }
         self.pg_no = 0
         self.texts = {}
-        pdf = self.pdf = FPDF(format=format,unit="mm")
+        pdf = self.pdf = FPDF(format=format,orientation=orientation, unit="mm")
         pdf.set_title(title)
         pdf.set_author(author)
         pdf.set_creator(creator)
@@ -61,6 +61,9 @@ class Template:
                 value = str(value)
             self.texts[self.pg_no][name.lower()] = value
 
+    # setitem shortcut (may be further extended)
+    set = __setitem__
+
     def split_multicell(self, text, element_name):
         "Divide (\n) a string using a given element width"
         pdf = self.pdf
@@ -86,8 +89,12 @@ class Template:
                 #print "dib",element['type'], element['name'], element['x1'], element['y1'], element['x2'], element['y2']
                 element = element.copy()
                 element['text'] = self.texts[pg].get(element['name'].lower(), element['text'])
+                if 'rotate' in element:
+                    pdf.rotate(element['rotate'], element['x1'], element['y1'])
                 self.handlers[element['type'].upper()](pdf, **element)
-
+                if 'rotate' in element:
+                    pdf.rotate(0)
+                    
         return pdf.output(outfile, dest)
         
     def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10, 
