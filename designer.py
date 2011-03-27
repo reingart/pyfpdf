@@ -512,7 +512,7 @@ class AppFrame(wx.Frame):
         dlg = wx.FileDialog(
             self, message="Choose a file",
             defaultDir=os.getcwd(), 
-            defaultFile="factura-jacofer.csv",
+            defaultFile="invoice.csv",
             wildcard="CSV Files (*.csv)|*.csv",
             style=wx.OPEN 
             )
@@ -527,7 +527,7 @@ class AppFrame(wx.Frame):
         self.do_new()
         tmp = []
         for lno, linea in enumerate(open(self.filename).readlines()):
-            if DEBUG: print "procesando linea ", lno, linea
+            if DEBUG: print "processing line", lno, linea
             args = []
             for i,v in enumerate(linea.split(";")):
                 if not v.startswith("'"): 
@@ -543,7 +543,7 @@ class AppFrame(wx.Frame):
         
         # sort by z-order (priority)
         for args in sorted(tmp, key=lambda t: t[-1]):
-            print args
+            if DEBUG: print args
             self.create_elements(*args)
         self.diagram.ShowAll( 1 )                       #
 
@@ -555,10 +555,17 @@ class AppFrame(wx.Frame):
             ts = strftime("%Y%m%d%H%M%S", gmtime())
             os.rename(self.filename, self.filename + ts + ".bak")
         except Exception, e:
-            print e
+            if DEBUG: print e
             pass
+        
+        def csv_repr(v, decimal_sep="."):
+            if isinstance(v, float):
+                return ("%0.2f" % v).replace(".", decimal_sep)
+            else:
+                return repr(v)
+        
         f = open(self.filename, "w")
-        for element in self.elements:
+        for element in sorted(self.elements, key=lambda e:e.name):
             if element.static:
                 continue
             d = element.as_dict()
@@ -569,21 +576,24 @@ class AppFrame(wx.Frame):
                  d['foreground'], d['background'],
                  d['align'], d['text'], d['priority'], 
                 ]
-            f.write(";".join([repr(v) for v in l]))
+            f.write(";".join([csv_repr(v) for v in l]))
             f.write("\n")
         f.close()
         
     def do_print(self, evt):
         # genero el renderizador con propiedades del PDF
-        from pyfpdf_hg import Template
+        from template import Template
         t = Template(elements=[e.as_dict() for e in self.elements if not e.static])
         t.add_page()
-        t.set('logo','serpiente.png')
+        t.set('logo','tutorial/logo.png')
         try:
             t.render(self.filename +".pdf")
         except:
-            import pdb;
-            pdb.pm()
+            if DEBUG and False:
+                import pdb;
+                pdb.pm()
+            else:
+                raise
         if sys.platform=="posix":
             os.system("evince ""%s""" % self.filename +".pdf")
         else:
@@ -645,9 +655,10 @@ class AppFrame(wx.Frame):
     def do_paste(self, evt):
         "Insert new elements"
         element = Element.new(self)
-        self.canvas.Refresh(False)
-        self.elements.append(element)
-        self.diagram.ShowAll( 1 )                   
+        if element:
+            self.canvas.Refresh(False)
+            self.elements.append(element)
+            self.diagram.ShowAll( 1 )                   
 
     def create_elements(self, name, type, x1, y1, x2, y2, 
                    font="Arial", size=12,
@@ -677,7 +688,9 @@ class AppFrame(wx.Frame):
         info.Version = __version__
         info.Copyright = __copyright__
         info.Description = wordwrap(
-            "Visual Template designer for PyFPDF (using wxPython OGL library)",
+            "Visual Template designer for PyFPDF (using wxPython OGL library)\n"
+            "Input files are CSV format describing the layout, separated by ;.\n"
+            ,
             350, wx.ClientDC(self))
         info.WebSite = ("http://www.sistemasagiles.com.ar/", "Commercial Support")
         info.Developers = [ __author__, ]
