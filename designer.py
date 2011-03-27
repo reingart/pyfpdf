@@ -393,7 +393,7 @@ class AppFrame(wx.Frame):
         sys.excepthook  = self.except_hook
         self.filename = ""
         # Create a toolbar:
-        tsize = (15,15)
+        tsize = (16,16)
         self.toolbar = self.CreateToolBar(wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT)
 
         artBmp = wx.ArtProvider.GetBitmap
@@ -460,7 +460,7 @@ class AppFrame(wx.Frame):
         canvas.SetScrollbars(20, 20, maxWidth/20, maxHeight/20)
         sizer.Add( canvas, 1, wx.GROW )
 
-        canvas.SetBackgroundColour("LIGHT BLUE") #
+        canvas.SetBackgroundColour("WHITE") #
 
         diagram = self.diagram = ogl.Diagram()
         canvas.SetDiagram( diagram )
@@ -697,7 +697,7 @@ class AppFrame(wx.Frame):
             "Over an element, a double left click opens edit text dialog, "
             "and a right click opens edit properties dialog. \n"
             "Multiple element can be selected with shift left click. \n"
-            "Use arrow keys or drag-and-drop to move elements"
+            "Use arrow keys or drag-and-drop to move elements.\n"
             "For further information see project webpage:"
             )
         info.WebSite = ("http://code.google.com/p/pyfpdf/wiki/Templates", 
