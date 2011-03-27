@@ -390,6 +390,8 @@ class AppFrame(wx.Frame):
                           None, -1, self.title,
                           size=(640,480),
                           style=wx.DEFAULT_FRAME_STYLE )
+        sys.excepthook  = self.except_hook
+        self.filename = ""
         # Create a toolbar:
         tsize = (15,15)
         self.toolbar = self.CreateToolBar(wx.TB_HORIZONTAL | wx.NO_BORDER | wx.TB_FLAT)
@@ -700,6 +702,13 @@ class AppFrame(wx.Frame):
         # Then we call wx.AboutBox giving it that info object
         wx.AboutBox(info)
         
+    def except_hook(self, type, value, trace): 
+        import traceback
+        exc = traceback.format_exception(type, value, trace) 
+        for e in exc: wx.LogError(e) 
+        wx.LogError('Unhandled Error: %s: %s'%(str(type), str(value))) 
+
+
 app = wx.PySimpleApp()
 ogl.OGLInitialize()
 frame = AppFrame()
