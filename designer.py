@@ -333,7 +333,7 @@ class Element(object):
             self.kwargs['text'] = txt
             self.shape.ClearText()
             for line in txt.split('\n'):
-                self.shape.AddText(line)
+                self.shape.AddText(unicode(line, "latin1"))
             self.canvas.Refresh(False)
         return self.kwargs['text']
     text = property(text, text)
@@ -383,7 +383,7 @@ class Element(object):
         
 class AppFrame(wx.Frame):
     "OGL Designer main window"
-    title = "PyFPDF Template Designer (OGL)"
+    title = "PyFPDF Template Designer (wx OGL)"
     
     def __init__(self):
         wx.Frame.__init__( self,
@@ -596,7 +596,7 @@ class AppFrame(wx.Frame):
                 pdb.pm()
             else:
                 raise
-        if sys.platform=="posix":
+        if sys.platform=="linux2":
             os.system("evince ""%s""" % self.filename +".pdf")
         else:
             os.startfile(self.filename +".pdf")
@@ -689,12 +689,19 @@ class AppFrame(wx.Frame):
         info.Name = self.title
         info.Version = __version__
         info.Copyright = __copyright__
-        info.Description = wordwrap(
+        info.Description = (
             "Visual Template designer for PyFPDF (using wxPython OGL library)\n"
-            "Input files are CSV format describing the layout, separated by ;.\n"
-            ,
-            350, wx.ClientDC(self))
-        info.WebSite = ("http://www.sistemasagiles.com.ar/", "Commercial Support")
+            "Input files are CSV format describing the layout, separated by ;\n"
+            "Use toolbar buttons to open, save, print (preview) your template, "
+            "and there are buttons to find, add, remove or duplicate elements.\n"
+            "Over an element, a double left click opens edit text dialog, "
+            "and a right click opens edit properties dialog. \n"
+            "Multiple element can be selected with shift left click. \n"
+            "Use arrow keys or drag-and-drop to move elements"
+            "For further information see project webpage:"
+            )
+        info.WebSite = ("http://code.google.com/p/pyfpdf/wiki/Templates", 
+                        "pyfpdf Google Code Project")
         info.Developers = [ __author__, ]
 
         info.License = wordwrap(__license__, 500, wx.ClientDC(self))
@@ -714,3 +721,4 @@ ogl.OGLInitialize()
 frame = AppFrame()
 app.MainLoop()
 app.Destroy()
+
