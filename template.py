@@ -74,6 +74,10 @@ class Template:
         if element['underline']: style += "U"
         pdf.set_font(element['font'],style,element['size'])
         align = {'L':'L','R':'R','I':'L','D':'R','C':'C','':''}.get(element['align']) # D/I in spanish
+        if isinstance(text, unicode):
+            text = text.encode("latin1","ignore")
+        else:
+            text = str(text)
         return pdf.multi_cell(w=element['x2']-element['x1'],
                              h=element['y2']-element['y1'],
                              txt=text,align=align,split_only=True)
