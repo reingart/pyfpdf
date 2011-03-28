@@ -254,7 +254,7 @@ class Element(object):
             self.shape.SetWidth(w)
             self.shape.SetHeight(h)
             self.canvas.Refresh(False)
-            self.canvas.GetDiagram.ShowAll(1)
+            self.canvas.GetDiagram().ShowAll(1)
         
     def edit_text(self):
         "Allow text edition (i.e. for doubleclick)"
@@ -587,7 +587,10 @@ class AppFrame(wx.Frame):
         from template import Template
         t = Template(elements=[e.as_dict() for e in self.elements if not e.static])
         t.add_page()
-        t.set('logo','tutorial/logo.png')
+        if not t['logo'] or not os.path.exists(t['logo']):
+            # put a default logo so it doesn't trow an exception
+            logo = os.path.join(os.path.dirname(__file__), 'tutorial','logo.png')
+            t.set('logo', logo)
         try:
             t.render(self.filename +".pdf")
         except:
