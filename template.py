@@ -64,6 +64,10 @@ class Template:
     # setitem shortcut (may be further extended)
     set = __setitem__
 
+    def __getitem__(self, name):
+        if name.lower() in self.elements:
+            return self.texts[self.pg_no].get(name.lower(), self.elements[name.lower()]['text'])
+
     def split_multicell(self, text, element_name):
         "Divide (\n) a string using a given element width"
         pdf = self.pdf
