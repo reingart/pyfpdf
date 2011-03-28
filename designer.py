@@ -26,7 +26,12 @@ import os, sys
 import wx
 import wx.lib.ogl as ogl
 from wx.lib.wordwrap import wordwrap
-
+try:
+    from template import Template
+except ImportError:
+    # we are frozen?
+    from pyfpdf_hg.template import Template
+    
 DEBUG = True
 
 
@@ -584,12 +589,11 @@ class AppFrame(wx.Frame):
         
     def do_print(self, evt):
         # genero el renderizador con propiedades del PDF
-        from template import Template
         t = Template(elements=[e.as_dict() for e in self.elements if not e.static])
         t.add_page()
         if not t['logo'] or not os.path.exists(t['logo']):
             # put a default logo so it doesn't trow an exception
-            logo = os.path.join(os.path.dirname(__file__), 'tutorial','logo.png')
+            os.path.join(os.path.dirname(__file__), 'tutorial','logo.png')
             t.set('logo', logo)
         try:
             t.render(self.filename +".pdf")
