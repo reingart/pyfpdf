@@ -15,7 +15,7 @@
 __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2011 Mariano Reingart"
 __license__ = "GPL 3.0"
-__version__ = "1.01a"
+__version__ = "1.01c"
 
 # Based on:
 #  * pySjetch.py wxPython sample application
@@ -428,6 +428,8 @@ class AppFrame(wx.Frame):
         self.toolbar.AddSeparator()
         self.toolbar.AddSimpleTool(
             wx.ID_FIND, artBmp(wx.ART_FIND, wx.ART_TOOLBAR, tsize), "Find")
+        self.toolbar.AddSimpleTool(
+            wx.ID_REPLACE, artBmp(wx.ART_FIND_AND_REPLACE, wx.ART_TOOLBAR, tsize), "Modify")
         self.toolbar.AddSeparator()
         self.toolbar.AddSimpleTool(
             wx.ID_PRINT, artBmp(wx.ART_PRINT, wx.ART_TOOLBAR, tsize), "Print")
@@ -446,6 +448,7 @@ class AppFrame(wx.Frame):
             (wx.ID_SAVE, self.do_save),
             (wx.ID_PRINT, self.do_print),
             (wx.ID_FIND, self.do_find),
+            (wx.ID_REPLACE, self.do_modify),
             (wx.ID_CUT, self.do_cut),
             (wx.ID_COPY, self.do_copy),
             (wx.ID_PASTE, self.do_paste),
@@ -460,7 +463,7 @@ class AppFrame(wx.Frame):
         self.CreateStatusBar()
 
         canvas = self.canvas = ogl.ShapeCanvas( self )
-        maxWidth  = 1500
+        maxWidth  = 2000
         maxHeight = 2000
         canvas.SetScrollbars(20, 20, maxWidth/20, maxHeight/20)
         sizer.Add( canvas, 1, wx.GROW )
@@ -667,6 +670,16 @@ class AppFrame(wx.Frame):
         if element:
             self.canvas.Refresh(False)
             self.elements.append(element)
+            self.diagram.ShowAll( 1 )                   
+
+    def do_modify(self, evt):
+        "Modify selected elements"
+        fields = ['dx', 'dy']
+        data = {'dx': 0.0, 'dy': 0.0}
+        data = CustomDialog.do_input(self, 'Modify (move) elements', fields, data)
+        if data:
+            self.move_elements(data['dx'], data['dy'])
+            self.canvas.Refresh(False)
             self.diagram.ShowAll( 1 )                   
 
     def create_elements(self, name, type, x1, y1, x2, y2, 
