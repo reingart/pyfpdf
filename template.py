@@ -16,7 +16,8 @@ class Template:
     def __init__(self, infile=None, elements=None, format='A4', orientation='portrait',
                  title='', author='', subject='', creator='', keywords=''):
         if elements:
-            self.elements = dict([(v['name'].lower(),v) for v in elements])
+            self.elements = elements
+            self.keys = [v['name'].lower() for v in self.elements]
         self.handlers = {'T': self.text, 'L': self.line, 'I': self.image, 
                          'B': self.rect, 'BC': self.barcode, }
         self.pg_no = 0
@@ -33,7 +34,7 @@ class Template:
         keys = ('name','type','x1','y1','x2','y2','font','size',
             'bold','italic','underline','foreground','background',
             'align','text','priority')
-        self.elements = {}
+        self.elements = []
         for row in csv.reader(open(infile, 'rb'), delimiter=delimiter):
             kargs = {}
             for i,v in enumerate(row):
@@ -46,15 +47,15 @@ class Template:
                 else:
                     v = eval(v.strip())
                 kargs[keys[i]] = v
-            self.elements[kargs['name'].lower()] = kargs
-
+            self.elements.append(kargs)
+        self.keys = [v['name'].lower() for v in self.elements]
 
     def add_page(self):
         self.pg_no += 1
         self.texts[self.pg_no] = {}
         
     def __setitem__(self, name, value):
-        if name.lower() in self.elements:
+        if name.lower() in self.keys:
             if isinstance(value,unicode):
                 value = value.encode("latin1","ignore")
             else:
@@ -65,13 +66,14 @@ class Template:
     set = __setitem__
 
     def __getitem__(self, name):
-        if name.lower() in self.elements:
+        if name.lower() in self.keys:
             return self.texts[self.pg_no].get(name.lower(), self.elements[name.lower()]['text'])
 
     def split_multicell(self, text, element_name):
         "Divide (\n) a string using a given element width"
         pdf = self.pdf
-        element = self.elements[element_name.lower()]
+        element = [element for element in self.elements
+            if element['name'].lower() == element_name.lower()][0]
         style = ""
         if element['bold']: style += "B"
         if element['italic']: style += "I"
@@ -93,7 +95,7 @@ class Template:
             pdf.set_font('Arial','B',16)
             pdf.set_auto_page_break(False,margin=0)
 
-            for element in sorted(self.elements.values(),key=lambda x: x['priority']):
+            for element in sorted(self.elements,key=lambda x: x['priority']):
                 #print "dib",element['type'], element['name'], element['x1'], element['y1'], element['x2'], element['y2']
                 element = element.copy()
                 element['text'] = self.texts[pg].get(element['name'].lower(), element['text'])
