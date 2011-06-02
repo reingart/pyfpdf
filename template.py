@@ -55,7 +55,7 @@ class Template:
         self.texts[self.pg_no] = {}
         
     def __setitem__(self, name, value):
-        if name.lower() in self.keys:
+        if self.has_key(name):
             if isinstance(value,unicode):
                 value = value.encode("latin1","ignore")
             else:
@@ -65,8 +65,11 @@ class Template:
     # setitem shortcut (may be further extended)
     set = __setitem__
 
+    def has_key(self, name):
+        return name.lower() in self.keys
+        
     def __getitem__(self, name):
-        if name.lower() in self.keys:
+        if self.has_key(name):
             return self.texts[self.pg_no].get(name.lower(), self.elements[name.lower()]['text'])
 
     def split_multicell(self, text, element_name):
