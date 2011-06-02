@@ -58,6 +58,8 @@ class Template:
         if self.has_key(name):
             if isinstance(value,unicode):
                 value = value.encode("latin1","ignore")
+            elif value is None:
+                value = ""
             else:
                 value = str(value)
             self.texts[self.pg_no][name.lower()] = value
