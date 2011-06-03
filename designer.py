@@ -15,7 +15,7 @@
 __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2011 Mariano Reingart"
 __license__ = "GPL 3.0"
-__version__ = "1.01c"
+__version__ = "1.01d"
 
 # Based on:
 #  * pySjetch.py wxPython sample application
@@ -736,9 +736,10 @@ class AppFrame(wx.Frame):
         wx.LogError('Unhandled Error: %s: %s'%(str(type), str(value))) 
 
 
-app = wx.PySimpleApp()
-ogl.OGLInitialize()
-frame = AppFrame()
-app.MainLoop()
-app.Destroy()
+if __name__ == "__main__":
+    app = wx.PySimpleApp()
+    ogl.OGLInitialize()
+    frame = AppFrame()
+    app.MainLoop()
+    app.Destroy()
 
