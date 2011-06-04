@@ -15,7 +15,7 @@
 __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2011 Mariano Reingart"
 __license__ = "GPL 3.0"
-__version__ = "1.01d"
+__version__ = "1.01e"
 
 # Based on:
 #  * pySjetch.py wxPython sample application
@@ -596,7 +596,7 @@ class AppFrame(wx.Frame):
         t.add_page()
         if not t['logo'] or not os.path.exists(t['logo']):
             # put a default logo so it doesn't trow an exception
-            os.path.join(os.path.dirname(__file__), 'tutorial','logo.png')
+            logo = os.path.join(os.path.dirname(__file__), 'tutorial','logo.png')
             t.set('logo', logo)
         try:
             t.render(self.filename +".pdf")
