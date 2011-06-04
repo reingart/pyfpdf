@@ -72,7 +72,16 @@ class Template:
         
     def __getitem__(self, name):
         if self.has_key(name):
-            return self.texts[self.pg_no].get(name.lower(), self.elements[name.lower()]['text'])
+            key = name.lower()
+            if key in self.texts:
+                # text for this page:
+                return self.texts[self.pg_no][key]
+            else:
+                # find first element for default text:
+                elements = [element for element in self.elements
+                    if element['name'].lower() == key]
+                if elements:
+                    return elements[0]['text']
 
     def split_multicell(self, text, element_name):
         "Divide (\n) a string using a given element width"
