@@ -4,6 +4,7 @@
 # * Software: FPDF for python                                                  *
 # * Version:  1.54c                                                            *
 # * Date:     2010-09-10                                                       *
+# * Last update: 2011-10-06
 # * License:  LGPL v3.0                                                        *
 # *                                                                            *
 # * Original Author (PHP):  Olivier PLATHEY 2004-12-31                         *
@@ -34,7 +35,7 @@ FPDF_VERSION='1.54b'
 FPDF_FONT_DIR=os.path.join(os.path.dirname(__file__),'font')
 fpdf_charwidths = {}
 
-class FPDF:
+class FPDF(object):
 #Private properties
 #~ page;               #current page number
 #~ n;                  #current object number
