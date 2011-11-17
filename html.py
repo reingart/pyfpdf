@@ -170,7 +170,7 @@ class HTML2FPDF(HTMLParser):
         if tag=='p':
             self.pdf.ln(5)
             if attrs:
-                self.align=attrs['align'].lower()
+                if attrs: self.align = attrs.get('align')
         if tag in ('h1', 'h2', 'h3', 'h4', 'h5', 'h6'):
             k = (2, 1.5, 1.17, 1, 0.83, 0.67)[int(tag[1])]
             self.pdf.ln(5*k)
