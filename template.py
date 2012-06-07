@@ -33,7 +33,7 @@ class Template:
         "Parse template format csv file and create elements dict"
         keys = ('name','type','x1','y1','x2','y2','font','size',
             'bold','italic','underline','foreground','background',
-            'align','text','priority')
+            'align','text','priority', 'multiline')
         self.elements = []
         for row in csv.reader(open(infile, 'rb'), delimiter=delimiter):
             kargs = {}
@@ -123,7 +123,7 @@ class Template:
         
     def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10, 
              bold=False, italic=False, underline=False, align="", 
-             foreground=0, backgroud=65535,
+             foreground=0, backgroud=65535, multiline=None,
              *args, **kwargs):
         if text:
             if pdf.text_color!=rgb(foreground):
@@ -147,7 +147,19 @@ class Template:
             ##m_k = 72 / 2.54
             ##h = (size/m_k)
             pdf.set_xy(x1,y1)
-            pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align)
+            if multiline is None:
+                # multiline==None: write without wrapping/trimming (default)
+                pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align)
+            elif multiline:
+                # multiline==True: automatic word - warp
+                pdf.multi_cell(w=x2-x1,h=y2-y1,txt=text,border=0,align=align)
+            else:
+                # multiline==False: trim to fit exactly the space defined
+                text = pdf.multi_cell(w=x2-x1, h=y2-y1,
+                             txt=text, align=align, split_only=True)[0]
+                print "trimming: *%s*" % text
+                pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align)
+
             #pdf.Text(x=x1,y=y1,txt=text)
 
     def line(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, *args, **kwargs):
