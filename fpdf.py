@@ -664,7 +664,8 @@ class FPDF(object):
                 #Explicit line break
                 if(self.ws>0):
                     self.ws=0
-                    self._out('0 Tw')
+                    if not split_only:
+                        self._out('0 Tw')
                 if not split_only:
                     self.cell(w,h,substr(s,j,i-j),b,2,align,fill)
                 else:
@@ -690,7 +691,8 @@ class FPDF(object):
                         i+=1
                     if(self.ws>0):
                         self.ws=0
-                        self._out('0 Tw')
+                        if not split_only:
+                            self._out('0 Tw')
                     if not split_only:
                         self.cell(w,h,substr(s,j,i-j),b,2,align,fill)
                     else:
@@ -701,7 +703,8 @@ class FPDF(object):
                             self.ws=(wmax-ls)/1000.0*self.font_size/(ns-1)
                         else:
                             self.ws=0
-                        self._out(sprintf('%.3f Tw',self.ws*self.k))
+                        if not split_only:
+                            self._out(sprintf('%.3f Tw',self.ws*self.k))
                     if not split_only:
                         self.cell(w,h,substr(s,j,sep-j),b,2,align,fill)
                     else:
@@ -719,14 +722,15 @@ class FPDF(object):
         #Last chunk
         if(self.ws>0):
             self.ws=0
-            self._out('0 Tw')
+            if not split_only:
+                self._out('0 Tw')
         if(border and 'B' in border):
             b+='B'
         if not split_only:
             self.cell(w,h,substr(s,j,i-j),b,2,align,fill)
+            self.x=self.l_margin
         else:
             ret.append(substr(s,j,i-j))
-        self.x=self.l_margin
         return ret
 
     def write(self, h,txt,link=''):
