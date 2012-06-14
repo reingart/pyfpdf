@@ -2,7 +2,7 @@
 # -*- coding: latin-1 -*-
 # ******************************************************************************
 # * Software: FPDF for python                                                  *
-# * Version:  1.54c                                                            *
+# * Version:  1.7                                                            *
 # * Date:     2010-09-10                                                       *
 # * Last update: 2011-10-06
 # * License:  LGPL v3.0                                                        *
@@ -15,7 +15,7 @@
 
 from datetime import datetime
 import math
-import os, sys, zlib, struct
+import os, sys, zlib, struct, re
 
 try:
     # Check if PIL is available, necessary for JPEG support.
@@ -31,7 +31,7 @@ def substr(s, start, length=-1):
 def sprintf(fmt, *args): return fmt % args
 
 # Global variables
-FPDF_VERSION='1.54b'
+FPDF_VERSION='1.7'
 FPDF_FONT_DIR=os.path.join(os.path.dirname(__file__),'font')
 fpdf_charwidths = {}
 
@@ -962,6 +962,8 @@ class FPDF(object):
                             h=h_pt
                         annots+=sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',1+2*l[0],h-l[1]*self.k)
                 self._out(annots+']')
+            if(self.pdf_version>'1.3'):
+                self._out('/Group <</Type /Group /S /Transparency /CS /DeviceRGB>>')
             self._out('/Contents '+str(self.n+1)+' 0 R>>')
             self._out('endobj')
             #Page content
@@ -1086,8 +1088,15 @@ class FPDF(object):
         if self.compress:
             filter='/Filter /FlateDecode '
         for filename,info in self.images.iteritems():
+            self._putimage(info)
+            del info['data']
+            if 'smask' in info:
+                del info['smask']
+            
+    def _putimage(self, info):
+        if 'data' in info:
             self._newobj()
-            self.images[filename]['n']=self.n
+            info['n']=self.n
             self._out('<</Type /XObject')
             self._out('/Subtype /Image')
             self._out('/Width '+str(info['w']))
@@ -1101,20 +1110,27 @@ class FPDF(object):
             self._out('/BitsPerComponent '+str(info['bpc']))
             if 'f' in info:
                 self._out('/Filter /'+info['f'])
-            if 'parms' in info:
-                self._out(info['parms'])
-            if('trns' in info and type([])==info['trns']):
+            if 'dp' in info:
+                self._out('/DecodeParms <<' + info['dp'] + '>>')
+            if('trns' in info and isinstance(info['trns'], list)):
                 trns=''
                 for i in xrange(0,len(info['trns'])):
                     trns+=str(info['trns'][i])+' '+str(info['trns'][i])+' '
                 self._out('/Mask ['+trns+']')
+            if('smask' in info):
+                self._out('/SMask ' + str(self.n+1) + ' 0 R');
             self._out('/Length '+str(len(info['data']))+'>>')
             self._putstream(info['data'])
-            self.images[filename]['data'] = None
             self._out('endobj')
+            # Soft mask
+            if('smask' in info):
+                dp = '/Predictor 15 /Colors 1 /BitsPerComponent 8 /Columns ' + str(info['w'])
+                smask = {'w': info['w'], 'h': info['h'], 'cs': 'DeviceGray', 'bpc': 8, 'f': info['f'], 'dp': dp, 'data': info['smask']}
+                self._putimage(smask)
             #Palette
             if(info['cs']=='Indexed'):
                 self._newobj()
+                filter = self.compress and '/Filter /FlateDecode ' or ''
                 if self.compress:
                     pal=zlib.compress(info['pal'])
                 else:
@@ -1315,14 +1331,14 @@ class FPDF(object):
         if(bpc>8):
             self.error('16-bit depth not supported: '+name)
         ct=ord(f.read(1))
-        if(ct==0):
+        if(ct==0 or ct==4):
             colspace='DeviceGray'
-        elif(ct==2):
+        elif(ct==2 or ct==6):
             colspace='DeviceRGB'
         elif(ct==3):
             colspace='Indexed'
         else:
-            self.error('Alpha channel not supported: '+name)
+            self.error('Unknown color type: '+name)
         if(ord(f.read(1))!=0):
             self.error('Unknown compression method: '+name)
         if(ord(f.read(1))!=0):
@@ -1330,12 +1346,12 @@ class FPDF(object):
         if(ord(f.read(1))!=0):
             self.error('Interlacing not supported: '+name)
         f.read(4)
-        parms='/DecodeParms <</Predictor 15 /Colors '
-        if ct==2:
-            parms+='3'
+        dp='/Predictor 15 /Colors '
+        if colspace == 'DeviceRGB':
+            dp+='3'
         else:
-            parms+='1'
-        parms+=' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+'>>'
+            dp+='1'
+        dp+=' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+''
         #Scan chunks looking for palette, transparency and image data
         pal=''
         trns=''
@@ -1371,7 +1387,39 @@ class FPDF(object):
         if(colspace=='Indexed' and not pal):
             self.error('Missing palette in '+name)
         f.close()
-        return {'w':w,'h':h,'cs':colspace,'bpc':bpc,'f':'FlateDecode','parms':parms,'pal':pal,'trns':trns,'data':data}
+        info = {'w':w,'h':h,'cs':colspace,'bpc':bpc,'f':'FlateDecode','dp':dp,'pal':pal,'trns':trns,}
+        if(ct>=4):
+            # Extract alpha channel
+            data = zlib.decompress(data)
+            color = '';
+            alpha = '';
+            if(ct==4):
+                # Gray image
+                length = 2*w
+                for i in range(h):
+                    pos = (1+length)*i
+                    color += data[pos]
+                    alpha += data[pos]
+                    line = substr(data, pos+1, length)
+                    color += re.sub('(.).',lambda m: m.group(1),line, flags=re.DOTALL)
+                    alpha += re.sub('.(.)',lambda m: m.group(1),line, flags=re.DOTALL)
+            else:
+                # RGB image
+                length = 4*w
+                for i in range(h):
+                    pos = (1+length)*i
+                    color += data[pos]
+                    alpha += data[pos]
+                    line = substr(data, pos+1, length)
+                    color += re.sub('(.{3}).',lambda m: m.group(1),line, flags=re.DOTALL)
+                    alpha += re.sub('.{3}(.)',lambda m: m.group(1),line, flags=re.DOTALL)
+            del data
+            data = zlib.compress(color)
+            info['smask'] = zlib.compress(alpha)
+            if (self.pdf_version < '1.4'):
+                self.pdf_version = '1.4'
+        info['data'] = data
+        return info
 
     def _freadint(self, f):
         #Read a 4-byte integer from file
