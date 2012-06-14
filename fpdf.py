@@ -15,7 +15,7 @@
 
 from datetime import datetime
 import math
-import os, sys, zlib, struct, re
+import os, sys, zlib, struct, re, tempfile
 
 try:
     # Check if PIL is available, necessary for JPEG support.
@@ -815,7 +815,7 @@ class FPDF(object):
                 mtd='_parse'+type
                 if not hasattr(self,mtd):
                     self.error('Unsupported image type: '+type)
-                info=self.mtd(name)
+                info=getattr(self, mtd)(name)
             info['i']=len(self.images)+1
             self.images[name]=info
         else:
@@ -1308,6 +1308,25 @@ class FPDF(object):
         data = f.read()
         f.close()
         return {'w':a[0],'h':a[1],'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
+
+    def _parsegif(self, filename):
+        # Extract info from a GIF file (via PNG conversion)
+        if Image is None:
+            self.error('PIL is required for GIF support')
+        try:
+            im = Image.open(filename)
+        except Exception, e:
+            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(e)))
+        else:
+            # Use temporary file
+            f = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
+            tmp = f.name
+            transparency = im.info['transparency']
+            f.close()
+            im.save(tmp, transparency=transparency)
+            info = self._parsepng(tmp)
+            os.unlink(tmp)
+        return info
 
     def _parsepng(self, name):
         #Extract info from a PNG file
