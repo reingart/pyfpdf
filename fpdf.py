@@ -416,40 +416,40 @@ class FPDF(object):
 
     def add_font(self, family,style='',fname=''):
         "Add a TrueType or Type1 font"
-        family=family.lower()
-        if(fname==''):
-            fname=family.replace(' ','')+style.lower()+'.font'
-        fname=os.path.join(FPDF_FONT_DIR,fname)
-        if(family=='arial'):
-            family='helvetica'
-        style=style.upper()
-        if(style=='IB'):
-            style='BI'
-        fontkey=family+style
+        family = family.lower()
+        if (fname == ''):
+            fname = family.replace(' ','') + style.lower() + '.font'
+        fname = os.path.join(FPDF_FONT_DIR, fname)
+        if (family == 'arial'):
+            family = 'helvetica'
+        style = style.upper()
+        if (style == 'IB'):
+            style = 'BI'
+        fontkey = family+style
         if fontkey in self.fonts:
-            self.error('Font already added: '+family+' '+style)
+            self.error('Font already added: ' + family + ' ' + style)
         execfile(fname, globals(), globals())
         if 'name' not in globals():
             self.error('Could not include font definition file')
-        i=len(self.fonts)+1
-        self.fonts[fontkey]={'i':i,'type':type,'name':name,'desc':desc,'up':up,'ut':ut,'cw':cw,'enc':enc,'file':filename}
-        if(diff):
+        i = len(self.fonts)+1
+        self.fonts[fontkey] = {'i':i,'type':type,'name':name,'desc':desc,'up':up,'ut':ut,'cw':cw,'enc':enc,'file':filename}
+        if (diff):
             #Search existing encodings
-            d=0
-            nb=len(self.diffs)
-            for i in xrange(1,nb+1):
-                if(self.diffs[i]==diff):
-                    d=i
+            d = 0
+            nb = len(self.diffs)
+            for i in xrange(1, nb+1):
+                if(self.diffs[i] == diff):
+                    d = i
                     break
-            if(d==0):
-                d=nb+1
-                self.diffs[d]=diff
-            self.fonts[fontkey]['diff']=d
-        if(filename):
-            if(type=='TrueType'):
-                self.font_files[filename]={'length1':originalsize}
+            if (d == 0):
+                d = nb + 1
+                self.diffs[d] = diff
+            self.fonts[fontkey]['diff'] = d
+        if (filename):
+            if (type == 'TrueType'):
+                self.font_files[filename]={'length1': originalsize}
             else:
-                self.font_files[filename]={'length1':size1,'length2':size2}
+                self.font_files[filename]={'length1': size1, 'length2': size2}
 
     def set_font(self, family,style='',size=0):
         "Select a font; size given in points"
