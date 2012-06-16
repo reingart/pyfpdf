@@ -1,24 +1,24 @@
-#/*******************************************************************************
-#* TTFontFile class                                                             *
-#*                                                                              *
-#* This class is based on The ReportLab Open Source PDF library                 *
-#* written in Python - http:#www.reportlab.com/software/opensource/            *
-#* together with ideas from the OpenOffice source code and others.              *
-#*                                                                              *
-#* Version:  1.04                                                               *
-#* Date:     2011-09-18                                                         *
-#* Author:   Ian Back <ianb@bpm1.com>                                           *
-#* License:  LGPL                                                               *
-#* Copyright (c) Ian Back, 2010                                                 *
-#* This header must be retained in any redistribution or                        *
-#* modification of the file.                                                    *
-#*                                                                              *
-#*******************************************************************************/
+#******************************************************************************
+# TTFontFile class                                                             
+#                                                                              
+# This class is based on The ReportLab Open Source PDF library                 
+# written in Python - http://www.reportlab.com/software/opensource/            
+# together with ideas from the OpenOffice source code and others.              
+#                                                                              
+# Version:  1.04                                                               
+# Date:     2011-09-18                                                         
+# Author:   Ian Back <ianb@bpm1.com>                                           
+# License:  LGPL                                                               
+# Copyright (c) Ian Back, 2010                                                 
+# This header must be retained in any redistribution or                        
+# modification of the file.                                                    
+#                                                                              
+#******************************************************************************
 
-from struct import pack
+from struct import pack, unpack, unpack_from
 import re
 
-       
+
 # Define the value used in the "head" table of a created TTF file
 # 0x74727565 "true" for Mac
 # 0x00010000 for Windows
@@ -93,7 +93,7 @@ class TTFontFile:
         self.filename = file
         self.fh = open(file,'rb')
         self._pos = 0
-        self.charWidths = ''
+        self.charWidths = []
         self.glyphPos = {}
         self.charToGlyph = {}
         self.tables = {}
@@ -110,7 +110,7 @@ class TTFontFile:
             die("Not a TrueType font: version=".version)
         self.readTableDirectory()
         self.extractInfo()
-        fh.close()
+        self.fh.close()
     
     def readTableDirectory(self, ):
         self.numTables = self.read_ushort()
@@ -190,13 +190,13 @@ class TTFontFile:
             val = abs(val)
             val = ~val
             val += 1
-        return pack("n",val) 
+        return pack(">H",val) 
     
     def splice(self, stream, offset, value):
         return substr(stream,0,offset) + value + substr(stream,offset+strlen(value))
     
     def _set_ushort(self, stream, offset, value):
-        up = pack("n", value)
+        up = pack(">H", value)
         return self.splice(stream, offset, up)    
 
     def _set_short(self, stream, offset, val):
@@ -204,7 +204,7 @@ class TTFontFile:
             val = abs(val)
             val = ~val
             val += 1
-        up = pack("n",val) 
+        up = pack(">H",val) 
         return self.splice(stream, offset, up)
 
     def get_chunk(self, pos, length): 
@@ -316,7 +316,7 @@ class TTFontFile:
         self.seek_table("head")
         self.skip(18) 
         self.unitsPerEm = unitsPerEm = self.read_ushort()
-        scale = 1000 / unitsPerEm
+        scale = 1000 / float(unitsPerEm)
         self.skip(16)
         xMin = self.read_short()
         yMin = self.read_short()
@@ -462,7 +462,7 @@ class TTFontFile:
         self.filename = file
         self.fh = open(file ,'rb')
         self._pos = 0
-        self.charWidths = ''
+        self.charWidths = []
         self.glyphPos = {}
         self.charToGlyph = {}
         self.tables = {}
@@ -649,7 +649,7 @@ class TTFontFile:
         cmap.append(0)    # Mapping for last character
         cmapstr = ''
         for cm in cmap:  
-            cmapstr += pack("n",cm) 
+            cmapstr += pack(">H",cm) 
         self.add('cmap', cmapstr)
 
         # glyf - Glyph data
@@ -695,7 +695,7 @@ class TTFontFile:
                     data = ''
             
             if (glyphLen > 0):
-                up = unpack("n", substr(data,0,2))
+                up = unpack(">H", substr(data,0,2))
 
             if (glyphLen > 2 and (up[1] & (1 << 15)) ):     # If number of contours <= -1 i.e. composiste glyph
                 pos_in_glyph = 10
@@ -703,9 +703,9 @@ class TTFontFile:
                 nComponentElements = 0
                 while (flags & GF_MORE):
                     nComponentElements += 1    # number of glyphs referenced at top level
-                    up = unpack("n", substr(data,pos_in_glyph,2))
+                    up = unpack(">H", substr(data,pos_in_glyph,2))
                     flags = up[1]
-                    up = unpack("n", substr(data,pos_in_glyph+2,2))
+                    up = unpack(">H", substr(data,pos_in_glyph+2,2))
                     glyphIdx = up[1]
                     self.glyphdata[originalGlyphIdx]['compGlyphs'].append(glyphIdx)
                     data = self._set_ushort(data, pos_in_glyph + 2, glyphSet[glyphIdx])
@@ -741,11 +741,11 @@ class TTFontFile:
         if (((pos + 1) >> 1) > 0xFFFF): 
             indexToLocFormat = 1        # long format
             for offset in offsets:
-                locastr += pack("N",offset) 
+                locastr += pack(">L",offset) 
         else:
             indexToLocFormat = 0        # short format
             for offset in offsets:  
-                locastr += pack("n",(offset/2)) 
+                locastr += pack(">H",(offset/2)) 
         
         self.add('loca', locastr)
 
@@ -832,21 +832,21 @@ class TTFontFile:
     def getHMTX(self, numberOfHMetrics, numGlyphs, glyphToChar, scale):
         start = self.seek_table("hmtx")
         aw = 0
-        self.charWidths = str_pad('', 256*256*2, "\x00")
+        self.charWidths = ["\x00"] * 256*256*2
         nCharWidths = 0
         if ((numberOfHMetrics*4) < self.maxStrLenRead): 
             data = self.get_chunk(start,(numberOfHMetrics*4))
-            arr = unpack("n*", data)
+            arr = unpack(">" + "H" * (len(data)/2), data)
         else:
             self.seek(start) 
         for glyph in range(numberOfHMetrics): 
             if ((numberOfHMetrics*4) < self.maxStrLenRead):
-                aw = arr[(glyph*2)+1]
+                aw = arr[(glyph*2)] # PHP starts arrays from index 0!? +1
             else:
                 aw = self.read_ushort()
                 lsb = self.read_ushort()
             
-            if (isset(glyphToChar[glyph]) or glyph == 0):
+            if (glyph in glyphToChar or glyph == 0):
                 if (aw >= (1 << 15) ):
                     aw = 0     # 1.03 Some (arabic) fonts have -ve values for width
                     # although should be unsigned value - comes out as e.g. 65108 (intended -50)
@@ -865,7 +865,7 @@ class TTFontFile:
             
         
         data = self.get_chunk((start+numberOfHMetrics*4),(numGlyphs*2))
-        arr = unpack("n*", data)
+        arr = unpack(">" + "H" * (len(data)/2), data)
         diff = numGlyphs-numberOfHMetrics
         for pos in range(diff): 
             glyph = pos + numberOfHMetrics
@@ -904,14 +904,14 @@ class TTFontFile:
         self.glyphPos = []
         if (indexToLocFormat == 0):
             data = self.get_chunk(start,(numGlyphs*2)+2)
-            arr = unpack("n*", data)
+            arr = unpack(">" + "H" * (len(data)/2), data)
             for n in range(numGlyphs): 
-                self.glyphPos.append((arr[n+1] * 2))
+                self.glyphPos.append((arr[n] * 2))  # n+1 !?
         elif (indexToLocFormat == 1):
             data = self.get_chunk(start,(numGlyphs*4)+4)
-            arr = unpack("N*", data)
+            arr = unpack(">" + "L" * (len(data)/2), data)
             for n in range(numGlyphs):
-                self.glyphPos.append((arr[n+1]))
+                self.glyphPos.append((arr[n]))  # n+1 !?
         else:
             die('Unknown location table format ' + indexToLocFormat)
 
@@ -958,7 +958,7 @@ class TTFontFile:
                 charToGlyph[unichar] = glyph
                 if (unichar < 196608):
                     self.maxUniChar = max(unichar,self.maxUniChar) 
-                glyphToChar[glyph].append(unichar)
+                glyphToChar.setdefault(glyph, []).append(unichar)
 
 
     # Put the TTF file together
@@ -976,9 +976,9 @@ class TTFontFile:
 
         # Header
         if (_TTF_MAC_HEADER): 
-            stm += (pack("Nnnnn", 0x74727565, numTables, searchRange, entrySelector, rangeShift))    # Mac
+            stm += (pack(">L>H>H>H>H", 0x74727565, numTables, searchRange, entrySelector, rangeShift))    # Mac
         else:
-            stm += (pack("Nnnnn", 0x00010000 , numTables, searchRange, entrySelector, rangeShift))    # Windows
+            stm += (pack(">L>H>H>H>H", 0x00010000 , numTables, searchRange, entrySelector, rangeShift))    # Windows
         
 
         # Table directory
@@ -991,8 +991,8 @@ class TTFontFile:
                 head_start = offset 
             stm += tag
             checksum = self.calcChecksum(data)
-            stm += pack("nn", checksum[0],checksum[1])
-            stm += pack("NN", offset, strlen(data))
+            stm += pack(">H>H", checksum[0],checksum[1])
+            stm += pack(">L>L", offset, strlen(data))
             paddedLength = (strlen(data)+3)&~3
             offset = offset + paddedLength
 
@@ -1003,7 +1003,7 @@ class TTFontFile:
 
         checksum = self.calcChecksum(stm)
         checksum = self.sub32((0xB1B0,0xAFBA), checksum)
-        chk = pack("nn", checksum[0],checksum[1])
+        chk = pack(">H>H", checksum[0],checksum[1])
         stm = self.splice(stm,(head_start + 8),chk)
         return stm 
     
@@ -1011,13 +1011,13 @@ if __name__ == '__main__':
     ttf = TTFontFile()
     ttffile = 'DejaVuSansCondensed.ttf';
     ttf.getMetrics(ttffile)
-    assert ttf.descent == -236
-    assert ttf.capHeight == 928
+    assert round(ttf.descent, 0) == -236
+    assert round(ttf.capHeight, 0) == 928
     assert ttf.flags == 4
-    assert ttf.bbox == [-918, -415, 1513, 1167]
+    assert [round(i, 0) for i in ttf.bbox] == [-918, -415, 1513, 1167]
     assert ttf.italicAngle == 0
     assert ttf.stemV == 87
-    assert ttf.defaultWidth == 540
-    assert round(ttf.underlinePosition) == -63
-    assert round(ttf.underlineThickness) == 44
+    assert round(ttf.defaultWidth, 0) == 540
+    assert round(ttf.underlinePosition, 0) == -63
+    assert round(ttf.underlineThickness, 0) == 44
 
