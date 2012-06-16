@@ -15,7 +15,7 @@
 
 from datetime import datetime
 import math
-import os, sys, zlib, struct, re, tempfile
+import os, sys, zlib, struct, re, tempfile, pickle
 
 try:
     # Check if PIL is available, necessary for JPEG support.
@@ -414,11 +414,11 @@ class FPDF(object):
             op='S'
         self._out(sprintf('%.2f %.2f %.2f %.2f re %s',x*self.k,(self.h-y)*self.k,w*self.k,-h*self.k,op))
 
-    def add_font(self, family,style='',fname=''):
+    def add_font(self, family,style='',fname='', uni=False):
         "Add a TrueType or Type1 font"
         family = family.lower()
         if (fname == ''):
-            fname = family.replace(' ','') + style.lower() + '.font'
+            fname = family.replace(' ','') + style.lower() + '.pkl'
         fname = os.path.join(FPDF_FONT_DIR, fname)
         if (family == 'arial'):
             family = 'helvetica'
@@ -428,11 +428,14 @@ class FPDF(object):
         fontkey = family+style
         if fontkey in self.fonts:
             self.error('Font already added: ' + family + ' ' + style)
-        execfile(fname, globals(), globals())
-        if 'name' not in globals():
-            self.error('Could not include font definition file')
-        i = len(self.fonts)+1
-        self.fonts[fontkey] = {'i':i,'type':type,'name':name,'desc':desc,'up':up,'ut':ut,'cw':cw,'enc':enc,'file':filename}
+        # load font data from pickled file
+        fontfile = open(fname)
+        try:
+            font_dict = pickle.load(fontfile)
+        finally:
+            fontfile.close()
+        self.fonts[fontkey] = {'i': len(self.fonts)+1}
+        self.fonts[fontkey].update(font_dict)
         if (diff):
             #Search existing encodings
             d = 0
@@ -445,6 +448,7 @@ class FPDF(object):
                 d = nb + 1
                 self.diffs[d] = diff
             self.fonts[fontkey]['diff'] = d
+        filename = font_dict.get('filename')
         if (filename):
             if (type == 'TrueType'):
                 self.font_files[filename]={'length1': originalsize}
