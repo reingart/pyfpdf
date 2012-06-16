@@ -121,7 +121,7 @@ class TTFontFile:
         for i in range(self.numTables):
             record = {}
             record['tag'] = self.read_tag()
-            record['checksum'] = array(self.read_ushort(),self.read_ushort())
+            record['checksum'] = (self.read_ushort(),self.read_ushort())
             record['offset'] = self.read_ulong()
             record['length'] = self.read_ulong()
             self.tables[record['tag']] = record    
@@ -252,7 +252,7 @@ class TTFontFile:
             nameId = self.read_ushort()
             length = self.read_ushort()
             offset = self.read_ushort()
-            if (k not in nameId): continue
+            if (nameId not in K): continue
             N = ''
             if (platformId == 3 and encodingId == 1 and languageId == 0x409):  # Microsoft, Unicode, US English, PS Name
                 opos = self._pos
@@ -916,7 +916,7 @@ class TTFontFile:
             die('Unknown location table format ' + indexToLocFormat)
 
     # CMAP Format 4
-    def getCMAP4(unicode_cmap_offset, glyphToChar, charToGlyph ):
+    def getCMAP4(self, unicode_cmap_offset, glyphToChar, charToGlyph ):
         self.maxUniChar = 0
         self.seek(unicode_cmap_offset + 2)
         length = self.read_ushort()
@@ -932,17 +932,17 @@ class TTFontFile:
         startCount = []
         for i in range(segCount):
             startCount.append(self.read_ushort()) 
-        idDelta = array()
+        idDelta = []
         for i in range(segCount):
             idDelta.append(self.read_short())         # ???? was unsigned short
         idRangeOffset_start = self._pos
-        idRangeOffset = array()
+        idRangeOffset = []
         for i in range(segCount):
             idRangeOffset.append(self.read_ushort()) 
 
         for n in range(segCount): 
             endpoint = (endCount[n] + 1)
-            for unichar in range(startCount[n], unichar<endpoint, 1): 
+            for unichar in range(startCount[n], endpoint, 1): 
                 if (idRangeOffset[n] == 0):
                     glyph = (unichar + idDelta[n]) & 0xFFFF
                 else:
@@ -1002,8 +1002,22 @@ class TTFontFile:
             stm += substr(data,0,(strlen(data)&~3))
 
         checksum = self.calcChecksum(stm)
-        checksum = self.sub32(array(0xB1B0,0xAFBA), checksum)
+        checksum = self.sub32((0xB1B0,0xAFBA), checksum)
         chk = pack("nn", checksum[0],checksum[1])
         stm = self.splice(stm,(head_start + 8),chk)
         return stm 
     
+if __name__ == '__main__':
+    ttf = TTFontFile()
+    ttffile = 'DejaVuSansCondensed.ttf';
+    ttf.getMetrics(ttffile)
+    assert ttf.descent == -236
+    assert ttf.capHeight == 928
+    assert ttf.flags == 4
+    assert ttf.bbox == [-918, -415, 1513, 1167]
+    assert ttf.italicAngle == 0
+    assert ttf.stemV == 87
+    assert ttf.defaultWidth == 540
+    assert round(ttf.underlinePosition) == -63
+    assert round(ttf.underlineThickness) == 44
+
