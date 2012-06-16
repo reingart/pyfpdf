@@ -10,6 +10,7 @@
 # Author:   Ian Back <ianb@bpm1.com>                                           
 # License:  LGPL                                                               
 # Copyright (c) Ian Back, 2010                                                 
+# Ported to Python 2.7 by Mariano Reingart (reingart@gmail.com) on 2012        
 # This header must be retained in any redistribution or                        
 # modification of the file.                                                    
 #                                                                              
