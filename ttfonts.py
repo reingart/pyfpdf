@@ -833,7 +833,7 @@ class TTFontFile:
     def getHMTX(self, numberOfHMetrics, numGlyphs, glyphToChar, scale):
         start = self.seek_table("hmtx")
         aw = 0
-        self.charWidths = ["\x00"] * 256*256*2
+        self.charWidths = [0] * 256*256*2
         nCharWidths = 0
         if ((numberOfHMetrics*4) < self.maxStrLenRead): 
             data = self.get_chunk(start,(numberOfHMetrics*4))
@@ -860,8 +860,7 @@ class TTFontFile:
                         w = int(round(scale*aw))
                         if (w == 0):  w = 65535 
                         if (char < 196608): 
-                            self.charWidths[char*2] = chr(w >> 8)
-                            self.charWidths[char*2 + 1] = chr(w & 0xFF)
+                            self.charWidths[char] = w 
                             nCharWidths += 1
             
         
@@ -876,15 +875,13 @@ class TTFontFile:
                         w = int(round(scale*aw))
                         if (w == 0):  w = 65535 
                         if (char < 196608):
-                            self.charWidths[char*2] = chr(w >> 8)
-                            self.charWidths[char*2 + 1] = chr(w & 0xFF)
+                            self.charWidths[char] = w
                             nCharWidths += 1 
                         
         
         # NB 65535 is a set width of 0
         # First bytes define number of chars in font
-        self.charWidths[0] = chr(nCharWidths >> 8)
-        self.charWidths[1] = chr(nCharWidths & 0xFF)
+        self.charWidths[0] = nCharWidths 
     
 
     def getHMetric(self, numberOfHMetrics, gid): 
