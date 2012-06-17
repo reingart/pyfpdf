@@ -395,8 +395,23 @@ class FPDF(object):
         cw=self.current_font['cw']
         w=0
         l=len(s)
-        for i in xrange(0, l):
-            w += cw.get(s[i],0)
+      	if self.unifontsubset:
+            for char in s:
+                char = ord(char)
+                if len(cw) > char:
+                    w += cw[char] # ord(cw[2*char])<<8 + ord(cw[2*char+1])
+                    print "width: ", w,
+                #elif (char>0 and char<128 and isset($cw[chr($char)])) { $w += $cw[chr($char)]; }
+                elif (self.current_font['desc']['MissingWidth']) :
+                    print "!",
+                    w += self.current_font['desc']['MissingWidth']
+                #elif (isset($this->CurrentFont['MissingWidth'])) { $w += $this->CurrentFont['MissingWidth']; }
+                else:   
+                    print "Missing!!!!!!!",
+                    w += 500
+        else:
+            for i in xrange(0, l):
+                w += cw.get(s[i],0)
         return w*self.font_size/1000.0
 
     def set_line_width(self, width):
@@ -573,6 +588,7 @@ class FPDF(object):
         self.font_size_pt=size
         self.font_size=size/self.k
         self.current_font=self.fonts[fontkey]
+      	self.unifontsubset = (self.fonts[fontkey]['type'] == 'TTF')
         if(self.page>0):
             self._out(sprintf('BT /F%d %.2f Tf ET',self.current_font['i'],self.font_size_pt))
 
@@ -683,6 +699,8 @@ class FPDF(object):
             if(self.color_flag):
                 s+='q '+self.text_color+' '
             txt2=txt.replace('\\','\\\\').replace(')','\\)').replace('(','\\(')
+            if isinstance(txt2, unicode):
+                txt2 = txt2.encode(self.unifontsubset and "utf8" or "latin1")
             s+=sprintf('BT %.2f %.2f Td (%s) Tj ET',(self.x+dx)*k,(self.h-(self.y+.5*h+.3*self.font_size))*k,txt2)
             if(self.underline):
                 s+=' '+self._dounderline(self.x+dx,self.y+.5*h+.3*self.font_size,txt)
@@ -812,6 +830,10 @@ class FPDF(object):
 
     def write(self, h,txt,link=''):
         "Output text in flowing mode"
+        if self.unifontsubset and isinstance(txt, str):
+            txt = txt.decode('utf8')
+        elif isinstance(txt, unicode):
+            txt = txt.encode('latin1')
         cw=self.current_font['cw']
         w=self.w-self.r_margin-self.x
         wmax=(w-2*self.c_margin)*1000.0/self.font_size
@@ -840,7 +862,10 @@ class FPDF(object):
                 continue
             if(c==' '):
                 sep=i
-            l+=cw.get(c,0)
+            if self.unifontsubset:  
+                l += self.get_string_width(c)
+            else:
+                l += cw.get(c,0) * self.font_size/1000.0
             if(l>wmax):
                 #Automatic line break
                 if(sep==-1):
