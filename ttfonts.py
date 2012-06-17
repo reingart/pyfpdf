@@ -220,7 +220,7 @@ class TTFontFile:
         self.fh.seek(pos)
         return (self.fh.read(length))
 
-    def add(tag, data):
+    def add(self, tag, data):
         if (tag == 'head') :
             data = self.splice(data, 8, "\0\0\0\0")        
         self.otables[tag] = data
@@ -554,13 +554,16 @@ class TTFontFile:
             glyphSet[originalGlyphIdx] = n    # old glyphID to new glyphID
             n += 1
 
+        codeToGlyph = {}
         for uni, originalGlyphIdx in sorted(subsetCharToGlyph.items()):
             codeToGlyph[uni] = glyphSet[originalGlyphIdx] 
         
         self.codeToGlyph = codeToGlyph
 
         for originalGlyphIdx, uni in sorted(subsetglyphs.items()): 
-            self.getGlyphs(originalGlyphIdx, start, glyphSet, subsetglyphs)
+            nonlocals = {'start': start, 'glyphSet': glyphSet, 
+                         'subsetglyphs': subsetglyphs}
+            self.getGlyphs(originalGlyphIdx, nonlocals)
 
         numGlyphs = numberOfHMetrics = len(subsetglyphs)
 
@@ -599,7 +602,7 @@ class TTFontFile:
             prevglidx = glidx
 
         # cmap - Character to glyph mapping - Format 4 (MS / )
-        segCount = len(range) + 1    # + 1 Last segment has missing character 0xFFFF
+        segCount = len(range_) + 1    # + 1 Last segment has missing character 0xFFFF
         searchRange = 1
         entrySelector = 0
         while (searchRange * 2 <= segCount ):
@@ -618,6 +621,8 @@ class TTFontFile:
             entrySelector,
             rangeShift]
 
+        range_ = sorted(range_.items())
+        
         # endCode(s)
         for start, subrange in range_:
             endCode = start + (len(subrange)-1)
@@ -645,12 +650,20 @@ class TTFontFile:
         cmap.append(0)    # idRangeOffset of last Segment
         for subrange in range_: 
             for glidx in subrange:  
-                cmap.append(glidx)
+                print "glidx", glidx
+                if isinstance(glidx, list):
+                    cmap.extend(glidx)
+                else:
+                    cmap.append(glidx)
         
         cmap.append(0)    # Mapping for last character
         cmapstr = ''
-        for cm in cmap:  
-            cmapstr += pack(">H",cm) 
+        for cm in cmap:
+            print cm
+            if cm >= 0:
+                cmapstr += pack(">H", cm) 
+            else:
+                cmapstr += pack(">h", cm) 
         self.add('cmap', cmapstr)
 
         # glyf - Glyph data
@@ -679,7 +692,7 @@ class TTFontFile:
         maxComponentDepth = 0        # levels of recursion, set to 0 if font has only simple glyphs
         self.glyphdata = {}
 
-        for originalGlyphIdx, uni in subsetglyphs: 
+        for originalGlyphIdx, uni in sorted(subsetglyphs.items()): 
             # hmtx - Horizontal Metrics
             hm = self.getHMetric(orignHmetrics, originalGlyphIdx)    
             hmtxstr += hm
@@ -696,18 +709,18 @@ class TTFontFile:
                     data = ''
             
             if (glyphLen > 0):
-                up = unpack(">H", substr(data,0,2))
-
-            if (glyphLen > 2 and (up[1] & (1 << 15)) ):     # If number of contours <= -1 i.e. composiste glyph
+                up = unpack(">H", substr(data,0,2))[0]
+            #print "up", up
+            if (glyphLen > 2 and (up & (1 << 15)) ):     # If number of contours <= -1 i.e. composiste glyph
                 pos_in_glyph = 10
                 flags = GF_MORE
                 nComponentElements = 0
                 while (flags & GF_MORE):
                     nComponentElements += 1    # number of glyphs referenced at top level
                     up = unpack(">H", substr(data,pos_in_glyph,2))
-                    flags = up[1]
+                    flags = up
                     up = unpack(">H", substr(data,pos_in_glyph+2,2))
-                    glyphIdx = up[1]
+                    glyphIdx = up
                     self.glyphdata[originalGlyphIdx]['compGlyphs'].append(glyphIdx)
                     data = self._set_ushort(data, pos_in_glyph + 2, glyphSet[glyphIdx])
                     pos_in_glyph += 4
@@ -769,7 +782,7 @@ class TTFontFile:
         os2 = self.get_table('OS/2')
         self.add('OS/2', os2 )
 
-        fh.close()
+        self.fh.close()
 
         # Put the TTF file together
         stm = self.endTTFile('')
@@ -907,7 +920,7 @@ class TTFontFile:
                 self.glyphPos.append((arr[n] * 2))  # n+1 !?
         elif (indexToLocFormat == 1):
             data = self.get_chunk(start,(numGlyphs*4)+4)
-            arr = unpack(">" + "L" * (len(data)/2), data)
+            arr = unpack(">" + "L" * (len(data)/4), data)
             for n in range(numGlyphs):
                 self.glyphPos.append((arr[n]))  # n+1 !?
         else:
@@ -974,9 +987,9 @@ class TTFontFile:
 
         # Header
         if (_TTF_MAC_HEADER): 
-            stm += (pack(">L>H>H>H>H", 0x74727565, numTables, searchRange, entrySelector, rangeShift))    # Mac
+            stm += (pack(">LHHHH", 0x74727565, numTables, searchRange, entrySelector, rangeShift))    # Mac
         else:
-            stm += (pack(">L>H>H>H>H", 0x00010000 , numTables, searchRange, entrySelector, rangeShift))    # Windows
+            stm += (pack(">LHHHH", 0x00010000 , numTables, searchRange, entrySelector, rangeShift))    # Windows
         
 
         # Table directory
@@ -988,9 +1001,9 @@ class TTFontFile:
             if (tag == 'head'):
                 head_start = offset 
             stm += tag
-            checksum = self.calcChecksum(data)
-            stm += pack(">H>H", checksum[0],checksum[1])
-            stm += pack(">L>L", offset, strlen(data))
+            checksum = calcChecksum(data)
+            stm += pack(">HH", checksum[0],checksum[1])
+            stm += pack(">LL", offset, strlen(data))
             paddedLength = (strlen(data)+3)&~3
             offset = offset + paddedLength
 
@@ -999,9 +1012,9 @@ class TTFontFile:
             data += "\0\0\0"
             stm += substr(data,0,(strlen(data)&~3))
 
-        checksum = self.calcChecksum(stm)
-        checksum = self.sub32((0xB1B0,0xAFBA), checksum)
-        chk = pack(">H>H", checksum[0],checksum[1])
+        checksum = calcChecksum(stm)
+        checksum = sub32((0xB1B0,0xAFBA), checksum)
+        chk = pack(">HH", checksum[0],checksum[1])
         stm = self.splice(stm,(head_start + 8),chk)
         return stm 
     
