@@ -23,6 +23,10 @@ try:
 except ImportError:
     Image = None
 
+from ttfonts import TTFontFile
+
+# php helpers:
+
 def substr(s, start, length=-1):
        if length < 0:
                length=len(s)-start
@@ -33,6 +37,7 @@ def sprintf(fmt, *args): return fmt % args
 # Global variables
 FPDF_VERSION='1.7'
 FPDF_FONT_DIR=os.path.join(os.path.dirname(__file__),'font')
+SYSTEM_TTFONTS = None
 fpdf_charwidths = {}
 
 class FPDF(object):
@@ -414,7 +419,7 @@ class FPDF(object):
             op='S'
         self._out(sprintf('%.2f %.2f %.2f %.2f re %s',x*self.k,(self.h-y)*self.k,w*self.k,-h*self.k,op))
 
-    def add_font(self, family,style='',fname='', uni=False):
+    def add_font(self, family, style='', fname='', uni=False):
         "Add a TrueType or Type1 font"
         family = family.lower()
         if (fname == ''):
@@ -427,33 +432,101 @@ class FPDF(object):
             style = 'BI'
         fontkey = family+style
         if fontkey in self.fonts:
-            self.error('Font already added: ' + family + ' ' + style)
-        # load font data from pickled file
-        fontfile = open(fname)
-        try:
-            font_dict = pickle.load(fontfile)
-        finally:
-            fontfile.close()
-        self.fonts[fontkey] = {'i': len(self.fonts)+1}
-        self.fonts[fontkey].update(font_dict)
-        if (diff):
-            #Search existing encodings
-            d = 0
-            nb = len(self.diffs)
-            for i in xrange(1, nb+1):
-                if(self.diffs[i] == diff):
-                    d = i
-                    break
-            if (d == 0):
-                d = nb + 1
-                self.diffs[d] = diff
-            self.fonts[fontkey]['diff'] = d
-        filename = font_dict.get('filename')
-        if (filename):
-            if (type == 'TrueType'):
-                self.font_files[filename]={'length1': originalsize}
+            # Font already added!
+            return
+        if (uni):
+            if (SYSTEM_TTFONTS and 
+                os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
+                ttffilename = os.path.join(SYSTEM_TTFONTS, fname)
             else:
-                self.font_files[filename]={'length1': size1, 'length2': size2}
+                ttffilename = os.path.join(FPDF_FONT_DIR, 'unifont', fname)
+            unifilename = os.path.splitext(fname)[0] + '.pkl'
+            name = ''
+            if os.path.exists(unifilename):
+                print "reading ..."
+                fh = open(unifilename)
+                try:
+                    font_dict = pickle.load(fh)
+                finally:
+                    fh.close()
+            else:
+                ttf = TTFontFile()
+                ttf.getMetrics(ttffilename)
+                desc = {
+                    'Ascent': round(ttf.ascent, 0),
+                    'Descent': round(ttf.descent, 0),
+                    'CapHeight': round(ttf.capHeight, 0),
+                    'Flags': ttf.flags,
+                    'FontBBox': "[%s %s %s %s]" % (
+                        round(ttf.bbox[0], 0),
+                        round(ttf.bbox[1], 0),
+                        round(ttf.bbox[2], 0),
+                        round(ttf.bbox[3], 0)),
+                    'ItalicAngle': ttf.italicAngle,
+                    'StemV': round(ttf.stemV, 0),
+                    'MissingWidth': round(ttf.defaultWidth, 0),
+                    }
+                # Generate metrics .pkl file
+                font_dict = {
+                    'name': re.sub('[ ()]', '', ttf.fullName),
+                    'type': 'TTF',
+                    'desc': desc,
+                    'up': round(ttf.underlinePosition),
+                    'ut': round(ttf.underlineThickness),
+                    'ttffile': ttffilename,
+                    'fontkey': fontkey,
+                    'originalsize': os.stat(ttffilename).st_size,
+                    'cw': ttf.charWidths,
+                    }
+                print "unifilename", unifilename
+                if (True or os.access(unifilename, os.W_OK)):
+                    print "writing..."
+                    fh = open(unifilename, "w")
+                    pickle.dump(font_dict, fh)
+                    fh.close()
+                del ttf
+            if (not hasattr(self,'str_alias_nb_pages')):
+                sbarr = range(0,57)
+            else:
+                sbarr = range(0,32)
+            self.fonts[fontkey] = {
+                'i': len(self.fonts)+1, 'type': font_dict['type'], 
+                'name': font_dict['name'], 'desc': font_dict['desc'], 
+                'up': font_dict['up'], 'ut': font_dict['ut'], 
+                'cw': font_dict['cw'], 
+                'ttffile': font_dict['ttffile'], 'fontkey': fontkey, 
+                'subset': sbarr, 'unifilename': unifilename,
+                }
+            self.font_files[fontkey] = {'length1': font_dict['originalsize'],
+                                        'type': "TTF", 'ttffile': ttffilename}
+            self.font_files[fname] = {'type': "TTF"}
+        else:
+            fontfile = open(fname)
+            try:
+                font_dict = pickle.load(fontfile)
+            finally:
+                fontfile.close()
+            self.fonts[fontkey] = {'i': len(self.fonts)+1}
+            self.fonts[fontkey].update(font_dict)
+            if (diff):
+                #Search existing encodings
+                d = 0
+                nb = len(self.diffs)
+                for i in xrange(1, nb+1):
+                    if(self.diffs[i] == diff):
+                        d = i
+                        break
+                if (d == 0):
+                    d = nb + 1
+                    self.diffs[d] = diff
+                self.fonts[fontkey]['diff'] = d
+            filename = font_dict.get('filename')
+            if (filename):
+                if (type == 'TrueType'):
+                    self.font_files[filename]={'length1': originalsize}
+                else:
+                    self.font_files[filename]={'length1': size1, 
+                                               'length2': size2}
 
     def set_font(self, family,style='',size=0):
         "Select a font; size given in points"
