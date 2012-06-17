@@ -15,7 +15,7 @@
 
 from datetime import datetime
 import math
-import os, sys, zlib, struct, re, tempfile, pickle
+import os, sys, zlib, struct, re, tempfile, pickle,struct
 
 try:
     # Check if PIL is available, necessary for JPEG support.
@@ -1098,33 +1098,34 @@ class FPDF(object):
             self._out('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+self.diffs[diff]+']>>')
             self._out('endobj')
         for name,info in self.font_files.iteritems():
-            #Font file embedding
-            self._newobj()
-            self.font_files[name]['n']=self.n
-            font=''
-            f=file(self._getfontpath()+name,'rb',1)
-            if(not f):
-                self.error('Font file not found')
-            font=f.read()
-            f.close()
-            compressed=(substr(name,-2)=='.z')
-            if(not compressed and 'length2' in info):
-                header=(ord(font[0])==128)
-                if(header):
-                    #Strip first binary header
-                    font=substr(font,6)
-                if(header and ord(font[info['length1']])==128):
-                    #Strip second binary header
-                    font=substr(font,0,info['length1'])+substr(font,info['length1']+6)
-            self._out('<</Length '+str(len(font)))
-            if(compressed):
-                self._out('/Filter /FlateDecode')
-            self._out('/Length1 '+str(info['length1']))
-            if('length2' in info):
-                self._out('/Length2 '+str(info['length2'])+' /Length3 0')
-            self._out('>>')
-            self._putstream(font)
-            self._out('endobj')
+            if 'type' in info and info['type'] != 'TTF':
+                #Font file embedding
+                self._newobj()
+                self.font_files[name]['n']=self.n
+                font=''
+                f=file(self._getfontpath()+name,'rb',1)
+                if(not f):
+                    self.error('Font file not found')
+                font=f.read()
+                f.close()
+                compressed=(substr(name,-2)=='.z')
+                if(not compressed and 'length2' in info):
+                    header=(ord(font[0])==128)
+                    if(header):
+                        #Strip first binary header
+                        font=substr(font,6)
+                    if(header and ord(font[info['length1']])==128):
+                        #Strip second binary header
+                        font=substr(font,0,info['length1'])+substr(font,info['length1']+6)
+                self._out('<</Length '+str(len(font)))
+                if(compressed):
+                    self._out('/Filter /FlateDecode')
+                self._out('/Length1 '+str(info['length1']))
+                if('length2' in info):
+                    self._out('/Length2 '+str(info['length2'])+' /Length3 0')
+                self._out('>>')
+                self._putstream(font)
+                self._out('endobj')
         for k,font in self.fonts.iteritems():
             #Font objects
             self.fonts[k]['n']=self.n+1
@@ -1178,12 +1179,220 @@ class FPDF(object):
                     s+=' '+str(self.font_files[filename]['n'])+' 0 R'
                 self._out(s+'>>')
                 self._out('endobj')
+            elif (type == 'TTF'):
+                self.fonts[k]['n'] = self.n + 1
+                ttf = TTFontFile()
+                fontname = 'MPDFAA' + '+' + font['name']
+                subset = font['subset']
+                del subset[0]
+                ttfontstream = ttf.makeSubset(font['ttffile'], subset)
+                ttfontsize = len(ttfontstream);
+                fontstream = zlib.compress(ttfontstream)
+                codeToGlyph = ttf.codeToGlyph
+                print "codeToGlyph", codeToGlyph.keys()
+                ##del codeToGlyph[0]
+                # Type0 Font
+                # A composite font - a font composed of other fonts, organized hierarchically
+                self._newobj()
+                self._out('<</Type /Font');
+                self._out('/Subtype /Type0');
+                self._out('/BaseFont /' + fontname + '');
+                self._out('/Encoding /Identity-H'); 
+                self._out('/DescendantFonts [' + str(self.n + 1) + ' 0 R]')
+                self._out('/ToUnicode ' + str(self.n + 2) + ' 0 R')
+                self._out('>>')
+                self._out('endobj')
+
+                # CIDFontType2
+                # A CIDFont whose glyph descriptions are based on TrueType font technology
+                self._newobj()
+                self._out('<</Type /Font')
+                self._out('/Subtype /CIDFontType2')
+                self._out('/BaseFont /' + fontname + '')
+                self._out('/CIDSystemInfo ' + str(self.n + 2) + ' 0 R')
+                self._out('/FontDescriptor ' + str(self.n + 3) + ' 0 R')
+                if (font['desc'].get('MissingWidth')):
+                    self._out('/DW ' + str(font['desc']['MissingWidth']) + '')
+                self._putTTfontwidths(font, ttf.maxUni)
+                self._out('/CIDToGIDMap ' + str(self.n + 4) + ' 0 R')
+                self._out('>>')
+                self._out('endobj')
+
+                # ToUnicode
+                self._newobj()
+                toUni = "/CIDInit /ProcSet findresource begin\n" \
+                        "12 dict begin\n" \
+                        "begincmap\n" \
+                        "/CIDSystemInfo\n" \
+                        "<</Registry (Adobe)\n" \
+                        "/Ordering (UCS)\n" \
+                        "/Supplement 0\n" \
+                        ">> def\n" \
+                        "/CMapName /Adobe-Identity-UCS def\n" \
+                        "/CMapType 2 def\n" \
+                        "1 begincodespacerange\n" \
+                        "<0000> <FFFF>\n" \
+                        "endcodespacerange\n" \
+                        "1 beginbfrange\n" \
+                        "<0000> <FFFF> <0000>\n" \
+                        "endbfrange\n" \
+                        "endcmap\n" \
+                        "CMapName currentdict /CMap defineresource pop\n" \
+                        "end\n" \
+                        "end"
+                self._out('<</Length ' + str(len(toUni)) + '>>')
+                self._putstream(toUni)
+                self._out('endobj')
+
+                # CIDSystemInfo dictionary
+                self._newobj()
+                self._out('<</Registry (Adobe)')
+                self._out('/Ordering (UCS)')
+                self._out('/Supplement 0')
+                self._out('>>')
+                self._out('endobj')
+
+                # Font descriptor
+                self._newobj()
+                self._out('<</Type /FontDescriptor')
+                self._out('/FontName /' + fontname)
+                for kd, v in font['desc'].items():
+                    if (kd == 'Flags'):
+                        v = v | 4; 
+                        v = v & ~32; # SYMBOLIC font flag
+                    self._out(' /%s %s' % (kd, v))
+                self._out('/FontFile2 ' + str(self.n + 2) + ' 0 R')
+                self._out('>>')
+                self._out('endobj')
+
+                # Embed CIDToGIDMap
+                # A specification of the mapping from CIDs to glyph indices
+                cidtogidmap = '';
+                cidtogidmap = ["\x00"] * 256*256*2
+                for cc, glyph in sorted(codeToGlyph.items()):
+                    cidtogidmap[cc*2] = chr(glyph >> 8)
+                    cidtogidmap[cc*2 + 1] = chr(glyph & 0xFF)
+                cidtogidmap = zlib.compress(''.join(cidtogidmap));
+                self._newobj()
+                self._out('<</Length ' + str(len(cidtogidmap)) + '')
+                self._out('/Filter /FlateDecode')
+                self._out('>>')
+                self._putstream(cidtogidmap)
+                self._out('endobj')
+
+                #Font file 
+                self._newobj()
+                self._out('<</Length ' + str(len(fontstream)))
+                self._out('/Filter /FlateDecode')
+                self._out('/Length1 ' + str(ttfontsize))
+                self._out('>>')
+                self._putstream(fontstream)
+                self._out('endobj')
+                del ttf
             else:
                 #Allow for additional types
                 mtd='_put'+type.lower()
                 if(not method_exists(self,mtd)):
                     self.error('Unsupported font type: '+type)
                 self.mtd(font)
+
+    def _putTTfontwidths(self, font, maxUni):
+        cw127fname = font['unifilename'] + '.cw127.pkl'
+        if (os.path.exists(cw127fname)):
+            fh = open(cw127fname);
+            try:
+                font_dict = pickle.load(fh)
+            finally:
+                fh.close()
+            rangeid = font_dict['rangeid']
+            range_ = font_dict['range']
+            prevcid = font_dict['prevcid']
+            prevwidth = font_dict['prevwidth']
+            interval = font_dict['interval']
+            range_interval = font_dict['range_interval']
+            startcid = 128
+        else:
+            rangeid = 0
+            range_ = {}
+            range_interval = {}
+            prevcid = -2
+            prevwidth = -1
+            interval = False
+            startcid = 1
+        cwlen = maxUni + 1
+
+        # for each character
+        for cid in range(startcid, cwlen):
+            if (cid==128 and not os.path.exists(cw127fname)):
+                if (True or os.access(cw127fname, os.W_OK)):
+                    fh = open(cw127fname, "wb")
+                    font_dict = {}
+                    font_dict['rangeid'] = rangeid
+                    font_dict['prevcid'] = prevcid
+                    font_dict['prevwidth'] = prevwidth
+                    font_dict['interval'] = interval
+                    font_dict['range_interval'] = range_interval
+                    font_dict['range'] = range
+                    pickle.dump(font_dict, fh)
+                    fh.close()
+            if (font['cw'][cid] == 0):
+                continue
+            width = font['cw'][cid]
+            if (width == 65535): width = 0
+            if (cid > 255 and (cid not in font['subset'] or not font['subset'][cid])):
+                continue
+            if ('dw' not in font or (font['dw'] and width != font['dw'])):
+                if (cid == (prevcid + 1)):
+                    if (width == prevwidth):
+                        if (width == range_[rangeid][0]):
+                            range_.setdefault(rangeid, []).append(width)
+                        else:
+                            range_[rangeid].pop()
+                            # new range
+                            rangeid = prevcid
+                            range_[rangeid] = [prevwidth, width]
+                        interval = True
+                        range_interval[rangeid] = True
+                    else:
+                        if (interval):
+                            # new range
+                            rangeid = cid
+                            range_[rangeid] = [width]
+                        else:
+                            range_[rangeid].append(width)
+                        interval = False
+                else:
+                    rangeid = cid
+                    range_[rangeid] = [width]
+                    interval = False
+                prevcid = cid
+                prevwidth = width
+        prevk = -1
+        nextk = -1
+        prevint = False
+        for k, ws in sorted(range_.items()):
+            cws = len(ws)
+            if (k == nextk and not prevint and (not range_interval.get(k) or cws < 4)):
+                if (range_interval.get(k)):
+                    del range_interval[k]
+                range_[prevk] = range_[prevk] + range_[k]
+                del range_[k]
+            else:
+                prevk = k
+            nextk = k + cws
+            if (range_interval.get(k)):
+                prevint = (cws > 3)
+                del range_interval[k]
+                nextk -= 1
+            else:
+                prevint = False
+        w = []
+        for k, ws in sorted(range_.items()):
+            if (len(set(ws)) == 1):
+                w.append(' %s %s %s' % (k, k + len(ws) - 1, ws[0]))
+            else:
+                w.append(' %s [ %s ]\n' % (k, ' '.join([struct.pack(">H", h) for h in ws])))
+        self._out('/W [%s]' % ''.join(w))
 
     def _putimages(self):
         filter=''
