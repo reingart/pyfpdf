@@ -718,10 +718,10 @@ class TTFontFile:
                 while (flags & GF_MORE):
                     nComponentElements += 1    # number of glyphs referenced at top level
                     up = unpack(">H", substr(data,pos_in_glyph,2))
-                    flags = up
+                    flags = up[0]
                     up = unpack(">H", substr(data,pos_in_glyph+2,2))
-                    glyphIdx = up
-                    self.glyphdata[originalGlyphIdx]['compGlyphs'].append(glyphIdx)
+                    glyphIdx = up[0]
+                    self.glyphdata.setdefault(originalGlyphIdx, {}).setdefault('compGlyphs', []).append(glyphIdx)
                     data = self._set_ushort(data, pos_in_glyph + 2, glyphSet[glyphIdx])
                     pos_in_glyph += 4
                     if (flags & GF_WORDS): 
