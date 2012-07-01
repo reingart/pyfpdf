@@ -34,6 +34,28 @@ def substr(s, start, length=-1):
 
 def sprintf(fmt, *args): return fmt % args
 
+def print_r(array):
+    if not isinstance(array, dict):
+        array = dict([(k, k) for k in array])
+    for k, v in array.items():
+        print "[%s] => %s" % (k, v),
+        
+def UTF8ToUTF16BE(instr, setbom=True):
+    "Converts UTF-8 strings to UTF16-BE."
+    outstr = ""
+    if (setbom):
+        outstr += "\xFE\xFF"; 
+    if not isinstance(instr, unicode):
+        instr = instr.decode('UTF-8')
+    outstr += instr.encode('UTF-16BE')
+    return outstr
+
+def UTF8StringToArray(instr):
+    "Converts UTF-8 strings to codepoints array"
+    return [ord(c) for c in instr]
+
+
+
 # Global variables
 FPDF_VERSION='1.7'
 FPDF_FONT_DIR=os.path.join(os.path.dirname(__file__),'font')
@@ -395,19 +417,19 @@ class FPDF(object):
         cw=self.current_font['cw']
         w=0
         l=len(s)
-      	if self.unifontsubset:
+        if self.unifontsubset:
             for char in s:
                 char = ord(char)
                 if len(cw) > char:
                     w += cw[char] # ord(cw[2*char])<<8 + ord(cw[2*char+1])
-                    print "width: ", w,
+                    print "Width %s: %d" % (char, w)
                 #elif (char>0 and char<128 and isset($cw[chr($char)])) { $w += $cw[chr($char)]; }
                 elif (self.current_font['desc']['MissingWidth']) :
-                    print "!",
+                    print "Missing %s !" % char
                     w += self.current_font['desc']['MissingWidth']
                 #elif (isset($this->CurrentFont['MissingWidth'])) { $w += $this->CurrentFont['MissingWidth']; }
                 else:   
-                    print "Missing!!!!!!!",
+                    print "Not found %s !!!!!!!" % char
                     w += 500
         else:
             for i in xrange(0, l):
@@ -588,7 +610,7 @@ class FPDF(object):
         self.font_size_pt=size
         self.font_size=size/self.k
         self.current_font=self.fonts[fontkey]
-      	self.unifontsubset = (self.fonts[fontkey]['type'] == 'TTF')
+        self.unifontsubset = (self.fonts[fontkey]['type'] == 'TTF')
         if(self.page>0):
             self._out(sprintf('BT /F%d %.2f Tf ET',self.current_font['i'],self.font_size_pt))
 
@@ -623,7 +645,13 @@ class FPDF(object):
 
     def text(self, x,y,txt):
         "Output a string"
-        s=sprintf('BT %.2f %.2f Td (%s) Tj ET',x*self.k,(self.h-y)*self.k,self._escape(txt))
+        if (self.unifontSubset):
+            txt2 = '(' + self._escape(UTF8ToUTF16BE(txt, False)) + ')'
+            for uni in UTF8StringToArray(txt):
+                self.current_font['subset'].append(uni)
+        else:
+            txt2 = self._escape(txt)
+        s=sprintf('BT %.2f %.2f Td (%s) Tj ET',x*self.k,(self.h-y)*self.k, txt2)
         if(self.underline and txt!=''):
             s+=' '+self._dounderline(x,y,txt)
         if(self.color_flag):
@@ -698,10 +726,36 @@ class FPDF(object):
                 dx=self.c_margin
             if(self.color_flag):
                 s+='q '+self.text_color+' '
-            txt2=txt.replace('\\','\\\\').replace(')','\\)').replace('(','\\(')
-            if isinstance(txt2, unicode):
-                txt2 = txt2.encode(self.unifontsubset and "utf8" or "latin1")
-            s+=sprintf('BT %.2f %.2f Td (%s) Tj ET',(self.x+dx)*k,(self.h-(self.y+.5*h+.3*self.font_size))*k,txt2)
+
+            ##if isinstance(txt, unicode):
+            ##    txt = txt.encode(self.unifontsubset and "utf8" or "latin1")
+                
+            # If multibyte, Tw has no effect - do word spacing using an adjustment before each space
+            if (self.ws and self.unifontsubset):
+                for uni in self.UTF8StringToArray(txt):
+                    self.current_font['subset'].append(uni)
+                space = self._escape(UTF8ToUTF16BE(' ', False))
+                s += sprintf('BT 0 Tw %.2F %.2F Td [',(self.x + dx) * k,(self.h - (self.y + 0.5*h+ 0.3 * self.font_size)) * k)
+                t = txt.split(' ')
+                numt = len(t)
+                for i in range(numt):
+                    tx = t[i]
+                    tx = '(' + self._escape(UTF8ToUTF16BE(tx, False)) + ')'
+                    s += sprintf('%s ', tx);
+                    if ((i+1)<numt):
+                        adj = -(self.ws * self.k) * 1000 / self.font_size_pt
+                        s += sprintf('%d(%s) ', adj, space)
+                s += '] TJ'
+                s += ' ET'
+            else:
+                if (self.unifontsubset):
+                    txt2 = '(' + self._escape(UTF8ToUTF16BE(txt, False)) + ')'
+                    for uni in UTF8StringToArray(txt):
+                        self.current_font['subset'].append(uni)
+                else:
+                    txt2 = txt.replace('\\','\\\\').replace(')','\\)').replace('(','\\(')
+                s += sprintf('BT %.2f %.2f Td (%s) Tj ET',(self.x+dx)*k,(self.h-(self.y+.5*h+.3*self.font_size))*k,txt2)
+            
             if(self.underline):
                 s+=' '+self._dounderline(self.x+dx,self.y+.5*h+.3*self.font_size,txt)
             if(self.color_flag):
@@ -1184,6 +1238,7 @@ class FPDF(object):
                 ttf = TTFontFile()
                 fontname = 'MPDFAA' + '+' + font['name']
                 subset = font['subset']
+                print_r(sorted(subset))
                 del subset[0]
                 ttfontstream = ttf.makeSubset(font['ttffile'], subset)
                 ttfontsize = len(ttfontstream);
