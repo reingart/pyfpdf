@@ -1241,7 +1241,8 @@ class FPDF(object):
                 print_r(sorted(subset))
                 del subset[0]
                 ttfontstream = ttf.makeSubset(font['ttffile'], subset)
-                ttfontsize = len(ttfontstream);
+                ttfontsize = len(ttfontstream)
+                print "ttfontsize", ttfontsize
                 fontstream = zlib.compress(ttfontstream)
                 codeToGlyph = ttf.codeToGlyph
                 print "codeToGlyph", codeToGlyph.keys()
@@ -1267,7 +1268,7 @@ class FPDF(object):
                 self._out('/CIDSystemInfo ' + str(self.n + 2) + ' 0 R')
                 self._out('/FontDescriptor ' + str(self.n + 3) + ' 0 R')
                 if (font['desc'].get('MissingWidth')):
-                    self._out('/DW ' + str(font['desc']['MissingWidth']) + '')
+                    self._out('/DW %d' % font['desc']['MissingWidth'])
                 self._putTTfontwidths(font, ttf.maxUni)
                 self._out('/CIDToGIDMap ' + str(self.n + 4) + ' 0 R')
                 self._out('>>')
@@ -1394,7 +1395,7 @@ class FPDF(object):
                 continue
             width = font['cw'][cid]
             if (width == 65535): width = 0
-            if (cid > 255 and (cid not in font['subset'] or not font['subset'][cid])):
+            if (cid > 255 and (cid not in font['subset']) or not cid): #  
                 continue
             if ('dw' not in font or (font['dw'] and width != font['dw'])):
                 if (cid == (prevcid + 1)):
@@ -1446,7 +1447,7 @@ class FPDF(object):
             if (len(set(ws)) == 1):
                 w.append(' %s %s %s' % (k, k + len(ws) - 1, ws[0]))
             else:
-                w.append(' %s [ %s ]\n' % (k, ' '.join([struct.pack(">H", h) for h in ws])))
+                w.append(' %s [ %s ]\n' % (k, ' '.join([str(int(h)) for h in ws]))) ## struct.pack(">H", h)
         self._out('/W [%s]' % ''.join(w))
 
     def _putimages(self):
