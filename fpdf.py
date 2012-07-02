@@ -490,18 +490,18 @@ class FPDF(object):
                 ttf = TTFontFile()
                 ttf.getMetrics(ttffilename)
                 desc = {
-                    'Ascent': round(ttf.ascent, 0),
-                    'Descent': round(ttf.descent, 0),
-                    'CapHeight': round(ttf.capHeight, 0),
+                    'Ascent': int(round(ttf.ascent, 0)),
+                    'Descent': int(round(ttf.descent, 0)),
+                    'CapHeight': int(round(ttf.capHeight, 0)),
                     'Flags': ttf.flags,
                     'FontBBox': "[%s %s %s %s]" % (
-                        round(ttf.bbox[0], 0),
-                        round(ttf.bbox[1], 0),
-                        round(ttf.bbox[2], 0),
-                        round(ttf.bbox[3], 0)),
-                    'ItalicAngle': ttf.italicAngle,
-                    'StemV': round(ttf.stemV, 0),
-                    'MissingWidth': round(ttf.defaultWidth, 0),
+                        int(round(ttf.bbox[0], 0)),
+                        int(round(ttf.bbox[1], 0)),
+                        int(round(ttf.bbox[2], 0)),
+                        int(round(ttf.bbox[3], 0))),
+                    'ItalicAngle': int(ttf.italicAngle),
+                    'StemV': int(round(ttf.stemV, 0)),
+                    'MissingWidth': int(round(ttf.defaultWidth, 0)),
                     }
                 # Generate metrics .pkl file
                 font_dict = {
@@ -1223,8 +1223,8 @@ class FPDF(object):
                 #Descriptor
                 self._newobj()
                 s='<</Type /FontDescriptor /FontName /'+name
-                for k,v in font['desc'].iteritems():
-                    s+=' /'+str(k)+' '+str(v)
+                for k in ('Ascent', 'Descent', 'CapHeight', 'Falgs', 'FontBBox', 'ItalicAngle', 'StemV', 'MissingWidth'):
+                    s+=' /%s %s' % (k, font['desc'][k])
                 filename=font['file']
                 if(filename):
                     s+=' /FontFile'
@@ -1447,7 +1447,7 @@ class FPDF(object):
             if (len(set(ws)) == 1):
                 w.append(' %s %s %s' % (k, k + len(ws) - 1, ws[0]))
             else:
-                w.append(' %s [ %s ]\n' % (k, ' '.join([str(int(h)) for h in ws]))) ## struct.pack(">H", h)
+                w.append(' %s [ %s ]\n' % (k, ' '.join([str(int(h)) for h in ws]))) ## 
         self._out('/W [%s]' % ''.join(w))
 
     def _putimages(self):
