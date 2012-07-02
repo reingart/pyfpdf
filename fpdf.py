@@ -1388,7 +1388,7 @@ class FPDF(object):
                     font_dict['prevwidth'] = prevwidth
                     font_dict['interval'] = interval
                     font_dict['range_interval'] = range_interval
-                    font_dict['range'] = range
+                    font_dict['range'] = range_
                     pickle.dump(font_dict, fh)
                     fh.close()
             if (font['cw'][cid] == 0):
