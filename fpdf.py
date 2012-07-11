@@ -1224,7 +1224,7 @@ class FPDF(object):
                 self._newobj()
                 s='<</Type /FontDescriptor /FontName /'+name
                 for k in ('Ascent', 'Descent', 'CapHeight', 'Falgs', 'FontBBox', 'ItalicAngle', 'StemV', 'MissingWidth'):
-                    s+=' /%s %s' % (k, font['desc'][k])
+                    s += ' /%s %s' % (k, font['desc'][k])
                 filename=font['file']
                 if(filename):
                     s+=' /FontFile'
@@ -1312,7 +1312,8 @@ class FPDF(object):
                 self._newobj()
                 self._out('<</Type /FontDescriptor')
                 self._out('/FontName /' + fontname)
-                for kd, v in font['desc'].items():
+                for kd in ('Ascent', 'Descent', 'CapHeight', 'Flags', 'FontBBox', 'ItalicAngle', 'StemV', 'MissingWidth'):
+                    v = font['desc'][kd]
                     if (kd == 'Flags'):
                         v = v | 4; 
                         v = v & ~32; # SYMBOLIC font flag
@@ -1428,15 +1429,15 @@ class FPDF(object):
         prevint = False
         for k, ws in sorted(range_.items()):
             cws = len(ws)
-            if (k == nextk and not prevint and (not range_interval.get(k) or cws < 4)):
-                if (range_interval.get(k)):
+            if (k == nextk and not prevint and (not k in range_interval or cws < 3)):
+                if (k in range_interval):
                     del range_interval[k]
                 range_[prevk] = range_[prevk] + range_[k]
                 del range_[k]
             else:
                 prevk = k
             nextk = k + cws
-            if (range_interval.get(k)):
+            if (k in range_interval):
                 prevint = (cws > 3)
                 del range_interval[k]
                 nextk -= 1
