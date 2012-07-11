@@ -749,11 +749,11 @@ class FPDF(object):
                 s += ' ET'
             else:
                 if (self.unifontsubset):
-                    txt2 = '(' + self._escape(UTF8ToUTF16BE(txt, False)) + ')'
+                    txt2 = self._escape(UTF8ToUTF16BE(txt, False))
                     for uni in UTF8StringToArray(txt):
                         self.current_font['subset'].append(uni)
                 else:
-                    txt2 = txt.replace('\\','\\\\').replace(')','\\)').replace('(','\\(')
+                    txt2 = txt.replace('\\','\\\\').replace(')','\\)').replace('(','\\(') 
                 s += sprintf('BT %.2f %.2f Td (%s) Tj ET',(self.x+dx)*k,(self.h-(self.y+.5*h+.3*self.font_size))*k,txt2)
             
             if(self.underline):
