@@ -537,19 +537,21 @@ class TTFontFile:
         #################/
         self.getLOCA(indexToLocFormat, numGlyphs)
 
-        subsetglyphs = {0: 0} 
+        subsetglyphs = [(0, 0)]     # special "sorted dict"!
         subsetCharToGlyph = {}
         for code in subset: 
             if (code in self.charToGlyph):
-                subsetglyphs[self.charToGlyph[code]] = code    # Old Glyph ID => Unicode
+                if (self.charToGlyph[code], code) not in subsetglyphs:
+                    subsetglyphs.append((self.charToGlyph[code], code))   # Old Glyph ID => Unicode
                 subsetCharToGlyph[code] = self.charToGlyph[code]    # Unicode to old GlyphID
             self.maxUni = max(self.maxUni, code)
         (start,dummy) = self.get_table_pos('glyf')
 
+        subsetglyphs.sort()
         glyphSet = {}
         n = 0
         fsLastCharIndex = 0    # maximum Unicode index (character code) in this font, according to the cmap subtable for platform ID 3 and platform- specific encoding ID 0 or 1.
-        for originalGlyphIdx, uni in sorted(subsetglyphs.items()): 
+        for originalGlyphIdx, uni in subsetglyphs:
             fsLastCharIndex = max(fsLastCharIndex , uni)
             glyphSet[originalGlyphIdx] = n    # old glyphID to new glyphID
             n += 1
@@ -559,8 +561,8 @@ class TTFontFile:
             codeToGlyph[uni] = glyphSet[originalGlyphIdx] 
         
         self.codeToGlyph = codeToGlyph
-
-        for originalGlyphIdx, uni in sorted(subsetglyphs.items()): 
+        
+        for originalGlyphIdx, uni in subsetglyphs: 
             nonlocals = {'start': start, 'glyphSet': glyphSet, 
                          'subsetglyphs': subsetglyphs}
             self.getGlyphs(originalGlyphIdx, nonlocals)
@@ -686,7 +688,7 @@ class TTFontFile:
         maxComponentDepth = 0        # levels of recursion, set to 0 if font has only simple glyphs
         self.glyphdata = {}
 
-        for originalGlyphIdx, uni in sorted(subsetglyphs.items()): 
+        for originalGlyphIdx, uni in subsetglyphs: 
             # hmtx - Horizontal Metrics
             hm = self.getHMetric(orignHmetrics, originalGlyphIdx)    
             hmtxstr += hm
@@ -704,7 +706,6 @@ class TTFontFile:
             
             if (glyphLen > 0):
                 up = unpack(">H", substr(data,0,2))[0]
-            #print "up", up
             if (glyphLen > 2 and (up & (1 << 15)) ):     # If number of contours <= -1 i.e. composiste glyph
                 pos_in_glyph = 10
                 flags = GF_MORE
@@ -817,9 +818,9 @@ class TTFontFile:
             while (flags & GF_MORE): 
                 flags = self.read_ushort()
                 glyphIdx = self.read_ushort()
-                if (not glyphIdx in nonlocals['glyphSet']):
+                if (glyphIdx not in nonlocals['glyphSet']):
                     nonlocals['glyphSet'][glyphIdx] = len(nonlocals['subsetglyphs'])    # old glyphID to new glyphID
-                    nonlocals['subsetglyphs'][glyphIdx] = True
+                    nonlocals['subsetglyphs'].append((glyphIdx, 1))
                 
                 savepos = self.fh.tell()
                 self.getGlyphs(glyphIdx, nonlocals)
@@ -984,14 +985,14 @@ class TTFontFile:
             stm += (pack(">LHHHH", 0x74727565, numTables, searchRange, entrySelector, rangeShift))    # Mac
         else:
             stm += (pack(">LHHHH", 0x00010000 , numTables, searchRange, entrySelector, rangeShift))    # Windows
-        
 
+        
         # Table directory
         tables = self.otables
 
         offset = 12 + numTables * 16
         sorted_tables = sorted(tables.items())
-        for tag, data in sorted_tables: 
+        for tag, data in sorted_tables:
             if (tag == 'head'):
                 head_start = offset 
             stm += tag
