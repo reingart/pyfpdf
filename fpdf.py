@@ -522,7 +522,7 @@ class FPDF(object):
                     pickle.dump(font_dict, fh)
                     fh.close()
                 del ttf
-            if (not hasattr(self,'str_alias_nb_pages')):
+            if False and (not hasattr(self,'str_alias_nb_pages')):
                 sbarr = range(0,57)
             else:
                 sbarr = range(0,32)
@@ -1326,7 +1326,7 @@ class FPDF(object):
                 # A specification of the mapping from CIDs to glyph indices
                 cidtogidmap = '';
                 cidtogidmap = ["\x00"] * 256*256*2
-                for cc, glyph in sorted(codeToGlyph.items()):
+                for cc, glyph in codeToGlyph.items():
                     cidtogidmap[cc*2] = chr(glyph >> 8)
                     cidtogidmap[cc*2 + 1] = chr(glyph & 0xFF)
                 cidtogidmap = zlib.compress(''.join(cidtogidmap));
