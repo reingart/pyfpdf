@@ -582,8 +582,8 @@ class TTFontFile:
         self.add('post', post)
 
         # Sort CID2GID map into segments of contiguous codes
-        k0 = sorted(codeToGlyph.keys())[0]
-        del codeToGlyph[k0]
+        if 0 in codeToGlyph:
+            del codeToGlyph[0]
         #unset(codeToGlyph[65535])
         rangeid = 0
         range_ = {}
