@@ -422,14 +422,11 @@ class FPDF(object):
                 char = ord(char)
                 if len(cw) > char:
                     w += cw[char] # ord(cw[2*char])<<8 + ord(cw[2*char+1])
-                    print "Width %s: %d" % (char, w)
                 #elif (char>0 and char<128 and isset($cw[chr($char)])) { $w += $cw[chr($char)]; }
                 elif (self.current_font['desc']['MissingWidth']) :
-                    print "Missing %s !" % char
                     w += self.current_font['desc']['MissingWidth']
                 #elif (isset($this->CurrentFont['MissingWidth'])) { $w += $this->CurrentFont['MissingWidth']; }
                 else:   
-                    print "Not found %s !!!!!!!" % char
                     w += 500
         else:
             for i in xrange(0, l):
@@ -480,7 +477,6 @@ class FPDF(object):
             unifilename = os.path.splitext(fname)[0] + '.pkl'
             name = ''
             if os.path.exists(unifilename):
-                print "reading ..."
                 fh = open(unifilename)
                 try:
                     font_dict = pickle.load(fh)
@@ -515,9 +511,7 @@ class FPDF(object):
                     'originalsize': os.stat(ttffilename).st_size,
                     'cw': ttf.charWidths,
                     }
-                print "unifilename", unifilename
                 if (True or os.access(unifilename, os.W_OK)):
-                    print "writing..."
                     fh = open(unifilename, "w")
                     pickle.dump(font_dict, fh)
                     fh.close()
@@ -1238,14 +1232,11 @@ class FPDF(object):
                 ttf = TTFontFile()
                 fontname = 'MPDFAA' + '+' + font['name']
                 subset = font['subset']
-                print_r(sorted(subset))
                 del subset[0]
                 ttfontstream = ttf.makeSubset(font['ttffile'], subset)
                 ttfontsize = len(ttfontstream)
-                print "ttfontsize", ttfontsize
                 fontstream = zlib.compress(ttfontstream)
                 codeToGlyph = ttf.codeToGlyph
-                print "codeToGlyph", codeToGlyph.keys()
                 ##del codeToGlyph[0]
                 # Type0 Font
                 # A composite font - a font composed of other fonts, organized hierarchically
