@@ -826,7 +826,10 @@ class FPDF(object):
                 sep=i
                 ls=l
                 ns+=1
-            l+=cw.get(c,0)
+                if self.unifontsubset:  
+                    l += self.get_string_width(c)
+                else:
+                    l += cw.get(c,0)
             if(l>wmax):
                 #Automatic line break
                 if(sep==-1):
