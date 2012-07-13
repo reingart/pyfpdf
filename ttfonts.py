@@ -648,18 +648,12 @@ class TTFontFile:
             cmap.append(0)    # idRangeOffset[segCount]      Offset in bytes to glyph indexArray, or 0
         
         cmap.append(0)    # idRangeOffset of last Segment
-        for subrange in range_: 
-            for glidx in subrange:  
-                print "glidx", glidx
-                if isinstance(glidx, list):
-                    cmap.extend(glidx)
-                else:
-                    cmap.append(glidx)
+        for subrange, glidx in range_: 
+            cmap.extend(glidx)
         
         cmap.append(0)    # Mapping for last character
         cmapstr = ''
         for cm in cmap:
-            print cm
             if cm >= 0:
                 cmapstr += pack(">H", cm) 
             else:
