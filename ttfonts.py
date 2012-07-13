@@ -659,7 +659,11 @@ class TTFontFile:
             if cm >= 0:
                 cmapstr += pack(">H", cm) 
             else:
-                cmapstr += pack(">h", cm) 
+                try:
+                    cmapstr += pack(">h", cm) 
+                except:
+                    cmapstr += pack(">H", -cm) 
+                    print "ERROR", cm
         self.add('cmap', cmapstr)
 
         # glyf - Glyph data
