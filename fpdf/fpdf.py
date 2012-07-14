@@ -473,12 +473,17 @@ class FPDF(object):
             # Font already added!
             return
         if (uni):
-            if (SYSTEM_TTFONTS and 
+            if os.path.exists(fname):
+                ttffilename = fname
+            elif (FPDF_FONT_DIR and 
+                os.path.exists(os.path.join(FPDF_FONT_DIR, fname))):
+                ttffilename = os.path.join(FPDF_FONT_DIR, fname)
+            elif (SYSTEM_TTFONTS and 
                 os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
                 ttffilename = os.path.join(SYSTEM_TTFONTS, fname)
             else:
-                ttffilename = fname
-            unifilename = os.path.splitext(fname)[0] + '.pkl'
+                raise RuntimeError("TTF Font file not found: %s" % fname)
+            unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
             name = ''
             if os.path.exists(unifilename):
                 fh = open(unifilename)
@@ -1365,7 +1370,7 @@ class FPDF(object):
                 self.mtd(font)
 
     def _putTTfontwidths(self, font, maxUni):
-        cw127fname = font['unifilename'] + '.cw127.pkl'
+        cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
         if (os.path.exists(cw127fname)):
             fh = open(cw127fname);
             try:
