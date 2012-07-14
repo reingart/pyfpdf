@@ -663,6 +663,7 @@ class TTFontFile:
                 try:
                     cmapstr += pack(">h", cm) 
                 except:
+                    warnings.warn("cmap value too big/small: %s" % cm)
                     cmapstr += pack(">H", -cm) 
         self.add('cmap', cmapstr)
 
