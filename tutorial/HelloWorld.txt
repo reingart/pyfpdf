@@ -1,4 +1,4 @@
-English: Hello World
+﻿English: Hello World
 Greek: Γειά σου κόσμος
 Polish: Witaj świecie
 Portuguese: Olá mundo
