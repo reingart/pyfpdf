@@ -663,7 +663,6 @@ class TTFontFile:
                     cmapstr += pack(">h", cm) 
                 except:
                     cmapstr += pack(">H", -cm) 
-                    print "ERROR", cm
         self.add('cmap', cmapstr)
 
         # glyf - Glyph data
