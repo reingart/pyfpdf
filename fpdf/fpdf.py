@@ -62,10 +62,13 @@ def UTF8StringToArray(instr):
 
 
 # Global variables
-FPDF_VERSION='1.7'
-FPDF_FONT_DIR=os.path.join(os.path.dirname(__file__),'font')
+FPDF_VERSION = '1.7'
+FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
 SYSTEM_TTFONTS = None
 fpdf_charwidths = {}
+
+def set_global(var, val):
+    globals()[var] = val
 
 class FPDF(object):
 #Private properties
@@ -473,6 +476,7 @@ class FPDF(object):
             # Font already added!
             return
         if (uni):
+            global SYSTEM_TTFONTS
             if os.path.exists(fname):
                 ttffilename = fname
             elif (FPDF_FONT_DIR and 
