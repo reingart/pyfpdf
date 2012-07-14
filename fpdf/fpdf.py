@@ -15,6 +15,7 @@
 
 from datetime import datetime
 import math
+import errno
 import os, sys, zlib, struct, re, tempfile, struct
 
 try:
@@ -514,10 +515,13 @@ class FPDF(object):
                     'originalsize': os.stat(ttffilename).st_size,
                     'cw': ttf.charWidths,
                     }
-                if (True or os.access(unifilename, os.W_OK)):
+                try:
                     fh = open(unifilename, "w")
                     pickle.dump(font_dict, fh)
                     fh.close()
+                except IOError as e:
+                    if not e.errno == errno.EACCES:
+                        raise  # Not a permission error.
                 del ttf
             if False and (not hasattr(self,'str_alias_nb_pages')):
                 sbarr = range(0,57)
@@ -1388,7 +1392,7 @@ class FPDF(object):
         # for each character
         for cid in range(startcid, cwlen):
             if (cid==128 and not os.path.exists(cw127fname)):
-                if (True or os.access(cw127fname, os.W_OK)):
+                try:
                     fh = open(cw127fname, "wb")
                     font_dict = {}
                     font_dict['rangeid'] = rangeid
@@ -1399,6 +1403,9 @@ class FPDF(object):
                     font_dict['range'] = range_
                     pickle.dump(font_dict, fh)
                     fh.close()
+                except IOError as e:
+                    if not e.errno == errno.EACCES:
+                        raise  # Not a permission error.
             if (font['cw'][cid] == 0):
                 continue
             width = font['cw'][cid]
