@@ -4,7 +4,7 @@
 from fpdf import FPDF
 import sys
 
-fn = 'ex.pdf'
+fn = 'unicode.pdf'
 
 pdf = FPDF()
 pdf.add_page()

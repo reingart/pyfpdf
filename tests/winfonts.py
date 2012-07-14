@@ -2,6 +2,7 @@
 # http://www.fpdf.org/en/script/script92.php
 
 import sys
+import time
 import fpdf
 
 # Set system font path
@@ -11,9 +12,12 @@ pdf = fpdf.FPDF()
 pdf.add_page()
 
 # Add a Windows System font (uses UTF-8)
+t0 = time.time()
 pdf.add_font('sysfont','','arial.ttf',uni=True)
 pdf.set_font('sysfont','',14)
-fn = 'ex.pdf'
+t1 = time.time()
+print "ttf loading time", t1-t0
+fn = 'winfonts.pdf'
 
 # Load a UTF-8 string from a file and print it
 txt = open('HelloWorld.txt').read()
