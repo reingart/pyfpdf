@@ -40,6 +40,8 @@ FPDF_VERSION = '1.7'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
 SYSTEM_TTFONTS = None
 
+PY3K = sys.version_info >= (3, 0)
+
 def set_global(var, val):
     globals()[var] = val
 
@@ -654,9 +656,6 @@ class FPDF(object):
                 dx=self.c_margin
             if(self.color_flag):
                 s+='q '+self.text_color+' '
-
-            ##if isinstance(txt, unicode):
-            ##    txt = txt.encode(self.unifontsubset and "utf8" or "latin1")
                 
             # If multibyte, Tw has no effect - do word spacing using an adjustment before each space
             if (self.ws and self.unifontsubset):
@@ -959,12 +958,6 @@ class FPDF(object):
         #Finish document if necessary
         if(self.state<3):
             self.close()
-        #Normalize parameters
- #       if(type(dest)==type(bool())):
- #           if dest:
- #               dest='D'
- #           else:
- #               dest='F'
         dest=dest.upper()
         if(dest==''):
             if(name==''):
@@ -978,10 +971,14 @@ class FPDF(object):
             print self.buffer
         elif dest=='F':
             #Save to local file
-            f=file(name,'wb')
+            f=open(name,'wb')
             if(not f):
                 self.error('Unable to create output file: '+name)
-            f.write(self.buffer)
+            if PY3K:
+                # TODO: proper unicode support
+                f.write(self.buffer.encode("latin1"))
+            else:
+                f.write(self.buffer)
             f.close()
         elif dest=='S':
             #Return as a string
@@ -996,7 +993,7 @@ class FPDF(object):
         # - for built-in fonts: string instances (latin 1 encoding)
         if self.unifontsubset and isinstance(txt, str):
             txt = txt.decode('utf8')
-        elif not self.unifontsubset and isinstance(txt, unicode):
+        elif not self.unifontsubset and isinstance(txt, unicode) and not PY3K:
             txt = txt.encode('latin1')
         return txt
 
@@ -1092,7 +1089,7 @@ class FPDF(object):
                 self._newobj()
                 self.font_files[name]['n']=self.n
                 font=''
-                f=file(self._getfontpath()+name,'rb',1)
+                f=open(self._getfontpath()+name,'rb',1)
                 if(not f):
                     self.error('Font file not found')
                 font=f.read()
@@ -1637,7 +1634,7 @@ class FPDF(object):
             import urllib
             f = urllib.urlopen(name)
         else:
-            f=file(name,'rb')
+            f=open(name,'rb')
         if(not f):
             self.error("Can't open image file: "+name)
         #Check signature
