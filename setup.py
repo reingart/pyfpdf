@@ -2,8 +2,15 @@
 
 from distutils.core import setup
 
-import fpdf
+import sys
 
+if sys.version_info >= (3, 0):
+    import fpdf_py3k as fpdf
+    package_dir = 'fpdf_py3k'
+else:
+    import fpdf
+    package_dir = 'fpdf'
+    
 setup(name='PyFPDF',
       version=fpdf.__version__,
       description='Simple PDF generation for Python',
@@ -14,7 +21,7 @@ setup(name='PyFPDF',
       url='http://code.google.com/p/pyfpdf',
       download_url="http://pyfpdf.googlecode.com/files/pyfpdf-%s.tar.gz" % fpdf.__version__,
       packages=['fpdf', ],
-      package_dir={'fpdf': 'fpdf'},
+      package_dir={'fpdf': package_dir},
       package_data={'fpdf': ['font/*.ttf']},
       classifiers = [
             "Development Status :: 5 - Production/Stable",
@@ -24,6 +31,7 @@ setup(name='PyFPDF',
             "Programming Language :: Python :: 2.5",
             "Programming Language :: Python :: 2.6",
             "Programming Language :: Python :: 2.7",
+            "Programming Language :: Python :: 3.2",
             "Operating System :: OS Independent",
             "Topic :: Software Development :: Libraries :: PHP Classes",
             "Topic :: Software Development :: Libraries :: Python Modules",
