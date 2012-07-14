@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: latin-1 -*-
-# ******************************************************************************
-# * Software: FPDF for python                                                  *
+# ****************************************************************************
+# * Software: FPDF for python                                                *
 # * Version:  1.7                                                            *
-# * Date:     2010-09-10                                                       *
-# * Last update: 2011-10-06
-# * License:  LGPL v3.0                                                        *
-# *                                                                            *
-# * Original Author (PHP):  Olivier PLATHEY 2004-12-31                         *
-# * Ported to Python 2.4 by Max (maxpat78@yahoo.it) on 2006-05                 *
-# * Maintainer:  Mariano Reingart (reingart@gmail.com) et al since 2008 (est.) *
-# * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT    *
-# *****************************************************************************/
+# * Date:     2010-09-10                                                     *
+# * Last update: 2012-07-14                                                  *
+# * License:  LGPL v3.0                                                      *
+# *                                                                          *
+# * Original Author (PHP):  Olivier PLATHEY 2004-12-31                       *
+# * Ported to Python 2.4 by Max (maxpat78@yahoo.it) on 2006-05               *
+# * Maintainer:  Mariano Reingart (reingart@gmail.com) et al since 2008 est. *
+# * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT  *
+# ****************************************************************************
 
 from datetime import datetime
 import math
@@ -29,6 +29,7 @@ try:
 except ImportError:
     Image = None
 
+
 from ttfonts import TTFontFile
 from fonts import fpdf_charwidths
 from php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
@@ -44,102 +45,44 @@ def set_global(var, val):
 
 
 class FPDF(object):
-#Private properties
-#~ page;               #current page number
-#~ n;                  #current object number
-#~ offsets;            #array of object offsets
-#~ buffer;             #buffer holding in-memory PDF
-#~ pages;              #array containing pages
-#~ state;              #current document state
-#~ compress;           #compression flag
-#~ def_orientation;     #default orientation
-#~ cur_orientation;     #current orientation
-#~ orientation_changes; #array indicating orientation changes
-#~ k;                  #scale factor (number of points in user unit)
-#~ fw_pt,fh_pt;         #dimensions of page format in points
-#~ fw,fh;             #dimensions of page format in user unit
-#~ w_pt,h_pt;           #current dimensions of page in points
-#~ w,h;               #current dimensions of page in user unit
-#~ l_margin;            #left margin
-#~ t_margin;            #top margin
-#~ r_margin;            #right margin
-#~ b_margin;            #page break margin
-#~ c_margin;            #cell margin
-#~ x,y;               #current position in user unit for cell positioning
-#~ lasth;              #height of last cell printed
-#~ line_width;          #line width in user unit
-#~ core_fonts;          #array of standard font names
-#~ fonts;              #array of used fonts
-#~ font_files;          #array of font files
-#~ diffs;              #array of encoding differences
-#~ images;             #array of used images
-#~ page_links;          #array of links in pages
-#~ links;              #array of internal links
-#~ font_family;         #current font family
-#~ font_style;          #current font style
-#~ underline;          #underlining flag
-#~ current_font;        #current font info
-#~ font_size_pt;         #current font size in points
-#~ font_size;           #current font size in user unit
-#~ draw_color;          #commands for drawing color
-#~ fill_color;          #commands for filling color
-#~ text_color;          #commands for text color
-#~ color_flag;          #indicates whether fill and text colors are different
-#~ ws;                 #word spacing
-#~ auto_page_break;      #automatic page breaking
-#~ page_break_trigger;   #threshold used to trigger page breaks
-#~ in_footer;           #flag set when processing footer
-#~ zoom_mode;           #zoom display mode
-#~ layout_mode;         #layout display mode
-#~ title;              #title
-#~ subject;            #subject
-#~ author;             #author
-#~ keywords;           #keywords
-#~ creator;            #creator
-#~ alias_nb_pages;       #alias for total number of pages
-#~ pdf_version;         #PDF version number
-
-# ******************************************************************************
-# *                                                                              *
-# *                               Public methods                                 *
-# *                                                                              *
-# *******************************************************************************/
+    "PDF Generation class"
+    
     def __init__(self, orientation='P',unit='mm',format='A4'):
-        #Some checks
+        # Some checks
         self._dochecks()
-        #Initialization of properties
-        self.offsets={}
-        self.page=0
-        self.n=2
-        self.buffer=''
-        self.pages={}
-        self.orientation_changes={}
-        self.state=0
-        self.fonts={}
-        self.font_files={}
-        self.diffs={}
-        self.images={}
-        self.page_links={}
-        self.links={}
-        self.in_footer=0
+        # Initialization of properties
+        self.offsets={}                 # array of object offsets
+        self.page=0                     # current page number
+        self.n=2                        # current object number
+        self.buffer=''                  # buffer holding in-memory PDF
+        self.pages={}                   # array containing pages
+        self.orientation_changes={}     # array indicating orientation changes
+        self.state=0                    # current document state
+        self.fonts={}                   # array of used fonts
+        self.font_files={}              # array of font files
+        self.diffs={}                   # array of encoding differences
+        self.images={}                  # array of used images
+        self.page_links={}              # array of links in pages
+        self.links={}                   # array of internal links
+        self.in_footer=0                # flag set when processing footer
         self.lastw=0
-        self.lasth=0
-        self.font_family=''
-        self.font_style=''
-        self.font_size_pt=12
-        self.underline=0
+        self.lasth=0                    # height of last cell printed
+        self.font_family=''             # current font family
+        self.font_style=''              # current font style
+        self.font_size_pt=12            # current font size in points
+        self.underline=0                # underlining flag
         self.draw_color='0 G'
         self.fill_color='0 g'
         self.text_color='0 g'
-        self.color_flag=0
-        self.ws=0
+        self.color_flag=0               # indicates whether fill and text colors are different
+        self.ws=0                       # word spacing
         self.angle=0
-        #Standard fonts
+        # Standard fonts
         self.core_fonts={'courier':'Courier','courierB':'Courier-Bold','courierI':'Courier-Oblique','courierBI':'Courier-BoldOblique',
             'helvetica':'Helvetica','helveticaB':'Helvetica-Bold','helveticaI':'Helvetica-Oblique','helveticaBI':'Helvetica-BoldOblique',
             'times':'Times-Roman','timesB':'Times-Bold','timesI':'Times-Italic','timesBI':'Times-BoldItalic',
             'symbol':'Symbol','zapfdingbats':'ZapfDingbats'}
-        #Scale factor
+        # Scale factor
         if(unit=='pt'):
             self.k=1
         elif(unit=='mm'):
@@ -150,7 +93,7 @@ class FPDF(object):
             self.k=72
         else:
             self.error('Incorrect unit: '+unit)
-        #Page format
+        # Page format
         if(isinstance(format,basestring)):
             format=format.lower()
             if(format=='a3'):
@@ -172,7 +115,7 @@ class FPDF(object):
             self.fh_pt=format[1]*self.k
         self.fw=self.fw_pt/self.k
         self.fh=self.fh_pt/self.k
-        #Page orientation
+        # Page orientation
         orientation=orientation.lower()
         if(orientation=='p' or orientation=='portrait'):
             self.def_orientation='P'
@@ -187,20 +130,20 @@ class FPDF(object):
         self.cur_orientation=self.def_orientation
         self.w=self.w_pt/self.k
         self.h=self.h_pt/self.k
-        #Page margins (1 cm)
+        # Page margins (1 cm)
         margin=28.35/self.k
         self.set_margins(margin,margin)
-        #Interior cell margin (1 mm)
+        # Interior cell margin (1 mm)
         self.c_margin=margin/10.0
-        #line width (0.2 mm)
+        # line width (0.2 mm)
         self.line_width=.567/self.k
-        #Automatic page break
+        # Automatic page break
         self.set_auto_page_break(1,2*margin)
-        #Full width display mode
+        # Full width display mode
         self.set_display_mode('fullwidth')
-        #Enable compression
+        # Enable compression
         self.set_compression(1)
-        #Set default PDF version number
+        # Set default PDF version number
         self.pdf_version='1.3'
 
     def set_margins(self, left,top,right=-1):
@@ -1057,11 +1000,7 @@ class FPDF(object):
             txt = txt.encode('latin1')
         return txt
 
-# ******************************************************************************
-# *                                                                              *
-# *                              Protected methods                               *
-# *                                                                              *
-# *******************************************************************************/
+
     def _dochecks(self):
         #Check for locale-related bug
 #        if(1.1==1):
