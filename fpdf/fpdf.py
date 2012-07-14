@@ -15,7 +15,12 @@
 
 from datetime import datetime
 import math
-import os, sys, zlib, struct, re, tempfile, pickle,struct
+import os, sys, zlib, struct, re, tempfile, struct
+
+try:
+    import cPickle as pickle
+except ImportError:
+    import pickle
 
 try:
     # Check if PIL is available, necessary for JPEG support.
