@@ -18,6 +18,7 @@
 
 from struct import pack, unpack, unpack_from
 import re
+import warnings
 
 
 # Define the value used in the "head" table of a created TTF file
@@ -697,8 +698,13 @@ class TTFontFile:
             hmtxstr += hm
 
             offsets.append(pos)
-            glyphPos = self.glyphPos[originalGlyphIdx]
-            glyphLen = self.glyphPos[originalGlyphIdx + 1] - glyphPos
+            try:
+                glyphPos = self.glyphPos[originalGlyphIdx]
+                glyphLen = self.glyphPos[originalGlyphIdx + 1] - glyphPos
+            except IndexError:
+                warnings.warn("missing glyph %s" % (originalGlyphIdx))
+                glyphLen = 0
+
             if (glyfLength < self.maxStrLenRead):
                 data = substr(glyphData,glyphPos,glyphLen)
             else:
@@ -720,7 +726,11 @@ class TTFontFile:
                     up = unpack(">H", substr(data,pos_in_glyph+2,2))
                     glyphIdx = up[0]
                     self.glyphdata.setdefault(originalGlyphIdx, {}).setdefault('compGlyphs', []).append(glyphIdx)
-                    data = self._set_ushort(data, pos_in_glyph + 2, glyphSet[glyphIdx])
+                    try:
+                        data = self._set_ushort(data, pos_in_glyph + 2, glyphSet[glyphIdx])
+                    except KeyError:
+                        data = 0
+                        warnings.warn("missing glyph data %s" % glyphIdx)
                     pos_in_glyph += 4
                     if (flags & GF_WORDS): 
                         pos_in_glyph += 4 
@@ -808,8 +818,14 @@ class TTFontFile:
     # Recursively get composite glyphs
     def getGlyphs(self, originalGlyphIdx, nonlocals):
         # &start, &glyphSet, &subsetglyphs) 
-        glyphPos = self.glyphPos[originalGlyphIdx]
-        glyphLen = self.glyphPos[originalGlyphIdx + 1] - glyphPos
+        
+        try:
+            glyphPos = self.glyphPos[originalGlyphIdx]
+            glyphLen = self.glyphPos[originalGlyphIdx + 1] - glyphPos
+        except IndexError:
+            warnings.warn("missing glyph %s" % (originalGlyphIdx))
+            return
+
         if (not glyphLen):  
             return
         
