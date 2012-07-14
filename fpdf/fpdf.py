@@ -457,7 +457,6 @@ class FPDF(object):
         family = family.lower()
         if (fname == ''):
             fname = family.replace(' ','') + style.lower() + '.pkl'
-        fname = os.path.join(FPDF_FONT_DIR, fname)
         if (family == 'arial'):
             family = 'helvetica'
         style = style.upper()
@@ -472,7 +471,7 @@ class FPDF(object):
                 os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
                 ttffilename = os.path.join(SYSTEM_TTFONTS, fname)
             else:
-                ttffilename = os.path.join(FPDF_FONT_DIR, 'unifont', fname)
+                ttffilename = fname
             unifilename = os.path.splitext(fname)[0] + '.pkl'
             name = ''
             if os.path.exists(unifilename):
