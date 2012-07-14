@@ -31,35 +31,7 @@ except ImportError:
 
 from ttfonts import TTFontFile
 from fonts import fpdf_charwidths
-
-# php helpers:
-
-def substr(s, start, length=-1):
-       if length < 0:
-               length=len(s)-start
-       return s[start:start+length]
-
-def sprintf(fmt, *args): return fmt % args
-
-def print_r(array):
-    if not isinstance(array, dict):
-        array = dict([(k, k) for k in array])
-    for k, v in array.items():
-        print "[%s] => %s" % (k, v),
-        
-def UTF8ToUTF16BE(instr, setbom=True):
-    "Converts UTF-8 strings to UTF16-BE."
-    outstr = ""
-    if (setbom):
-        outstr += "\xFE\xFF"; 
-    if not isinstance(instr, unicode):
-        instr = instr.decode('UTF-8')
-    outstr += instr.encode('UTF-16BE')
-    return outstr
-
-def UTF8StringToArray(instr):
-    "Converts UTF-8 strings to codepoints array"
-    return [ord(c) for c in instr]
+from php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
 
 
 # Global variables
@@ -69,6 +41,7 @@ SYSTEM_TTFONTS = None
 
 def set_global(var, val):
     globals()[var] = val
+
 
 class FPDF(object):
 #Private properties
