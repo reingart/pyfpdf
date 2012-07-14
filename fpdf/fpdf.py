@@ -55,7 +55,6 @@ def UTF8StringToArray(instr):
     return [ord(c) for c in instr]
 
 
-
 # Global variables
 FPDF_VERSION='1.7'
 FPDF_FONT_DIR=os.path.join(os.path.dirname(__file__),'font')
@@ -637,8 +636,9 @@ class FPDF(object):
             self.page_links[self.page] = []
         self.page_links[self.page] += [(x*self.k,self.h_pt-y*self.k,w*self.k,h*self.k,link),]
 
-    def text(self, x,y,txt):
+    def text(self, x, y, txt=''):
         "Output a string"
+        txt = self.normalize_text(txt)
         if (self.unifontSubset):
             txt2 = '(' + self._escape(UTF8ToUTF16BE(txt, False)) + ')'
             for uni in UTF8StringToArray(txt):
@@ -675,6 +675,7 @@ class FPDF(object):
 
     def cell(self, w,h=0,txt='',border=0,ln=0,align='',fill=0,link=''):
         "Output a cell"
+        txt = self.normalize_text(txt)
         k=self.k
         if(self.y+h>self.page_break_trigger and not self.in_footer and self.accept_page_break()):
             #Automatic page break
@@ -767,8 +768,9 @@ class FPDF(object):
         else:
             self.x+=w
 
-    def multi_cell(self, w,h,txt,border=0,align='J',fill=0, split_only=False):
+    def multi_cell(self, w, h, txt='', border=0, align='J', fill=0, split_only=False):
         "Output text with automatic or explicit line breaks"
+        txt = self.normalize_text(txt)
         ret = [] # if split_only = True, returns splited text cells
         cw=self.current_font['cw']
         if(w==0):
@@ -879,12 +881,9 @@ class FPDF(object):
             ret.append(substr(s,j,i-j))
         return ret
 
-    def write(self, h,txt,link=''):
+    def write(self, h, txt='', link=''):
         "Output text in flowing mode"
-        if self.unifontsubset and isinstance(txt, str):
-            txt = txt.decode('utf8')
-        elif isinstance(txt, unicode):
-            txt = txt.encode('latin1')
+        txt = self.normalize_text(txt)
         cw=self.current_font['cw']
         w=self.w-self.r_margin-self.x
         wmax=(w-2*self.c_margin)*1000.0/self.font_size
@@ -1057,6 +1056,16 @@ class FPDF(object):
         else:
             self.error('Incorrect output destination: '+dest)
         return ''
+
+    def normalize_text(self, txt):
+        "Check that text input is in the correct format/encoding"
+        # - for TTF unicode fonts: unicode object (utf8 encoding)
+        # - for built-in fonts: string instances (latin 1 encoding)
+        if self.unifontsubset and isinstance(txt, str):
+            txt = txt.decode('utf8')
+        elif not self.unifontsubset and isinstance(txt, unicode):
+            txt = txt.encode('latin1')
+        return txt
 
 # ******************************************************************************
 # *                                                                              *
