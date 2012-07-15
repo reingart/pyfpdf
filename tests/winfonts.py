@@ -23,6 +23,11 @@ fn = 'winfonts.pdf'
 txt = open('HelloWorld.txt').read()
 pdf.write(8, txt)
 
+pdf.write(5,'To find out what\'s new in self tutorial, click ')
+pdf.set_font('','U')
+link=pdf.add_link()
+pdf.write(5,'here',link)
+
 # Select a standard font (uses windows-1252)
 pdf.set_font('Arial','',14)
 pdf.ln(10)

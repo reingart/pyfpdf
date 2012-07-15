@@ -845,9 +845,9 @@ class FPDF(object):
             if(c==' '):
                 sep=i
             if self.unifontsubset:  
-                l += self.get_string_width(c)
+                l += self.get_string_width(c) / self.font_size*1000.0
             else:
-                l += cw.get(c,0) * self.font_size/1000.0
+                l += cw.get(c,0)
             if(l>wmax):
                 #Automatic line break
                 if(sep==-1):
