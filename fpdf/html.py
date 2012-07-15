@@ -9,10 +9,7 @@ __license__ = "LGPL 3.0"
 # Inspired by tuto5.py and several examples from fpdf.org, html2fpdf, etc.
 
 from fpdf import FPDF
-from gluon.html import web2pyHTMLParser, A, B, BR, CENTER, DIV, EM, \
-    H1, H2, H3, H4, H5, H6, HR, I, IMG, LI, OL, UL, P, PRE, SPAN, \
-    STRONG, TABLE, TD, TH, THEAD, TBODY, TFOOT, TITLE, TR, TT
-
+from gluon.html import web2pyHTMLParser
 
 DEBUG = True
 
