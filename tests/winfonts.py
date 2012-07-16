@@ -21,7 +21,9 @@ fn = 'winfonts.pdf'
 
 # Load a UTF-8 string from a file and print it
 txt = open('HelloWorld.txt').read()
-pdf.write(8, txt)
+pdf.multi_cell(15, 5, txt)
+
+pdf.text(100, 5, '1234')
 
 pdf.write(5,'To find out what\'s new in self tutorial, click ')
 pdf.set_font('','U')
