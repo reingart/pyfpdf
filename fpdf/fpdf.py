@@ -574,8 +574,8 @@ class FPDF(object):
     def text(self, x, y, txt=''):
         "Output a string"
         txt = self.normalize_text(txt)
-        if (self.unifontSubset):
-            txt2 = '(' + self._escape(UTF8ToUTF16BE(txt, False)) + ')'
+        if (self.unifontsubset):
+            txt2 = self._escape(UTF8ToUTF16BE(txt, False))
             for uni in UTF8StringToArray(txt):
                 self.current_font['subset'].append(uni)
         else:
