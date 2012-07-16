@@ -659,7 +659,7 @@ class FPDF(object):
                 
             # If multibyte, Tw has no effect - do word spacing using an adjustment before each space
             if (self.ws and self.unifontsubset):
-                for uni in self.UTF8StringToArray(txt):
+                for uni in UTF8StringToArray(txt):
                     self.current_font['subset'].append(uni)
                 space = self._escape(UTF8ToUTF16BE(' ', False))
                 s += sprintf('BT 0 Tw %.2F %.2F Td [',(self.x + dx) * k,(self.h - (self.y + 0.5*h+ 0.3 * self.font_size)) * k)
@@ -760,10 +760,10 @@ class FPDF(object):
                 sep=i
                 ls=l
                 ns+=1
-                if self.unifontsubset:  
-                    l += self.get_string_width(c)
-                else:
-                    l += cw.get(c,0)
+            if self.unifontsubset:  
+                l += self.get_string_width(c) / self.font_size*1000.0
+            else:
+                l += cw.get(c,0)
             if(l>wmax):
                 #Automatic line break
                 if(sep==-1):
