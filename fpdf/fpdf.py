@@ -450,8 +450,8 @@ class FPDF(object):
                     if not e.errno == errno.EACCES:
                         raise  # Not a permission error.
                 del ttf
-            if False and (not hasattr(self,'str_alias_nb_pages')):
-                sbarr = range(0,57)
+            if hasattr(self,'str_alias_nb_pages'):
+                sbarr = range(0,57)   # include numbers in the subset!
             else:
                 sbarr = range(0,32)
             self.fonts[fontkey] = {
@@ -1013,7 +1013,12 @@ class FPDF(object):
     def _putpages(self):
         nb=self.page
         if hasattr(self,'str_alias_nb_pages'):
-            #Replace number of pages
+            # Replace number of pages in fonts using subsets (unicode)
+            alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False);
+            r = UTF8ToUTF16BE(str(nb), False)
+            for n in xrange(1, nb+1):
+                self.pages[n] = self.pages[n].replace(alias, r)
+            # Now repeat for no pages in non-subset fonts
             for n in xrange(1,nb+1):
                 self.pages[n]=self.pages[n].replace(self.str_alias_nb_pages,str(nb))
         if(self.def_orientation=='P'):
