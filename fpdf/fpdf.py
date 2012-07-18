@@ -1773,19 +1773,9 @@ class FPDF(object):
         wide = w
         
         # wide/narrow codes for the digits
-        bar_char={}
-        bar_char['0'] = 'nnwwn'
-        bar_char['1'] = 'wnnnw'
-        bar_char['2'] = 'nwnnw'
-        bar_char['3'] = 'wwnnn'
-        bar_char['4'] = 'nnwnw'
-        bar_char['5'] = 'wnwnn'
-        bar_char['6'] = 'nwwnn'
-        bar_char['7'] = 'nnnww'
-        bar_char['8'] = 'wnnwn'
-        bar_char['9'] = 'nwnwn'
-        bar_char['A'] = 'nn'
-        bar_char['Z'] = 'wn'
+        bar_char={'0': 'nnwwn', '1': 'wnnnw', '2': 'nwnnw', '3': 'wwnnn',
+                  '4': 'nnwnw', '5': 'wnwnn', '6': 'nwwnn', '7': 'nnnww',
+                  '8': 'wnnwn', '9': 'nwnwn', 'A': 'nn', 'Z': 'wn'}
            
         self.set_fill_color(0)
         code = txt
@@ -1798,15 +1788,15 @@ class FPDF(object):
 
         for i in xrange(0, len(code), 2):
             # choose next pair of digits
-            char_bar = code[i];
-            char_space = code[i+1];
+            char_bar = code[i]
+            char_space = code[i+1]
             # check whether it is a valid digit
             if not char_bar in bar_char.keys():
-                raise RuntimeError ('Caractér "%s" inválido para el código de barras I25: ' % char_bar)
+                raise RuntimeError ('Char "%s" invalid for I25: ' % char_bar)
             if not char_space in bar_char.keys():
-                raise RuntimeError ('Caractér "%s" inválido para el código de barras I25: ' % char_space)
+                raise RuntimeError ('Char "%s" invalid for I25: ' % char_space)
 
-            # create a wide/narrow-sequence (first digit=bars, second digit=spaces)
+            # create a wide/narrow-seq (first digit=bars, second digit=spaces)
             seq = ''
             for s in xrange(0, len(bar_char[char_bar])):
                 seq += bar_char[char_bar][s] + bar_char[char_space][s]
@@ -1818,7 +1808,7 @@ class FPDF(object):
                 else:
                     line_width = wide
 
-                # draw every second value, because the second digit of the pair is represented by the spaces
+                # draw every second value, the other is represented by space
                 if bar % 2 == 0:
                     self.rect(x, y, line_width, h, 'F')
 
@@ -1828,64 +1818,34 @@ class FPDF(object):
     def code39(self, txt, x, y, w=1.5, h=5.0):
         "Barcode 3of9"
         wide = w
-        narrow = w /3.0
+        narrow = w / 3.0
         gap = narrow
 
-        bar_char={}
-        bar_char['0'] = 'nnnwwnwnn'
-        bar_char['1'] = 'wnnwnnnnw'
-        bar_char['2'] = 'nnwwnnnnw'
-        bar_char['3'] = 'wnwwnnnnn'
-        bar_char['4'] = 'nnnwwnnnw'
-        bar_char['5'] = 'wnnwwnnnn'
-        bar_char['6'] = 'nnwwwnnnn'
-        bar_char['7'] = 'nnnwnnwnw'
-        bar_char['8'] = 'wnnwnnwnn'
-        bar_char['9'] = 'nnwwnnwnn'
-        bar_char['A'] = 'wnnnnwnnw'
-        bar_char['B'] = 'nnwnnwnnw'
-        bar_char['C'] = 'wnwnnwnnn'
-        bar_char['D'] = 'nnnnwwnnw'
-        bar_char['E'] = 'wnnnwwnnn'
-        bar_char['F'] = 'nnwnwwnnn'
-        bar_char['G'] = 'nnnnnwwnw'
-        bar_char['H'] = 'wnnnnwwnn'
-        bar_char['I'] = 'nnwnnwwnn'
-        bar_char['J'] = 'nnnnwwwnn'
-        bar_char['K'] = 'wnnnnnnww'
-        bar_char['L'] = 'nnwnnnnww'
-        bar_char['M'] = 'wnwnnnnwn'
-        bar_char['N'] = 'nnnnwnnww'
-        bar_char['O'] = 'wnnnwnnwn'
-        bar_char['P'] = 'nnwnwnnwn'
-        bar_char['Q'] = 'nnnnnnwww'
-        bar_char['R'] = 'wnnnnnwwn'
-        bar_char['S'] = 'nnwnnnwwn'
-        bar_char['T'] = 'nnnnwnwwn'
-        bar_char['U'] = 'wwnnnnnnw'
-        bar_char['V'] = 'nwwnnnnnw'
-        bar_char['W'] = 'wwwnnnnnn'
-        bar_char['X'] = 'nwnnwnnnw'
-        bar_char['Y'] = 'wwnnwnnnn'
-        bar_char['Z'] = 'nwwnwnnnn'
-        bar_char['-'] = 'nwnnnnwnw'
-        bar_char['.'] = 'wwnnnnwnn'
-        bar_char[' '] = 'nwwnnnwnn'
-        bar_char['*'] = 'nwnnwnwnn'
-        bar_char['$'] = 'nwnwnwnnn'
-        bar_char['/'] = 'nwnwnnnwn'
-        bar_char['+'] = 'nwnnnwnwn'
-        bar_char['%'] = 'nnnwnwnwn'
+        bar_char={'0': 'nnnwwnwnn', '1': 'wnnwnnnnw', '2': 'nnwwnnnnw', 
+                  '3': 'wnwwnnnnn', '4': 'nnnwwnnnw', '5': 'wnnwwnnnn',
+                  '6': 'nnwwwnnnn', '7': 'nnnwnnwnw', '8': 'wnnwnnwnn',
+                  '9': 'nnwwnnwnn', 'A': 'wnnnnwnnw', 'B': 'nnwnnwnnw',
+                  'C': 'wnwnnwnnn', 'D': 'nnnnwwnnw', 'E': 'wnnnwwnnn',
+                  'F': 'nnwnwwnnn', 'G': 'nnnnnwwnw', 'H': 'wnnnnwwnn',
+                  'I': 'nnwnnwwnn', 'J': 'nnnnwwwnn', 'K': 'wnnnnnnww',
+                  'L': 'nnwnnnnww', 'M': 'wnwnnnnwn', 'N': 'nnnnwnnww',
+                  'O': 'wnnnwnnwn', 'P': 'nnwnwnnwn', 'Q': 'nnnnnnwww',
+                  'R': 'wnnnnnwwn', 'S': 'nnwnnnwwn', 'T': 'nnnnwnwwn',
+                  'U': 'wwnnnnnnw', 'V': 'nwwnnnnnw', 'W': 'wwwnnnnnn',
+                  'X': 'nwnnwnnnw', 'Y': 'wwnnwnnnn', 'Z': 'nwwnwnnnn',
+                  '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn',
+                  '*': 'nwnnwnwnn', '$': 'nwnwnwnnn', '/': 'nwnwnnnwn',
+                  '+': 'nwnnnwnwn', '%': 'nnnwnwnwn'}
 
         self.set_fill_color(0)
         code = txt      
             
         code = code.upper()
         for i in xrange (0, len(code), 2):
-            char_bar = code[i];
+            char_bar = code[i]
 
             if not char_bar in bar_char.keys():
-                raise RuntimeError ('Caracter "%s" inválido para el código de barras' % char_bar)
+                raise RuntimeError ('Char "%s" invalid for Code39' % char_bar)
 
             seq= ''
             for s in xrange(0, len(bar_char[char_bar])):
@@ -1898,9 +1858,8 @@ class FPDF(object):
                     line_width = wide
 
                 if bar % 2 == 0:
-                    self.rect(x,y,line_width,h,'F')
+                    self.rect(x, y, line_width, h, 'F')
                 x += line_width
         x += gap
 
-#End of class
 
