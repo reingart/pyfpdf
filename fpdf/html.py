@@ -388,7 +388,7 @@ class HTML2FPDF(HTMLParser):
         self.pdf.line(self.pdf.get_x(),self.pdf.get_y(),self.pdf.get_x()+187,self.pdf.get_y())
         self.pdf.ln(3)
 
-class HTMLMixin():
+class HTMLMixin(object):
     def write_html(self, text):
         "Parse HTML and convert it to PDF"
         h2p = HTML2FPDF(self)
