@@ -34,11 +34,15 @@ class HTML2FPDF(HTMLParser):
         self.align = ''
         self.page_links = {}
         self.font_list = ("times","courier", "helvetica")
+        self.font = None
+        self.font_stack = [] 
         self.pdf = pdf
         self.r = self.g = self.b = 0
         self.indent = 0
         self.bullet = []
         self.set_font("times", 12)
+        self.font_face = "times"    # initialize font
+        self.color = 0              #initialize font color
         self.table = None           # table attributes
         self.table_col_width = None # column (header) widths
         self.table_col_index = None # current column index
@@ -205,6 +209,8 @@ class HTML2FPDF(HTMLParser):
             self.pdf.write(self.h,'%s%s ' % (' '*5*self.indent, bullet))
             self.set_text_color()
         if tag=='font':
+            # save previous font state:
+            self.font_stack.append((self.font_face, self.font_size, self.color))
             if 'color' in attrs:
                 self.color = hex2dec(attrs['color'])
                 self.set_text_color(*color)
@@ -214,8 +220,8 @@ class HTML2FPDF(HTMLParser):
                 self.pdf.set_font(face)
                 self.font_face = face
             if 'size' in attrs:
-                face = attrs.get('size')
-                self.pdf.set_font('', size)
+                size = int(attrs.get('size'))
+                self.pdf.set_font(self.font_face, size=int(size))
                 self.font_size = size
         if tag=='table':
             self.table = dict([(k.lower(), v) for k,v in attrs.items()])
@@ -320,12 +326,13 @@ class HTML2FPDF(HTMLParser):
             self.td = None
             self.th = False
         if tag=='font':
-            if self.color:
+            # recover last font state
+            face, size, color = self.font_stack.pop()
+            if face:
                 self.pdf.set_text_color(0,0,0)
                 self.color = None
-            if self.font:
-                self.SetFont('Times','',12)
-                self.font = None
+            self.set_font(face, size)                
+            self.font = None
         if tag=='center':
             self.align = None
 

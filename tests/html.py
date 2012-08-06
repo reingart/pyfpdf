@@ -55,6 +55,10 @@ or on an image: click on the logo.<br>
 </tr>""" * 200 + """
 </tbody>
 </table>
+
+<font face='helvetica' size='40'>Font example: Arial 40pt</font>
+ 
+
 """
 
     class MyFPDF(FPDF, HTMLMixin):
