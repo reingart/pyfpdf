@@ -79,8 +79,18 @@ or on an image: click on the logo.<br>
     #First page
     pdf.add_page()
     pdf.write_html(html)
-    pdf.output('html.pdf','F')
 
+    # this will fail (tables without widht are not supported):
+    try:
+        pdf.write_html("""<table><tr><td></td></tr></table>""")
+    except RuntimeError:
+        pass
+
+    # this may be rendered incorrectly as currently there is no two pass auto-layout:
+    pdf.write_html("""<table><tr><th></th><td width="100%">100%</td></tr></table>""")
+
+    pdf.output('html.pdf','F')
+        
     import os
     try:
         os.startfile("html.pdf")

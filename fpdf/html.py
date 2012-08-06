@@ -67,7 +67,10 @@ class HTML2FPDF(HTMLParser):
     def handle_data(self, txt):
         if self.td is not None: # drawing a table?
             if 'width' not in self.td and 'colspan' not in self.td:
-                l = [self.table_col_width[self.table_col_index]]
+                try:
+                    l = [self.table_col_width[self.table_col_index]]
+                except IndexError:
+                    raise RuntimeError("Table column/cell width not specified, unable to continue")
             elif 'colspan' in self.td:
                 i = self.table_col_index
                 colspan = int(self.td['colspan'])
@@ -237,6 +240,7 @@ class HTML2FPDF(HTMLParser):
             self.tfooter = []
             self.thead = None
             self.tfoot = None
+            self.table_h = 0
             self.pdf.ln()
         if tag=='tr':
             self.tr = dict([(k.lower(), v) for k,v in attrs.items()])
@@ -247,7 +251,7 @@ class HTML2FPDF(HTMLParser):
         if tag=='th':
             self.td = dict([(k.lower(), v) for k,v in attrs.items()])
             self.th = True
-            if self.td['width']:
+            if 'width' in self.td:
                 self.table_col_width.append(self.td['width'])
         if tag=='thead':
             self.thead = {}
