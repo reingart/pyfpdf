@@ -9,9 +9,9 @@ __license__ = "LGPL 3.0"
 # Inspired by tuto5.py and several examples from fpdf.org, html2fpdf, etc.
 
 from fpdf import FPDF
-from gluon.html import web2pyHTMLParser
+from HTMLParser import HTMLParser
 
-DEBUG = True
+DEBUG = False
 
 def px2mm(px):
     return int(px)*25.4/72.0
@@ -23,11 +23,11 @@ def hex2dec(color = "#000000"):
         b = int(color[5:7], 16)
         return r, g, b
 
-
-class HTML2FPDF(object):
+class HTML2FPDF(HTMLParser):
     "Render basic HTML to FPDF"
 
     def __init__(self, pdf):
+        HTMLParser.__init__(self)
         self.style = {}
         self.pre = False
         self.href = ''
@@ -50,22 +50,6 @@ class HTML2FPDF(object):
         self.thead = None
         self.tfoot = None
         self.theader_out = self.tfooter_out = False
-    
-    def feed(self, html):
-        "Parse html and create a python objects tree (web2py helpers)"
-        tree = web2pyHTMLParser(html).tree
-        self.analyze(tree)
-    
-    def analyze(self, node):
-        "Recursively convert python objects tree (web2py helpers) to PDF"
-        attrs = dict([(k[1:], v) for k,v in node.attributes.items()])
-        self.handle_starttag(node.tag, attrs)
-        for child in node.components:
-            if isinstance(child, basestring):
-                self.handle_data(child)
-            else:
-                self.analyze(child)
-        self.handle_endtag(node.tag)
         
     def width2mm(self, length):
         if length[-1]=='%':
@@ -409,7 +393,7 @@ styles : <B>bold</B>, <I>italic</I>, <U>underlined</U>, or
 on text, such as <A HREF="http://www.fpdf.org">www.fpdf.org</A>,
 or on an image: click on the logo.<br>
 <center>
-<A HREF="http://www.fpdf.org"><img src="../tutorial/logo.png" width="104" height="71"></A>
+<A HREF="http://www.fpdf.org"><img src="tutorial/logo.png" width="104" height="71"></A>
 </center>
 <h3>Sample List</h3>
 <ul><li>option 1</li>
@@ -440,14 +424,14 @@ or on an image: click on the logo.<br>
 <td>cell 3</td><td>cell 4</td>
 </tr><tr bgcolor="#FFFFFF">
 <td>cell 5</td><td>cell 6</td>
-</tr>""" * 10 + """
+</tr>""" * 200 + """
 </tbody>
 </table>
 """
 
     class MyFPDF(FPDF, HTMLMixin):
         def header(self):
-            self.image('../tutorial/logo_pb.png',10,8,33)
+            self.image('tutorial/logo_pb.png',10,8,33)
             self.set_font('Arial','B',15)
             self.cell(80)
             self.cell(30,10,'Title',1,0,'C')
@@ -466,5 +450,4 @@ or on an image: click on the logo.<br>
     pdf.output('html.pdf','F')
 
     import os
-    os.startfile("html.pdf")
     os.system("evince html.pdf")
