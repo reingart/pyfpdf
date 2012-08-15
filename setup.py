@@ -11,7 +11,7 @@ else:
     import fpdf
     package_dir = 'fpdf'
     
-setup(name='PyFPDF',
+setup(name='fpdf',
       version=fpdf.__version__,
       description='Simple PDF generation for Python',
       author='Olivier PLATHEY ported by Max',
