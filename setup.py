@@ -22,7 +22,7 @@ setup(name='fpdf',
       download_url="http://pyfpdf.googlecode.com/files/pyfpdf-%s.tar.gz" % fpdf.__version__,
       packages=['fpdf', ],
       package_dir={'fpdf': package_dir},
-      package_data={'fpdf': ['font/*.ttf']},
+      package_data={'fpdf': ['font/*.ttf', 'font/*.txt']},
       classifiers = [
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
