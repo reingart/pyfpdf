@@ -880,7 +880,7 @@ class FPDF(object):
         if(i!=j):
             self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
-    def image(self, name,x,y,w=0,h=0,type='',link=''):
+    def image(self, name, x=None, y=None, w=0,h=0,type='',link=''):
         "Put an image on the page"
         if not name in self.images:
             #First use of image, get info
@@ -909,10 +909,21 @@ class FPDF(object):
             #Put image at 72 dpi
             w=info['w']/self.k
             h=info['h']/self.k
-        if(w==0):
+        elif(w==0):
             w=h*info['w']/info['h']
-        if(h==0):
+        elif(h==0):
             h=w*info['h']/info['w']
+        # Flowing mode
+        if y is None:
+            if (self.y + h > self.page_break_trigger and not self.in_footer and self.accept_page_break()):
+                #Automatic page break
+                x = self.x
+                self.add_page(self.cur_orientation)
+                self.x = x
+            y = self.y
+            self.y += h
+        if x is None:
+            x = self.x
         self._out(sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',w*self.k,h*self.k,x*self.k,(self.h-(y+h))*self.k,info['i']))
         if(link):
             self.link(x,y,w,h,link)
