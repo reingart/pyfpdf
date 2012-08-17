@@ -2,9 +2,9 @@
 # -*- coding: latin-1 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
-# * Version:  1.7                                                            *
+# * Version:  1.7.1                                                          *
 # * Date:     2010-09-10                                                     *
-# * Last update: 2012-07-14                                                  *
+# * Last update: 2012-08-16                                                  *
 # * License:  LGPL v3.0                                                      *
 # *                                                                          *
 # * Original Author (PHP):  Olivier PLATHEY 2004-12-31                       *
@@ -36,7 +36,7 @@ from php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
 
 
 # Global variables
-FPDF_VERSION = '1.7'
+FPDF_VERSION = '1.7.1'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
 SYSTEM_TTFONTS = None
 
