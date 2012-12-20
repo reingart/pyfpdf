@@ -93,7 +93,7 @@ class TTFontFile:
             if (version==0x74746366):
                 die("ERROR - TrueType Fonts Collections not supported")
             if (version not in (0x00010000,0x74727565)):
-                die("Not a TrueType font: version=" + version)
+                die("Not a TrueType font: version=" + str(version))
             self.readTableDirectory()
             self.extractInfo()
     
