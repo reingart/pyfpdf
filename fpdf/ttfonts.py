@@ -402,7 +402,7 @@ class TTFontFile:
         # maxp - Maximum profile table
         #################/
         self.seek_table("maxp")
-        self.skip(4) 
+        self.skip(4)
         numGlyphs = self.read_ushort()
 
         #################/
@@ -412,25 +412,37 @@ class TTFontFile:
         self.skip(2)
         cmapTableCount = self.read_ushort()
         unicode_cmap_offset = 0
+        unicode_cmap_offset12 = 0
+        
         for i in range(cmapTableCount):
             platformID = self.read_ushort()
             encodingID = self.read_ushort()
             offset = self.read_ulong()
             save_pos = self._pos
+            if platformID == 3 and encodingID == 10:  # Microsoft, UCS-4
+                format = self.get_ushort(cmap_offset + offset)
+                if (format == 12):
+                    if not unicode_cmap_offset12:
+                        unicode_cmap_offset12 = cmap_offset + offset
+                    break
             if ((platformID == 3 and encodingID == 1) or platformID == 0):  # Microsoft, Unicode
                 format = self.get_ushort(cmap_offset + offset)
                 if (format == 4):
                     if (not unicode_cmap_offset):
                         unicode_cmap_offset = cmap_offset + offset
                     break
-            self.seek(save_pos )
+                    
+            self.seek(save_pos)
         
-        if (not unicode_cmap_offset):
-            die('Font (' + self.filename + ') does not have cmap for Unicode (platform 3, encoding 1, format 4, or platform 0, any encoding, format 4)')
+        if not unicode_cmap_offset and not unicode_cmap_offset12:
+            die('Font (' + self.filename + ') does not have cmap for Unicode (platform 3, encoding 1, format 4, or platform 3, encoding 10, format 12, or platform 0, any encoding, format 4)')
 
         glyphToChar = {}
         charToGlyph = {}
-        self.getCMAP4(unicode_cmap_offset, glyphToChar, charToGlyph )
+        if unicode_cmap_offset12:
+            self.getCMAP12(unicode_cmap_offset12, glyphToChar, charToGlyph)
+        else:    
+            self.getCMAP4(unicode_cmap_offset, glyphToChar, charToGlyph)
 
         #################/
         # hmtx - Horizontal metrics table
@@ -486,11 +498,18 @@ class TTFontFile:
         self.skip(2)
         cmapTableCount = self.read_ushort()
         unicode_cmap_offset = 0
+        unicode_cmap_offset12 = 0
         for i in range(cmapTableCount):
             platformID = self.read_ushort()
             encodingID = self.read_ushort()
             offset = self.read_ulong()
             save_pos = self._pos
+            if platformID == 3 and encodingID == 10:  # Microsoft, UCS-4
+                format = self.get_ushort(cmap_offset + offset)
+                if (format == 12):
+                    if not unicode_cmap_offset12:
+                        unicode_cmap_offset12 = cmap_offset + offset
+                    break
             if ((platformID == 3 and encodingID == 1) or platformID == 0):  # Microsoft, Unicode
                 format = self.get_ushort(cmap_offset + offset)
                 if (format == 4):
@@ -499,12 +518,15 @@ class TTFontFile:
                 
             self.seek(save_pos )
         
-        if (not unicode_cmap_offset):
-            die('Font (' + self.filename + ') does not have cmap for Unicode (platform 3, encoding 1, format 4, or platform 0, any encoding, format 4)')
+        if not unicode_cmap_offset and not unicode_cmap_offset12:
+            die('Font (' + self.filename + ') does not have cmap for Unicode (platform 3, encoding 1, format 4, or platform 3, encoding 10, format 12, or platform 0, any encoding, format 4)')
 
         glyphToChar = {}
         charToGlyph = {}
-        self.getCMAP4(unicode_cmap_offset, glyphToChar, charToGlyph )
+        if unicode_cmap_offset12:
+            self.getCMAP12(unicode_cmap_offset12, glyphToChar, charToGlyph)
+        else:    
+            self.getCMAP4(unicode_cmap_offset, glyphToChar, charToGlyph)
 
         self.charToGlyph = charToGlyph
 
@@ -923,7 +945,7 @@ class TTFontFile:
             die('Unknown location table format ' + indexToLocFormat)
 
     # CMAP Format 4
-    def getCMAP4(self, unicode_cmap_offset, glyphToChar, charToGlyph ):
+    def getCMAP4(self, unicode_cmap_offset, glyphToChar, charToGlyph):
         self.maxUniChar = 0
         self.seek(unicode_cmap_offset + 2)
         length = self.read_ushort()
@@ -967,6 +989,34 @@ class TTFontFile:
                     self.maxUniChar = max(unichar,self.maxUniChar) 
                 glyphToChar.setdefault(glyph, []).append(unichar)
 
+    # CMAP Format 12
+    def getCMAP12(self, unicode_cmap_offset, glyphToChar, charToGlyph):
+        self.maxUniChar = 0
+        # table (skip format version, should be 12)
+        self.seek(unicode_cmap_offset + 2)
+        # reserved
+        self.skip(2)
+        # table length
+        length = self.read_ulong()
+        # language (should be 0)
+        self.skip(4)
+        # groups count
+        grpCount = self.read_ulong()
+
+        if 2 + 2 + 4 + 4 + 4 + grpCount * 3 * 4 > length:
+            die("TTF format 12 cmap table too small")  
+        for n in range(grpCount):
+            startCharCode = self.read_ulong()
+            endCharCode = self.read_ulong()
+            glyph = self.read_ulong()
+            for unichar in range(startCharCode, endCharCode + 1):
+                charToGlyph[unichar] = glyph
+                if (unichar < 196608):
+                    self.maxUniChar = max(unichar, self.maxUniChar) 
+                glyphToChar.setdefault(glyph, []).append(unichar)
+                glyph += 1
+            
+            
 
     # Put the TTF file together
     def endTTFile(self, stm): 
