@@ -23,9 +23,13 @@ try:
 except ImportError:
     import pickle
 
+# Check if PIL is available (tries importing both pypi version and corrected or manually installed versions).
+# Necessary for JPEG and GIF support.
 try:
-    # Check if PIL is available, necessary for JPEG support.
-    import Image
+    try:
+        import Image
+    except:
+        from PIL import Image
 except ImportError:
     Image = None
 
