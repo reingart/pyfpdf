@@ -1641,9 +1641,11 @@ class FPDF(object):
             # Use temporary file
             f = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
             tmp = f.name
-            transparency = im.info['transparency']
             f.close()
-            im.save(tmp, transparency=transparency)
+            if "transparency" in im.info:
+                im.save(tmp, transparency = im.info['transparency'])
+            else:
+                im.save(tmp)
             info = self._parsepng(tmp)
             os.unlink(tmp)
         return info
