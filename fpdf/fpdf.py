@@ -684,7 +684,7 @@ class FPDF(object):
                     for uni in UTF8StringToArray(txt):
                         self.current_font['subset'].append(uni)
                 else:
-                    txt2 = txt.replace('\\','\\\\').replace(')','\\)').replace('(','\\(') 
+                    txt2 = self._escape(txt)
                 s += sprintf('BT %.2f %.2f Td (%s) Tj ET',(self.x+dx)*k,(self.h-(self.y+.5*h+.3*self.font_size))*k,txt2)
             
             if(self.underline):
@@ -1775,7 +1775,7 @@ class FPDF(object):
 
     def _escape(self, s):
         #Add \ before \, ( and )
-        return s.replace('\\','\\\\').replace(')','\\)').replace('(','\\(')
+        return s.replace('\\','\\\\').replace(')','\\)').replace('(','\\(').replace('\r','\\r')
 
     def _putstream(self, s):
         self._out('stream')
