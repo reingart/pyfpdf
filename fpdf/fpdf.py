@@ -1765,7 +1765,7 @@ class FPDF(object):
     def _freadint(self, f):
         #Read a 4-byte integer from file
         try:
-            return struct.unpack('>HH',f.read(4))[1]
+            return struct.unpack('>I', f.read(4))[0]
         except:
             return None
 
