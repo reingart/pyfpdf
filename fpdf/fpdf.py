@@ -900,10 +900,24 @@ class FPDF(object):
                 info=self._parsepng(name)
             else:
                 #Allow for additional formats
-                mtd='_parse'+type
-                if not hasattr(self,mtd):
-                    self.error('Unsupported image type: '+type)
-                info=getattr(self, mtd)(name)
+                #maybe the image is not showing the correct extension,
+                #but the header is OK, 
+                succeed_parsing = False
+                #try all the parsing functions
+                parsing_functions = [self._parsejpg,self._parsepng,self._parsegif]
+                for pf in parsing_functions:
+                    try:
+                        info = pf(name)
+                        succeed_parsing = True
+                        break;
+                    except:
+                        pass
+                #last resource
+                if not succeed_parsing:
+                    mtd='_parse'+type
+                    if not hasattr(self,mtd):
+                        self.error('Unsupported image type: '+type)
+                    info=getattr(self, mtd)(name)
             info['i']=len(self.images)+1
             self.images[name]=info
         else:
