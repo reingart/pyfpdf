@@ -6,7 +6,7 @@
 Empecemos con el ejemplo clásico: 
 
 {{{
-from pyfpdf import FPDF
+from fpdf import FPDF
 
 pdf=FPDF()
 pdf.add_page()
@@ -59,7 +59,7 @@ Finalmente, el documento es cerrado y enviado al explorador con [Output]. Podemo
 Aquí hay un ejemplo de dos páginas con encabezado, pie y logo: 
 
 {{{
-from pyfpdf import FPDF
+from fpdf import FPDF
 
 class PDF(FPDF):
         def header(this):
@@ -183,3 +183,21 @@ El método GetStringWidth permite determinar la longitud de una cadena en la fue
 El método usado para imprimir parrafos es MultiCell. Cada vez que una línea alcanza el extremo derecho de la celda o un caracter de retorno de linea, un salto de línea es emitido y una nueva celda es automáticamente creada bajo la actual. El texto es justificado por defecto. 
 
 Dos propiedades del documento son definidas: el título (SetTitle) y el autor (SetAuthor). Las propiedades pueden ser vistas de dos formas. La primera es abrir el documento directamente con Acrobat Reader, ir al menú Archivo y elegir la opción Propiedades del Documento. La segunda, también disponible en el plug-in, es hacer click izquierdo y seleccionar Propiedades del documento (Document Properties).
+
+== Notas de instalación ==
+
+Anteriormente, para importar el objeto se debía usar el paquete pyfpdf:
+
+{{{
+from pyfpdf import FPDF
+}}}
+
+A partir de la versión 1.7, para importar el objeto se debe usar el paquete fpdf:
+
+{{{
+from fpdf import FPDF
+}}}
+
+
+
+
