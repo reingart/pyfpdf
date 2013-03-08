@@ -373,6 +373,21 @@ class FPDF(object):
         "Draw a line"
         self._out(sprintf('%.2f %.2f m %.2f %.2f l S',x1*self.k,(self.h-y1)*self.k,x2*self.k,(self.h-y2)*self.k))
 
+    def _set_dash(self, dash_length=False, space_length=False):
+        if(dash_length and space_length):
+            s = sprintf('[%.3f %.3f] 0 d', dash_length*self.k, space_length*self.k)
+        else:
+            s = '[] 0 d'
+        self._out(s)
+
+    def dashed_line(self, x1,y1,x2,y2, dash_length=1, space_length=1):
+        """Draw a dashed line. Same interface as line() except:
+           - dash_length: Length of the dash
+           - space_length: Length of the space between dashes"""
+        self._set_dash(dash_length, space_length)
+        self.line(x1, y1, x2, y2)
+        self._set_dash()
+
     def rect(self, x,y,w,h,style=''):
         "Draw a rectangle"
         if(style=='F'):
