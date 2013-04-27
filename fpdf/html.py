@@ -33,7 +33,6 @@ class HTML2FPDF(HTMLParser):
         self.href = ''
         self.align = ''
         self.page_links = {}
-        self.font_list = ("times","courier", "helvetica")
         self.font = None
         self.font_stack = [] 
         self.pdf = pdf
@@ -219,7 +218,7 @@ class HTML2FPDF(HTMLParser):
                 self.color = hex2dec(attrs['color'])
                 self.set_text_color(*color)
                 self.color = color
-            if 'face' in attrs and attrs['face'].lower() in self.font_list:
+            if 'face' in attrs:
                 face = attrs.get('face').lower()
                 self.pdf.set_font(face)
                 self.font_face = face
