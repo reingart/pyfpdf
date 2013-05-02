@@ -11,7 +11,7 @@ else:
     import fpdf
     package_dir = 'fpdf'
     
-setup(name='PyFPDF',
+setup(name='fpdf',
       version=fpdf.__version__,
       description='Simple PDF generation for Python',
       author='Olivier PLATHEY ported by Max',
@@ -22,7 +22,7 @@ setup(name='PyFPDF',
       download_url="http://pyfpdf.googlecode.com/files/pyfpdf-%s.tar.gz" % fpdf.__version__,
       packages=['fpdf', ],
       package_dir={'fpdf': package_dir},
-      package_data={'fpdf': ['font/*.ttf']},
+      package_data={'fpdf': ['font/*.ttf', 'font/*.txt']},
       classifiers = [
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
