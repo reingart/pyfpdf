@@ -34,7 +34,7 @@ if __name__ == '__main__':
     # greek
     pdf.write_html(u"""<p><font face="DejaVu">Γειά σου κόσμος</font></p>""")
     # russian
-    pdf.write_html(u"""<p><font face="DejaVu">Здравствулте мир</font></p>""")
+    pdf.write_html(u"""<p><font face="DejaVu">Здравствуй, Мир</font></p>""")
 
     pdf.output('html_unicode.pdf','F')
         
@@ -42,4 +42,4 @@ if __name__ == '__main__':
     try:
         os.startfile("html_unicode.pdf")
     except:
-        os.system("evince html.pdf")
+        os.system("xdg-open \"%s\"" % fn)

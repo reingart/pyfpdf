@@ -64,8 +64,6 @@ img.save(gif1, "GIF")
 img.save(gif2, "GIF", transparency = 1)
 
 
-print FPDF_VERSION
-
 pdf=FPDF()
 pdf.add_page()
 pdf.set_font('Arial', '', 16)
@@ -95,4 +93,4 @@ os.unlink(gif2)
 try:
     os.startfile(fn)
 except:
-    os.system("xdg-open %s" % fn)
+    os.system("xdg-open \"%s\"" % fn)

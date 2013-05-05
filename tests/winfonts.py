@@ -37,7 +37,4 @@ pdf.write(5, 'The file size of this PDF is only 12 KB.')
 
 pdf.output(fn,'F')
 import os
-try:
-    os.startfile(fn)
-except:
-    os.system("evince %s" % fn)
+os.startfile(fn)

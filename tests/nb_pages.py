@@ -21,3 +21,9 @@ for i in range(5):
     pdf.cell(40,10,'Hello World! unicode {nb}')
     
 pdf.output('nb_pages.pdf','F')
+
+import os
+try:
+    os.startfile(fn)
+except:
+    os.system("xdg-open \"%s\"" % fn)

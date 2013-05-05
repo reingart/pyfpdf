@@ -95,4 +95,4 @@ or on an image: click on the logo.<br>
     try:
         os.startfile("html.pdf")
     except:
-        os.system("evince html.pdf")
+        os.system("xdg-open \"%s\"" % fn)

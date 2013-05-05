@@ -39,4 +39,4 @@ import os
 try:
     os.startfile(fn)
 except:
-    os.system("evince %s" % fn)
+    os.system("xdg-open \"%s\"" % fn)
