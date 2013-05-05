@@ -36,10 +36,11 @@ if __name__ == '__main__':
     # russian
     pdf.write_html(u"""<p><font face="DejaVu">Здравствуй, Мир</font></p>""")
 
-    pdf.output('html_unicode.pdf','F')
+    fn = 'html_unicode.pdf'
+    pdf.output(fn,'F')
         
     import os
     try:
-        os.startfile("html_unicode.pdf")
+        os.startfile(fn)
     except:
         os.system("xdg-open \"%s\"" % fn)

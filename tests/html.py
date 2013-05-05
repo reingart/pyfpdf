@@ -89,10 +89,11 @@ or on an image: click on the logo.<br>
     # this may be rendered incorrectly as currently there is no two pass auto-layout:
     pdf.write_html("""<table><tr><th></th><td width="100%">100%</td></tr></table>""")
 
-    pdf.output('html.pdf','F')
+    fn = 'html.pdf'
+    pdf.output(fn,'F')
         
     import os
     try:
-        os.startfile("html.pdf")
+        os.startfile(fn)
     except:
         os.system("xdg-open \"%s\"" % fn)
