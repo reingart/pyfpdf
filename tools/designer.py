@@ -27,9 +27,9 @@ import wx
 import wx.lib.ogl as ogl
 from wx.lib.wordwrap import wordwrap
 try:
-    from template import Template
+    from fpdf.template import Template
 except ImportError:
-    # we are frozen?
+    # we are frozen? replace pyfpdf_hg with the proper directory for template.py
     from pyfpdf_hg.template import Template
     
 DEBUG = True
