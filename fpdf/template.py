@@ -16,8 +16,7 @@ class Template:
     def __init__(self, infile=None, elements=None, format='A4', orientation='portrait',
                  title='', author='', subject='', creator='', keywords=''):
         if elements:
-            self.elements = elements
-            self.keys = [v['name'].lower() for v in self.elements]
+            self.load_elements(elements)
         self.handlers = {'T': self.text, 'L': self.line, 'I': self.image, 
                          'B': self.rect, 'BC': self.barcode, }
         self.pg_no = 0
@@ -29,6 +28,11 @@ class Template:
         pdf.set_subject(subject)
         pdf.set_keywords(keywords)
 
+    def load_elements(self, elements):
+        "Initialize the internal element structures"
+        self.elements = elements
+        self.keys = [v['name'].lower() for v in self.elements]
+    
     def parse_csv(self, infile, delimiter=",", decimal_sep="."):
         "Parse template format csv file and create elements dict"
         keys = ('name','type','x1','y1','x2','y2','font','size',
@@ -110,8 +114,8 @@ class Template:
             pdf.set_auto_page_break(False,margin=0)
 
             for element in sorted(self.elements,key=lambda x: x['priority']):
-                # make a copy of the element:
-                element = dict(element)
+                #print "dib",element['type'], element['name'], element['x1'], element['y1'], element['x2'], element['y2']
+                element = element.copy()
                 element['text'] = self.texts[pg].get(element['name'].lower(), element['text'])
                 if 'rotate' in element:
                     pdf.rotate(element['rotate'], element['x1'], element['y1'])
