@@ -19,7 +19,6 @@ class Template:
             self.load_elements(elements)
         self.handlers = {'T': self.text, 'L': self.line, 'I': self.image, 
                          'B': self.rect, 'BC': self.barcode, }
-        self.pg_no = 0
         self.texts = {}
         pdf = self.pdf = FPDF(format=format,orientation=orientation, unit="mm")
         pdf.set_title(title)
@@ -30,6 +29,7 @@ class Template:
 
     def load_elements(self, elements):
         "Initialize the internal element structures"
+        self.pg_no = 0
         self.elements = elements
         self.keys = [v['name'].lower() for v in self.elements]
     
@@ -39,6 +39,7 @@ class Template:
             'bold','italic','underline','foreground','background',
             'align','text','priority', 'multiline')
         self.elements = []
+        self.pg_no = 0
         for row in csv.reader(open(infile, 'rb'), delimiter=delimiter):
             kargs = {}
             for i,v in enumerate(row):
