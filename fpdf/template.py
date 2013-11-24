@@ -122,8 +122,9 @@ class Template:
                 self.handlers[element['type'].upper()](pdf, **element)
                 if 'rotate' in element:
                     pdf.rotate(0)
-                    
-        return pdf.output(outfile, dest)
+        
+        if dest:
+            return pdf.output(outfile, dest)
         
     def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10, 
              bold=False, italic=False, underline=False, align="", 
