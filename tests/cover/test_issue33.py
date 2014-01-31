@@ -3,13 +3,19 @@
 #PyFPDF-cover-test:fn=issue_33.pdf
 #PyFPDF-cover-test:hash=be95c7ef3a5b14b5a54a52f7eaf3a9e4
 #PyFPDF-cover-test:2to3=no
-#PyFPDF-cover-test:python2=yes
+#PyFPDF-cover-test:pil=yes
 
 import common # test utilities
 from fpdf import FPDF, FPDF_VERSION
 
 import os, sys, tempfile
-import Image
+try:
+    try:
+        import Image
+    except:
+        from PIL import Image
+except ImportError:
+    Image = None
 
 
 def genbar():
@@ -58,10 +64,10 @@ def dotest(outputname, nostamp = False):
     img = Image.merge("RGB", (plane, plane, plane))
     img = img.quantize(palette = pal_image)
 
-    f = tempfile.NamedTemporaryFile(delete = False, prefix="gif1_", suffix = ".gif")
+    f = tempfile.NamedTemporaryFile(delete = False, suffix = ".gif")
     gif1 = f.name
     f.close()
-    f = tempfile.NamedTemporaryFile(delete = False, prefix="gif2_", suffix = ".gif")
+    f = tempfile.NamedTemporaryFile(delete = False, suffix = ".gif")
     gif2 = f.name
     f.close()
 

@@ -6,12 +6,14 @@
 #PyFPDF-cover-test:fn=template.pdf
 # hash stamp for compare in --check mode (insert your hash)
 #PyFPDF-cover-test:hash=b1812fffdcf175976e80317b3766a0f0
-# use 2to3 tool
+# use 2to3 tool (default - no)
 #PyFPDF-cover-test:2to3=no
 # can be used in python2 (by default - yes)
 #PyFPDF-cover-test:python2=yes
 # can be used in python3 (by default - yes)
 #PyFPDF-cover-test:python3=yes
+# is PIL required (by default - no)
+#PyFPDF-cover-test:pil=no
 
 import common # common set of utilities
 import fpdf

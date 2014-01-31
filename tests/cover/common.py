@@ -43,7 +43,10 @@ def execcmd(cmd):
 def startbyext(fn):
     "Open file in associated progrom"
     try:
-        os.startfile(fn)
+        try:
+            os.startfile(fn)
+        except WindowsError:
+            os.system("start " + fn)
     except:
         subprocess.call(["xdg-open", fn])
 
@@ -52,6 +55,11 @@ def writer(stream, items):
     for item in items:
         stream.write(tobytes(sep))
         sep = " "
+        if not isinstance(item, str):
+            item = str(item)
+        if not PY3K:
+            if not isinstance(item, unicode):
+                item = str(item)
         stream.write(tobytes(item))
     stream.write(tobytes("\n"))
     
@@ -91,10 +99,17 @@ def readcoverinfo(fn):
     f = open(fn, "r")
     da = {}
     mark = "#PyFPDF-cover-test:"
+
     try:
         hdr = False
+        lineno = 0
         for line in f.readlines():
             line = line.strip()
+            lineno += 1
+            if lineno == 1:
+                if line[:1] == line[-1:]:
+                    if line[:1] == "\"" or line[:1] == "'":
+                        da["desc"] = line[1:-1].strip()
             if line[:len(mark)] == mark:
                 hdr = True
                 kv = line[len(mark):].split("=", 1)
@@ -124,7 +139,7 @@ def parsetestargs(args, deffn):
             sys.exit(0)
         if arg == "--auto":
             da["autotest"] = True
-        if arg == "--check":
+        elif arg == "--check":
             da["check"] = True
         else:
             da["fn"] = arg
@@ -147,19 +162,37 @@ def checkenv(settings, args):
             if verbose:
                 err("Python version %s is not compatible" % repr(sys.version_info))
             return False
+    if settings.get("pil", "no") == "yes":
+        # import PIL
+        try:
+            try:
+                import Image
+            except:
+                from PIL import Image
+        except ImportError:
+            Image = None
+        if Image is None:
+            if verbose:
+                err("PIL or Pillow module is required")
+            return False
     return True
     
 def checkresult(settings, args):
+    check = True
     if args["check"]:
         # compare with hash
         hs = filehash(args["fn"])
         fhs = settings.get("hash", "<not specified>")
         if hs != fhs:
+            check = False
             err("Hash do not match:")
-            err("      new = %s" % hs)
-            err("  reuired = %s" % fhs)
+            err("       new = %s" % hs)
+            err("  required = %s" % fhs)
             
     
-    if not args["autotest"]:
+    if args["autotest"]:
+        if check:
+            log("OK")
+    else:
         startbyext(args["fn"])
 
