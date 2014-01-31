@@ -1439,8 +1439,10 @@ class FPDF(object):
     def _putimages(self):
         filter=''
         if self.compress:
-            filter='/Filter /FlateDecode '
-        for filename,info in self.images.iteritems():
+            filter='/Filter /FlateDecode '            
+        i = [(x[1]["i"],x[1]) for x in self.images.iteritems()]
+        i.sort()
+        for idx,info in i:
             self._putimage(info)
             del info['data']
             if 'smask' in info:
@@ -1493,8 +1495,10 @@ class FPDF(object):
                 self._out('endobj')
 
     def _putxobjectdict(self):
-        for image in self.images.values():
-            self._out('/I'+str(image['i'])+' '+str(image['n'])+' 0 R')
+        i = [(x[1]["i"],x[1]["n"]) for x in self.images.iteritems()]
+        i.sort()
+        for idx,n in i:
+            self._out('/I'+str(idx)+' '+str(n)+' 0 R')
 
     def _putresourcedict(self):
         self._out('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]')
