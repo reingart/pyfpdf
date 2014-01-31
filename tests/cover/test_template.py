@@ -1,7 +1,10 @@
+# -*- coding: utf-8 -*-
+
 "This is test template"
+
 # Lines below must not be separated by blank line
 # output formats PDF (can be auto-opened), TXT
-#PyFPDF-cover-test:output=PDF
+#PyFPDF-cover-test:format=PDF
 # default filename
 #PyFPDF-cover-test:fn=template.pdf
 # hash stamp for compare in --check mode (insert your hash)
@@ -20,30 +23,17 @@ import fpdf
 
 import sys
 
-def dotest(filename, nostamp):
+def dotest(outputname, nostamp):
     # filename - output filename
     # nostamp - do no use stamp in result file
-    
     pdf = fpdf.FPDF()
     if nostamp:
         pdf._putinfo = lambda: common.test_putinfo(pdf)
     pdf.add_page()
     pdf.set_font('Arial', '', 16)
     pdf.write(8, "Test template")
-    pdf.output(filename, 'F')
+    pdf.output(outputname, 'F')
 
-def main():
-    # read PyFPDF-cover-test settings
-    si = common.readcoverinfo(__file__)
-    # parse command line aguments (see --help)
-    da = common.parsetestargs(sys.argv, si["fn"])
-    # test environment
-    if not common.checkenv(si, da):
-        return
-    # start test
-    dotest(da["fn"], da["autotest"] or da["check"])
-    # finish test
-    common.checkresult(si, da)
-    
 if __name__ == "__main__":
-    main()
+    common.testmain(__file__, dotest)
+

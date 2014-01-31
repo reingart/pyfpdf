@@ -6,6 +6,7 @@ import fpdf
 
 import sys, os, shutil
 import traceback
+import subprocess
 
 def search_python_posix():
     lst = []
@@ -127,18 +128,18 @@ def dotestone(testfile, interp, info, dest):
     py2 = (info.get("python2", "yes") == "yes")
     py3 = (info.get("python3", "yes") == "yes")
     testname = os.path.basename(testfile)
-    testfmt = info.get("python3", "raw")
+    testfmt = info.get("format", "raw")
     copy = False
     if nid[:2] == "3.":
         if not py3:
-            return "SKIP   "
+            return "skip"
         if not tool2to3:
             copy = True
         else:
-            return "UNIMPLE"
+            return "unimplemented"
     if nid[:2] == "2.":
         if not py2:
-            return "SKIP   "
+            return "skip"
         copy = True
     # copy files
     newfile = os.path.join(dest, testname)
@@ -146,11 +147,21 @@ def dotestone(testfile, interp, info, dest):
     if copy:
         shutil.copy(testfile, dest)
     # start execution
-    std, err = cover.execcmd([path, newfile, "--check", "--auto", newres])
-    if std.strip() == "OK":
-        return "OK     "
+    std, err = cover.execcmd([path, "-B", newfile, "--check", "--auto", newres])
+    f = open(os.path.join(dest, "testlog.txt"), "a")
+    f.write("#" * 40 + "\n")
+    f.write(testname + "\n")    
+    f.write("=" * 40 + "\n")
+    f.write(std)    
+    f.write("-" * 40 + "\n")
+    f.write(err)
+    f.close()
+    
+    answ = std.strip()
+    if answ.find("\n") >= 0 or len(answ) == 0:
+        return "fail"
     else:
-        return "FAIL   "
+        return answ.lower()
     #print "="*40
     #print std
     #print "-"*40
@@ -165,41 +176,71 @@ def preparedest(interp):
     src = os.path.join(cover.basepath, "cover")
     shutil.copy(os.path.join(src, "__init__.py"), dest)
     shutil.copy(os.path.join(src, "common.py"), dest)
+    f = open(os.path.join(dest, "testlog.txt"), "w")
+    f.write("Version: " + interp[1] + "\n")
+    f.write("Path: " + interp[0] + "\n")
+    f.write(str(interp[2:]) + "\n")
+    f.close()
+    
     return dest
 
-def dotest(testfile, interps, hint = ""):
-    cover.log("Test:", hint, testfile)
+def dotest(testfile, interps, dests, stats, hint = ""):
+    cover.log("Test", hint, ":", os.path.basename(testfile))
     info = cover.readcoverinfo(testfile)
-    if info.get("desc"):
-        cover.log("  ", info.get("desc"))
     resall = ""       
     # prepare
-    dests = {}
-    for interp in interps:
-        dests[interp[1]] = preparedest(interp)
     # do tests
     for interp in interps:
-        if len(interps) < 8:
+        if len(interps) < 6:
             resall += (interp[1] + " - ")
-        resall += dotestone(testfile, interp, info, dests[interp[1]])
-        resall += "    "
+        res = dotestone(testfile, interp, info, dests[interp[1]])
+        # update statistic
+        stats["_"]["_"] += 1
+        stats["_"][res] = stats["_"].get(res, 0) + 1
+        stats[interp[1]]["_"] += 1
+        stats[interp[1]][res] = stats[interp[1]].get(res, 0) + 1
+        resall += (res + " " * 4)[:4].upper()
+        resall += "  "
     cover.log(resall)
+
 
 def doalltest(interps):
     cover.log(">> Interpretators:", len(interps))
+    dests = {}
+    stats = {"_": {"_": 0}}
     for idx, interp in enumerate(interps):
         cover.log("%d) %s - %s" % (idx + 1, interp[1], interp[0]))
+        dests[interp[1]] = preparedest(interp)
+        stats[interp[1]] = {"_": 0}
+    cover.log()
     tst = search_tests()
+
     cover.log(">> Tests:", len(tst))
     for idx, test in enumerate(tst):
-        dotest(test, interps, "%d / %d" % (idx + 1, len(tst)))
-    
+        dotest(test, interps, dests, stats, "%d / %d" % (idx + 1, len(tst)))
+    cover.log()
+
+    cover.log(">> Statistics:")
+    def statstr(stat):
+        keys = stat.keys()
+        keys.sort()
+        st = "total - %d" % stat["_"]
+        for key in keys:
+            if key == "_":
+                continue
+            st += (", %s - %d" % (key, stat[key]))
+            
+        return st
+    for interp in interps:
+        cover.log(interp[1] + ":", statstr(stats[interp[1]]))
+    cover.log("-"*10)
+    cover.log("All:", statstr(stats["_"]))
 
 def usage():
     cover.log("Usage: todo")
 
 def main():
-    cover.log("FPDF", fpdf.FPDF_VERSION)
+    cover.log("Test FPDF", fpdf.FPDF_VERSION)
     ins = find_python_version(search_python())
     #if len(sys.argv) == 1:
     #    return usage()

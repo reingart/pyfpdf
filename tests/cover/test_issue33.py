@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
+
 "Test issue 33 (Cannot import GIF files that don't have transparency)"
-#PyFPDF-cover-test:output=PDF
+
+#PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=issue_33.pdf
 #PyFPDF-cover-test:hash=be95c7ef3a5b14b5a54a52f7eaf3a9e4
 #PyFPDF-cover-test:2to3=no
@@ -56,7 +59,7 @@ def genbar():
     return bar
 
 
-def dotest(outputname, nostamp = False):
+def dotest(outputname, nostamp):
     plane = genbar()
     pal_image = Image.new("P", (1,1))
     pal_image.putpalette( (0,0,0, 255,255,255) + (128,128,128)*254)
@@ -111,3 +114,4 @@ def main():
     
 if __name__ == "__main__":
     main()
+

@@ -30,7 +30,7 @@ else:
     except ImportError:
         import md5
         
-    sys.path = [os.path.join(fprefix, "fpdf")] + sys.path
+    sys.path = [fprefix] + sys.path
    
 
 def execcmd(cmd):
@@ -53,15 +53,15 @@ def startbyext(fn):
 def writer(stream, items):
     sep = ""
     for item in items:
-        stream.write(tobytes(sep))
+        stream.write(sep)
         sep = " "
         if not isinstance(item, str):
             item = str(item)
         if not PY3K:
             if not isinstance(item, unicode):
                 item = str(item)
-        stream.write(tobytes(item))
-    stream.write(tobytes("\n"))
+        stream.write(item)
+    stream.write("\n")
     
 def log(*kw):
     writer(sys.stdout, kw)
@@ -95,21 +95,15 @@ def filehash(fn):
     return md.hexdigest()
 
 def readcoverinfo(fn):
-    "Red cover test info"
+    "Read cover test info"
     f = open(fn, "r")
     da = {}
     mark = "#PyFPDF-cover-test:"
 
     try:
         hdr = False
-        lineno = 0
         for line in f.readlines():
             line = line.strip()
-            lineno += 1
-            if lineno == 1:
-                if line[:1] == line[-1:]:
-                    if line[:1] == "\"" or line[:1] == "'":
-                        da["desc"] = line[1:-1].strip()
             if line[:len(mark)] == mark:
                 hdr = True
                 kv = line[len(mark):].split("=", 1)
@@ -154,13 +148,17 @@ def checkenv(settings, args):
         if settings.get("python3", "yes") == "no":
             # python 3 inacceptable
             if verbose:
-                err("Python version %s is not compatible" % repr(sys.version_info))
+                err("Python 3.x unsupported %s" % repr(sys.version_info))
+            else:
+                log("NOTFORPY3")
             return False
     else:
         if settings.get("python2", "yes") == "no":
             # python 2 inacceptable
             if verbose:
-                err("Python version %s is not compatible" % repr(sys.version_info))
+                err("Python 2.x unsupported %s" % repr(sys.version_info))
+            else:
+                log("NOTFORPY2")
             return False
     if settings.get("pil", "no") == "yes":
         # import PIL
@@ -174,6 +172,8 @@ def checkenv(settings, args):
         if Image is None:
             if verbose:
                 err("PIL or Pillow module is required")
+            else:
+                log("NOPIL")
             return False
     return True
     
@@ -185,14 +185,23 @@ def checkresult(settings, args):
         fhs = settings.get("hash", "<not specified>")
         if hs != fhs:
             check = False
-            err("Hash do not match:")
+            err("Hash mismatch:")
             err("       new = %s" % hs)
             err("  required = %s" % fhs)
-            
-    
+
     if args["autotest"]:
         if check:
             log("OK")
+        else:
+            log("HASHERROR")
     else:
         startbyext(args["fn"])
+
+def testmain(fn, dotest):
+    si = readcoverinfo(fn)
+    da = parsetestargs(sys.argv, si["fn"])
+    if not checkenv(si, da):
+        return
+    dotest(da["fn"], da["autotest"] or da["check"])
+    checkresult(si, da)
 
