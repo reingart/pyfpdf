@@ -8,8 +8,8 @@
 #PyFPDF-cover-test:2to3=no
 #PyFPDF-cover-test:pil=yes
 
-import common # test utilities
-from fpdf import FPDF, FPDF_VERSION
+import common
+from fpdf import FPDF
 
 import os, sys, tempfile
 try:

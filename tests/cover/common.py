@@ -10,14 +10,13 @@ import sys, os, subprocess
 PY3K = sys.version_info >= (3, 0)
 
 basepath = os.path.abspath(os.path.join(__file__, "..", "..")) 
-fprefix = os.path.dirname(basepath)
 
 if PY3K:
     #import common3 as _common
     def tobytes(value):
         return value.encode("latin1")
 
-    sys.path = [os.path.join(fprefix, "fpdf_py3k")] + sys.path
+    sys.path = [os.path.join(basepath, "fpdf_py3k")] + sys.path
     from hashlib import md5
 
 else:
@@ -30,8 +29,7 @@ else:
     except ImportError:
         import md5
         
-    sys.path = [fprefix] + sys.path
-   
+    sys.path = [os.path.join(basepath, "fpdf_py2k")] + sys.path
 
 def execcmd(cmd):
     "Execute command and return console output (stdout, stderr)"
@@ -96,14 +94,24 @@ def filehash(fn):
 
 def readcoverinfo(fn):
     "Read cover test info"
-    f = open(fn, "r")
+    f = open(fn, "rb")
     da = {}
     mark = "#PyFPDF-cover-test:"
-
+    encmark = "# -*- coding:"
+    enc = None
     try:
         hdr = False
         for line in f.readlines():
-            line = line.strip()
+            if enc is None:
+                if line.decode("latin-1")[:len(encmark)] == encmark:
+                    enc = line.decode("latin-1")[len(encmark)].strip()
+                    if enc[-3:] == "-*-":
+                        enc = enc[:-3].strip()
+                        try:
+                            line.decode("enc")
+                        except:
+                            enc = None                    
+            line = line.decode(enc or "UTF-8").strip()
             if line[:len(mark)] == mark:
                 hdr = True
                 kv = line[len(mark):].split("=", 1)

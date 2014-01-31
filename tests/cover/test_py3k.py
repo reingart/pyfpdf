@@ -4,11 +4,13 @@
 
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=py3k.pdf
-#PyFPDF-cover-test:hash=2b136c8ca150bf3f0d245aa4bf6fc3d6
+#PyFPDF-cover-test:hash=52e9af3018aa8020316b290e837eb8ad
 #PyFPDF-cover-test:python2=no
 
 import common # test utilities
 from fpdf import FPDF
+
+import sys
 
 def dotest(outputname, nostamp):
     pdf = FPDF()
@@ -20,9 +22,13 @@ def dotest(outputname, nostamp):
     # unicode is not yet supported in py3k version, use windows-1252 standards font
     pdf.set_font('Arial', '', 14)  
     pdf.ln(10)
-    pdf.write(5, 'hello world %s Ã¡Ã©Ã­Ã³ÃºÃ¼Ã±' % range(4))
+    if nostamp:
+        data = "TEST-TEST-TEST"
+    else:
+        data = sys.version
+    # Note: file encoding is latin-1
+    pdf.write(5, 'hello world %s áéíóúüñ' % data)
     pdf.output(outputname, 'F')
-
 
 if __name__ == "__main__":
     common.testmain(__file__, dotest)

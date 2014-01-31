@@ -3,7 +3,7 @@
 "Test issue 41 (escape CR char)"
 
 #PyFPDF-cover-test:format=TXT
-#PyFPDF-cover-test:fn=issue41.txt
+#PyFPDF-cover-test:fn=issue_41.txt
 #PyFPDF-cover-test:hash=c576afec3362a7cc3b4b07a12feeefd3
 
 import common # common set of utilities

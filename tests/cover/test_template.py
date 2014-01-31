@@ -19,14 +19,14 @@
 #PyFPDF-cover-test:pil=no
 
 import common # common set of utilities
-import fpdf
+from fpdf import FPDF
 
 import sys
 
 def dotest(outputname, nostamp):
     # filename - output filename
     # nostamp - do no use stamp in result file
-    pdf = fpdf.FPDF()
+    pdf = FPDF()
     if nostamp:
         pdf._putinfo = lambda: common.test_putinfo(pdf)
     pdf.add_page()
