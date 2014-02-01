@@ -6,7 +6,7 @@
 __license__ = "LGPL 3.0"
 __version__ = "1.7.2"
 
-from .fpdf import *
+from .fpdf import FPDF, FPDF_FONT_DIR, FPDF_VERSION, SYSTEM_TTFONTS, set_global
 try:
     from .html import HTMLMixin
 except ImportError:
