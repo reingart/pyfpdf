@@ -39,7 +39,7 @@ else:
     if PYFPDFTESTLOCAL:
         sys.path = [os.path.join(basepath, "fpdf_py2k")] + sys.path
 
-def execcmd(cmd):
+def exec_cmd(cmd):
     "Execute command and return console output (stdout, stderr)"
     obj = subprocess.Popen(cmd, \
         stdout = subprocess.PIPE,
@@ -47,7 +47,7 @@ def execcmd(cmd):
     std, err = obj.communicate()
     return (frombytes(std), frombytes(err))
 
-def startbyext(fn):
+def start_by_ext(fn):
     "Open file in associated progrom"
     try:
         try:
@@ -91,7 +91,7 @@ def test_putinfo(self):
         self._out('/Creator '+self._textstring(self.creator))
     self._out('/CreationDate '+self._textstring('D:19700101000000'))
 
-def filehash(fn):
+def file_hash(fn):
     "Calc MD5 hash for file"
     md = md5()
     f = open(fn, "rb")
@@ -101,7 +101,7 @@ def filehash(fn):
         f.close()
     return md.hexdigest()
 
-def readcoverinfo(fn):
+def read_cover_info(fn):
     "Read cover test info"
     f = open(fn, "rb")
     da = {}
@@ -133,7 +133,7 @@ def readcoverinfo(fn):
         f.close()
     return da
 
-def parsetestargs(args, deffn):
+def parse_test_args(args, deffn):
     "Parse test args, return (fn, autotest)"
     args = args[1:]
     da = {}
@@ -157,7 +157,7 @@ def parsetestargs(args, deffn):
         args = args[1:]
     return da
     
-def checkenv(settings, args):
+def check_env(settings, args):
     "Check test environment"
     verbose = not args["autotest"]
     # check python version
@@ -194,11 +194,11 @@ def checkenv(settings, args):
             return False
     return True
     
-def checkresult(settings, args):
+def check_result(settings, args):
     check = True
     if args["check"]:
         # compare with hash
-        hs = filehash(args["fn"])
+        hs = file_hash(args["fn"])
         fhs = settings.get("hash", "<not specified>")
         if hs != fhs:
             check = False
@@ -214,11 +214,11 @@ def checkresult(settings, args):
     else:
         startbyext(args["fn"])
 
-def testmain(fn, dotest):
-    si = readcoverinfo(fn)
-    da = parsetestargs(sys.argv, si["fn"])
-    if not checkenv(si, da):
+def testmain(fn, testfunc):
+    si = read_cover_info(fn)
+    da = parse_test_args(sys.argv, si["fn"])
+    if not check_env(si, da):
         return
-    dotest(da["fn"], da["autotest"] or da["check"])
-    checkresult(si, da)
+    testfunc(da["fn"], da["autotest"] or da["check"])
+    check_result(si, da)
 

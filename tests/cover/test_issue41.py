@@ -24,12 +24,12 @@ def dotest(outputname, nostamp):
     f.close()
 
 def main():
-    si = common.readcoverinfo(__file__)
-    da = common.parsetestargs(sys.argv, si["fn"])
-    if not common.checkenv(si, da):
+    si = common.read_cover_info(__file__)
+    da = common.parse_test_args(sys.argv, si["fn"])
+    if not common.check_env(si, da):
         return
     dotest(da["fn"], da["autotest"] or da["check"])
-    common.checkresult(si, da)
+    common.check_result(si, da)
     
 if __name__ == "__main__":
     main()

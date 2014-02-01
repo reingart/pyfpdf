@@ -91,7 +91,7 @@ def find_python_version(pylst):
     ids = []
     for interp in pylst:
         try:
-            std, err = cover.execcmd([interp, "-V"])
+            std, err = cover.exec_cmd([interp, "-V"])
             version = err.strip()
             if version[:6] == "Python":
                 shver = version[6:].strip().replace(" ", "-")
@@ -120,7 +120,7 @@ def search_tests():
     lst.sort()
     return lst
 
-def dotestone(testfile, interp, info, dest):
+def do_test_one(testfile, interp, info, dest):
     path = interp[0]
     nid = interp[1]
     destpath = dest[0]
@@ -158,7 +158,7 @@ def dotestone(testfile, interp, info, dest):
     if copy:
         shutil.copy(testfile, destpath)
     # start execution
-    std, err = cover.execcmd([path, "-B", newfile, "--check", "--auto", newres])
+    std, err = cover.exec_cmd([path, "-B", newfile, "--check", "--auto", newres])
     f = open(os.path.join(destpath, "testlog.txt"), "a")
     f.write("#" * 40 + "\n")
     f.write(testname + "\n")    
@@ -175,7 +175,7 @@ def dotestone(testfile, interp, info, dest):
         return answ.lower()
 
 
-def preparedest(interp):
+def prepare_dest(interp):
     destpath = os.path.join(cover.basepath, "out-" + interp[1])
     if not os.path.exists(destpath):
         os.makedirs(destpath)
@@ -189,7 +189,7 @@ def preparedest(interp):
     f.write(str(interp[2:]) + "\n")
 
     # run checkenv
-    std, err = cover.execcmd([interp[0], "-B", os.path.join(destpath, "checkenv.py")])
+    std, err = cover.exec_cmd([interp[0], "-B", os.path.join(destpath, "checkenv.py")])
     env = {}
     if len(err.strip()) == 0:
         # OK
@@ -211,16 +211,16 @@ def preparedest(interp):
     f.close()    
     return (destpath, env)
 
-def dotest(testfile, interps, dests, stats, hint = ""):
+def do_test(testfile, interps, dests, stats, hint = ""):
     cover.log("Test", hint, ":", os.path.basename(testfile))
-    info = cover.readcoverinfo(testfile)
+    info = cover.read_cover_info(testfile)
     resall = ""       
     # prepare
     # do tests
     for interp in interps:
         if len(interps) < 6:
             resall += (interp[1] + " - ")
-        res = dotestone(testfile, interp, info, dests[interp[1]])
+        res = do_test_one(testfile, interp, info, dests[interp[1]])
         # update statistic
         stats["_"]["_"] += 1
         stats["_"][res] = stats["_"].get(res, 0) + 1
@@ -230,25 +230,30 @@ def dotest(testfile, interps, dests, stats, hint = ""):
         resall += "  "
     cover.log(resall)
 
-
-def doalltest(interps):
-    cover.log(">> Interpretators:", len(interps))
+def print_interps(interps):
+    cover.log(">> interpretors:", len(interps))
     dests = {}
     stats = {"_": {"_": 0}}
     for idx, interp in enumerate(interps):
         cover.log("%d) %s - %s" % (idx + 1, interp[1], interp[0]))
-        dests[interp[1]] = preparedest(interp)
+    cover.log()
+
+def do_all_test(interps, tests):
+    print_interps(interps)
+    dests = {}
+    stats = {"_": {"_": 0}}
+    for idx, interp in enumerate(interps):
+        dests[interp[1]] = prepare_dest(interp)
         stats[interp[1]] = {"_": 0}
     cover.log()
-    tst = search_tests()
 
-    cover.log(">> Tests:", len(tst))
-    for idx, test in enumerate(tst):
-        dotest(test, interps, dests, stats, "%d / %d" % (idx + 1, len(tst)))
+    cover.log(">> Tests:", len(tests))
+    for idx, test in enumerate(tests):
+        do_test(test, interps, dests, stats, "%d / %d" % (idx + 1, len(tests)))
     cover.log()
 
     cover.log(">> Statistics:")
-    def statstr(stat):
+    def stat_str(stat):
         keys = list(stat.keys())
         keys.sort()
         st = "total - %d" % stat["_"]
@@ -259,20 +264,39 @@ def doalltest(interps):
             
         return st
     for interp in interps:
-        cover.log(interp[1] + ":", statstr(stats[interp[1]]))
+        cover.log(interp[1] + ":", stat_str(stats[interp[1]]))
     cover.log("-"*10)
-    cover.log("All:", statstr(stats["_"]))
+    cover.log("All:", stat_str(stats["_"]))
 
     # check if no FPDF at all
     total = stats["_"]["_"]
     fpdf = stats["_"].get("nofpdf", 0) + stats["_"].get("skip", 0)
     if fpdf == total:
-        hintprepare()
+        hint_prepare()
+
+def list_tests():
+    tst = search_tests()
+    cover.log(">> Tests:", len(tst))
+    for idx, test in enumerate(tst):
+        test = os.path.basename(test)
+        if test[:5].lower() == "test_":
+            test = test[5:]
+        if test[-3:].lower() == ".py":
+            test = test[:-3]
+        cover.log("%d) %s" % (idx + 1, test))
+    cover.log()
 
 def usage():
-    cover.log("Usage: todo")
+    cover.log("Usage: runtest.py [...]")
+    cover.log("  --listtests      - list all tests")
+    cover.log("  --listinterps    - list all availiabl interpretors")
+    cover.log("  --test issuexx   - add test issuexx")
+    cover.log("  --test @file     - add test from file")
+    cover.log("  --interp path    - add test issuexx")
+    cover.log("  --interp @file   - add test from file")
+    cover.log("  --help           - this page")
 
-def hintprepare():
+def hint_prepare():
     if cover.PYFPDFTESTLOCAL:
         if sys.platform.startswith("win"):
             prefix = ""
@@ -293,13 +317,86 @@ def hintprepare():
         else:
             cover.log("***   export PYFPDFTESTLOCAL=1")
         
+
+def read_list(fn):
+    f = open(fn, "r")
+    try:
+        return f.readlines()
+    finally:
+        f.close()
+
 def main():
     cover.log("Test PyFPDF")   
     
-    ins = find_python_version(search_python())
-    #if len(sys.argv) == 1:
-    #    return usage()
-    doalltest(ins)
+    testsn = []
+    interpsn = []
+    args = sys.argv[1:]
+    while len(args):
+        arg = args[0]
+        args = args[1:]
+        if arg == "--help":
+            return usage()
+        elif arg == "--test":
+            if len(args) > 0:
+                value = args[0]
+                args = args[1:]
+            else:
+                cover.log("Param without value")
+                return usage()
+            if value[:1] == "@":
+                # from file            
+                testsn += read_list(value[1:])
+            else:
+                testsn.append(value)
+        elif arg == "--interp":
+            if len(args) > 0:
+                value = args[0]
+                args = args[1:]
+            else:
+                cover.log("Param without value")
+                return usage()
+            if value[:1] == "@":
+                # from file            
+                interpsn += read_list(value[1:])
+            else:
+                interpsn.append(value)
+        elif arg == "--listtests":
+            return list_tests()
+        elif arg == "--listinterps":
+            return print_interps(find_python_version(search_python()))
+        else:
+            cover.log("Unknown param")
+            return usage()                        
+
+    if len(testsn) == 0:
+        tests = search_tests()
+    else:
+        # cheack all tests
+        tests = []
+        for test in testsn:
+            test = test.strip()
+            fn = os.path.join(cover.basepath, "cover", "test_" + test + ".py")
+            if os.path.exists(fn):
+                tests.append(fn)
+            else:
+                cover.err("Test \"%s\" not found" % test)
+                return                
+
+    if len(interpsn) == 0:
+        interps = find_python_version(search_python())
+    else:
+        # cheack all tests
+        interps = []
+        for interp in interpsn:
+            fn = os.path.abspath(interp)
+            if os.path.exists(fn):
+                interps.append(fn)
+            else:
+                cover.err("Interpretor \"%s\" not found" % test)
+                return                
+        interps = find_python_version(interps)
+
+    do_all_test(interps, tests)
     
     
 if __name__ == "__main__":
