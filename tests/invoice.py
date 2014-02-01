@@ -70,7 +70,7 @@ if __name__ == "__main__":
         f['item_description%02d' % (max_lines_per_page+1)] = s
 
         f["company_name"] = "Sample Company"
-        f["company_logo"] = "" #"../tutorial/logo.png"
+        f["company_logo"] = "../tutorial/logo.png"
         f["company_header1"] = "Some Address - somewhere -"
         f["company_header2"] = "http://www.example.com"        
         f["company_footer1"] = "Tax Code ..."
