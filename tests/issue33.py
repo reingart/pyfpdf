@@ -3,8 +3,10 @@
 from fpdf import FPDF, FPDF_VERSION
 
 import os, tempfile
-import Image
-
+try:
+    import Image
+except:
+    from PIL import Image
 
 def genbar():
     # bg
@@ -65,6 +67,7 @@ img.save(gif2, "GIF", transparency = 1)
 
 
 pdf=FPDF()
+pdf.compress = False
 pdf.add_page()
 pdf.set_font('Arial', '', 16)
 pdf.write(8, "Transparency")

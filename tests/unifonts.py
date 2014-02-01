@@ -18,7 +18,7 @@ txt = open('HelloWorld.txt').read()
 for font in os.listdir(font_dir):
     if font.lower().endswith('.ttf'):
         fontpath = os.path.join(font_dir, font)
-        print fontpath
+        print(fontpath)
         t0 = time.time()
         pdf.add_font(font,'', fontpath, uni=True)
         t1 = time.time()
@@ -29,9 +29,9 @@ for font in os.listdir(font_dir):
         pdf.write(8, txt)
         pdf.ln()
         t3 = time.time()
-        print "ttf loading time", t1-t0
-        print "ttf total time", t3-t0
-        print
+        print("ttf loading time", t1-t0)
+        print("ttf total time", t3-t0)
+        print()
 
 fn = 'unifonts.pdf'
 pdf.output(fn,'F')
