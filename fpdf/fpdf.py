@@ -23,6 +23,11 @@ try:
 except ImportError:
     import pickle
 
+try:
+	from urllib import urlopen
+except ImportError:
+	from urllib.request import urlopen
+
 # Check if PIL is available (tries importing both pypi version and corrected or manually installed versions).
 # Necessary for JPEG and GIF support.
 try:
@@ -34,13 +39,13 @@ except ImportError:
     Image = None
 
 
-from ttfonts import TTFontFile
-from fonts import fpdf_charwidths
-from php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
+from .ttfonts import TTFontFile
+from .fonts import fpdf_charwidths
+from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
 
 
 # Global variables
-FPDF_VERSION = '1.7.1'
+FPDF_VERSION = '1.7.2'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
 SYSTEM_TTFONTS = None
 
@@ -359,7 +364,7 @@ class FPDF(object):
                 else:
                     w += 500
         else:
-            for i in xrange(0, l):
+            for i in range(0, l):
                 w += cw.get(s[i],0)
         return w*self.font_size/1000.0
 
@@ -465,14 +470,14 @@ class FPDF(object):
                     fh = open(unifilename, "w")
                     pickle.dump(font_dict, fh)
                     fh.close()
-                except IOError, e:
+                except IOError as e:
                     if not e.errno == errno.EACCES:
                         raise  # Not a permission error.
                 del ttf
             if hasattr(self,'str_alias_nb_pages'):
-                sbarr = range(0,57)   # include numbers in the subset!
+                sbarr = list(range(0,57))   # include numbers in the subset!
             else:
-                sbarr = range(0,32)
+                sbarr = list(range(0,32))
             self.fonts[fontkey] = {
                 'i': len(self.fonts)+1, 'type': font_dict['type'],
                 'name': font_dict['name'], 'desc': font_dict['desc'],
@@ -496,7 +501,7 @@ class FPDF(object):
                 #Search existing encodings
                 d = 0
                 nb = len(self.diffs)
-                for i in xrange(1, nb+1):
+                for i in range(1, nb+1):
                     if(self.diffs[i] == diff):
                         d = i
                         break
@@ -544,7 +549,7 @@ class FPDF(object):
                     name=os.path.join(FPDF_FONT_DIR,family)
                     if(family=='times' or family=='helvetica'):
                         name+=style.lower()
-                    execfile(name+'.font')
+                    exec(compile(open(name+'.font').read(), name+'.font', 'exec'))
                     if fontkey not in fpdf_charwidths:
                         self.error('Could not include font metric file for'+fontkey)
                 i=len(self.fonts)+1
@@ -1014,9 +1019,9 @@ class FPDF(object):
             else:
                 dest='F'
         if dest=='I':
-            print self.buffer
+            print(self.buffer)
         elif dest=='D':
-            print self.buffer
+            print(self.buffer)
         elif dest=='F':
             #Save to local file
             f=open(name,'wb')
@@ -1064,10 +1069,10 @@ class FPDF(object):
             # Replace number of pages in fonts using subsets (unicode)
             alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False);
             r = UTF8ToUTF16BE(str(nb), False)
-            for n in xrange(1, nb+1):
+            for n in range(1, nb+1):
                 self.pages[n] = self.pages[n].replace(alias, r)
             # Now repeat for no pages in non-subset fonts
-            for n in xrange(1,nb+1):
+            for n in range(1,nb+1):
                 self.pages[n]=self.pages[n].replace(self.str_alias_nb_pages,str(nb))
         if(self.def_orientation=='P'):
             w_pt=self.fw_pt
@@ -1079,7 +1084,7 @@ class FPDF(object):
             filter='/Filter /FlateDecode '
         else:
             filter=''
-        for n in xrange(1,nb+1):
+        for n in range(1,nb+1):
             #Page
             self._newobj()
             self._out('<</Type /Page')
@@ -1121,7 +1126,7 @@ class FPDF(object):
         self._out('1 0 obj')
         self._out('<</Type /Pages')
         kids='/Kids ['
-        for i in xrange(0,nb):
+        for i in range(0,nb):
             kids+=str(3+2*i)+' 0 R '
         self._out(kids+']')
         self._out('/Count '+str(nb))
@@ -1136,7 +1141,7 @@ class FPDF(object):
             self._newobj()
             self._out('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+self.diffs[diff]+']>>')
             self._out('endobj')
-        for name,info in self.font_files.iteritems():
+        for name,info in self.font_files.items():
             if 'type' in info and info['type'] != 'TTF':
                 #Font file embedding
                 self._newobj()
@@ -1165,7 +1170,7 @@ class FPDF(object):
                 self._out('>>')
                 self._putstream(font)
                 self._out('endobj')
-        for k,font in self.fonts.iteritems():
+        for k,font in self.fonts.items():
             #Font objects
             self.fonts[k]['n']=self.n+1
             type=font['type']
@@ -1200,7 +1205,7 @@ class FPDF(object):
                 self._newobj()
                 cw=font['cw']
                 s='['
-                for i in xrange(32,256):
+                for i in range(32,256):
                     # Get doesn't rise exception; returns 0 instead of None if not set
                     s+=str(cw.get(chr(i)) or 0)+' '
                 self._out(s+']')
@@ -1374,7 +1379,7 @@ class FPDF(object):
                     font_dict['range'] = range_
                     pickle.dump(font_dict, fh)
                     fh.close()
-                except IOError, e:
+                except IOError as e:
                     if not e.errno == errno.EACCES:
                         raise  # Not a permission error.
             if (font['cw'][cid] == 0):
@@ -1440,7 +1445,7 @@ class FPDF(object):
         filter=''
         if self.compress:
             filter='/Filter /FlateDecode '            
-        i = [(x[1]["i"],x[1]) for x in self.images.iteritems()]
+        i = [(x[1]["i"],x[1]) for x in self.images.items()]
         i.sort()
         for idx,info in i:
             self._putimage(info)
@@ -1469,7 +1474,7 @@ class FPDF(object):
                 self._out('/DecodeParms <<' + info['dp'] + '>>')
             if('trns' in info and isinstance(info['trns'], list)):
                 trns=''
-                for i in xrange(0,len(info['trns'])):
+                for i in range(0,len(info['trns'])):
                     trns+=str(info['trns'][i])+' '+str(info['trns'][i])+' '
                 self._out('/Mask ['+trns+']')
             if('smask' in info):
@@ -1495,7 +1500,7 @@ class FPDF(object):
                 self._out('endobj')
 
     def _putxobjectdict(self):
-        i = [(x[1]["i"],x[1]["n"]) for x in self.images.iteritems()]
+        i = [(x[1]["i"],x[1]["n"]) for x in self.images.items()]
         i.sort()
         for idx,n in i:
             self._out('/I'+str(idx)+' '+str(n)+' 0 R')
@@ -1582,7 +1587,7 @@ class FPDF(object):
         self._out('xref')
         self._out('0 '+(str(self.n+1)))
         self._out('0000000000 65535 f ')
-        for i in xrange(1,self.n+1):
+        for i in range(1,self.n+1):
             self._out(sprintf('%010d 00000 n ',self.offsets[i]))
         #Trailer
         self._out('trailer')
@@ -1647,7 +1652,7 @@ class FPDF(object):
         try:
             f = open(filename, 'rb')
             im = Image.open(f)
-        except Exception, e:
+        except Exception as e:
             self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(e)))
         else:
             a = im.size
@@ -1672,7 +1677,7 @@ class FPDF(object):
             self.error('PIL is required for GIF support')
         try:
             im = Image.open(filename)
-        except Exception, e:
+        except Exception as e:
             self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(e)))
         else:
             # Use temporary file
@@ -1690,8 +1695,7 @@ class FPDF(object):
     def _parsepng(self, name):
         #Extract info from a PNG file
         if name.startswith("http://") or name.startswith("https://"):
-            import urllib
-            f = urllib.urlopen(name)
+               f = urlopen(name)
         else:
             f=open(name,'rb')
         if(not f):
@@ -1845,7 +1849,7 @@ class FPDF(object):
         # add start and stop codes
         code = 'AA' + code.lower() + 'ZA'
 
-        for i in xrange(0, len(code), 2):
+        for i in range(0, len(code), 2):
             # choose next pair of digits
             char_bar = code[i]
             char_space = code[i+1]
@@ -1857,10 +1861,10 @@ class FPDF(object):
 
             # create a wide/narrow-seq (first digit=bars, second digit=spaces)
             seq = ''
-            for s in xrange(0, len(bar_char[char_bar])):
+            for s in range(0, len(bar_char[char_bar])):
                 seq += bar_char[char_bar][s] + bar_char[char_space][s]
 
-            for bar in xrange(0, len(seq)):
+            for bar in range(0, len(seq)):
                 # set line_width depending on value
                 if seq[bar] == 'n':
                     line_width = narrow
@@ -1900,17 +1904,17 @@ class FPDF(object):
         code = txt
 
         code = code.upper()
-        for i in xrange (0, len(code), 2):
+        for i in range (0, len(code), 2):
             char_bar = code[i]
 
             if not char_bar in bar_char.keys():
                 raise RuntimeError ('Char "%s" invalid for Code39' % char_bar)
 
             seq= ''
-            for s in xrange(0, len(bar_char[char_bar])):
+            for s in range(0, len(bar_char[char_bar])):
                 seq += bar_char[char_bar][s]
 
-            for bar in xrange(0, len(seq)):
+            for bar in range(0, len(seq)):
                 if seq[bar] == 'n':
                     line_width = narrow
                 else:

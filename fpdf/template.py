@@ -7,7 +7,7 @@ __copyright__ = "Copyright (C) 2010 Mariano Reingart"
 __license__ = "LGPL 3.0"
 
 import sys,os,csv
-from fpdf import FPDF
+from .fpdf import FPDF
 
 def rgb(col):
     return (col // 65536), (col // 256 % 256), (col% 256)
@@ -60,8 +60,8 @@ class Template:
         self.texts[self.pg_no] = {}
         
     def __setitem__(self, name, value):
-        if self.has_key(name):
-            if isinstance(value,unicode):
+        if name in self:
+            if isinstance(value,str):
                 value = value.encode("latin1","ignore")
             elif value is None:
                 value = ""
@@ -76,7 +76,7 @@ class Template:
         return name.lower() in self.keys
         
     def __getitem__(self, name):
-        if self.has_key(name):
+        if name in self:
             key = name.lower()
             if key in self.texts:
                 # text for this page:
@@ -163,7 +163,7 @@ class Template:
                 # multiline==False: trim to fit exactly the space defined
                 text = pdf.multi_cell(w=x2-x1, h=y2-y1,
                              txt=text, align=align, split_only=True)[0]
-                print "trimming: *%s*" % text
+                print("trimming: *%s*" % text)
                 pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align)
 
             #pdf.Text(x=x1,y=y1,txt=text)

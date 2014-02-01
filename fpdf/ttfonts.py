@@ -19,7 +19,7 @@
 from struct import pack, unpack, unpack_from
 import re
 import warnings
-from php import die, substr, str_repeat, str_pad, strlen, count
+from .php import die, substr, str_repeat, str_pad, strlen, count
 
 
 # Define the value used in the "head" table of a created TTF file
@@ -226,7 +226,7 @@ class TTFontFile:
         numRecords = self.read_ushort()
         string_data_offset = name_offset + self.read_ushort()
         names = {1:'',2:'',3:'',4:'',6:''}
-        K = names.keys()
+        K = list(names.keys())
         nameCount = len(names)
         for i in range(numRecords): 
             platformId = self.read_ushort()

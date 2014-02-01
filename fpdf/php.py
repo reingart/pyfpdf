@@ -14,7 +14,7 @@ def print_r(array):
     if not isinstance(array, dict):
         array = dict([(k, k) for k in array])
     for k, v in array.items():
-        print "[%s] => %s" % (k, v),
+        print("[%s] => %s " % (k, v))
         
 def UTF8ToUTF16BE(instr, setbom=True):
     "Converts UTF-8 strings to UTF16-BE."
