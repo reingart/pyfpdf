@@ -1440,7 +1440,7 @@ class FPDF(object):
             self._out('/Width '+str(info['w']))
             self._out('/Height '+str(info['h']))
             if(info['cs']=='Indexed'):
-                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(len(info['pal'])/3-1)+' '+str(self.n+1)+' 0 R]')
+                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(int(len(info['pal'])/3)-1)+' '+str(self.n+1)+' 0 R]')
             else:
                 self._out('/ColorSpace /'+info['cs'])
                 if(info['cs']=='DeviceCMYK'):
@@ -1679,11 +1679,15 @@ class FPDF(object):
         if(not f):
             self.error("Can't open image file: "+name)
         #Check signature
-        if(f.read(8)!='\x89'+'PNG'+'\r'+'\n'+'\x1a'+'\n'):
+        magic = f.read(8).decode("latin1")
+        signature = '\x89'+'PNG'+'\r'+'\n'+'\x1a'+'\n'
+        if not PY3K: signature = signature.decode("latin1")
+        if(magic!=signature):
             self.error('Not a PNG file: '+name)
         #Read header chunk
-        f.read(4)
-        if(f.read(4)!='IHDR'):
+        f.seek(12)
+        chunk = f.read(4).decode("latin1")
+        if(chunk!='IHDR'):
             self.error('Incorrect PNG file: '+name)
         w=self._freadint(f)
         h=self._freadint(f)
@@ -1715,11 +1719,11 @@ class FPDF(object):
         #Scan chunks looking for palette, transparency and image data
         pal=''
         trns=''
-        data=''
+        data=bytes() if PY3K else str()
         n=1
         while n != None:
             n=self._freadint(f)
-            type=f.read(4)
+            type=f.read(4).decode("latin1")
             if(type=='PLTE'):
                 #Read palette
                 pal=f.read(n)
@@ -1732,7 +1736,7 @@ class FPDF(object):
                 elif(ct==2):
                     trns=[ord(substr(t,1,1)),ord(substr(t,3,1)),ord(substr(t,5,1))]
                 else:
-                    pos=t.find('\x00')
+                    pos=t.find('\x00'.encode("latin1"))
                     if(pos!=-1):
                         trns=[pos,]
                 f.read(4)
@@ -1761,8 +1765,8 @@ class FPDF(object):
                     color += data[pos]
                     alpha += data[pos]
                     line = substr(data, pos+1, length)
-                    color += re.sub('(.).',lambda m: m.group(1),line, flags=re.DOTALL)
-                    alpha += re.sub('.(.)',lambda m: m.group(1),line, flags=re.DOTALL)
+                    color += re.sub('(.).'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
+                    alpha += re.sub('.(.)'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
             else:
                 # RGB image
                 length = 4*w
@@ -1771,8 +1775,8 @@ class FPDF(object):
                     color += data[pos]
                     alpha += data[pos]
                     line = substr(data, pos+1, length)
-                    color += re.sub('(.{3}).',lambda m: m.group(1),line, flags=re.DOTALL)
-                    alpha += re.sub('.{3}(.)',lambda m: m.group(1),line, flags=re.DOTALL)
+                    color += re.sub('(.{3}).'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
+                    alpha += re.sub('.{3}(.)'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
             del data
             data = zlib.compress(color)
             info['smask'] = zlib.compress(alpha)
@@ -1803,10 +1807,15 @@ class FPDF(object):
 
     def _out(self, s):
         #Add a line to the document
+        if PY3K and isinstance(s, bytes):
+            # manage binary data as latin1 until PEP461-like function is implemented
+            s = s.decode("latin1")          
+        elif not isinstance(s, basestring):
+            s = str(s)
         if(self.state==2):
             self.pages[self.page]+=s+"\n"
         else:
-            self.buffer+=str(s)+"\n"
+            self.buffer+=s+"\n"
 
     def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
         "Barcode I2of5 (numeric), adds a 0 if odd lenght"
