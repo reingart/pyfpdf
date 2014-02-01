@@ -18,38 +18,16 @@ import math
 import errno
 import os, sys, zlib, struct, re, tempfile, struct
 
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
-
-try:
-	from urllib import urlopen
-except ImportError:
-	from urllib.request import urlopen
-
-# Check if PIL is available (tries importing both pypi version and corrected or manually installed versions).
-# Necessary for JPEG and GIF support.
-try:
-    try:
-        import Image
-    except:
-        from PIL import Image
-except ImportError:
-    Image = None
-
-
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
-
+from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode
 
 # Global variables
 FPDF_VERSION = '1.7.2'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
 SYSTEM_TTFONTS = None
 
-PY3K = sys.version_info >= (3, 0)
 
 def set_global(var, val):
     globals()[var] = val

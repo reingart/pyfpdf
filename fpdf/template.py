@@ -8,6 +8,7 @@ __license__ = "LGPL 3.0"
 
 import sys,os,csv
 from .fpdf import FPDF
+from .py3k import PY3K, basestring, unicode
 
 def rgb(col):
     return (col // 65536), (col // 256 % 256), (col% 256)

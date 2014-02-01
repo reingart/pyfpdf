@@ -9,10 +9,7 @@ __license__ = "LGPL 3.0"
 # Inspired by tuto5.py and several examples from fpdf.org, html2fpdf, etc.
 
 from .fpdf import FPDF
-try:
-	from HTMLParser import HTMLParser
-except ImportError:
-	from html.parser import HTMLParser
+from .py3k import PY3K, basestring, unicode, HTMLParser
 
 DEBUG = False
 
