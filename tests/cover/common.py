@@ -11,32 +11,41 @@ PY3K = sys.version_info >= (3, 0)
 
 basepath = os.path.abspath(os.path.join(__file__, "..", "..")) 
 
+# if PYFPDFTESTLOCAL is not set - use instaled pyfpdf version
+PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
+
 if PY3K:
     #import common3 as _common
     def tobytes(value):
         return value.encode("latin1")
-
-    sys.path = [os.path.join(basepath, "fpdf_py3k")] + sys.path
+    def frombytes(value):
+        return value.decode("latin1")
     from hashlib import md5
+
+    if PYFPDFTESTLOCAL:
+        sys.path = [os.path.join(basepath, "fpdf_py3k")] + sys.path
 
 else:
     #import common2 as _common
     def tobytes(value):
         return value
-
+    def frombytes(value):
+        return value
     try:
         from hashlib import md5
     except ImportError:
         import md5
         
-    sys.path = [os.path.join(basepath, "fpdf_py2k")] + sys.path
+    if PYFPDFTESTLOCAL:
+        sys.path = [os.path.join(basepath, "fpdf_py2k")] + sys.path
 
 def execcmd(cmd):
     "Execute command and return console output (stdout, stderr)"
     obj = subprocess.Popen(cmd, \
         stdout = subprocess.PIPE,
         stderr = subprocess.PIPE)
-    return obj.communicate()
+    std, err = obj.communicate()
+    return (frombytes(std), frombytes(err))
 
 def startbyext(fn):
     "Open file in associated progrom"

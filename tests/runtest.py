@@ -1,10 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os, sys
 import cover
-import fpdf
-
-import sys, os, shutil
+import shutil
 import traceback
 import subprocess
 
@@ -124,11 +123,16 @@ def search_tests():
 def dotestone(testfile, interp, info, dest):
     path = interp[0]
     nid = interp[1]
+    destpath = dest[0]
+    destenv = dest[1]
+    # check PIL
+    if info.get("pil", "no") == "yes":
+        if destenv.get("pil", "no") != "yes":
+            return "skip"
+    # check python version
     tool2to3 = (info.get("2to3", "no") == "yes")
     py2 = (info.get("python2", "yes") == "yes")
     py3 = (info.get("python3", "yes") == "yes")
-    testname = os.path.basename(testfile)
-    testfmt = info.get("format", "raw")
     copy = False
     if nid[:2] == "3.":
         if not py3:
@@ -141,14 +145,21 @@ def dotestone(testfile, interp, info, dest):
         if not py2:
             return "skip"
         copy = True
+
+    # check if fpdf instaled
+    if destenv.get("ver", "None") == "None":
+        return "nofpdf"
+
     # copy files
-    newfile = os.path.join(dest, testname)
-    newres = os.path.join(dest, info.get("fn", testname + "." + testfmt.lower()))
+    testname = os.path.basename(testfile)
+    testfmt = info.get("format", "raw")
+    newfile = os.path.join(destpath, testname)
+    newres = os.path.join(destpath, info.get("fn", testname + "." + testfmt.lower()))
     if copy:
-        shutil.copy(testfile, dest)
+        shutil.copy(testfile, destpath)
     # start execution
     std, err = cover.execcmd([path, "-B", newfile, "--check", "--auto", newres])
-    f = open(os.path.join(dest, "testlog.txt"), "a")
+    f = open(os.path.join(destpath, "testlog.txt"), "a")
     f.write("#" * 40 + "\n")
     f.write(testname + "\n")    
     f.write("=" * 40 + "\n")
@@ -162,27 +173,43 @@ def dotestone(testfile, interp, info, dest):
         return "fail"
     else:
         return answ.lower()
-    #print "="*40
-    #print std
-    #print "-"*40
-    #print err
-    #print "="*40
+
 
 def preparedest(interp):
-    dest = os.path.join(cover.basepath, "out-" + interp[1])
-    if not os.path.exists(dest):
-        os.makedirs(dest)
+    destpath = os.path.join(cover.basepath, "out-" + interp[1])
+    if not os.path.exists(destpath):
+        os.makedirs(destpath)
     # copy common set
     src = os.path.join(cover.basepath, "cover")
-    shutil.copy(os.path.join(src, "__init__.py"), dest)
-    shutil.copy(os.path.join(src, "common.py"), dest)
-    f = open(os.path.join(dest, "testlog.txt"), "w")
+    shutil.copy(os.path.join(src, "common.py"), destpath)
+    shutil.copy(os.path.join(src, "checkenv.py"), destpath)
+    f = open(os.path.join(destpath, "testlog.txt"), "w")
     f.write("Version: " + interp[1] + "\n")
     f.write("Path: " + interp[0] + "\n")
     f.write(str(interp[2:]) + "\n")
-    f.close()
-    
-    return dest
+
+    # run checkenv
+    std, err = cover.execcmd([interp[0], "-B", os.path.join(destpath, "checkenv.py")])
+    env = {}
+    if len(err.strip()) == 0:
+        # OK
+        f.write("Check environment - ok:\n")
+        f.write(std)
+        lineno = 0
+        for line in std.split("\n"):
+            lineno += 1
+            if lineno == 1:
+                if line != "CHECK":
+                    break
+            line = line.strip()
+            kv = line.split("=", 1)
+            if len(kv) == 2:
+                env[kv[0].lower().strip()] = kv[1].strip()
+    else:
+        f.write("ERROR:\n")
+        f.write(err)
+    f.close()    
+    return (destpath, env)
 
 def dotest(testfile, interps, dests, stats, hint = ""):
     cover.log("Test", hint, ":", os.path.basename(testfile))
@@ -199,7 +226,7 @@ def dotest(testfile, interps, dests, stats, hint = ""):
         stats["_"][res] = stats["_"].get(res, 0) + 1
         stats[interp[1]]["_"] += 1
         stats[interp[1]][res] = stats[interp[1]].get(res, 0) + 1
-        resall += (res + " " * 4)[:4].upper()
+        resall += (res + " " * 10)[:6].upper()
         resall += "  "
     cover.log(resall)
 
@@ -222,7 +249,7 @@ def doalltest(interps):
 
     cover.log(">> Statistics:")
     def statstr(stat):
-        keys = stat.keys()
+        keys = list(stat.keys())
         keys.sort()
         st = "total - %d" % stat["_"]
         for key in keys:
@@ -236,11 +263,39 @@ def doalltest(interps):
     cover.log("-"*10)
     cover.log("All:", statstr(stats["_"]))
 
+    # check if no FPDF at all
+    total = stats["_"]["_"]
+    fpdf = stats["_"].get("nofpdf", 0) + stats["_"].get("skip", 0)
+    if fpdf == total:
+        hintprepare()
+
 def usage():
     cover.log("Usage: todo")
 
+def hintprepare():
+    if cover.PYFPDFTESTLOCAL:
+        if sys.platform.startswith("win"):
+            prefix = ""
+            suffix = ".bat"
+        else:
+            prefix = "./"
+            suffix = ".sh"
+        cover.log("*** Please, prepare local copy for Python 2.x")
+        cover.log("***   " + prefix + "prepare2" + suffix)
+        cover.log("*** or prepare for Python 3.x")
+        cover.log("***   " + prefix + "prepare3" + suffix)
+    else:
+        cover.log("*** Please, install PyFPDF with")
+        cover.log("***   python setup.py install")
+        cover.log("*** or set PYFPDFTESTLOCAL variable to use local copy")
+        if sys.platform.startswith("win"):
+            cover.log("***   set PYFPDFTESTLOCAL=1")
+        else:
+            cover.log("***   export PYFPDFTESTLOCAL=1")
+        
 def main():
-    cover.log("Test FPDF", fpdf.FPDF_VERSION)
+    cover.log("Test PyFPDF")   
+    
     ins = find_python_version(search_python())
     #if len(sys.argv) == 1:
     #    return usage()
