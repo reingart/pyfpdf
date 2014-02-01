@@ -1045,8 +1045,12 @@ class FPDF(object):
         nb=self.page
         if hasattr(self,'str_alias_nb_pages'):
             # Replace number of pages in fonts using subsets (unicode)
-            alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False);
+            alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False)
             r = UTF8ToUTF16BE(str(nb), False)
+            if PY3K:
+                # convert bytes back to string until PEP461-like is implemented
+                alias = alias.decode("latin1")
+                r = r.decode("latin1")
             for n in range(1, nb+1):
                 self.pages[n] = self.pages[n].replace(alias, r)
             # Now repeat for no pages in non-subset fonts
