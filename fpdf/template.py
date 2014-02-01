@@ -27,6 +27,8 @@ class Template:
         pdf.set_creator(creator)
         pdf.set_subject(subject)
         pdf.set_keywords(keywords)
+        if PY3K:
+            pdf.compress = False    # TODO: not suported yet
 
     def load_elements(self, elements):
         "Initialize the internal element structures"
@@ -41,7 +43,11 @@ class Template:
             'align','text','priority', 'multiline')
         self.elements = []
         self.pg_no = 0
-        for row in csv.reader(open(infile, 'rb'), delimiter=delimiter):
+        if not PY3K:
+            f = open(infile, 'rb')
+        else:
+            f = open(infile)
+        for row in csv.reader(f, delimiter=delimiter):
             kargs = {}
             for i,v in enumerate(row):
                 if not v.startswith("'") and decimal_sep!=".": 
@@ -61,8 +67,8 @@ class Template:
         self.texts[self.pg_no] = {}
         
     def __setitem__(self, name, value):
-        if name in self:
-            if isinstance(value,str):
+        if name in self.keys:
+            if isinstance(value,str) and not PY3K:
                 value = value.encode("latin1","ignore")
             elif value is None:
                 value = ""
@@ -77,7 +83,7 @@ class Template:
         return name.lower() in self.keys
         
     def __getitem__(self, name):
-        if name in self:
+        if name in self.keys:
             key = name.lower()
             if key in self.texts:
                 # text for this page:
@@ -100,7 +106,7 @@ class Template:
         if element['underline']: style += "U"
         pdf.set_font(element['font'],style,element['size'])
         align = {'L':'L','R':'R','I':'L','D':'R','C':'C','':''}.get(element['align']) # D/I in spanish
-        if isinstance(text, unicode):
+        if isinstance(text, unicode) and not PY3K:
             text = text.encode("latin1","ignore")
         else:
             text = str(text)
@@ -186,7 +192,8 @@ class Template:
         pdf.rect(x1, y1, x2-x1, y2-y1)
 
     def image(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', *args,**kwargs):
-        pdf.image(text,x1,y1,w=x2-x1,h=y2-y1,type='',link='')
+        if text:
+            pdf.image(text,x1,y1,w=x2-x1,h=y2-y1,type='',link='')
 
     def barcode(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
              foreground=0, *args, **kwargs):
@@ -258,7 +265,7 @@ if __name__ == "__main__":
         f['item_description%02d' % (max_lines_per_page+1)] = s
 
         f["company_name"] = "Sample Company"
-        f["company_logo"] = "tutorial/logo.png"
+        f["company_logo"] = "../tutorial/logo.png"
         f["company_header1"] = "Some Address - somewhere -"
         f["company_header2"] = "http://www.example.com"        
         f["company_footer1"] = "Tax Code ..."
