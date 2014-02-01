@@ -21,7 +21,7 @@ import os, sys, zlib, struct, re, tempfile, struct
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
-from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode
+from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception
 
 # Global variables
 FPDF_VERSION = '1.7.2'
@@ -448,8 +448,8 @@ class FPDF(object):
                     fh = open(unifilename, "w")
                     pickle.dump(font_dict, fh)
                     fh.close()
-                except IOError as e:
-                    if not e.errno == errno.EACCES:
+                except IOError:
+                    if not exception().errno == errno.EACCES:
                         raise  # Not a permission error.
                 del ttf
             if hasattr(self,'str_alias_nb_pages'):
@@ -1357,8 +1357,8 @@ class FPDF(object):
                     font_dict['range'] = range_
                     pickle.dump(font_dict, fh)
                     fh.close()
-                except IOError as e:
-                    if not e.errno == errno.EACCES:
+                except IOError:
+                    if not exception().errno == errno.EACCES:
                         raise  # Not a permission error.
             if (font['cw'][cid] == 0):
                 continue
@@ -1630,8 +1630,8 @@ class FPDF(object):
         try:
             f = open(filename, 'rb')
             im = Image.open(f)
-        except Exception as e:
-            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(e)))
+        except Exception:
+            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
         else:
             a = im.size
         # We shouldn't get into here, as Jpeg is RGB=8bpp right(?), but, just in case...
@@ -1655,8 +1655,8 @@ class FPDF(object):
             self.error('PIL is required for GIF support')
         try:
             im = Image.open(filename)
-        except Exception as e:
-            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(e)))
+        except Exception:
+            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
         else:
             # Use temporary file
             f = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
