@@ -212,7 +212,7 @@ def check_result(settings, args):
         else:
             log("HASHERROR")
     else:
-        startbyext(args["fn"])
+        start_by_ext(args["fn"])
 
 def testmain(fn, testfunc):
     si = read_cover_info(fn)
