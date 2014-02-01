@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: latin-1 -*-
 
+from .py3k import PY3K, basestring, unicode
+
 # fpdf php helpers:
 
 def substr(s, start, length=-1):
@@ -18,9 +20,9 @@ def print_r(array):
         
 def UTF8ToUTF16BE(instr, setbom=True):
     "Converts UTF-8 strings to UTF16-BE."
-    outstr = ""
+    outstr = "".encode()
     if (setbom):
-        outstr += "\xFE\xFF"; 
+        outstr += "\xFE\xFF".encode("latin1")
     if not isinstance(instr, unicode):
         instr = instr.decode('UTF-8')
     outstr += instr.encode('UTF-16BE')
