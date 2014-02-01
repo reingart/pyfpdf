@@ -117,4 +117,4 @@ if __name__ == "__main__":
     if sys.platform.startswith("linux"):
         os.system("evince ./invoice.pdf")
     else:
-        os.system("./invoice.pdf")
+        os.startfile("./invoice.pdf")
