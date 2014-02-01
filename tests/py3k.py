@@ -14,6 +14,7 @@ pdf.add_page()
 pdf.set_font('Arial','',14)  
 pdf.ln(10)
 pdf.write(5, 'hello world %s αινσϊόρ' % sys.version)
+pdf.image("../tutorial/logo.png", 50, 50)
 
 fn='py3k.pdf'
 pdf.output(fn,'F')
