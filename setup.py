@@ -4,12 +4,8 @@ from distutils.core import setup
 
 import sys
 
-if sys.version_info >= (3, 0):
-    import fpdf_py3k as fpdf
-    package_dir = 'fpdf_py3k'
-else:
-    import fpdf
-    package_dir = 'fpdf'
+import fpdf
+package_dir = 'fpdf'
     
 setup(name='fpdf',
       version=fpdf.__version__,
