@@ -1006,7 +1006,7 @@ class FPDF(object):
             if(not f):
                 self.error('Unable to create output file: '+name)
             if PY3K:
-                # TODO: proper unicode support
+                # manage binary data as latin1 until PEP461 or similar is implemented
                 f.write(self.buffer.encode("latin1"))
             else:
                 f.write(self.buffer)
@@ -1096,7 +1096,9 @@ class FPDF(object):
             self._out('endobj')
             #Page content
             if self.compress:
-                p = zlib.compress(self.pages[n])
+                # manage binary data as latin1 until PEP461 or similar is implemented
+                p = self.pages[n].encode("latin1") if PY3K else self.pages[n] 
+                p = zlib.compress(p)
             else:
                 p = self.pages[n]
             self._newobj()
