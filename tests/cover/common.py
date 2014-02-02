@@ -13,6 +13,9 @@ basepath = os.path.abspath(os.path.join(__file__, "..", ".."))
 
 # if PYFPDFTESTLOCAL is not set - use instaled pyfpdf version
 PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
+if PYFPDFTESTLOCAL:
+    sys.path = [os.path.join(basepath, "fpdf_local")] + sys.path
+    
 
 if PY3K:
     #import common3 as _common
@@ -21,9 +24,6 @@ if PY3K:
     def frombytes(value):
         return value.decode("latin1")
     from hashlib import md5
-
-    if PYFPDFTESTLOCAL:
-        sys.path = [os.path.join(basepath, "fpdf_py3k")] + sys.path
 
 else:
     #import common2 as _common
@@ -35,9 +35,6 @@ else:
         from hashlib import md5
     except ImportError:
         import md5
-        
-    if PYFPDFTESTLOCAL:
-        sys.path = [os.path.join(basepath, "fpdf_py2k")] + sys.path
 
 def exec_cmd(cmd):
     "Execute command and return console output (stdout, stderr)"

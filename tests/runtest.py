@@ -231,7 +231,7 @@ def do_test(testfile, interps, dests, stats, hint = ""):
     cover.log(resall)
 
 def print_interps(interps):
-    cover.log(">> interpretors:", len(interps))
+    cover.log(">> Interpretors:", len(interps))
     dests = {}
     stats = {"_": {"_": 0}}
     for idx, interp in enumerate(interps):
@@ -245,7 +245,6 @@ def do_all_test(interps, tests):
     for idx, interp in enumerate(interps):
         dests[interp[1]] = prepare_dest(interp)
         stats[interp[1]] = {"_": 0}
-    cover.log()
 
     cover.log(">> Tests:", len(tests))
     for idx, test in enumerate(tests):
@@ -304,10 +303,8 @@ def hint_prepare():
         else:
             prefix = "./"
             suffix = ".sh"
-        cover.log("*** Please, prepare local copy for Python 2.x")
-        cover.log("***   " + prefix + "prepare2" + suffix)
-        cover.log("*** or prepare for Python 3.x")
-        cover.log("***   " + prefix + "prepare3" + suffix)
+        cover.log("*** Please, prepare local copy for tests")
+        cover.log("***   " + prefix + "prepare_local" + suffix)
     else:
         cover.log("*** Please, install PyFPDF with")
         cover.log("***   python setup.py install")
