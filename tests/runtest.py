@@ -128,7 +128,7 @@ def do_test_one(testfile, interp, info, dest):
     # check PIL
     if info.get("pil", "no") == "yes":
         if destenv.get("pil", "no") != "yes":
-            return "skip"
+            return ("skip", "no PIL or PIllow found")
     # check python version
     tool2to3 = (info.get("2to3", "no") == "yes")
     py2 = (info.get("python2", "yes") == "yes")
@@ -136,19 +136,19 @@ def do_test_one(testfile, interp, info, dest):
     copy = False
     if nid[:2] == "3.":
         if not py3:
-            return "skip"
+            return ("skip", "not for python 3")
         if not tool2to3:
             copy = True
         else:
-            return "unimplemented"
+            return ("unimplemented", "todo")
     if nid[:2] == "2.":
         if not py2:
-            return "skip"
+            return ("skip", "not for python 2")
         copy = True
 
     # check if fpdf instaled
     if destenv.get("ver", "None") == "None":
-        return "nofpdf"
+        return ("nofpdf", "")
 
     # copy files
     testname = os.path.basename(testfile)
@@ -170,9 +170,17 @@ def do_test_one(testfile, interp, info, dest):
     
     answ = std.strip()
     if answ.find("\n") >= 0 or len(answ) == 0:
-        return "fail"
+        return ("fail", "bad output")
     else:
-        return answ.lower()
+        if answ == "HASHERROR":
+            # get new hash
+            nh = ""
+            for line in err.split("\n"):
+                line = line.strip()
+                if line[:5] == "new =":
+                    nh = line[5:].strip()
+            return ("hasherror", nh)
+        return (answ.lower(), "")
 
 
 def prepare_dest(interp):
@@ -217,10 +225,14 @@ def do_test(testfile, interps, dests, stats, hint = ""):
     resall = ""       
     # prepare
     # do tests
+    hasherr = []
     for interp in interps:
         if len(interps) < 6:
             resall += (interp[1] + " - ")
-        res = do_test_one(testfile, interp, info, dests[interp[1]])
+        res, desc = do_test_one(testfile, interp, info, dests[interp[1]])
+        if res == "hasherror":
+            hasherr.append(desc)
+            #cover.log("HASH =", desc)
         # update statistic
         stats["_"]["_"] += 1
         stats["_"][res] = stats["_"].get(res, 0) + 1
@@ -229,6 +241,9 @@ def do_test(testfile, interps, dests, stats, hint = ""):
         resall += (res + " " * 10)[:6].upper()
         resall += "  "
     cover.log(resall)
+    # test if all hash
+    if len(interps) == len(hasherr):
+        cover.err("All hashes wrong")
 
 def print_interps(interps):
     cover.log(">> Interpretors:", len(interps))
