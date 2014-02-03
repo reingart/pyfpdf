@@ -22,7 +22,7 @@ def dotest(outputname, nostamp):
     # Add a Unicode font (uses UTF-8)
     pdf.add_font('DejaVu', '', \
         os.path.join(common.basepath, "fonts", 'DejaVuSansCondensed.ttf'), \
-        uni=True)
+        uni = True)
     pdf.set_font('DejaVu', '', 14)
 
     for i in range(5):
