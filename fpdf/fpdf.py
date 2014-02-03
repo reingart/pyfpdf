@@ -1154,7 +1154,9 @@ class FPDF(object):
                 self._out('>>')
                 self._putstream(font)
                 self._out('endobj')
-        for k,font in self.fonts.items():
+        flist = [(x[1]["i"],x[0],x[1]) for x in self.fonts.items()]
+        flist.sort()
+        for idx,k,font in flist:
             #Font objects
             self.fonts[k]['n']=self.n+1
             type=font['type']
@@ -1484,7 +1486,7 @@ class FPDF(object):
                 self._out('endobj')
 
     def _putxobjectdict(self):
-        i = [(x[1]["i"],x[1]["n"]) for x in self.images.items()]
+        i = [(x["i"],x["n"]) for x in self.images.values()]
         i.sort()
         for idx,n in i:
             self._out('/I'+str(idx)+' '+str(n)+' 0 R')
@@ -1492,8 +1494,10 @@ class FPDF(object):
     def _putresourcedict(self):
         self._out('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]')
         self._out('/Font <<')
-        for font in self.fonts.values():
-            self._out('/F'+str(font['i'])+' '+str(font['n'])+' 0 R')
+        f = [(x["i"],x["n"]) for x in self.fonts.values()]
+        f.sort()
+        for idx,n in f:
+            self._out('/F'+str(idx)+' '+str(n)+' 0 R')
         self._out('>>')
         self._out('/XObject <<')
         self._putxobjectdict()
