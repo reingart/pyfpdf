@@ -410,7 +410,7 @@ class FPDF(object):
             unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
             name = ''
             if os.path.exists(unifilename):
-                fh = open(unifilename)
+                fh = open(unifilename, "rb")
                 try:
                     font_dict = pickle.load(fh)
                 finally:
@@ -445,7 +445,7 @@ class FPDF(object):
                     'cw': ttf.charWidths,
                     }
                 try:
-                    fh = open(unifilename, "w")
+                    fh = open(unifilename, "wb")
                     pickle.dump(font_dict, fh)
                     fh.close()
                 except IOError:
@@ -1022,7 +1022,7 @@ class FPDF(object):
         "Check that text input is in the correct format/encoding"
         # - for TTF unicode fonts: unicode object (utf8 encoding)
         # - for built-in fonts: string instances (latin 1 encoding)
-        if self.unifontsubset and isinstance(txt, str):
+        if self.unifontsubset and isinstance(txt, str) and not PY3K:
             txt = txt.decode('utf8')
         elif not self.unifontsubset and isinstance(txt, unicode) and not PY3K:
             txt = txt.encode('latin1')
@@ -1047,10 +1047,6 @@ class FPDF(object):
             # Replace number of pages in fonts using subsets (unicode)
             alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False)
             r = UTF8ToUTF16BE(str(nb), False)
-            if PY3K:
-                # convert bytes back to string until PEP461-like is implemented
-                alias = alias.decode("latin1")
-                r = r.decode("latin1")
             for n in range(1, nb+1):
                 self.pages[n] = self.pages[n].replace(alias, r)
             # Now repeat for no pages in non-subset fonts
@@ -1300,7 +1296,11 @@ class FPDF(object):
                 for cc, glyph in codeToGlyph.items():
                     cidtogidmap[cc*2] = chr(glyph >> 8)
                     cidtogidmap[cc*2 + 1] = chr(glyph & 0xFF)
-                cidtogidmap = zlib.compress(''.join(cidtogidmap));
+                cidtogidmap = ''.join(cidtogidmap)
+                if PY3K:
+                    # manage binary data as latin1 until PEP461-like function is implemented
+                    cidtogidmap = cidtogidmap.encode("latin1")
+                cidtogidmap = zlib.compress(cidtogidmap);
                 self._newobj()
                 self._out('<</Length ' + str(len(cidtogidmap)) + '')
                 self._out('/Filter /FlateDecode')
@@ -1327,7 +1327,7 @@ class FPDF(object):
     def _putTTfontwidths(self, font, maxUni):
         cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
         if (os.path.exists(cw127fname)):
-            fh = open(cw127fname);
+            fh = open(cw127fname, "rb");
             try:
                 font_dict = pickle.load(fh)
             finally:
@@ -1816,6 +1816,8 @@ class FPDF(object):
         if PY3K and isinstance(s, bytes):
             # manage binary data as latin1 until PEP461-like function is implemented
             s = s.decode("latin1")          
+        elif not PY3K and isinstance(s, unicode):
+            s = s.encode("latin1")    # default encoding (font name and similar)      
         elif not isinstance(s, basestring):
             s = str(s)
         if(self.state==2):
