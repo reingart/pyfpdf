@@ -17,6 +17,10 @@
 #PyFPDF-cover-test:python3=yes
 # is PIL required (default - no)
 #PyFPDF-cover-test:pil=no
+#...
+#...PyFPDF-cover-test:res=some_resource.ttf
+#...PyFPDF-cover-test:res=other_resource.txt
+#...
 
 import common # common set of utilities
 from fpdf import FPDF

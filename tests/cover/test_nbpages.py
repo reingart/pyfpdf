@@ -5,6 +5,7 @@
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=nb_pages.pdf
 #PyFPDF-cover-test:hash=4f22df85e31007cb275fabdc9fa78f97
+#PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 
 import common
 from fpdf import FPDF
@@ -21,7 +22,7 @@ def dotest(outputname, nostamp):
 
     # Add a Unicode font (uses UTF-8)
     pdf.add_font('DejaVu', '', \
-        os.path.join(common.basepath, "fonts", 'DejaVuSansCondensed.ttf'), \
+        os.path.join(common.basepath, "font", 'DejaVuSansCondensed.ttf'), \
         uni = True)
     pdf.set_font('DejaVu', '', 14)
 

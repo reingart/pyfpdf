@@ -11,6 +11,8 @@ PY3K = sys.version_info >= (3, 0)
 
 basepath = os.path.abspath(os.path.join(__file__, "..", "..")) 
 
+RESHASH = "04b45488beab7bda039d5ffd5d0bfdcf"
+
 # if PYFPDFTESTLOCAL is not set - use instaled pyfpdf version
 PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
 if PYFPDFTESTLOCAL:
@@ -101,7 +103,7 @@ def file_hash(fn):
 def read_cover_info(fn):
     "Read cover test info"
     f = open(fn, "rb")
-    da = {}
+    da = {"res": []}
     mark = "#PyFPDF-cover-test:"
     encmark = "# -*- coding:"
     enc = None
@@ -121,7 +123,11 @@ def read_cover_info(fn):
             if line[:len(mark)] == mark:
                 hdr = True
                 kv = line[len(mark):].split("=", 1)
-                da[kv[0]] = kv[1]
+                if len(kv) == 2:
+                    if kv[0] == "res":
+                        da["res"].append(kv[1])
+                    else:
+                        da[kv[0]] = kv[1]
             else:
                 if hdr and len(line) == 0:
                     break
@@ -153,6 +159,28 @@ def parse_test_args(args, deffn):
             da["fn"] = arg
         args = args[1:]
     return da
+    
+def load_res_file(path):
+    items = {}
+    res = None
+    for line in open(path):
+        line = line.strip()
+        if line[:1] == "#":
+            continue
+        kv = line.split("=", 1)
+        if len(kv) != 2:
+            continue
+        if kv[0] == "res":
+            res = kv[1]
+            if res not in items:
+                items[res] = ["", []]
+        elif res is None:
+            continue
+        elif kv[0] == "hash":
+            items[res][0] = kv[1]
+        elif kv[0] == "tags":
+            items[res][1] += [kv[1].split(",")]
+    return items
     
 def check_env(settings, args):
     "Check test environment"
@@ -189,6 +217,36 @@ def check_env(settings, args):
             else:
                 log("NOPIL")
             return False
+    # check res
+    reslst = None
+    for res in settings.get("res", []):
+        if reslst is None:
+            # check
+            respath = os.path.join(basepath, "resources.txt")
+            if file_hash(respath) != RESHASH:
+                if verbose:
+                    err("File resources.txt damaged (hash mismatch)")
+                else:
+                    log("RESHASH")
+                return False
+            # load data
+            reslst = load_res_file(respath)
+        if res not in reslst:
+            err("Resource \"" + res + "\" not found")
+            if not verbose:
+                log("NORES")
+            return False
+        # check hash
+        respath = os.path.join(basepath, res)
+        hs = file_hash(respath)
+        if hs != reslst[res][0]:
+            err("Resource \"" + res + "\" damaged")
+            err("      read = %s" % hs)
+            err("  required = %s" % reslst[res][0])
+            if not verbose:
+                log("RESERR")
+            return False
+            
     return True
     
 def check_result(settings, args):

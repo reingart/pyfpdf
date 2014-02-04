@@ -337,6 +337,42 @@ def read_list(fn):
     finally:
         f.close()
 
+def hasher(path, args):
+    tags = []
+    while len(args):
+        arg = args[0]
+        args = args[1:]
+        if arg == "--tag":
+            if len(args) == 0:
+                cover.log("Param without value")
+                return 
+            value = args[0]
+            args = args[1:]
+            if value not in tags:
+                tags.append(value)
+        else:
+            cover.log("Unknown param")
+            return
+        
+    lst = []
+    if os.path.isdir(path):
+        files = [(x.lower(), x) for x in os.listdir(path)]
+        files.sort()
+        for s, item in files:
+            fp = os.path.join(path, item)
+            # clear path
+            bp = fp
+            if sys.platform.startswith("win"):
+                bp = fp.replace("\\", "/")
+            lst += [[bp, cover.file_hash(fp)]]
+    else:
+        lst = [[path, cover.file_hash(path)]]
+    for item, hs in lst:
+        cover.log("res=" + item)
+        cover.log("hash=" + hs)
+        cover.log("tags=" + ",".join(tags))
+        cover.log()
+
 def main():
     cover.log("Test PyFPDF")   
     
@@ -346,6 +382,11 @@ def main():
     while len(args):
         arg = args[0]
         args = args[1:]
+        if arg == "--hash":
+            if len(args) == 0:
+                cover.log("Param without value")
+                return usage()
+            return hasher(args[0], args[1:])
         if arg == "--help":
             return usage()
         elif arg == "--test":

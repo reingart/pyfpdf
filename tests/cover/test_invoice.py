@@ -9,6 +9,7 @@ __license__ = "LGPL 3.0"
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=invoice.pdf
 #PyFPDF-cover-test:hash=5844bbebe3e33b0ac9cc15ac39327a81
+#PyFPDF-cover-test:res=invoice.csv
 
 import common
 from fpdf import Template
