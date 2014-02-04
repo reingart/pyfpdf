@@ -27,8 +27,6 @@ class Template:
         pdf.set_creator(creator)
         pdf.set_subject(subject)
         pdf.set_keywords(keywords)
-        if PY3K:
-            pdf.compress = False    # TODO: not suported yet
 
     def load_elements(self, elements):
         "Initialize the internal element structures"

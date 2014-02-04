@@ -1,4 +1,4 @@
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 
 "PDF Template Helper for FPDF.py"
 
@@ -6,20 +6,64 @@ __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2010 Mariano Reingart"
 __license__ = "LGPL 3.0"
 
-import sys, os
+#PyFPDF-cover-test:format=PDF
+#PyFPDF-cover-test:fn=invoice.pdf
+#PyFPDF-cover-test:hash=5844bbebe3e33b0ac9cc15ac39327a81
+
+import common
 from fpdf import Template
 
-if __name__ == "__main__":
+import os
 
-    # generate sample invoice (according Argentina's regulations)
+class randomfake:
+    RINT1_10 = [8, 5, 7, 9, 10, 8, 1, 9, 1, 7, 6, 2, 3, 7, 8, 4, 6, 5, 7, 2, \
+        5, 8, 6, 5, 5, 8, 7, 7, 6]
+    RINT65_90 = [67, 67, 87, 78, 84, 67, 86, 75, 86, 89, 81, 69, 72, 71, 84, \
+        80, 71 , 86 , 82 , 70 , 84 , 69 , 70]
+    RFLT = [0.820710198665, 0.342854771472, 0.0238515965298, 0.177658111957, \
+        0.422301628067, 0.701867781693, 0.168650983171, 0.329723498664, \
+        0.490481106182, 0.892634029991, 0.994758791625, 0.998243714035, \
+        0.596244312914 ,0.318601111178 ,0.321593673214 ,0.203486335469]
+    def __init__(self):
+        self.icnt1_10 = 0
+        self.icnt65_90 = 0
+        self.fcnt = 0
 
-    import random
+    def randint(self, beg, end):
+        if beg == 1 and end == 10:
+            self.icnt1_10 += 1
+            if self.icnt1_10 > len(self.RINT1_10):
+                self.icnt1_10 = 1
+            return self.RINT1_10[self.icnt1_10 - 1]
+        if beg == 65 and end == 90:
+            self.icnt65_90 += 1
+            if self.icnt65_90 > len(self.RINT65_90):
+                self.icnt65_90 = 1
+            return self.RINT65_90[self.icnt65_90 - 1]
+        raise Exception("Not implemented")
+
+    def random(self):
+        self.fcnt += 1
+        if self.fcnt > len(self.RFLT):
+            self.fcnt = 1
+        return self.RFLT[self.fcnt - 1]
+
+def dotest(outputname, nostamp):
+
+    # generate sample invoice (according Argentina's regulations)   
     from decimal import Decimal
 
     f = Template(format="A4",
              title="Sample Invoice", author="Sample Company",
              subject="Sample Customer", keywords="Electronic TAX Invoice")
-    f.parse_csv(infile="invoice.csv", delimiter=";", decimal_sep=",")
+    if nostamp:
+        f.pdf._putinfo = lambda: common.test_putinfo(f.pdf)
+        random = randomfake()
+    else:
+        import random
+
+    csvpath = os.path.join(common.basepath, "invoice.csv")
+    f.parse_csv(infile=csvpath, delimiter=";", decimal_sep=",")
     
     detail = "Lorem ipsum dolor sit amet, consectetur. " * 30
     items = []
@@ -70,7 +114,7 @@ if __name__ == "__main__":
         f['item_description%02d' % (max_lines_per_page+1)] = s
 
         f["company_name"] = "Sample Company"
-        f["company_logo"] = "../tutorial/logo.png"
+        f["company_logo"] = os.path.join(common.basepath, "../tutorial/logo.png")
         f["company_header1"] = "Some Address - somewhere -"
         f["company_header2"] = "http://www.example.com"        
         f["company_footer1"] = "Tax Code ..."
@@ -113,8 +157,8 @@ if __name__ == "__main__":
             f['total_label'] = 'SubTotal:'
         f['total'] = "%0.2f" % total
             
-    f.render("./invoice.pdf")
-    if sys.platform.startswith("linux"):
-        os.system("evince ./invoice.pdf")
-    else:
-        os.startfile("./invoice.pdf")
+    f.render(outputname)
+
+if __name__ == "__main__":
+    common.testmain(__file__, dotest)
+
