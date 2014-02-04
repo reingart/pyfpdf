@@ -864,7 +864,7 @@ class TTFontFile:
     def getHMTX(self, numberOfHMetrics, numGlyphs, glyphToChar, scale):
         start = self.seek_table("hmtx")
         aw = 0
-        self.charWidths = [0] * 256*256*2
+        self.charWidths = [0] * 256*256
         nCharWidths = 0
         if ((numberOfHMetrics*4) < self.maxStrLenRead): 
             data = self.get_chunk(start,(numberOfHMetrics*4))
