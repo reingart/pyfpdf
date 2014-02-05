@@ -9,10 +9,18 @@ from fpdf import FPDF
 
 import os, struct
 
+if common.PY3K:
+    def u(x):
+        return x
+else:
+    import codecs
+    def u(x):
+        return codecs.unicode_escape_decode(x)[0]
+
 def dotest(outputname, nostamp):
 
     pdf = FPDF()
-    pdf.set_font('Arial','',14)  
+    pdf.set_font('Arial','',14)
     s = 'Texto largo que no cabe en esta celda pero que será ajustado'
     w = pdf.get_string_width(s)
     if not nostamp:
@@ -20,7 +28,7 @@ def dotest(outputname, nostamp):
     assert round(w, 2) == 135.90
     pdf.add_font('DejaVu', '', './font/DejaVuSans.ttf', uni=True)
     pdf.set_font('DejaVu', '', 14)
-    s = u'Texto largo que no cabe en esta celda pero que será ajustado'
+    s = u('Texto largo que no cabe en esta celda pero que será ajustado') 
     w = pdf.get_string_width(s)
     if not nostamp:
         print (s, w)
