@@ -9,9 +9,8 @@ import os, struct
 
 def dotest(outputname, nostamp):
     try:
-        import fpdf
         # Portrait, millimeter units, A4 page size     
-        pdf=fpdf.FPDF("P", "mm", "A4")
+        pdf = FPDF("P", "mm", "A4")
         # Set font: Times, normal, size 10
         pdf.set_font('Times','', 12)
         ##pdf.add_page()

@@ -26,6 +26,7 @@ if PY3K:
     def frombytes(value):
         return value.decode("latin1")
     from hashlib import md5
+    unicode = str
 
 else:
     #import common2 as _common
@@ -111,14 +112,14 @@ def read_cover_info(fn):
         hdr = False
         for line in f.readlines():
             if enc is None:
-                if line.decode("latin-1")[:len(encmark)] == encmark:
-                    enc = line.decode("latin-1")[len(encmark)].strip()
-                    if enc[-3:] == "-*-":
+                if line.decode("latin-1")[:len(encmark)] == unicode(encmark):
+                    enc = line.decode("latin-1")[len(encmark):].strip()
+                    if enc[-3:] == unicode("-*-"):
                         enc = enc[:-3].strip()
                         try:
-                            line.decode("enc")
+                            line.decode(enc)
                         except:
-                            enc = None                    
+                            enc = None
             line = line.decode(enc or "UTF-8").strip()
             if line[:len(mark)] == mark:
                 hdr = True
