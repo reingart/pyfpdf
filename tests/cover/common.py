@@ -11,7 +11,7 @@ PY3K = sys.version_info >= (3, 0)
 
 basepath = os.path.abspath(os.path.join(__file__, "..", "..")) 
 
-RESHASH = "04b45488beab7bda039d5ffd5d0bfdcf"
+RESHASH = "7c6230f7ec99d40170503e513f825c43"
 
 # if PYFPDFTESTLOCAL is not set - use instaled pyfpdf version
 PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
@@ -251,15 +251,16 @@ def check_env(settings, args):
     
 def check_result(settings, args):
     check = True
-    if args["check"]:
-        # compare with hash
-        hs = file_hash(args["fn"])
-        fhs = settings.get("hash", "<not specified>")
-        if hs != fhs:
-            check = False
-            err("Hash mismatch:")
-            err("       new = %s" % hs)
-            err("  required = %s" % fhs)
+    if settings.get("fn"):        
+        if args["check"]:
+            # compare with hash
+            hs = file_hash(args["fn"])
+            fhs = settings.get("hash", "<not specified>")
+            if hs != fhs:
+                check = False
+                err("Hash mismatch:")
+                err("       new = %s" % hs)
+                err("  required = %s" % fhs)
 
     if args["autotest"]:
         if check:
@@ -267,11 +268,14 @@ def check_result(settings, args):
         else:
             log("HASHERROR")
     else:
-        start_by_ext(args["fn"])
+        if settings.get("fn"):        
+            start_by_ext(args["fn"])
+        else:
+            log("Test passed")
 
 def testmain(fn, testfunc):
     si = read_cover_info(fn)
-    da = parse_test_args(sys.argv, si["fn"])
+    da = parse_test_args(sys.argv, si.get("fn"))
     if not check_env(si, da):
         return
     testfunc(da["fn"], da["autotest"] or da["check"])

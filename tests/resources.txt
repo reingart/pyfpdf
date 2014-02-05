@@ -25,6 +25,10 @@ res=lena.gif
 hash=2dea6fb17967bb6b9374ca83c07e9076
 tags=
 
+res=dejavusanscondensed.cw.dat
+hash=61fb165f8f3947da890659ea595f58cf
+tags=
+
 res=font/Bandal.ttf
 hash=f3543d1732de78164adb2ff007f73e8e
 tags=fontpack
