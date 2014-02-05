@@ -14,37 +14,21 @@
 # ****************************************************************************
 
 from datetime import datetime
+from functools import wraps
 import math
 import errno
 import os, sys, zlib, struct, re, tempfile, struct
 
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
-
-# Check if PIL is available (tries importing both pypi version and corrected or manually installed versions).
-# Necessary for JPEG and GIF support.
-try:
-    try:
-        import Image
-    except:
-        from PIL import Image
-except ImportError:
-    Image = None
-
-
-from ttfonts import TTFontFile
-from fonts import fpdf_charwidths
-from php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
-
+from .ttfonts import TTFontFile
+from .fonts import fpdf_charwidths
+from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
+from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, b
 
 # Global variables
-FPDF_VERSION = '1.7.1'
+FPDF_VERSION = '1.7.2'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
 SYSTEM_TTFONTS = None
 
-PY3K = sys.version_info >= (3, 0)
 
 def set_global(var, val):
     globals()[var] = val
@@ -151,6 +135,16 @@ class FPDF(object):
         self.set_compression(1)
         # Set default PDF version number
         self.pdf_version='1.3'
+
+    def check_page(fn):
+        "Decorator to protect drawing methods"
+        @wraps(fn)
+        def wrapper(self, *args, **kwargs):
+            if not self.page:
+                self.error("No page open, you need to call add_page() first")
+            else:
+                fn(self, *args, **kwargs)
+        return wrapper
 
     def set_margins(self, left,top,right=-1):
         "Set left, top and right margins"
@@ -344,6 +338,7 @@ class FPDF(object):
 
     def get_string_width(self, s):
         "Get width of a string in the current font"
+        s = self.normalize_text(s)
         cw=self.current_font['cw']
         w=0
         l=len(s)
@@ -359,7 +354,7 @@ class FPDF(object):
                 else:
                     w += 500
         else:
-            for i in xrange(0, l):
+            for i in range(0, l):
                 w += cw.get(s[i],0)
         return w*self.font_size/1000.0
 
@@ -369,6 +364,7 @@ class FPDF(object):
         if(self.page>0):
             self._out(sprintf('%.2f w',width*self.k))
 
+    @check_page
     def line(self, x1,y1,x2,y2):
         "Draw a line"
         self._out(sprintf('%.2f %.2f m %.2f %.2f l S',x1*self.k,(self.h-y1)*self.k,x2*self.k,(self.h-y2)*self.k))
@@ -380,6 +376,7 @@ class FPDF(object):
             s = '[] 0 d'
         self._out(s)
 
+    @check_page
     def dashed_line(self, x1,y1,x2,y2, dash_length=1, space_length=1):
         """Draw a dashed line. Same interface as line() except:
            - dash_length: Length of the dash
@@ -388,6 +385,7 @@ class FPDF(object):
         self.line(x1, y1, x2, y2)
         self._set_dash()
 
+    @check_page
     def rect(self, x,y,w,h,style=''):
         "Draw a rectangle"
         if(style=='F'):
@@ -427,7 +425,7 @@ class FPDF(object):
             unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
             name = ''
             if os.path.exists(unifilename):
-                fh = open(unifilename)
+                fh = open(unifilename, "rb")
                 try:
                     font_dict = pickle.load(fh)
                 finally:
@@ -462,17 +460,17 @@ class FPDF(object):
                     'cw': ttf.charWidths,
                     }
                 try:
-                    fh = open(unifilename, "w")
+                    fh = open(unifilename, "wb")
                     pickle.dump(font_dict, fh)
                     fh.close()
-                except IOError, e:
-                    if not e.errno == errno.EACCES:
+                except IOError:
+                    if not exception().errno == errno.EACCES:
                         raise  # Not a permission error.
                 del ttf
             if hasattr(self,'str_alias_nb_pages'):
-                sbarr = range(0,57)   # include numbers in the subset!
+                sbarr = list(range(0,57))   # include numbers in the subset!
             else:
-                sbarr = range(0,32)
+                sbarr = list(range(0,32))
             self.fonts[fontkey] = {
                 'i': len(self.fonts)+1, 'type': font_dict['type'],
                 'name': font_dict['name'], 'desc': font_dict['desc'],
@@ -496,7 +494,7 @@ class FPDF(object):
                 #Search existing encodings
                 d = 0
                 nb = len(self.diffs)
-                for i in xrange(1, nb+1):
+                for i in range(1, nb+1):
                     if(self.diffs[i] == diff):
                         d = i
                         break
@@ -544,7 +542,7 @@ class FPDF(object):
                     name=os.path.join(FPDF_FONT_DIR,family)
                     if(family=='times' or family=='helvetica'):
                         name+=style.lower()
-                    execfile(name+'.font')
+                    exec(compile(open(name+'.font').read(), name+'.font', 'exec'))
                     if fontkey not in fpdf_charwidths:
                         self.error('Could not include font metric file for'+fontkey)
                 i=len(self.fonts)+1
@@ -590,6 +588,7 @@ class FPDF(object):
             self.page_links[self.page] = []
         self.page_links[self.page] += [(x*self.k,self.h_pt-y*self.k,w*self.k,h*self.k,link),]
 
+    @check_page
     def text(self, x, y, txt=''):
         "Output a string"
         txt = self.normalize_text(txt)
@@ -606,6 +605,7 @@ class FPDF(object):
             s='q '+self.text_color+' '+s+' Q'
         self._out(s)
 
+    @check_page
     def rotate(self, angle, x=None, y=None):
         if x is None:
             x = self.x
@@ -627,6 +627,7 @@ class FPDF(object):
         "Accept automatic page break or not"
         return self.auto_page_break
 
+    @check_page
     def cell(self, w,h=0,txt='',border=0,ln=0,align='',fill=0,link=''):
         "Output a cell"
         txt = self.normalize_text(txt)
@@ -719,6 +720,7 @@ class FPDF(object):
         else:
             self.x+=w
 
+    @check_page
     def multi_cell(self, w, h, txt='', border=0, align='J', fill=0, split_only=False):
         "Output text with automatic or explicit line breaks"
         txt = self.normalize_text(txt)
@@ -832,6 +834,7 @@ class FPDF(object):
             ret.append(substr(s,j,i-j))
         return ret
 
+    @check_page
     def write(self, h, txt='', link=''):
         "Output text in flowing mode"
         txt = self.normalize_text(txt)
@@ -899,6 +902,7 @@ class FPDF(object):
         if(i!=j):
             self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
+    @check_page
     def image(self, name, x=None, y=None, w=0,h=0,type='',link=''):
         "Put an image on the page"
         if not name in self.images:
@@ -965,6 +969,7 @@ class FPDF(object):
         if(link):
             self.link(x,y,w,h,link)
 
+    @check_page
     def ln(self, h=''):
         "Line Feed; default value is last cell height"
         self.x=self.l_margin
@@ -1014,16 +1019,16 @@ class FPDF(object):
             else:
                 dest='F'
         if dest=='I':
-            print self.buffer
+            print(self.buffer)
         elif dest=='D':
-            print self.buffer
+            print(self.buffer)
         elif dest=='F':
             #Save to local file
             f=open(name,'wb')
             if(not f):
                 self.error('Unable to create output file: '+name)
             if PY3K:
-                # TODO: proper unicode support
+                # manage binary data as latin1 until PEP461 or similar is implemented
                 f.write(self.buffer.encode("latin1"))
             else:
                 f.write(self.buffer)
@@ -1039,7 +1044,7 @@ class FPDF(object):
         "Check that text input is in the correct format/encoding"
         # - for TTF unicode fonts: unicode object (utf8 encoding)
         # - for built-in fonts: string instances (latin 1 encoding)
-        if self.unifontsubset and isinstance(txt, str):
+        if self.unifontsubset and isinstance(txt, str) and not PY3K:
             txt = txt.decode('utf8')
         elif not self.unifontsubset and isinstance(txt, unicode) and not PY3K:
             txt = txt.encode('latin1')
@@ -1062,12 +1067,12 @@ class FPDF(object):
         nb=self.page
         if hasattr(self,'str_alias_nb_pages'):
             # Replace number of pages in fonts using subsets (unicode)
-            alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False);
+            alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False)
             r = UTF8ToUTF16BE(str(nb), False)
-            for n in xrange(1, nb+1):
+            for n in range(1, nb+1):
                 self.pages[n] = self.pages[n].replace(alias, r)
             # Now repeat for no pages in non-subset fonts
-            for n in xrange(1,nb+1):
+            for n in range(1,nb+1):
                 self.pages[n]=self.pages[n].replace(self.str_alias_nb_pages,str(nb))
         if(self.def_orientation=='P'):
             w_pt=self.fw_pt
@@ -1079,7 +1084,7 @@ class FPDF(object):
             filter='/Filter /FlateDecode '
         else:
             filter=''
-        for n in xrange(1,nb+1):
+        for n in range(1,nb+1):
             #Page
             self._newobj()
             self._out('<</Type /Page')
@@ -1109,7 +1114,9 @@ class FPDF(object):
             self._out('endobj')
             #Page content
             if self.compress:
-                p = zlib.compress(self.pages[n])
+                # manage binary data as latin1 until PEP461 or similar is implemented
+                p = self.pages[n].encode("latin1") if PY3K else self.pages[n] 
+                p = zlib.compress(p)
             else:
                 p = self.pages[n]
             self._newobj()
@@ -1121,7 +1128,7 @@ class FPDF(object):
         self._out('1 0 obj')
         self._out('<</Type /Pages')
         kids='/Kids ['
-        for i in xrange(0,nb):
+        for i in range(0,nb):
             kids+=str(3+2*i)+' 0 R '
         self._out(kids+']')
         self._out('/Count '+str(nb))
@@ -1136,7 +1143,7 @@ class FPDF(object):
             self._newobj()
             self._out('<</Type /Encoding /BaseEncoding /WinAnsiEncoding /Differences ['+self.diffs[diff]+']>>')
             self._out('endobj')
-        for name,info in self.font_files.iteritems():
+        for name,info in self.font_files.items():
             if 'type' in info and info['type'] != 'TTF':
                 #Font file embedding
                 self._newobj()
@@ -1165,7 +1172,9 @@ class FPDF(object):
                 self._out('>>')
                 self._putstream(font)
                 self._out('endobj')
-        for k,font in self.fonts.iteritems():
+        flist = [(x[1]["i"],x[0],x[1]) for x in self.fonts.items()]
+        flist.sort()
+        for idx,k,font in flist:
             #Font objects
             self.fonts[k]['n']=self.n+1
             type=font['type']
@@ -1200,7 +1209,7 @@ class FPDF(object):
                 self._newobj()
                 cw=font['cw']
                 s='['
-                for i in xrange(32,256):
+                for i in range(32,256):
                     # Get doesn't rise exception; returns 0 instead of None if not set
                     s+=str(cw.get(chr(i)) or 0)+' '
                 self._out(s+']')
@@ -1311,7 +1320,11 @@ class FPDF(object):
                 for cc, glyph in codeToGlyph.items():
                     cidtogidmap[cc*2] = chr(glyph >> 8)
                     cidtogidmap[cc*2 + 1] = chr(glyph & 0xFF)
-                cidtogidmap = zlib.compress(''.join(cidtogidmap));
+                cidtogidmap = ''.join(cidtogidmap)
+                if PY3K:
+                    # manage binary data as latin1 until PEP461-like function is implemented
+                    cidtogidmap = cidtogidmap.encode("latin1")
+                cidtogidmap = zlib.compress(cidtogidmap);
                 self._newobj()
                 self._out('<</Length ' + str(len(cidtogidmap)) + '')
                 self._out('/Filter /FlateDecode')
@@ -1338,7 +1351,7 @@ class FPDF(object):
     def _putTTfontwidths(self, font, maxUni):
         cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
         if (os.path.exists(cw127fname)):
-            fh = open(cw127fname);
+            fh = open(cw127fname, "rb");
             try:
                 font_dict = pickle.load(fh)
             finally:
@@ -1374,8 +1387,8 @@ class FPDF(object):
                     font_dict['range'] = range_
                     pickle.dump(font_dict, fh)
                     fh.close()
-                except IOError, e:
-                    if not e.errno == errno.EACCES:
+                except IOError:
+                    if not exception().errno == errno.EACCES:
                         raise  # Not a permission error.
             if (font['cw'][cid] == 0):
                 continue
@@ -1439,8 +1452,10 @@ class FPDF(object):
     def _putimages(self):
         filter=''
         if self.compress:
-            filter='/Filter /FlateDecode '
-        for filename,info in self.images.iteritems():
+            filter='/Filter /FlateDecode '            
+        i = [(x[1]["i"],x[1]) for x in self.images.items()]
+        i.sort()
+        for idx,info in i:
             self._putimage(info)
             del info['data']
             if 'smask' in info:
@@ -1455,7 +1470,7 @@ class FPDF(object):
             self._out('/Width '+str(info['w']))
             self._out('/Height '+str(info['h']))
             if(info['cs']=='Indexed'):
-                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(len(info['pal'])/3-1)+' '+str(self.n+1)+' 0 R]')
+                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(int(len(info['pal'])/3)-1)+' '+str(self.n+1)+' 0 R]')
             else:
                 self._out('/ColorSpace /'+info['cs'])
                 if(info['cs']=='DeviceCMYK'):
@@ -1467,7 +1482,7 @@ class FPDF(object):
                 self._out('/DecodeParms <<' + info['dp'] + '>>')
             if('trns' in info and isinstance(info['trns'], list)):
                 trns=''
-                for i in xrange(0,len(info['trns'])):
+                for i in range(0,len(info['trns'])):
                     trns+=str(info['trns'][i])+' '+str(info['trns'][i])+' '
                 self._out('/Mask ['+trns+']')
             if('smask' in info):
@@ -1493,14 +1508,18 @@ class FPDF(object):
                 self._out('endobj')
 
     def _putxobjectdict(self):
-        for image in self.images.values():
-            self._out('/I'+str(image['i'])+' '+str(image['n'])+' 0 R')
+        i = [(x["i"],x["n"]) for x in self.images.values()]
+        i.sort()
+        for idx,n in i:
+            self._out('/I'+str(idx)+' '+str(n)+' 0 R')
 
     def _putresourcedict(self):
         self._out('/ProcSet [/PDF /Text /ImageB /ImageC /ImageI]')
         self._out('/Font <<')
-        for font in self.fonts.values():
-            self._out('/F'+str(font['i'])+' '+str(font['n'])+' 0 R')
+        f = [(x["i"],x["n"]) for x in self.fonts.values()]
+        f.sort()
+        for idx,n in f:
+            self._out('/F'+str(idx)+' '+str(n)+' 0 R')
         self._out('>>')
         self._out('/XObject <<')
         self._putxobjectdict()
@@ -1578,7 +1597,7 @@ class FPDF(object):
         self._out('xref')
         self._out('0 '+(str(self.n+1)))
         self._out('0000000000 65535 f ')
-        for i in xrange(1,self.n+1):
+        for i in range(1,self.n+1):
             self._out(sprintf('%010d 00000 n ',self.offsets[i]))
         #Trailer
         self._out('trailer')
@@ -1643,8 +1662,8 @@ class FPDF(object):
         try:
             f = open(filename, 'rb')
             im = Image.open(f)
-        except Exception, e:
-            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(e)))
+        except Exception:
+            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
         else:
             a = im.size
         # We shouldn't get into here, as Jpeg is RGB=8bpp right(?), but, just in case...
@@ -1668,8 +1687,8 @@ class FPDF(object):
             self.error('PIL is required for GIF support')
         try:
             im = Image.open(filename)
-        except Exception, e:
-            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(e)))
+        except Exception:
+            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
         else:
             # Use temporary file
             f = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
@@ -1686,18 +1705,21 @@ class FPDF(object):
     def _parsepng(self, name):
         #Extract info from a PNG file
         if name.startswith("http://") or name.startswith("https://"):
-            import urllib
-            f = urllib.urlopen(name)
+               f = urlopen(name)
         else:
             f=open(name,'rb')
         if(not f):
             self.error("Can't open image file: "+name)
         #Check signature
-        if(f.read(8)!='\x89'+'PNG'+'\r'+'\n'+'\x1a'+'\n'):
+        magic = f.read(8).decode("latin1")
+        signature = '\x89'+'PNG'+'\r'+'\n'+'\x1a'+'\n'
+        if not PY3K: signature = signature.decode("latin1")
+        if(magic!=signature):
             self.error('Not a PNG file: '+name)
         #Read header chunk
         f.read(4)
-        if(f.read(4)!='IHDR'):
+        chunk = f.read(4).decode("latin1")
+        if(chunk!='IHDR'):
             self.error('Incorrect PNG file: '+name)
         w=self._freadint(f)
         h=self._freadint(f)
@@ -1729,11 +1751,11 @@ class FPDF(object):
         #Scan chunks looking for palette, transparency and image data
         pal=''
         trns=''
-        data=''
+        data=bytes() if PY3K else str()
         n=1
         while n != None:
             n=self._freadint(f)
-            type=f.read(4)
+            type=f.read(4).decode("latin1")
             if(type=='PLTE'):
                 #Read palette
                 pal=f.read(n)
@@ -1746,7 +1768,7 @@ class FPDF(object):
                 elif(ct==2):
                     trns=[ord(substr(t,1,1)),ord(substr(t,3,1)),ord(substr(t,5,1))]
                 else:
-                    pos=t.find('\x00')
+                    pos=t.find('\x00'.encode("latin1"))
                     if(pos!=-1):
                         trns=[pos,]
                 f.read(4)
@@ -1765,28 +1787,28 @@ class FPDF(object):
         if(ct>=4):
             # Extract alpha channel
             data = zlib.decompress(data)
-            color = '';
-            alpha = '';
+            color = b('')
+            alpha = b('')
             if(ct==4):
                 # Gray image
                 length = 2*w
                 for i in range(h):
                     pos = (1+length)*i
-                    color += data[pos]
-                    alpha += data[pos]
+                    color += b(data[pos])
+                    alpha += b(data[pos])
                     line = substr(data, pos+1, length)
-                    color += re.sub('(.).',lambda m: m.group(1),line, flags=re.DOTALL)
-                    alpha += re.sub('.(.)',lambda m: m.group(1),line, flags=re.DOTALL)
+                    color += re.sub('(.).'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
+                    alpha += re.sub('.(.)'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
             else:
                 # RGB image
                 length = 4*w
                 for i in range(h):
                     pos = (1+length)*i
-                    color += data[pos]
-                    alpha += data[pos]
+                    color += b(data[pos])
+                    alpha += b(data[pos])
                     line = substr(data, pos+1, length)
-                    color += re.sub('(.{3}).',lambda m: m.group(1),line, flags=re.DOTALL)
-                    alpha += re.sub('.{3}(.)',lambda m: m.group(1),line, flags=re.DOTALL)
+                    color += re.sub('(...).'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
+                    alpha += re.sub('...(.)'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
             del data
             data = zlib.compress(color)
             info['smask'] = zlib.compress(alpha)
@@ -1817,11 +1839,19 @@ class FPDF(object):
 
     def _out(self, s):
         #Add a line to the document
+        if PY3K and isinstance(s, bytes):
+            # manage binary data as latin1 until PEP461-like function is implemented
+            s = s.decode("latin1")          
+        elif not PY3K and isinstance(s, unicode):
+            s = s.encode("latin1")    # default encoding (font name and similar)      
+        elif not isinstance(s, basestring):
+            s = str(s)
         if(self.state==2):
             self.pages[self.page]+=s+"\n"
         else:
-            self.buffer+=str(s)+"\n"
+            self.buffer+=s+"\n"
 
+    @check_page
     def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
         "Barcode I2of5 (numeric), adds a 0 if odd lenght"
         narrow = w / 3.0
@@ -1841,7 +1871,7 @@ class FPDF(object):
         # add start and stop codes
         code = 'AA' + code.lower() + 'ZA'
 
-        for i in xrange(0, len(code), 2):
+        for i in range(0, len(code), 2):
             # choose next pair of digits
             char_bar = code[i]
             char_space = code[i+1]
@@ -1853,10 +1883,10 @@ class FPDF(object):
 
             # create a wide/narrow-seq (first digit=bars, second digit=spaces)
             seq = ''
-            for s in xrange(0, len(bar_char[char_bar])):
+            for s in range(0, len(bar_char[char_bar])):
                 seq += bar_char[char_bar][s] + bar_char[char_space][s]
 
-            for bar in xrange(0, len(seq)):
+            for bar in range(0, len(seq)):
                 # set line_width depending on value
                 if seq[bar] == 'n':
                     line_width = narrow
@@ -1870,51 +1900,35 @@ class FPDF(object):
                 x += line_width
 
 
+    @check_page
     def code39(self, txt, x, y, w=1.5, h=5.0):
-        "Barcode 3of9"
-        wide = w
-        narrow = w / 3.0
-        gap = narrow
-
-        bar_char={'0': 'nnnwwnwnn', '1': 'wnnwnnnnw', '2': 'nnwwnnnnw',
-                  '3': 'wnwwnnnnn', '4': 'nnnwwnnnw', '5': 'wnnwwnnnn',
-                  '6': 'nnwwwnnnn', '7': 'nnnwnnwnw', '8': 'wnnwnnwnn',
-                  '9': 'nnwwnnwnn', 'A': 'wnnnnwnnw', 'B': 'nnwnnwnnw',
-                  'C': 'wnwnnwnnn', 'D': 'nnnnwwnnw', 'E': 'wnnnwwnnn',
-                  'F': 'nnwnwwnnn', 'G': 'nnnnnwwnw', 'H': 'wnnnnwwnn',
-                  'I': 'nnwnnwwnn', 'J': 'nnnnwwwnn', 'K': 'wnnnnnnww',
-                  'L': 'nnwnnnnww', 'M': 'wnwnnnnwn', 'N': 'nnnnwnnww',
-                  'O': 'wnnnwnnwn', 'P': 'nnwnwnnwn', 'Q': 'nnnnnnwww',
-                  'R': 'wnnnnnwwn', 'S': 'nnwnnnwwn', 'T': 'nnnnwnwwn',
-                  'U': 'wwnnnnnnw', 'V': 'nwwnnnnnw', 'W': 'wwwnnnnnn',
-                  'X': 'nwnnwnnnw', 'Y': 'wwnnwnnnn', 'Z': 'nwwnwnnnn',
-                  '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn',
-                  '*': 'nwnnwnwnn', '$': 'nwnwnwnnn', '/': 'nwnwnnnwn',
-                  '+': 'nwnnnwnwn', '%': 'nnnwnwnwn'}
-
+        """Barcode 3of9"""
+        dim = {'w': w, 'n': w/3.}
+        chars = {
+            '0': 'nnnwwnwnn', '1': 'wnnwnnnnw', '2': 'nnwwnnnnw',
+            '3': 'wnwwnnnnn', '4': 'nnnwwnnnw', '5': 'wnnwwnnnn',
+            '6': 'nnwwwnnnn', '7': 'nnnwnnwnw', '8': 'wnnwnnwnn',
+            '9': 'nnwwnnwnn', 'A': 'wnnnnwnnw', 'B': 'nnwnnwnnw',
+            'C': 'wnwnnwnnn', 'D': 'nnnnwwnnw', 'E': 'wnnnwwnnn',
+            'F': 'nnwnwwnnn', 'G': 'nnnnnwwnw', 'H': 'wnnnnwwnn',
+            'I': 'nnwnnwwnn', 'J': 'nnnnwwwnn', 'K': 'wnnnnnnww',
+            'L': 'nnwnnnnww', 'M': 'wnwnnnnwn', 'N': 'nnnnwnnww',
+            'O': 'wnnnwnnwn', 'P': 'nnwnwnnwn', 'Q': 'nnnnnnwww',
+            'R': 'wnnnnnwwn', 'S': 'nnwnnnwwn', 'T': 'nnnnwnwwn',
+            'U': 'wwnnnnnnw', 'V': 'nwwnnnnnw', 'W': 'wwwnnnnnn',
+            'X': 'nwnnwnnnw', 'Y': 'wwnnwnnnn', 'Z': 'nwwnwnnnn',
+            '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn',
+            '*': 'nwnnwnwnn', '$': 'nwnwnwnnn', '/': 'nwnwnnnwn',
+            '+': 'nwnnnwnwn', '%': 'nnnwnwnwn',
+        }
         self.set_fill_color(0)
-        code = txt
-
-        code = code.upper()
-        for i in xrange (0, len(code), 2):
-            char_bar = code[i]
-
-            if not char_bar in bar_char.keys():
-                raise RuntimeError ('Char "%s" invalid for Code39' % char_bar)
-
-            seq= ''
-            for s in xrange(0, len(bar_char[char_bar])):
-                seq += bar_char[char_bar][s]
-
-            for bar in xrange(0, len(seq)):
-                if seq[bar] == 'n':
-                    line_width = narrow
-                else:
-                    line_width = wide
-
-                if bar % 2 == 0:
-                    self.rect(x, y, line_width, h, 'F')
-                x += line_width
-        x += gap
+        for c in txt.upper():
+            if c not in chars:
+                raise RuntimeError('Invalid char "%s" for Code39' % c)
+            for i, d in enumerate(chars[c]):
+                if i % 2 == 0:
+                    self.rect(x, y, dim[d], h, 'F')
+                x += dim[d]
+            x += dim['n']
 
 

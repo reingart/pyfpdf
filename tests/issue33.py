@@ -3,40 +3,42 @@
 from fpdf import FPDF, FPDF_VERSION
 
 import os, tempfile
-import Image
-
+try:
+    import Image
+except:
+    from PIL import Image
 
 def genbar():
     # bg
-    bg = Image.new("L", (112, 1), 255)
+    bg = Image.new("L", (112, 1), 1)
     bg = bg.resize((112, 11))
     # stripes
     vbarnum = [0x4F43484B, 0xEE90D642, 0xF11A2735, 0xD71A]
-    vbar = Image.new("L", (112, 1), 192)
+    vbar = Image.new("L", (112, 1), 1)
     pix = vbar.load()
     pos = 0
     for b in vbarnum:
         for i in range(32):
-            pix[pos, 0] = 0 if (b & 1) else 255
+            pix[pos, 0] = 0 if (b & 1) else 1
             b = b >> 1
             pos += 1
             if pos >= 112: break    
     vbar = vbar.resize((112, 31), Image.NEAREST)
     # digit
     dignum = [0x398, 0x6dc, 0x61a, 0x31b, 0x1bf, 0x6d8, 0x7d8]
-    dbar = Image.new("L", (16, 7), 160)
+    dbar = Image.new("L", (16, 7), 1)
     pix = dbar.load()
     pos = 0
     ypos = 0
     for b in dignum:
         for i in range(16):
-            pix[pos, ypos] = 0 if (b & 1) else 255
+            pix[pos, ypos] = 0 if (b & 1) else 1
             b = b >> 1
             pos += 1
         ypos += 1
         pos = 0
     # result
-    bar = Image.new("L", (114, 44), 128)
+    bar = Image.new("L", (114, 44), 2)
     bar.paste(vbar, (1, 1))
     bar.paste(bg, (1, 32))
     for i in range(4):
@@ -45,11 +47,9 @@ def genbar():
 
 
 plane = genbar()
-pal_image= Image.new("P", (1,1))
-pal_image.putpalette( (0,0,0, 255,255,255) + (128,128,128)*254)
-
-img = Image.merge("RGB", (plane, plane, plane))
-img = img.quantize(palette = pal_image)
+palette = (0,0,0, 255,255,255) + (128,128,128)*254
+img = Image.fromstring("P", plane.size, plane.tostring())
+img.putpalette(palette)
 
 f = tempfile.NamedTemporaryFile(delete = False, suffix = ".gif")
 gif1 = f.name
@@ -65,6 +65,7 @@ img.save(gif2, "GIF", transparency = 1)
 
 
 pdf=FPDF()
+pdf.compress = False
 pdf.add_page()
 pdf.set_font('Arial', '', 16)
 pdf.write(8, "Transparency")

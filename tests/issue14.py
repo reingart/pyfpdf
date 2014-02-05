@@ -2,7 +2,7 @@
 
 from fpdf import FPDF, FPDF_VERSION
 
-print FPDF_VERSION
+print(FPDF_VERSION)
 
 pdf=FPDF()
 pdf.add_page()

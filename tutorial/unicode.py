@@ -20,7 +20,7 @@ English: Hello World
 Greek: Γειά σου κόσμος
 Polish: Witaj świecie
 Portuguese: Olá mundo
-Russian: Здравствулте мир
+Russian: Здравствуй, Мир
 Vietnamese: Xin chào thế giới
 Arabic: مرحبا العالم
 Hebrew: שלום עולם
