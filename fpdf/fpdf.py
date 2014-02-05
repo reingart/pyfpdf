@@ -1807,8 +1807,8 @@ class FPDF(object):
                     color += data[pos]
                     alpha += data[pos]
                     line = substr(data, pos+1, length)
-                    color += re.sub('(.{3}).'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
-                    alpha += re.sub('.{3}(.)'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
+                    color += re.sub('(...).'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
+                    alpha += re.sub('...(.)'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
             del data
             data = zlib.compress(color)
             info['smask'] = zlib.compress(alpha)
