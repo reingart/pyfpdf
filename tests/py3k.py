@@ -24,7 +24,7 @@ pdf.image("lena.gif", 50, 75)
 pdf.add_font('DejaVu','','DejaVuSansCondensed.ttf',uni=True)
 pdf.set_font('DejaVu','',14)
 pdf.ln(10)
-pdf.write(8, u"Hello world in Russian: Здравствулте мир")
+pdf.write(8, u"Hello world in Russian: Здравствуй, Мир")
 
 fn='py3k.pdf'
 pdf.output(fn,'F')
