@@ -26,7 +26,8 @@ def dotest(outputname, nostamp):
     pdf.set_font('DejaVu','',14)
 
     # Load a UTF-8 string from a file and print it
-    txt = open(os.path.join(common.basepath, 'HelloWorld.txt')).read()
+    txt = open(os.path.join(common.basepath, "HelloWorld.txt"), "rb").\
+        read().decode("UTF-8")
     pdf.write(8, txt)
 
 

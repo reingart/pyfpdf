@@ -256,8 +256,8 @@ def check_result(settings, args):
         if args["check"]:
             # compare with hash
             hs = file_hash(args["fn"])
-            fhs = settings.get("hash", "<not specified>")
-            if hs != fhs:
+            fhs = settings.get("hash", "")            
+            if fhs != "" and hs != fhs:
                 check = False
                 err("Hash mismatch:")
                 err("       new = %s" % hs)

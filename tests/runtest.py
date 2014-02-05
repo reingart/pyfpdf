@@ -133,6 +133,18 @@ def do_test_one(testfile, interp, info, dest):
     tool2to3 = (info.get("2to3", "no") == "yes")
     py2 = (info.get("python2", "yes") == "yes")
     py3 = (info.get("python3", "yes") == "yes")
+    plat = info.get("platform", "*")
+    if plat == "":
+        plat = "*"
+    if plat != "*":
+        plats = plat.split(",")
+        accept = False
+        for plat in plats:
+            if sys.platform == plat:
+                accept = True
+                break
+        if not accept:
+            return ("skip", "not for \"" + sys.platform + "\"")
     copy = False
     if nid[:2] == "3.":
         if not py3:
@@ -206,6 +218,7 @@ def prepare_dest(interp):
         lineno = 0
         for line in std.split("\n"):
             lineno += 1
+            line = line.strip()
             if lineno == 1:
                 if line != "CHECK":
                     break
@@ -284,9 +297,13 @@ def do_all_test(interps, tests):
 
     # check if no FPDF at all
     total = stats["_"]["_"]
-    fpdf = stats["_"].get("nofpdf", 0) + stats["_"].get("skip", 0)
-    if fpdf == total:
+    fpdf = stats["_"].get("nofpdf", 0) 
+    skip = stats["_"].get("skip", 0)
+    if skip == total:
+        cover.log("All tests skipped. Install some modules (PIL, PyBIDI, Gluon etc)")
+    elif fpdf + skip == total:
         hint_prepare()
+    
 
 def list_tests():
     tst = search_tests()

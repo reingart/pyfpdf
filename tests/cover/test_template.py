@@ -17,6 +17,8 @@
 #PyFPDF-cover-test:python3=yes
 # is PIL required (default - no)
 #PyFPDF-cover-test:pil=no
+# only for platform (default all - *)
+#PyFPDF-cover-test:platform=*
 #...
 #...PyFPDF-cover-test:res=some_resource.ttf
 #...PyFPDF-cover-test:res=other_resource.txt

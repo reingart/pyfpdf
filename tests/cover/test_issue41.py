@@ -19,8 +19,8 @@ def dotest(outputname, nostamp):
         "| [ ] ABCDEF..XYZ 56789\n"
          
     pdf = fpdf.FPDF()
-    f = open(outputname, "w")
-    f.write(pdf._escape(txt))
+    f = open(outputname, "wb")
+    f.write(pdf._escape(txt).encode("latin1"))
     f.close()
 
 def main():

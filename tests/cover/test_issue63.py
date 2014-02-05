@@ -2,6 +2,8 @@
 
 "Basic test to reproduce issue 63: warning in unicode get_char_width"
 
+#PyFPDF-cover-test:res=font/DejaVuSans.ttf
+
 import common
 from fpdf import FPDF
 
