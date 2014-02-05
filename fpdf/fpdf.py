@@ -140,10 +140,10 @@ class FPDF(object):
         "Decorator to protect drawing methods"
         @wraps(fn)
         def wrapper(self, *args, **kwargs):
-            if not self.page:
+            if not self.page and not kwargs.get('split_only'):
                 self.error("No page open, you need to call add_page() first")
             else:
-                fn(self, *args, **kwargs)
+                return fn(self, *args, **kwargs)
         return wrapper
 
     def set_margins(self, left,top,right=-1):
