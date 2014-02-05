@@ -1902,50 +1902,33 @@ class FPDF(object):
 
     @check_page
     def code39(self, txt, x, y, w=1.5, h=5.0):
-        "Barcode 3of9"
-        wide = w
-        narrow = w / 3.0
-        gap = narrow
-
-        bar_char={'0': 'nnnwwnwnn', '1': 'wnnwnnnnw', '2': 'nnwwnnnnw',
-                  '3': 'wnwwnnnnn', '4': 'nnnwwnnnw', '5': 'wnnwwnnnn',
-                  '6': 'nnwwwnnnn', '7': 'nnnwnnwnw', '8': 'wnnwnnwnn',
-                  '9': 'nnwwnnwnn', 'A': 'wnnnnwnnw', 'B': 'nnwnnwnnw',
-                  'C': 'wnwnnwnnn', 'D': 'nnnnwwnnw', 'E': 'wnnnwwnnn',
-                  'F': 'nnwnwwnnn', 'G': 'nnnnnwwnw', 'H': 'wnnnnwwnn',
-                  'I': 'nnwnnwwnn', 'J': 'nnnnwwwnn', 'K': 'wnnnnnnww',
-                  'L': 'nnwnnnnww', 'M': 'wnwnnnnwn', 'N': 'nnnnwnnww',
-                  'O': 'wnnnwnnwn', 'P': 'nnwnwnnwn', 'Q': 'nnnnnnwww',
-                  'R': 'wnnnnnwwn', 'S': 'nnwnnnwwn', 'T': 'nnnnwnwwn',
-                  'U': 'wwnnnnnnw', 'V': 'nwwnnnnnw', 'W': 'wwwnnnnnn',
-                  'X': 'nwnnwnnnw', 'Y': 'wwnnwnnnn', 'Z': 'nwwnwnnnn',
-                  '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn',
-                  '*': 'nwnnwnwnn', '$': 'nwnwnwnnn', '/': 'nwnwnnnwn',
-                  '+': 'nwnnnwnwn', '%': 'nnnwnwnwn'}
-
+        """Barcode 3of9"""
+        dim = {'w': w, 'n': w/3.}
+        chars = {
+            '0': 'nnnwwnwnn', '1': 'wnnwnnnnw', '2': 'nnwwnnnnw',
+            '3': 'wnwwnnnnn', '4': 'nnnwwnnnw', '5': 'wnnwwnnnn',
+            '6': 'nnwwwnnnn', '7': 'nnnwnnwnw', '8': 'wnnwnnwnn',
+            '9': 'nnwwnnwnn', 'A': 'wnnnnwnnw', 'B': 'nnwnnwnnw',
+            'C': 'wnwnnwnnn', 'D': 'nnnnwwnnw', 'E': 'wnnnwwnnn',
+            'F': 'nnwnwwnnn', 'G': 'nnnnnwwnw', 'H': 'wnnnnwwnn',
+            'I': 'nnwnnwwnn', 'J': 'nnnnwwwnn', 'K': 'wnnnnnnww',
+            'L': 'nnwnnnnww', 'M': 'wnwnnnnwn', 'N': 'nnnnwnnww',
+            'O': 'wnnnwnnwn', 'P': 'nnwnwnnwn', 'Q': 'nnnnnnwww',
+            'R': 'wnnnnnwwn', 'S': 'nnwnnnwwn', 'T': 'nnnnwnwwn',
+            'U': 'wwnnnnnnw', 'V': 'nwwnnnnnw', 'W': 'wwwnnnnnn',
+            'X': 'nwnnwnnnw', 'Y': 'wwnnwnnnn', 'Z': 'nwwnwnnnn',
+            '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn',
+            '*': 'nwnnwnwnn', '$': 'nwnwnwnnn', '/': 'nwnwnnnwn',
+            '+': 'nwnnnwnwn', '%': 'nnnwnwnwn',
+        }
         self.set_fill_color(0)
-        code = txt
-
-        code = code.upper()
-        for i in range (0, len(code), 2):
-            char_bar = code[i]
-
-            if not char_bar in bar_char.keys():
-                raise RuntimeError ('Char "%s" invalid for Code39' % char_bar)
-
-            seq= ''
-            for s in range(0, len(bar_char[char_bar])):
-                seq += bar_char[char_bar][s]
-
-            for bar in range(0, len(seq)):
-                if seq[bar] == 'n':
-                    line_width = narrow
-                else:
-                    line_width = wide
-
-                if bar % 2 == 0:
-                    self.rect(x, y, line_width, h, 'F')
-                x += line_width
-        x += gap
+        for c in txt.upper():
+            if c not in chars:
+                raise RuntimeError('Invalid char "%s" for Code39' % c)
+            for i, d in enumerate(chars[c]):
+                if i % 2 == 0:
+                    self.rect(x, y, dim[d], h, 'F')
+                x += dim[d]
+            x += dim['n']
 
 
