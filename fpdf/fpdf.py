@@ -14,6 +14,7 @@
 # ****************************************************************************
 
 from datetime import datetime
+from functools import wraps
 import math
 import errno
 import os, sys, zlib, struct, re, tempfile, struct
@@ -134,6 +135,16 @@ class FPDF(object):
         self.set_compression(1)
         # Set default PDF version number
         self.pdf_version='1.3'
+
+    def check_page(fn):
+        "Decorator to protect drawing methods"
+        @wraps(fn)
+        def wrapper(self, *args, **kwargs):
+            if not self.page:
+                self.error("No page open, you need to call add_page() first")
+            else:
+                fn(self, *args, **kwargs)
+        return wrapper
 
     def set_margins(self, left,top,right=-1):
         "Set left, top and right margins"
@@ -352,6 +363,7 @@ class FPDF(object):
         if(self.page>0):
             self._out(sprintf('%.2f w',width*self.k))
 
+    @check_page
     def line(self, x1,y1,x2,y2):
         "Draw a line"
         self._out(sprintf('%.2f %.2f m %.2f %.2f l S',x1*self.k,(self.h-y1)*self.k,x2*self.k,(self.h-y2)*self.k))
@@ -363,6 +375,7 @@ class FPDF(object):
             s = '[] 0 d'
         self._out(s)
 
+    @check_page
     def dashed_line(self, x1,y1,x2,y2, dash_length=1, space_length=1):
         """Draw a dashed line. Same interface as line() except:
            - dash_length: Length of the dash
@@ -371,6 +384,7 @@ class FPDF(object):
         self.line(x1, y1, x2, y2)
         self._set_dash()
 
+    @check_page
     def rect(self, x,y,w,h,style=''):
         "Draw a rectangle"
         if(style=='F'):
@@ -573,6 +587,7 @@ class FPDF(object):
             self.page_links[self.page] = []
         self.page_links[self.page] += [(x*self.k,self.h_pt-y*self.k,w*self.k,h*self.k,link),]
 
+    @check_page
     def text(self, x, y, txt=''):
         "Output a string"
         txt = self.normalize_text(txt)
@@ -589,6 +604,7 @@ class FPDF(object):
             s='q '+self.text_color+' '+s+' Q'
         self._out(s)
 
+    @check_page
     def rotate(self, angle, x=None, y=None):
         if x is None:
             x = self.x
@@ -610,6 +626,7 @@ class FPDF(object):
         "Accept automatic page break or not"
         return self.auto_page_break
 
+    @check_page
     def cell(self, w,h=0,txt='',border=0,ln=0,align='',fill=0,link=''):
         "Output a cell"
         txt = self.normalize_text(txt)
@@ -702,6 +719,7 @@ class FPDF(object):
         else:
             self.x+=w
 
+    @check_page
     def multi_cell(self, w, h, txt='', border=0, align='J', fill=0, split_only=False):
         "Output text with automatic or explicit line breaks"
         txt = self.normalize_text(txt)
@@ -815,6 +833,7 @@ class FPDF(object):
             ret.append(substr(s,j,i-j))
         return ret
 
+    @check_page
     def write(self, h, txt='', link=''):
         "Output text in flowing mode"
         txt = self.normalize_text(txt)
@@ -882,6 +901,7 @@ class FPDF(object):
         if(i!=j):
             self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
+    @check_page
     def image(self, name, x=None, y=None, w=0,h=0,type='',link=''):
         "Put an image on the page"
         if not name in self.images:
@@ -948,6 +968,7 @@ class FPDF(object):
         if(link):
             self.link(x,y,w,h,link)
 
+    @check_page
     def ln(self, h=''):
         "Line Feed; default value is last cell height"
         self.x=self.l_margin
@@ -1829,6 +1850,7 @@ class FPDF(object):
         else:
             self.buffer+=s+"\n"
 
+    @check_page
     def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
         "Barcode I2of5 (numeric), adds a 0 if odd lenght"
         narrow = w / 3.0
@@ -1877,6 +1899,7 @@ class FPDF(object):
                 x += line_width
 
 
+    @check_page
     def code39(self, txt, x, y, w=1.5, h=5.0):
         "Barcode 3of9"
         wide = w
