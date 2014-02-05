@@ -1717,7 +1717,7 @@ class FPDF(object):
         if(magic!=signature):
             self.error('Not a PNG file: '+name)
         #Read header chunk
-        f.seek(12)
+        f.read(4)
         chunk = f.read(4).decode("latin1")
         if(chunk!='IHDR'):
             self.error('Incorrect PNG file: '+name)
