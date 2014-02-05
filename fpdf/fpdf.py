@@ -338,6 +338,7 @@ class FPDF(object):
 
     def get_string_width(self, s):
         "Get width of a string in the current font"
+        s = self.normalize_text(s)
         cw=self.current_font['cw']
         w=0
         l=len(s)
