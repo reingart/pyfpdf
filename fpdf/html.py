@@ -221,8 +221,11 @@ class HTML2FPDF(HTMLParser):
                 self.color = color
             if 'face' in attrs:
                 face = attrs.get('face').lower()
-                self.pdf.set_font(face)
-                self.font_face = face
+                try:
+                    self.pdf.set_font(face)
+                    self.font_face = face
+                except RuntimeError:
+                    pass # font not found, ignore
             if 'size' in attrs:
                 size = int(attrs.get('size'))
                 self.pdf.set_font(self.font_face, size=int(size))
