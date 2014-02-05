@@ -43,7 +43,14 @@ else:
     ord = ord
 
 # shortcut to bytes conversion (b prefix)
-b = lambda s: s.encode("latin1")
+def b(s): 
+    if isinstance(s, basestring):
+        return s.encode("latin1")
+    elif isinstance(s, int):
+        if PY3K:
+            return bytes([s])       # http://bugs.python.org/issue4588
+        else:
+            return chr(s)
 
 def exception():
     "Return the current the exception instance currently being handled"

@@ -22,7 +22,7 @@ import os, sys, zlib, struct, re, tempfile, struct
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
-from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception
+from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, b
 
 # Global variables
 FPDF_VERSION = '1.7.2'
@@ -1787,15 +1787,15 @@ class FPDF(object):
         if(ct>=4):
             # Extract alpha channel
             data = zlib.decompress(data)
-            color = '';
-            alpha = '';
+            color = b('')
+            alpha = b('')
             if(ct==4):
                 # Gray image
                 length = 2*w
                 for i in range(h):
                     pos = (1+length)*i
-                    color += data[pos]
-                    alpha += data[pos]
+                    color += b(data[pos])
+                    alpha += b(data[pos])
                     line = substr(data, pos+1, length)
                     color += re.sub('(.).'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
                     alpha += re.sub('.(.)'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
@@ -1804,8 +1804,8 @@ class FPDF(object):
                 length = 4*w
                 for i in range(h):
                     pos = (1+length)*i
-                    color += data[pos]
-                    alpha += data[pos]
+                    color += b(data[pos])
+                    alpha += b(data[pos])
                     line = substr(data, pos+1, length)
                     color += re.sub('(...).'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
                     alpha += re.sub('...(.)'.encode("ascii"),lambda m: m.group(1),line, flags=re.DOTALL)
