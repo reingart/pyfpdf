@@ -22,11 +22,13 @@ import os, sys, zlib, struct, re, tempfile, struct
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
-from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, b
+from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, b, hashpath
 
 # Global variables
 FPDF_VERSION = '1.7.2'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
+FPDF_CACHE_MODE = 0 # 0 - in same foder, 1 - none, 2 - hash
+FPDF_CACHE_DIR = None
 SYSTEM_TTFONTS = None
 
 
@@ -411,7 +413,7 @@ class FPDF(object):
             # Font already added!
             return
         if (uni):
-            global SYSTEM_TTFONTS
+            global SYSTEM_TTFONTS, FPDF_CACHE_MODE, FPDF_CACHE_DIR
             if os.path.exists(fname):
                 ttffilename = fname
             elif (FPDF_FONT_DIR and
@@ -422,9 +424,15 @@ class FPDF(object):
                 ttffilename = os.path.join(SYSTEM_TTFONTS, fname)
             else:
                 raise RuntimeError("TTF Font file not found: %s" % fname)
-            unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
             name = ''
-            if os.path.exists(unifilename):
+            if FPDF_CACHE_MODE == 0:
+                unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
+            elif FPDF_CACHE_MODE == 2:                
+                unifilename = os.path.join(FPDF_CACHE_DIR, \
+                    hashpath(ttffilename) + ".pkl")
+            else:
+                unifilename = None
+            if unifilename and os.path.exists(unifilename):
                 fh = open(unifilename, "rb")
                 try:
                     font_dict = pickle.load(fh)
@@ -459,13 +467,14 @@ class FPDF(object):
                     'originalsize': os.stat(ttffilename).st_size,
                     'cw': ttf.charWidths,
                     }
-                try:
-                    fh = open(unifilename, "wb")
-                    pickle.dump(font_dict, fh)
-                    fh.close()
-                except IOError:
-                    if not exception().errno == errno.EACCES:
-                        raise  # Not a permission error.
+                if unifilename:
+                    try:
+                        fh = open(unifilename, "wb")
+                        pickle.dump(font_dict, fh)
+                        fh.close()
+                    except IOError:
+                        if not exception().errno == errno.EACCES:
+                            raise  # Not a permission error.
                 del ttf
             if hasattr(self,'str_alias_nb_pages'):
                 sbarr = list(range(0,57))   # include numbers in the subset!
@@ -1349,8 +1358,11 @@ class FPDF(object):
                 self.mtd(font)
 
     def _putTTfontwidths(self, font, maxUni):
-        cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
-        if (os.path.exists(cw127fname)):
+        if font['unifilename']:
+            cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
+        else:
+            cw127fname = None
+        if cw127fname and os.path.exists(cw127fname):
             fh = open(cw127fname, "rb");
             try:
                 font_dict = pickle.load(fh)
@@ -1375,7 +1387,7 @@ class FPDF(object):
 
         # for each character
         for cid in range(startcid, cwlen):
-            if (cid==128 and not os.path.exists(cw127fname)):
+            if cid == 128 and cw127fname and not os.path.exists(cw127fname):
                 try:
                     fh = open(cw127fname, "wb")
                     font_dict = {}

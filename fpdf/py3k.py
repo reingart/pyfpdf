@@ -17,6 +17,21 @@ try:
 except ImportError:
 	from urllib.request import urlopen
 
+try:
+    from hashlib import md5
+except ImportError:
+    try:
+        from md5 import md5
+    except ImportError:
+        md5 = None
+def hashpath(fn):
+    h = md5()
+    if PY3K:
+        h.update(fn.encode("UTF-8"))
+    else:
+        h.update(fn)
+    return h.hexdigest()
+
 # Check if PIL is available (tries importing both pypi version and corrected or manually installed versions).
 # Necessary for JPEG and GIF support.
 try:
