@@ -19,7 +19,7 @@ class Template:
         if elements:
             self.load_elements(elements)
         self.handlers = {'T': self.text, 'L': self.line, 'I': self.image, 
-                         'B': self.rect, 'BC': self.barcode, }
+                         'B': self.rect, 'BC': self.barcode, 'W': self.write, }
         self.texts = {}
         pdf = self.pdf = FPDF(format=format,orientation=orientation, unit="mm")
         pdf.set_title(title)
@@ -201,4 +201,26 @@ class Template:
         if font == 'interleaved 2of5 nt':
             pdf.interleaved2of5(text,x1,y1,w=size,h=y2-y1)
 
-
+    # Added by Derek Schwalenberg Schwalenberg1013@gmail.com to allow (url) links in templates (using write method) 2014-02-22
+    def write(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
+              bold=False, italic=False, underline=False, align="", link='http://example.com',
+             foreground=0, *args, **kwargs):
+        if pdf.text_color!=rgb(foreground):
+            pdf.set_text_color(*rgb(foreground))
+        font = font.strip().lower()
+        if font == 'arial black':
+            font = 'arial'
+        style = ""
+        for tag in 'B', 'I', 'U':
+            if (text.startswith("<%s>" % tag) and text.endswith("</%s>" %tag)):
+                text = text[3:-4]
+                style += tag
+        if bold: style += "B"
+        if italic: style += "I"
+        if underline: style += "U"
+        align = {'L':'L','R':'R','I':'L','D':'R','C':'C','':''}.get(align) # D/I in spanish
+        pdf.set_font(font,style,size)
+        ##m_k = 72 / 2.54
+        ##h = (size/m_k)
+        pdf.set_xy(x1,y1)
+        pdf.write(5,text,link)
