@@ -320,12 +320,14 @@ def list_tests():
 def usage():
     cover.log("Usage: runtest.py [...]")
     cover.log("  --listtests      - list all tests")
-    cover.log("  --listinterps    - list all availiabl interpretors")
+    cover.log("  --listinterps    - list all availiable interpretors")
     cover.log("  --test issuexx   - add test issuexx")
     cover.log("  --test @file     - add test from file")
-    cover.log("  --interp path    - add test issuexx")
-    cover.log("  --interp @file   - add test from file")
+    cover.log("  --interp path    - test against specified interpretors")
+    cover.log("  --interp @file   - read interpretors list from file")
+    cover.log("  --downloadfonts  - download font set")
     cover.log("  --help           - this page")
+    
 
 def hint_prepare():
     if cover.PYFPDFTESTLOCAL:
@@ -390,6 +392,44 @@ def hasher(path, args):
         cover.log("tags=" + ",".join(tags))
         cover.log()
 
+def download_fonts():
+    URL = "http://pyfpdf.googlecode.com/files/fpdf_unicode_font_pack.zip"
+    fntdir = os.path.join(cover.basepath, "font")
+    zippath = os.path.join(cover.basepath, URL.split('/')[-1])
+    if not os.path.exists(fntdir):
+        os.makedirs(fntdir)
+    if not os.path.exists(zippath):
+        import urllib2
+        u = urllib2.urlopen(URL)
+        meta = u.info()
+        file_size = int(meta.getheaders("Content-Length")[0])
+        cover.log("Downloading:", file_size, "bytes")
+        f = open(zippath, "wb")
+        file_size_dl = 0
+        while True:
+            buff = u.read(64 * 1024)
+            if not buff:
+                break
+            file_size_dl += len(buff)
+            f.write(buff)
+            cover.log("  ", file_size_dl * 100. / file_size, "%")
+        f.close()
+    # unpack
+    cover.log("Extracting")
+    import zipfile
+    fh = open(zippath, "rb")
+    z = zipfile.ZipFile(fh)
+    for name in z.namelist():
+        if name[:5] != "font/":
+            continue
+        if name[5:].find("/") >= 0:
+            continue
+        cover.log("  ", name[5:])
+        outfile = open(os.path.join(fntdir, name[5:]), "wb")
+        outfile.write(z.read(name))
+        outfile.close()
+    cover.log("Done")
+
 def main():
     cover.log("Test PyFPDF")   
     
@@ -434,6 +474,8 @@ def main():
             return list_tests()
         elif arg == "--listinterps":
             return print_interps(find_python_version(search_python()))
+        elif arg == "--downloadfonts":
+            return download_fonts()
         else:
             cover.log("Unknown param")
             return usage()                        
