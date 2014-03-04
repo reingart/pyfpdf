@@ -5,32 +5,34 @@ import os, sys
 import cover
 import shutil
 import traceback
-import subprocess
 
 def search_python_posix():
     lst = []
     path = os.environ.get("PATH")
     for item in path.split(":"):
-        for interp in os.listdir(item):
-            if interp[:6] != "python":
-                continue
-            if interp[-7:] == "-config":
-                continue
-            fp = os.path.join(item, interp)
-            # test if already in list
-            same = False
-            for lidx, l_interp in enumerate(lst):
-                if os.path.samefile(l_interp, fp):
-                    same = True
-                    # use shorter name
-                    if len(l_interp) < len(fp):
-                        lst[lidx] = fp
-                    break
-            if same:
-                continue
-            lst.append(fp)
+        try:
+            for interp in os.listdir(item):
+                if interp[:6] != "python":
+                    continue
+                if interp[-7:] == "-config":
+                    continue
+                fp = os.path.join(item, interp)
+                # test if already in list
+                same = False
+                for lidx, l_interp in enumerate(lst):
+                    if os.path.samefile(l_interp, fp):
+                        same = True
+                        # use shorter name
+                        if len(l_interp) < len(fp):
+                            lst[lidx] = fp
+                        break
+                if same:
+                    continue
+                lst.append(fp)
+        except OSError:
+            pass
     return lst
-           
+
 def search_python_win():
     lst = []
     try:
@@ -71,7 +73,7 @@ def search_python_win():
                     lst.append(fp)
         except:
             traceback.print_exc()
-        
+
     return lst
 
 def search_python():
@@ -173,13 +175,13 @@ def do_test_one(testfile, interp, info, dest):
     std, err = cover.exec_cmd([path, "-B", newfile, "--check", "--auto", newres])
     f = open(os.path.join(destpath, "testlog.txt"), "a")
     f.write("#" * 40 + "\n")
-    f.write(testname + "\n")    
+    f.write(testname + "\n")
     f.write("=" * 40 + "\n")
-    f.write(std)    
+    f.write(std)
     f.write("-" * 40 + "\n")
     f.write(err)
     f.close()
-    
+
     answ = std.strip()
     if answ.find("\n") >= 0 or len(answ) == 0:
         return ("fail", "bad output")
@@ -229,13 +231,13 @@ def prepare_dest(interp):
     else:
         f.write("ERROR:\n")
         f.write(err)
-    f.close()    
+    f.close()
     return (destpath, env)
 
 def do_test(testfile, interps, dests, stats, hint = ""):
     cover.log("Test", hint, ":", os.path.basename(testfile))
     info = cover.read_cover_info(testfile)
-    resall = ""       
+    resall = ""
     # prepare
     # do tests
     hasherr = []
@@ -288,7 +290,7 @@ def do_all_test(interps, tests):
             if key == "_":
                 continue
             st += (", %s - %d" % (key, stat[key]))
-            
+
         return st
     for interp in interps:
         cover.log(interp[1] + ":", stat_str(stats[interp[1]]))
@@ -297,13 +299,13 @@ def do_all_test(interps, tests):
 
     # check if no FPDF at all
     total = stats["_"]["_"]
-    fpdf = stats["_"].get("nofpdf", 0) 
+    fpdf = stats["_"].get("nofpdf", 0)
     skip = stats["_"].get("skip", 0)
     if skip == total:
         cover.log("All tests skipped. Install some modules (PIL, PyBIDI, Gluon etc)")
     elif fpdf + skip == total:
         hint_prepare()
-    
+
 
 def list_tests():
     tst = search_tests()
@@ -327,7 +329,7 @@ def usage():
     cover.log("  --interp @file   - read interpretors list from file")
     cover.log("  --downloadfonts  - download font set")
     cover.log("  --help           - this page")
-    
+
 
 def hint_prepare():
     if cover.PYFPDFTESTLOCAL:
@@ -347,7 +349,7 @@ def hint_prepare():
             cover.log("***   set PYFPDFTESTLOCAL=1")
         else:
             cover.log("***   export PYFPDFTESTLOCAL=1")
-        
+
 
 def read_list(fn):
     f = open(fn, "r")
@@ -364,7 +366,7 @@ def hasher(path, args):
         if arg == "--tag":
             if len(args) == 0:
                 cover.log("Param without value")
-                return 
+                return
             value = args[0]
             args = args[1:]
             if value not in tags:
@@ -372,7 +374,7 @@ def hasher(path, args):
         else:
             cover.log("Unknown param")
             return
-        
+
     lst = []
     if os.path.isdir(path):
         files = [(x.lower(), x) for x in os.listdir(path)]
@@ -431,8 +433,8 @@ def download_fonts():
     cover.log("Done")
 
 def main():
-    cover.log("Test PyFPDF")   
-    
+    cover.log("Test PyFPDF")
+
     testsn = []
     interpsn = []
     args = sys.argv[1:]
@@ -454,7 +456,7 @@ def main():
                 cover.log("Param without value")
                 return usage()
             if value[:1] == "@":
-                # from file            
+                # from file
                 testsn += read_list(value[1:])
             else:
                 testsn.append(value)
@@ -466,7 +468,7 @@ def main():
                 cover.log("Param without value")
                 return usage()
             if value[:1] == "@":
-                # from file            
+                # from file
                 interpsn += read_list(value[1:])
             else:
                 interpsn.append(value)
@@ -478,7 +480,7 @@ def main():
             return download_fonts()
         else:
             cover.log("Unknown param")
-            return usage()                        
+            return usage()
 
     if len(testsn) == 0:
         tests = search_tests()
@@ -492,7 +494,7 @@ def main():
                 tests.append(fn)
             else:
                 cover.err("Test \"%s\" not found" % test)
-                return                
+                return
 
     if len(interpsn) == 0:
         interps = find_python_version(search_python())
@@ -505,11 +507,11 @@ def main():
                 interps.append(fn)
             else:
                 cover.err("Interpretor \"%s\" not found" % test)
-                return                
+                return
         interps = find_python_version(interps)
 
     do_all_test(interps, tests)
-    
-    
+
+
 if __name__ == "__main__":
     main()
