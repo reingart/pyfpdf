@@ -95,6 +95,9 @@ def find_python_version(pylst):
         try:
             std, err = cover.exec_cmd([interp, "-V"])
             version = err.strip()
+            if not version:
+                # python 3.4+
+                version = std.strip()
             if version[:6] == "Python":
                 shver = version[6:].strip().replace(" ", "-")
                 nid = shver
