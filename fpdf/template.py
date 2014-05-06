@@ -66,7 +66,7 @@ class Template:
         
     def __setitem__(self, name, value):
         if name in self.keys:
-            if isinstance(value,str) and not PY3K:
+            if not PY3K and isinstance(value, unicode):
                 value = value.encode("latin1","ignore")
             elif value is None:
                 value = ""
