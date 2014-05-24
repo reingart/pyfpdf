@@ -72,9 +72,8 @@ def dotest(outputname, nostamp):
     gif2 = f.name
     f.close()
 
-    img.save(gif1, "GIF")
-    img.save(gif2, "GIF", transparency = 1)
-
+    img.save(gif1, "GIF", optimize = 0)
+    img.save(gif2, "GIF", transparency = 1, optimize = 0)
 
     pdf = FPDF()
     if nostamp:
