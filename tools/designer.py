@@ -30,7 +30,7 @@ try:
     from fpdf.template import Template
 except ImportError:
     # we are frozen? replace pyfpdf_hg with the proper directory for template.py
-    from pyfpdf_hg.template import Template
+    from fpdf.template import Template
     
 DEBUG = True
 
