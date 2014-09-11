@@ -34,6 +34,7 @@ def hashpath(fn):
 
 # Check if PIL is available (tries importing both pypi version and corrected or manually installed versions).
 # Necessary for JPEG and GIF support.
+# TODO: Pillow support
 try:
     from PIL import Image
 except ImportError:
