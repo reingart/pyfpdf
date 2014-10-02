@@ -1669,29 +1669,36 @@ class FPDF(object):
 
     def _parsejpg(self, filename):
         # Extract info from a JPEG file
-        if Image is None:
-            self.error('PIL not installed')
         try:
             f = open(filename, 'rb')
-            im = Image.open(f)
+            while True:
+                markerHigh, markerLow = struct.unpack('BB', f.read(2))
+                if markerHigh != 0xFF or markerLow < 0xC0:
+                    raise SyntaxError('No JPEG marker found')
+                elif markerLow == 0xDA: # SOS
+                    raise SyntaxError('No JPEG SOF marker found')
+                elif (markerLow == 0xC8 or # JPG
+                      (markerLow >= 0xD0 and markerLow <= 0xD9) or # RSTx
+                      (markerLow >= 0xF0 and markerLow <= 0xFD)): # JPGx
+                    pass
+                else:
+                    dataSize, = struct.unpack('>H', f.read(2))
+                    data = f.read(dataSize - 2) if dataSize > 2 else ''
+                    if ((markerLow >= 0xC0 and markerLow <= 0xC3) or # SOF0 - SOF3
+                        (markerLow >= 0xC5 and markerLow <= 0xC7) or # SOF4 - SOF7
+                        (markerLow >= 0xC9 and markerLow <= 0xCB) or # SOF9 - SOF11
+                        (markerLow >= 0xCD and markerLow <= 0xCF)): # SOF13 - SOF15
+                        bpc, height, width, layers = struct.unpack_from('>BHHB', data)
+                        colspace = 'DeviceRGB' if layers == 3 else ('DeviceCMYK' if layers == 4 else 'DeviceGray')
+                        break
         except Exception:
             self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
-        else:
-            a = im.size
-        # We shouldn't get into here, as Jpeg is RGB=8bpp right(?), but, just in case...
-        bpc=8
-        if im.mode == 'RGB':
-            colspace='DeviceRGB'
-        elif im.mode == 'CMYK':
-            colspace='DeviceCMYK'
-        else:
-            colspace='DeviceGray'
 
         # Read whole file from the start
         f.seek(0)
         data = f.read()
         f.close()
-        return {'w':a[0],'h':a[1],'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
+        return {'w':width,'h':height,'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
 
     def _parsegif(self, filename):
         # Extract info from a GIF file (via PNG conversion)
