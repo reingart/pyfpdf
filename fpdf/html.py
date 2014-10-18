@@ -397,5 +397,6 @@ class HTMLMixin(object):
     def write_html(self, text, image_map=None):
         "Parse HTML and convert it to PDF"
         h2p = HTML2FPDF(self, image_map)
+        text = h2p.unescape(text) # To deal with HTML entities
         h2p.feed(text)
 
