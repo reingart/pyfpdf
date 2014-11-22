@@ -82,7 +82,7 @@ class FPDF(object):
         elif(unit=='cm'):
             self.k=72/2.54
         elif(unit=='in'):
-            self.k=72
+            self.k=72.
         else:
             self.error('Incorrect unit: '+unit)
         # Page format
