@@ -398,6 +398,43 @@ class FPDF(object):
             op='S'
         self._out(sprintf('%.2f %.2f %.2f %.2f re %s',x*self.k,(self.h-y)*self.k,w*self.k,-h*self.k,op))
 
+    @check_page
+    def ellipse(self, x,y,w,h,style=''):
+        "Draw a ellipse"
+        if(style=='F'):
+            op='f'
+        elif(style=='FD' or style=='DF'):
+            op='B'
+        else:
+            op='S'
+
+        cx = x + w/2.0
+        cy = y + h/2.0
+        rx = w/2.0
+        ry = h/2.0
+
+        lx = 4.0/3.0*(math.sqrt(2)-1)*rx
+        ly = 4.0/3.0*(math.sqrt(2)-1)*ry
+
+        self._out(sprintf('%.2f %.2f m %.2f %.2f %.2f %.2f %.2f %.2f c', 
+            (cx+rx)*self.k, (self.h-cy)*self.k, 
+            (cx+rx)*self.k, (self.h-(cy-ly))*self.k, 
+            (cx+lx)*self.k, (self.h-(cy-ry))*self.k, 
+            cx*self.k, (self.h-(cy-ry))*self.k))
+        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c', 
+            (cx-lx)*self.k, (self.h-(cy-ry))*self.k, 
+            (cx-rx)*self.k, (self.h-(cy-ly))*self.k, 
+            (cx-rx)*self.k, (self.h-cy)*self.k))
+        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c', 
+            (cx-rx)*self.k, (self.h-(cy+ly))*self.k, 
+            (cx-lx)*self.k, (self.h-(cy+ry))*self.k, 
+            cx*self.k, (self.h-(cy+ry))*self.k))
+        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c %s', 
+            (cx+lx)*self.k, (self.h-(cy+ry))*self.k, 
+            (cx+rx)*self.k, (self.h-(cy+ly))*self.k, 
+            (cx+rx)*self.k, (self.h-cy)*self.k, 
+            op))
+
     def add_font(self, family, style='', fname='', uni=False):
         "Add a TrueType or Type1 font"
         family = family.lower()
