@@ -26,7 +26,7 @@ class PDF(FPDF):
 				else:
 					#Tag
 					if(e[0]=='/'):
-						self.close_tag(substr(e,1).upper())
+						self.close_tag(e[1:].upper())
 					else:
 						#Extract attributes
 						attr={}
