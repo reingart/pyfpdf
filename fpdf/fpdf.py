@@ -1095,24 +1095,25 @@ class FPDF(object):
                 dest='I'
             else:
                 dest='F'
-        if dest=='I':
-            print(self.buffer)
-        elif dest=='D':
-            print(self.buffer)
+        if PY3K:
+            # manage binary data as latin1 until PEP461 or similar is implemented
+            buffer = self.buffer.encode("latin1")
+        else:
+            buffer = self.buffer
+        if dest in ('I', 'D'):
+            # Python < 3 writes byte data transparently without "buffer"
+            stdout = getattr(sys.stdout, 'buffer', sys.stdout)
+            stdout.write(buffer)
         elif dest=='F':
             #Save to local file
             f=open(name,'wb')
             if(not f):
                 self.error('Unable to create output file: '+name)
-            if PY3K:
-                # manage binary data as latin1 until PEP461 or similar is implemented
-                f.write(self.buffer.encode("latin1"))
-            else:
-                f.write(self.buffer)
+            f.write(buffer)
             f.close()
         elif dest=='S':
             #Return as a string
-            return self.buffer
+            return buffer
         else:
             self.error('Incorrect output destination: '+dest)
 
