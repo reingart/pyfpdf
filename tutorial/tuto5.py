@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 from fpdf import *
 
 class PDF(FPDF):
@@ -5,8 +7,9 @@ class PDF(FPDF):
 	def load_data(self, name):
 		#Read file lines
 		data=[]
-		for line in open(name):
-			data += [line[:-1].split(';')]
+		with open(name) as file:
+			for line in file:
+				data += [line[:-1].split(';')]
 		return data
 
 	#Simple table

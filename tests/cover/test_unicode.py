@@ -2,6 +2,8 @@
 
 "Example of unicode support based on tfPDF http://www.fpdf.org/en/script/script92.php"
 
+from __future__ import with_statement
+
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=ex.pdf
 #PyFPDF-cover-test:hash=e3c74fe7738fba7eed0cd489c597dc88
@@ -27,8 +29,8 @@ def dotest(outputname, nostamp):
     pdf.set_font('DejaVu','',14)
 
     # Load a UTF-8 string from a file and print it
-    txt = open(os.path.join(common.basepath, "HelloWorld.txt"), "rb").\
-        read().decode("UTF-8")
+    with open(os.path.join(common.basepath, "HelloWorld.txt"), "rb") as file:
+        txt = file.read().decode("UTF-8")
     pdf.write(8, txt)
 
 

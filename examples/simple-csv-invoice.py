@@ -1,4 +1,6 @@
 # -*- coding: iso-8859-1 -*-
+from __future__ import with_statement
+
 import sys, os
 sys.path.append("..")
 import fpdf
@@ -13,10 +15,11 @@ items = [
 pdf = fpdf.FPDF()
 pdf.add_page();
 pdf.set_font('Arial','B',16);
-for line in open("simple-csv-invoice.txt").readlines():
-   sys.stdout.write(line)
-   args = eval(line.strip())
-   pdf.text(x=args[0],y=args[1],txt=str(args[2]));
+with open("simple-csv-invoice.txt") as file:
+   for line in file.readlines():
+      sys.stdout.write(line)
+      args = eval(line.strip())
+      pdf.text(x=args[0],y=args[1],txt=str(args[2]));
 
 pdf.output(r"./invoice.pdf","F")
 import sys

@@ -12,6 +12,8 @@
 
 "Visual Template designer for PyFPDF (using wxPython OGL library)"
 
+from __future__ import with_statement
+
 __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2011 Mariano Reingart"
 __license__ = "GPL 3.0"
@@ -535,20 +537,21 @@ class AppFrame(wx.Frame):
         
         self.do_new()
         tmp = []
-        for lno, linea in enumerate(open(self.filename).readlines()):
-            if DEBUG: print "processing line", lno, linea
-            args = []
-            for i,v in enumerate(linea.split(";")):
-                if not v.startswith("'"): 
-                    v = v.replace(",",".")
-                else:
-                    v = v#.decode('latin1')
-                if v.strip()=='':
-                    v = None
-                else:
-                    v = eval(v.strip())
-                args.append(v)
-            tmp.append(args)
+        with open(self.filename) as file:
+            for lno, linea in enumerate(file.readlines()):
+                if DEBUG: print "processing line", lno, linea
+                args = []
+                for i,v in enumerate(linea.split(";")):
+                    if not v.startswith("'"): 
+                        v = v.replace(",",".")
+                    else:
+                        v = v#.decode('latin1')
+                    if v.strip()=='':
+                        v = None
+                    else:
+                        v = eval(v.strip())
+                    args.append(v)
+                tmp.append(args)
         
         # sort by z-order (priority)
         for args in sorted(tmp, key=lambda t: t[-1]):
@@ -573,21 +576,20 @@ class AppFrame(wx.Frame):
             else:
                 return repr(v)
         
-        f = open(self.filename, "w")
-        for element in sorted(self.elements, key=lambda e:e.name):
-            if element.static:
-                continue
-            d = element.as_dict()
-            l = [d['name'], d['type'],
-                 d['x1'], d['y1'], d['x2'], d['y2'],
-                 d['font'], d['size'],
-                 d['bold'], d['italic'], d['underline'], 
-                 d['foreground'], d['background'],
-                 d['align'], d['text'], d['priority'], 
-                ]
-            f.write(";".join([csv_repr(v) for v in l]))
-            f.write("\n")
-        f.close()
+        with open(self.filename, "w") as f:
+            for element in sorted(self.elements, key=lambda e:e.name):
+                if element.static:
+                    continue
+                d = element.as_dict()
+                l = [d['name'], d['type'],
+                     d['x1'], d['y1'], d['x2'], d['y2'],
+                     d['font'], d['size'],
+                     d['bold'], d['italic'], d['underline'], 
+                     d['foreground'], d['background'],
+                     d['align'], d['text'], d['priority'], 
+                    ]
+                f.write(";".join([csv_repr(v) for v in l]))
+                f.write("\n")
         
     def do_print(self, evt):
         # genero el renderizador con propiedades del PDF

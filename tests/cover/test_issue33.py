@@ -2,6 +2,8 @@
 
 "Test issue 33 (Cannot import GIF files that don't have transparency)"
 
+from __future__ import with_statement
+
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=issue_33.pdf
 #PyFPDF-cover-test:hash=be95c7ef3a5b14b5a54a52f7eaf3a9e4
@@ -66,12 +68,10 @@ def dotest(outputname, nostamp):
     img = Image.fromstring("P", plane.size, plane.tostring())
     img.putpalette(palette)
 
-    f = tempfile.NamedTemporaryFile(delete = False, suffix = ".gif")
-    gif1 = f.name
-    f.close()
-    f = tempfile.NamedTemporaryFile(delete = False, suffix = ".gif")
-    gif2 = f.name
-    f.close()
+    with tempfile.NamedTemporaryFile(delete = False, suffix = ".gif") as f:
+        gif1 = f.name
+    with tempfile.NamedTemporaryFile(delete = False, suffix = ".gif") as f:
+        gif2 = f.name
 
     img.save(gif1, "GIF", optimize = 0)
     img.save(gif2, "GIF", transparency = 1, optimize = 0)

@@ -1,4 +1,6 @@
 # -*- coding: iso-8859-1 -*-
+from __future__ import with_statement
+
 import sys,os
 from fpdf import FPDF
 
@@ -9,19 +11,20 @@ class Form:
                 'align','text','priority')
         # parse form format file and create fields dict
         self.fields = {}
-        for linea in open(infile).readlines():
-            kargs = {}
-            for i,v in enumerate(linea.split(";")):
-                if not v.startswith("'"): 
-                    v = v.replace(",",".")
-                else:
-                    v = v#.decode('latin1')
-                if v=='':
-                    v = None
-                else:
-                    v = eval(v.strip())
-                kargs[keys[i]] = v
-            self.fields[kargs['name'].lower()] = kargs
+        with open(infile) as file:
+            for linea in file.readlines():
+                kargs = {}
+                for i,v in enumerate(linea.split(";")):
+                    if not v.startswith("'"): 
+                        v = v.replace(",",".")
+                    else:
+                        v = v#.decode('latin1')
+                    if v=='':
+                        v = None
+                    else:
+                        v = eval(v.strip())
+                    kargs[keys[i]] = v
+                self.fields[kargs['name'].lower()] = kargs
         self.handlers = {'T': self.text, 'L': self.line, 'I': self.image, 
                          'B': self.rect, 'BC': self.barcode}
 
