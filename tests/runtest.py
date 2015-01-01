@@ -400,10 +400,7 @@ def download_fonts():
     if not os.path.exists(zippath):
         u = urlopen(URL)
         meta = u.info()
-        try:
-            file_size = int(meta.getheaders("Content-Length")[0])
-        except AttributeError:
-            file_size = int(meta.get_all("Content-Length")[0])
+        file_size = int(meta.get("Content-Length"))
         cover.log("Downloading:", file_size, "bytes")
         f = open(zippath, "wb")
         file_size_dl = 0
