@@ -16,6 +16,7 @@ from fpdf import FPDF
 import sys
 import os, os.path
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     pdf = FPDF()
     if nostamp:

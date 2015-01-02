@@ -7,6 +7,7 @@ from fpdf import FPDF
 
 import os, struct
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     try:
         # Portrait, millimeter units, A4 page size     

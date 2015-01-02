@@ -41,6 +41,7 @@ def hashfn(fn):
     return h.hexdigest()
   
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     cachepath = os.path.join(os.path.dirname(__file__), "cache")
     if os.path.exists(cachepath):

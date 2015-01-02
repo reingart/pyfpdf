@@ -49,6 +49,7 @@ class randomfake:
             self.fcnt = 1
         return self.RFLT[self.fcnt - 1]
 
+@common.add_unittest
 def dotest(outputname, nostamp):
 
     # generate sample invoice (according Argentina's regulations)   

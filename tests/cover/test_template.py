@@ -29,6 +29,7 @@ from fpdf import FPDF
 
 import sys
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     # filename - output filename
     # nostamp - do no use stamp in result file

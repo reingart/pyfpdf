@@ -10,6 +10,7 @@ from fpdf.ttfonts import TTFontFile
 
 import os, struct
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     ttf = TTFontFile()
     ttffile = os.path.join(common.basepath, "font", "DejaVuSansCondensed.ttf");

@@ -15,6 +15,7 @@ import fpdf
 
 import os, time
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     fpdf.set_global('SYSTEM_TTFONTS', "c:\\WINDOWS\\Fonts")
 

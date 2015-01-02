@@ -6,6 +6,7 @@
 #       3) assert this file in tests/cover folder
 
 import sys, os, subprocess
+import unittest, inspect
 
 PY3K = sys.version_info >= (3, 0)
 
@@ -268,11 +269,32 @@ def check_result(settings, args):
             log("OK")
         else:
             log("HASHERROR")
+        return check
     else:
         if settings.get("fn"):        
             start_by_ext(args["fn"])
         else:
             log("Test passed")
+
+def add_unittest(testfunc):
+    """Decorator to add "unittest" test case class"""
+    
+    class Test(unittest.TestCase):
+        def setUp(self):
+            self.settings = read_cover_info(inspect.getsourcefile(testfunc))
+            self.assertTrue(check_env(self.settings, {"autotest": False}))
+        
+        def runTest(self):
+            outputname = self.settings.get("fn")
+            testfunc(outputname, nostamp=True)
+            args = {"check": True, "autotest": True, "fn": outputname}
+            self.assertTrue(check_result(self.settings, args))
+    
+    name = testfunc.__name__ + "_unittest"
+    Test.__name__ = name
+    Test.__module__ = testfunc.__module__
+    setattr(inspect.getmodule(testfunc), name, Test)
+    return testfunc
 
 def testmain(fn, testfunc):
     si = read_cover_info(fn)

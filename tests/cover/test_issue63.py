@@ -17,6 +17,7 @@ else:
     def u(x):
         return codecs.unicode_escape_decode(x)[0]
 
+@common.add_unittest
 def dotest(outputname, nostamp):
 
     pdf = FPDF()

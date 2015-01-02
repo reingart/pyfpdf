@@ -14,6 +14,7 @@ from fpdf import FPDF
 
 import os
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     # Portrait, millimeter units, A4 page size     
     pdf = FPDF("P", "mm", "A4")

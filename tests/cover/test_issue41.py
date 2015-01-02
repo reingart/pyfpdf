@@ -11,6 +11,7 @@ import fpdf
 
 import sys
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     txt = "This is test string for issue41 with special symbols \n" +\
         "ln - \n\n" +\

@@ -59,6 +59,7 @@ def genbar():
     return bar
 
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     plane = genbar()
     palette = (0,0,0, 255,255,255) + (128,128,128)*254
