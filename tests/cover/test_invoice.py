@@ -102,7 +102,7 @@ def dotest(outputname, nostamp):
     # calculate pages:
     lines = len(li_items)
     max_lines_per_page = 24
-    pages = int(lines / (max_lines_per_page - 1))
+    pages = lines // (max_lines_per_page - 1)
     if lines % (max_lines_per_page - 1): pages = pages + 1
 
     # completo campos y hojas

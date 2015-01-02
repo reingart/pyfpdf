@@ -244,7 +244,7 @@ class TTFontFile:
                 self.seek(string_data_offset + offset)
                 if (length % 2 != 0):
                     die("PostScript name is UTF-16BE string of odd length")
-                length /= 2
+                length //= 2
                 N = ''
                 while (length > 0):
                     char = self.read_ushort()
@@ -773,7 +773,7 @@ class TTFontFile:
             else:
                 indexToLocFormat = 0        # short format
                 for offset in offsets:  
-                    locastr += pack(">H",int(offset/2)) 
+                    locastr += pack(">H",offset//2) 
             
             self.add('loca', locastr)
 
@@ -873,7 +873,7 @@ class TTFontFile:
         nCharWidths = 0
         if ((numberOfHMetrics*4) < self.maxStrLenRead): 
             data = self.get_chunk(start,(numberOfHMetrics*4))
-            arr = unpack(">%dH" % (int(len(data)/2)), data)
+            arr = unpack(">%dH" % (len(data)//2), data)
         else:
             self.seek(start) 
         for glyph in range(numberOfHMetrics): 
@@ -903,7 +903,7 @@ class TTFontFile:
             
         
         data = self.get_chunk((start+numberOfHMetrics*4),(numGlyphs*2))
-        arr = unpack(">%dH" % (int(len(data)/2)), data)
+        arr = unpack(">%dH" % (len(data)//2), data)
         diff = numGlyphs-numberOfHMetrics
         for pos in range(diff): 
             glyph = pos + numberOfHMetrics
@@ -942,12 +942,12 @@ class TTFontFile:
         self.glyphPos = []
         if (indexToLocFormat == 0):
             data = self.get_chunk(start,(numGlyphs*2)+2)
-            arr = unpack(">%dH" % (int(len(data)/2)), data)
+            arr = unpack(">%dH" % (len(data)//2), data)
             for n in range(numGlyphs): 
                 self.glyphPos.append((arr[n] * 2))  # n+1 !?
         elif (indexToLocFormat == 1):
             data = self.get_chunk(start,(numGlyphs*4)+4)
-            arr = unpack(">%dL" % (int(len(data)/4)), data)
+            arr = unpack(">%dL" % (len(data)//4), data)
             for n in range(numGlyphs):
                 self.glyphPos.append((arr[n]))  # n+1 !?
         else:
@@ -961,7 +961,7 @@ class TTFontFile:
         limit = unicode_cmap_offset + length
         self.skip(2)
 
-        segCount = int(self.read_ushort() / 2)
+        segCount = self.read_ushort() // 2
         self.skip(6)
         endCount = []
         for i in range(segCount):

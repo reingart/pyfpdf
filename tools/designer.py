@@ -466,7 +466,7 @@ class AppFrame(wx.Frame):
         canvas = self.canvas = ogl.ShapeCanvas( self )
         maxWidth  = 2000
         maxHeight = 2000
-        canvas.SetScrollbars(20, 20, maxWidth/20, maxHeight/20)
+        canvas.SetScrollbars(20, 20, maxWidth//20, maxHeight//20)
         sizer.Add( canvas, 1, wx.GROW )
 
         canvas.SetBackgroundColour("WHITE") #

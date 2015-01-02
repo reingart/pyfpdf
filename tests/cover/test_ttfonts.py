@@ -34,7 +34,7 @@ def dotest(outputname, nostamp):
     with open(os.path.join(common.basepath, "dejavusanscondensed.cw.dat"),\
             "rb") as file:
         data = file.read()
-    char_widths = struct.unpack(">%dH" % int(len(data) / 2), data)
+    char_widths = struct.unpack(">%dH" % (len(data) // 2), data)
     assert len(char_widths) == 65536, "Check cw.dat char_widths 65536"
     assert len(ttf.charWidths) == 65536, "Check ttf char_widths 65536"
     diff = []
