@@ -13,6 +13,8 @@
 # * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT  *
 # ****************************************************************************
 
+from __future__ import division
+
 from datetime import datetime
 from functools import wraps
 import math
@@ -177,7 +179,11 @@ class FPDF(object):
         self.page_break_trigger=self.h-margin
 
     def set_display_mode(self, zoom,layout='continuous'):
-        "Set display mode in viewer"
+        """Set display mode in viewer
+        
+        The "zoom" argument may be 'fullpage', 'fullwidth', 'real',
+        'default', or a number, interpreted as a percentage."""
+        
         if(zoom=='fullpage' or zoom=='fullwidth' or zoom=='real' or zoom=='default' or not isinstance(zoom,basestring)):
             self.zoom_mode=zoom
         else:
@@ -1609,7 +1615,7 @@ class FPDF(object):
         elif(self.zoom_mode=='real'):
             self._out('/OpenAction [3 0 R /XYZ null null 1]')
         elif(not isinstance(self.zoom_mode,basestring)):
-            self._out('/OpenAction [3 0 R /XYZ null null '+(self.zoom_mode/100)+']')
+            self._out(sprintf('/OpenAction [3 0 R /XYZ null null %s]',self.zoom_mode/100))
         if(self.layout_mode=='single'):
             self._out('/PageLayout /SinglePage')
         elif(self.layout_mode=='continuous'):
