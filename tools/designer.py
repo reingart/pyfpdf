@@ -606,7 +606,7 @@ class AppFrame(wx.Frame):
             else:
                 raise
         if sys.platform.startswith("linux"):
-            os.system("xdg-open ""%s""" % self.filename +".pdf")
+            os.system('xdg-open "%s.pdf"' % self.filename)
         else:
             os.startfile(self.filename +".pdf")
 
