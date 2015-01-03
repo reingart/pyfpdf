@@ -184,26 +184,17 @@ def load_res_file(path):
             items[res][1] += [kv[1].split(",")]
     return items
     
-def check_env(settings, args):
-    "Check test environment"
-    verbose = not args["autotest"]
+def skip_reason(settings):
+    "Check if test should be skipped"
     # check python version
     if PY3K:
         if settings.get("python3", "yes") == "no":
             # python 3 inacceptable
-            if verbose:
-                err("Python 3.x unsupported %s" % repr(sys.version_info))
-            else:
-                log("NOTFORPY3")
-            return False
+            return "Python 3.x unsupported %s" % repr(sys.version_info)
     else:
         if settings.get("python2", "yes") == "no":
             # python 2 inacceptable
-            if verbose:
-                err("Python 2.x unsupported %s" % repr(sys.version_info))
-            else:
-                log("NOTFORPY2")
-            return False
+            return "Python 2.x unsupported %s" % repr(sys.version_info)
     if settings.get("pil", "no") == "yes":
         # import PIL
         try:
@@ -214,12 +205,10 @@ def check_env(settings, args):
         except ImportError:
             Image = None
         if Image is None:
-            if verbose:
-                err("PIL or Pillow module is required")
-            else:
-                log("NOPIL")
-            return False
-    # check res
+            return "PIL or Pillow module is required"
+    return None
+
+def check_res(settings, verbose):
     reslst = None
     for res in settings.get("res", []):
         if reslst is None:
@@ -281,8 +270,7 @@ def add_unittest(testfunc):
     
     class Test(unittest.TestCase):
         def setUp(self):
-            self.settings = read_cover_info(inspect.getsourcefile(testfunc))
-            self.assertTrue(check_env(self.settings, {"autotest": False}))
+            self.assertTrue(check_res(self.settings, verbose=True))
         
         def runTest(self):
             outputname = self.settings.get("fn")
@@ -293,14 +281,30 @@ def add_unittest(testfunc):
     name = testfunc.__name__ + "_unittest"
     Test.__name__ = name
     Test.__module__ = testfunc.__module__
+    
+    Test.settings = read_cover_info(inspect.getsourcefile(testfunc))
+    reason = skip_reason(Test.settings)
+    if reason is not None and sys.version_info >= (2, 7):
+        Test = unittest.skip(reason)(Test)  # No skip() in Python 2.6
+    
     setattr(inspect.getmodule(testfunc), name, Test)
     return testfunc
 
 def testmain(fn, testfunc):
     si = read_cover_info(fn)
     da = parse_test_args(sys.argv, si.get("fn"))
-    if not check_env(si, da):
+    
+    verbose = not da["autotest"]
+    reason = skip_reason(si)
+    if reason is not None:
+        if verbose:
+            err(reason)
+        else:
+            log("SKIP")
         return
+    if not check_res(si, verbose=verbose):
+        return
+    
     testfunc(da["fn"], da["autotest"] or da["check"])
     check_result(si, da)
 

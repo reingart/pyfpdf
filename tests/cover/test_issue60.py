@@ -14,6 +14,11 @@ import sys, traceback, os
 
 @common.add_unittest
 def dotest(outputname, nostamp):
+    try:
+        from bidi.algorithm import get_display
+    except ImportError:
+        from unittest import SkipTest
+        raise SkipTest("Need python-bidi")
     pdf = FPDF()
     if nostamp:
         pdf._putinfo = lambda: common.test_putinfo(pdf)
@@ -29,7 +34,6 @@ def dotest(outputname, nostamp):
     pdf.ln(8)
     # Reverse the RLT using the Bidirectional Algorithm to be displayed correctly:
     # (http://unicode.org/reports/tr9/)
-    from bidi.algorithm import get_display
     rtl_text = get_display(text)
     pdf.write(8, rtl_text)
 
