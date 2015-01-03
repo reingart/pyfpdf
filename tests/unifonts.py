@@ -6,13 +6,15 @@ import sys
 import os
 import time
 
+base = os.path.dirname(__file__)
+
 pdf = FPDF()
 pdf.add_page()
 
 #font_dir = fpdf.FPDF_FONT_DIR
-font_dir = '../fpdf/font'
+font_dir = os.path.join(base, 'font')
 
-txt = open('HelloWorld.txt').read()
+txt = open(os.path.join(base, 'HelloWorld.txt')).read()
 
 # Add a Unicode font (uses UTF-8)
 for font in os.listdir(font_dir):

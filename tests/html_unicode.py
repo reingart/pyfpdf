@@ -10,6 +10,8 @@ __license__ = "LGPL 3.0"
 
 from fpdf import FPDF, HTMLMixin
 
+import os.path
+
 
 if __name__ == '__main__':
 
@@ -19,7 +21,9 @@ if __name__ == '__main__':
     pdf=MyFPDF()
     
     # load the unicode font
-    pdf.add_font('DejaVu', '', 'DejaVuSansCondensed.ttf', uni=True)
+    dir = os.path.dirname(__file__)
+    font = os.path.join(dir, 'font', 'DejaVuSansCondensed.ttf')
+    pdf.add_font('DejaVu', '', font, uni=True)
     
     pdf.add_page()
     

@@ -7,7 +7,7 @@
 import common
 from fpdf import FPDF
 
-import os, struct
+import os.path, struct
 
 if common.PY3K:
     def u(x):
@@ -26,7 +26,8 @@ def dotest(outputname, nostamp):
     if not nostamp:
         print (s, w)
     assert round(w, 2) == 135.90
-    pdf.add_font('DejaVu', '', './font/DejaVuSans.ttf', uni=True)
+    font = os.path.join(common.basepath, 'font', 'DejaVuSans.ttf')
+    pdf.add_font('DejaVu', '', font, uni=True)
     pdf.set_font('DejaVu', '', 14)
     s = u('Texto largo que no cabe en esta celda pero que será ajustado') 
     w = pdf.get_string_width(s)

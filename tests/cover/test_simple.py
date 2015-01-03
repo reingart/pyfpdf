@@ -14,6 +14,7 @@ import common # test utilities
 from fpdf import FPDF
 
 import sys
+import os, os.path
 
 def dotest(outputname, nostamp):
     pdf = FPDF()
@@ -29,9 +30,10 @@ def dotest(outputname, nostamp):
         data = sys.version
 
     pdf.write(5, 'hello world %s' % data)
-    pdf.image("../tutorial/logo.png", 50, 50)
-    pdf.image("flower2.jpg", 100, 50)
-    pdf.image("lena.gif", 50, 75)
+    path = os.path.join(common.basepath, os.pardir, "tutorial", "logo.png")
+    pdf.image(path, 50, 50)
+    pdf.image(os.path.join(common.basepath, "flower2.jpg"), 100, 50)
+    pdf.image(os.path.join(common.basepath, "lena.gif"), 50, 75)
     pdf.output(outputname, 'F')
 
 if __name__ == "__main__":
