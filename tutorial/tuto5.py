@@ -5,7 +5,7 @@ class PDF(FPDF):
 	def load_data(self, name):
 		#Read file lines
 		data=[]
-		for line in file(name):
+		for line in open(name):
 			data += [line[:-1].split(';')]
 		return data
 

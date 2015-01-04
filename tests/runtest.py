@@ -56,7 +56,7 @@ def search_python_win():
                     ver = winreg.EnumKey(rl, i)
                     rv = winreg.QueryValue(key, PATH + "\\" + ver + "\\InstallPath")
                     fp = os.path.join(rv, "python.exe")
-                    #print fp
+                    #print(fp)
                     if os.path.exists(fp) and not fp in lst:
                         lst.append(fp)
             except WindowsError:

@@ -546,7 +546,7 @@ class FPDF(object):
                                         'type': "TTF", 'ttffile': ttffilename}
             self.font_files[fname] = {'type': "TTF"}
         else:
-            fontfile = open(fname)
+            fontfile = open(fname, 'rb')
             try:
                 font_dict = pickle.load(fontfile)
             finally:

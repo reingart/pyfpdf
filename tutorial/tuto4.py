@@ -59,7 +59,7 @@ class PDF(FPDF):
 
 	def chapter_body(self, fichier):
 		#Read text file
-		txt=file(fichier).read()
+		txt=open(fichier,'rb').read().decode('latin1')
 		#Font
 		self.set_font('Times','',12)
 		#Output text in a 6 cm width column

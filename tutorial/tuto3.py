@@ -42,7 +42,7 @@ class PDF(FPDF):
 
 	def chapter_body(self,name):
 		#Read text file
-		txt=file(name).read()
+		txt=open(name,'rb').read().decode('latin1')
 		#Times 12
 		self.set_font('Times','',12)
 		#Output justified text
