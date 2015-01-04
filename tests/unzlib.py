@@ -8,7 +8,7 @@ hex = '--hex' in sys.argv
 r = open(sys.argv[1], 'rb')
 i = 0
 length = None
-while 1:
+while True:
     l = r.readline()
     if l == "":
         break
