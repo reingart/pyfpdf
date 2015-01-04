@@ -195,6 +195,18 @@ def skip_reason(settings):
         if settings.get("python2", "yes") == "no":
             # python 2 inacceptable
             return "Python 2.x unsupported %s" % repr(sys.version_info)
+    plat = settings.get("platform", "*")
+    if plat == "":
+        plat = "*"
+    if plat != "*":
+        plats = plat.split(",")
+        accept = False
+        for plat in plats:
+            if sys.platform == plat:
+                accept = True
+                break
+        if not accept:
+            return "not for \"" + sys.platform + "\""
     if settings.get("pil", "no") == "yes":
         # import PIL
         try:

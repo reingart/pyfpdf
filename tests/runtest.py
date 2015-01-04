@@ -130,26 +130,9 @@ def do_test_one(testfile, interp, info, dest):
     nid = interp[1]
     destpath = dest[0]
     destenv = dest[1]
-    # check PIL
-    if info.get("pil", "no") == "yes":
-        if destenv.get("pil", "no") != "yes":
-            return ("skip", "no PIL or PIllow found")
-    # check python version
     tool2to3 = (info.get("2to3", "no") == "yes")
     py2 = (info.get("python2", "yes") == "yes")
     py3 = (info.get("python3", "yes") == "yes")
-    plat = info.get("platform", "*")
-    if plat == "":
-        plat = "*"
-    if plat != "*":
-        plats = plat.split(",")
-        accept = False
-        for plat in plats:
-            if sys.platform == plat:
-                accept = True
-                break
-        if not accept:
-            return ("skip", "not for \"" + sys.platform + "\"")
     copy = False
     if nid[:2] == "3.":
         if not py3:
