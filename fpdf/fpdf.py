@@ -1080,14 +1080,18 @@ class FPDF(object):
         self.set_x(x)
 
     def output(self, name='',dest=''):
-        "Output PDF to some destination"
+        """Output PDF to some destination
+        
+        By default the PDF is written to sys.stdout. If a name is given, the
+        PDF is written to a new file. If dest='S' is given, the PDF data is
+        returned as a byte string."""
+        
         #Finish document if necessary
         if(self.state<3):
             self.close()
         dest=dest.upper()
         if(dest==''):
             if(name==''):
-                name='doc.pdf'
                 dest='I'
             else:
                 dest='F'
@@ -1111,7 +1115,6 @@ class FPDF(object):
             return self.buffer
         else:
             self.error('Incorrect output destination: '+dest)
-        return ''
 
     def normalize_text(self, txt):
         "Check that text input is in the correct format/encoding"
