@@ -119,7 +119,7 @@ def search_tests():
     base = os.path.join(cover.basepath, "cover")
     lst = []
     for item in os.listdir(base):
-        if item[:5] != "test_":
+        if item[:5] != "test_" or item[-3:] != ".py":
             continue
         lst.append(os.path.join(base, item))
     lst.sort()

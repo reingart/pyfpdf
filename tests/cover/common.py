@@ -11,7 +11,7 @@ PY3K = sys.version_info >= (3, 0)
 
 basepath = os.path.abspath(os.path.join(__file__, "..", "..")) 
 
-RESHASH = "7c6230f7ec99d40170503e513f825c43"
+RESHASH = "38db8db76e80a2e75f94d1df9eda307e"
 
 # if PYFPDFTESTLOCAL is not set - use instaled pyfpdf version
 PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
