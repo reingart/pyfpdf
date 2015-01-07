@@ -1,4 +1,4 @@
-# List of all resources as for 2014-02-04
+# List of all resources as for 2015-01-07
 # can be filled with runtest.py --hash <file_or_dir> [--tag tag1[|--tag tag2]]
 
 res=HelloWorld.txt
@@ -27,6 +27,18 @@ tags=
 
 res=dejavusanscondensed.cw.dat
 hash=61fb165f8f3947da890659ea595f58cf
+tags=
+
+res=img_gray.jpg
+hash=97cd7bbd675a5d6b74bfa1a52fcfe2b7
+tags=
+
+res=img_rgb.jpg
+hash=b9273f5de5a57a40328707635757ff7b
+tags=
+
+res=img_cmyk.jpg
+hash=a1a0ebe183a8f04d3f586634292a4e25
 tags=
 
 res=font/Bandal.ttf
