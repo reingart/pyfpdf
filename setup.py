@@ -12,8 +12,8 @@ package_dir = 'fpdf'
 # convert the  and format in restructured text
 try:
     long_desc = subprocess.check_output(['pandoc', '--from=markdown', '--to=rst', 
-                                     'README.md'])
-except OSError, e:
+                                     'README.md']).decode("utf8")
+except OSError as e:
     warnings.warn("pandoc not available to convert the README format!: %s" % e)
     long_desc = ""
 
