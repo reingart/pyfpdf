@@ -3,14 +3,24 @@
 from distutils.core import setup
 
 import sys
+import warnings
+import subprocess
 
 import fpdf
 package_dir = 'fpdf'
-    
+
+# convert the  and format in restructured text
+try:
+    long_desc = subprocess.check_output(['pandoc', '--from=markdown', '--to=rst', 
+                                     'README.md'])
+except OSError, e:
+    warnings.warn("pandoc not available to convert the README format!: %s" % e)
+    long_desc = ""
+
 setup(name='fpdf',
       version=fpdf.__version__,
       description='Simple PDF generation for Python',
-      long_description=open('README.rst').read(),
+      long_description=long_desc,
       author='Olivier PLATHEY ported by Max',
       author_email='maxpat78@yahoo.it',
       maintainer = "Mariano Reingart",
@@ -21,7 +31,6 @@ setup(name='fpdf',
       packages=['fpdf', ],
       package_dir={'fpdf': package_dir},
       package_data={'fpdf': ['font/*.ttf', 'font/*.txt']},
-      include_package_data=True,
       classifiers = [
             "Development Status :: 5 - Production/Stable",
             "Intended Audience :: Developers",
