@@ -2,6 +2,7 @@
 
 from distutils.core import setup
 
+import os
 import sys
 import warnings
 import subprocess
@@ -9,13 +10,14 @@ import subprocess
 import fpdf
 package_dir = 'fpdf'
 
-# convert the  and format in restructured text
-try:
-    long_desc = subprocess.check_output(['pandoc', '--from=markdown', '--to=rst', 
-                                     'README.md']).decode("utf8")
-except OSError as e:
-    warnings.warn("pandoc not available to convert the README format!: %s" % e)
-    long_desc = ""
+# convert the README and format in restructured text (only when registering)
+long_desc = ""
+if os.path.exists("README.md"):
+    try:
+        cmd = ['pandoc', '--from=markdown', '--to=rst', 'README.md']
+        long_desc = subprocess.check_output(cmd).decode("utf8")
+    except Exception as e:
+        warnings.warn("Exception when converting the README format: %s" % e)
 
 setup(name='fpdf',
       version=fpdf.__version__,
