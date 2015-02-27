@@ -64,6 +64,7 @@ class FPDF(object):
         self.font_family=''             # current font family
         self.font_style=''              # current font style
         self.font_size_pt=12            # current font size in points
+        self.font_stretching=100        # current font stretching
         self.underline=0                # underlining flag
         self.draw_color='0 G'
         self.fill_color='0 g'
@@ -260,6 +261,7 @@ class FPDF(object):
         fc=self.fill_color
         tc=self.text_color
         cf=self.color_flag
+        stretching=self.font_stretching
         if(self.page>0):
             #Page footer
             self.in_footer=1
@@ -304,6 +306,9 @@ class FPDF(object):
             self._out(fc)
         self.text_color=tc
         self.color_flag=cf
+        #Restore stretching
+        if(stretching != 100):
+            self.set_stretching(stretching)
 
     def header(self):
         "Header to be implemented in your own inherited class"
@@ -364,6 +369,8 @@ class FPDF(object):
         else:
             for i in range(0, l):
                 w += cw.get(s[i],0)
+        if self.font_stretching != 100:
+            w = w * self.font_stretching / 100.0
         return w*self.font_size/1000.0
 
     def set_line_width(self, width):
@@ -619,6 +626,14 @@ class FPDF(object):
         self.font_size=size/self.k
         if(self.page>0):
             self._out(sprintf('BT /F%d %.2f Tf ET',self.current_font['i'],self.font_size_pt))
+
+    def set_stretching(self, factor):
+        "Set from stretch factor percents (default: 100.0)"
+        if(self.font_stretching == factor):
+            return
+        self.font_stretching = factor
+        if (self.page > 0):
+            self._out(sprintf('BT %.2f Tz ET', self.font_stretching))
 
     def add_link(self):
         "Create a new internal link"
@@ -1671,6 +1686,7 @@ class FPDF(object):
         self.x=self.l_margin
         self.y=self.t_margin
         self.font_family=''
+        self.font_stretching=100
         #Page orientation
         if(not orientation):
             orientation=self.def_orientation
