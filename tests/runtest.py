@@ -6,6 +6,11 @@ import cover
 import shutil
 import traceback
 
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
+
 def search_python_posix():
     lst = []
     path = os.environ.get("PATH")
@@ -410,10 +415,12 @@ def download_fonts():
     if not os.path.exists(fntdir):
         os.makedirs(fntdir)
     if not os.path.exists(zippath):
-        import urllib2
-        u = urllib2.urlopen(URL)
+        u = urlopen(URL)
         meta = u.info()
-        file_size = int(meta.getheaders("Content-Length")[0])
+        try:
+            file_size = int(meta.getheaders("Content-Length")[0])
+        except AttributeError:
+            file_size = int(meta.get_all("Content-Length")[0])
         cover.log("Downloading:", file_size, "bytes")
         f = open(zippath, "wb")
         file_size_dl = 0
