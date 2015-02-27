@@ -4,7 +4,7 @@
 
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=ex.pdf
-#PyFPDF-cover-test:hash=f77f71491e1662a732212861a2d87928
+#PyFPDF-cover-test:hash=e3c74fe7738fba7eed0cd489c597dc88
 #PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 #PyFPDF-cover-test:res=HelloWorld.txt
 
