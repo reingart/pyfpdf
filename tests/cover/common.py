@@ -225,20 +225,24 @@ def check_env(settings, args):
             # check
             respath = os.path.join(basepath, "resources.txt")
             if file_hash(respath) != RESHASH:
-                if verbose:
-                    err("File resources.txt damaged (hash mismatch)")
-                else:
+                err("File resources.txt damaged (hash mismatch)")
+                if not verbose:
                     log("RESHASH")
                 return False
             # load data
             reslst = load_res_file(respath)
         if res not in reslst:
-            err("Resource \"" + res + "\" not found")
+            err("Resource \"" + res + "\" not in list")
             if not verbose:
                 log("NORES")
             return False
         # check hash
         respath = os.path.join(basepath, res)
+        if not os.path.exists(respath):
+            err("Resource \"" + res + "\" not found")
+            if not verbose:
+                log("NORES")
+            return False
         hs = file_hash(respath)
         if hs != reslst[res][0]:
             err("Resource \"" + res + "\" damaged")

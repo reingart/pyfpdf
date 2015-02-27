@@ -299,15 +299,21 @@ def do_all_test(interps, tests):
         cover.log(interp[1] + ":", stat_str(stats[interp[1]]))
     cover.log("-"*10)
     cover.log("All:", stat_str(stats["_"]))
-
+    
     # check if no FPDF at all
     total = stats["_"]["_"]
     fpdf = stats["_"].get("nofpdf", 0)
     skip = stats["_"].get("skip", 0)
     if skip == total:
-        cover.log("All tests skipped. Install some modules (PIL, PyBIDI, Gluon etc)")
+        cover.log("*** All tests skipped. Install some modules (PIL, PyBIDI, " +
+            "Gluon, etc)")
     elif fpdf + skip == total:
         hint_prepare()
+    # check if NORES
+    nores = stats["_"].get("nores", 0)
+    if nores > 0:
+        cover.log("*** Some resources are not found. You can try download " +
+            "fonts with '--downloadfonts' option")
 
 
 def list_tests():
