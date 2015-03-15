@@ -36,7 +36,7 @@ DEBUG = True
 
 
 class CustomDialog(wx.Dialog):
-    "A dinamyc dialog to ask user about arbitrary fields"
+    "A dynamic dialog to ask user about arbitrary fields"
     
     def __init__(
             self, parent, ID, title, size=wx.DefaultSize, pos=wx.DefaultPosition, 
@@ -595,7 +595,7 @@ class AppFrame(wx.Frame):
         t = Template(elements=[e.as_dict() for e in self.elements if not e.static])
         t.add_page()
         if not t['logo'] or not os.path.exists(t['logo']):
-            # put a default logo so it doesn't trow an exception
+            # put a default logo so it doesn't throw an exception
             logo = os.path.join(os.path.dirname(__file__), 'tutorial','logo.png')
             t.set('logo', logo)
         try:

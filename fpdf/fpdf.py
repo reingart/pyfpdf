@@ -29,7 +29,7 @@ from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, 
 # Global variables
 FPDF_VERSION = '1.7.2'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
-FPDF_CACHE_MODE = 0 # 0 - in same foder, 1 - none, 2 - hash
+FPDF_CACHE_MODE = 0 # 0 - in same folder, 1 - none, 2 - hash
 FPDF_CACHE_DIR = None
 SYSTEM_TTFONTS = None
 
@@ -1277,7 +1277,7 @@ class FPDF(object):
                 cw=font['cw']
                 s='['
                 for i in range(32,256):
-                    # Get doesn't rise exception; returns 0 instead of None if not set
+                    # Get doesn't raise exception; returns 0 instead of None if not set
                     s+=str(cw.get(chr(i)) or 0)+' '
                 self._out(s+']')
                 self._out('endobj')

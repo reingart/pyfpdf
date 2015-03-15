@@ -720,7 +720,7 @@ class TTFontFile:
             
             if (glyphLen > 0):
                 up = unpack(">H", substr(data,0,2))[0]
-            if (glyphLen > 2 and (up & (1 << 15)) ):     # If number of contours <= -1 i.e. composiste glyph
+            if (glyphLen > 2 and (up & (1 << 15)) ):     # If number of contours <= -1 i.e. composite glyph
                 pos_in_glyph = 10
                 flags = GF_MORE
                 nComponentElements = 0

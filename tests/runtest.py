@@ -168,7 +168,7 @@ def do_test_one(testfile, interp, info, dest):
             return ("skip", "not for python 2")
         copy = True
 
-    # check if fpdf instaled
+    # check if fpdf installed
     if destenv.get("ver", "None") == "None":
         return ("nofpdf", "")
 
@@ -269,7 +269,7 @@ def do_test(testfile, interps, dests, stats, hint = ""):
         cover.err("All hashes wrong")
 
 def print_interps(interps):
-    cover.log(">> Interpretors:", len(interps))
+    cover.log(">> Interpreters:", len(interps))
     dests = {}
     stats = {"_": {"_": 0}}
     for idx, interp in enumerate(interps):
@@ -336,11 +336,11 @@ def list_tests():
 def usage():
     cover.log("Usage: runtest.py [...]")
     cover.log("  --listtests      - list all tests")
-    cover.log("  --listinterps    - list all availiable interpretors")
+    cover.log("  --listinterps    - list all availiable interpreters")
     cover.log("  --test issuexx   - add test issuexx")
     cover.log("  --test @file     - add test from file")
-    cover.log("  --interp path    - test against specified interpretors")
-    cover.log("  --interp @file   - read interpretors list from file")
+    cover.log("  --interp path    - test against specified interpreters")
+    cover.log("  --interp @file   - read interpreters list from file")
     cover.log("  --downloadfonts  - download font set")
     cover.log("  --help           - this page")
 
@@ -522,7 +522,7 @@ def main():
             if os.path.exists(fn):
                 interps.append(fn)
             else:
-                cover.err("Interpretor \"%s\" not found" % test)
+                cover.err("Interpreter \"%s\" not found" % test)
                 return
         interps = find_python_version(interps)
 

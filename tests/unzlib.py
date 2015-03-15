@@ -24,7 +24,7 @@ while 1:
     if l.startswith('stream') and length:
         i += 1
         fn = "stream_%s_%s" % (i, sys.argv[1])
-        print "writting ", length, fn
+        print "writing ", length, fn
         s = r.read(length)
         w = open(fn, 'wb')
         try:

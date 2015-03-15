@@ -80,7 +80,7 @@ or on an image: click on the logo.<br>
     pdf.add_page()
     pdf.write_html(html)
 
-    # this will fail (tables without widht are not supported):
+    # this will fail (tables without width are not supported):
     try:
         pdf.write_html("""<table><tr><td></td></tr></table>""")
     except RuntimeError:

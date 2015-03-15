@@ -13,7 +13,7 @@ basepath = os.path.abspath(os.path.join(__file__, "..", ".."))
 
 RESHASH = "38db8db76e80a2e75f94d1df9eda307e"
 
-# if PYFPDFTESTLOCAL is not set - use instaled pyfpdf version
+# if PYFPDFTESTLOCAL is not set - use installed pyfpdf version
 PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
 if PYFPDFTESTLOCAL:
     sys.path = [os.path.join(basepath, "fpdf_local")] + sys.path
