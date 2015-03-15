@@ -549,6 +549,7 @@ class FPDF(object):
                 fontfile.close()
             self.fonts[fontkey] = {'i': len(self.fonts)+1}
             self.fonts[fontkey].update(font_dict)
+            diff = font_dict.get('diff')
             if (diff):
                 #Search existing encodings
                 d = 0
@@ -563,11 +564,12 @@ class FPDF(object):
                 self.fonts[fontkey]['diff'] = d
             filename = font_dict.get('filename')
             if (filename):
-                if (type == 'TrueType'):
+                if (font_dict['type'] == 'TrueType'):
+                    originalsize = font_dict['originalsize']
                     self.font_files[filename]={'length1': originalsize}
                 else:
-                    self.font_files[filename]={'length1': size1,
-                                               'length2': size2}
+                    self.font_files[filename]={'length1': font_dict['size1'],
+                                               'length2': font_dict['size2']}
 
     def set_font(self, family,style='',size=0):
         "Select a font; size given in points"
@@ -1284,7 +1286,7 @@ class FPDF(object):
                 #Descriptor
                 self._newobj()
                 s='<</Type /FontDescriptor /FontName /'+name
-                for k in ('Ascent', 'Descent', 'CapHeight', 'Falgs', 'FontBBox', 'ItalicAngle', 'StemV', 'MissingWidth'):
+                for k in ('Ascent', 'Descent', 'CapHeight', 'Flags', 'FontBBox', 'ItalicAngle', 'StemV', 'MissingWidth'):
                     s += ' /%s %s' % (k, font['desc'][k])
                 filename=font['file']
                 if(filename):
