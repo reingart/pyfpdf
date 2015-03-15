@@ -37,6 +37,15 @@ SYSTEM_TTFONTS = None
 def set_global(var, val):
     globals()[var] = val
 
+def load_cache(filename):
+    """Return unpickled object, or None if cache unavailable"""
+    if not filename:
+        return None
+    try:
+        with open(filename, "rb") as fh:
+            return pickle.load(fh)
+    except (IOError, ValueError):  # File missing, unsupported pickle, etc
+        return None
 
 class FPDF(object):
     "PDF Generation class"
@@ -482,13 +491,8 @@ class FPDF(object):
                     hashpath(ttffilename) + ".pkl")
             else:
                 unifilename = None
-            if unifilename and os.path.exists(unifilename):
-                fh = open(unifilename, "rb")
-                try:
-                    font_dict = pickle.load(fh)
-                finally:
-                    fh.close()
-            else:
+            font_dict = load_cache(unifilename)
+            if font_dict is None:
                 ttf = TTFontFile()
                 ttf.getMetrics(ttffilename)
                 desc = {
@@ -1422,20 +1426,8 @@ class FPDF(object):
             cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
         else:
             cw127fname = None
-        if cw127fname and os.path.exists(cw127fname):
-            fh = open(cw127fname, "rb");
-            try:
-                font_dict = pickle.load(fh)
-            finally:
-                fh.close()
-            rangeid = font_dict['rangeid']
-            range_ = font_dict['range']
-            prevcid = font_dict['prevcid']
-            prevwidth = font_dict['prevwidth']
-            interval = font_dict['interval']
-            range_interval = font_dict['range_interval']
-            startcid = 128
-        else:
+        font_dict = load_cache(cw127fname)
+        if font_dict is None:    
             rangeid = 0
             range_ = {}
             range_interval = {}
@@ -1443,6 +1435,14 @@ class FPDF(object):
             prevwidth = -1
             interval = False
             startcid = 1
+        else:
+            rangeid = font_dict['rangeid']
+            range_ = font_dict['range']
+            prevcid = font_dict['prevcid']
+            prevwidth = font_dict['prevwidth']
+            interval = font_dict['interval']
+            range_interval = font_dict['range_interval']
+            startcid = 128
         cwlen = maxUni + 1
 
         # for each character
