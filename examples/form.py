@@ -1,6 +1,6 @@
 # -*- coding: iso-8859-1 -*-
 import sys,os
-from pyfpdf import FPDF
+from fpdf import FPDF
 
 class Form:
     def __init__(self, infile):
@@ -80,6 +80,6 @@ if __name__ == "__main__":
     f.set("logo","logo.png")
     f.render("./invoice.pdf")
     if sys.platform.startswith("linux"):
-        os.system("evince ./invoice.pdf")
+        os.system("xdg-open ./invoice.pdf")
     else:
         os.system("./invoice.pdf")

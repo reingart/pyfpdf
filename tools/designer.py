@@ -192,7 +192,6 @@ class Element(object):
         self.static = static
 
         name = kwargs['name']
-        kwargs['type']
         type = kwargs['type']
         
         x, y, w, h = self.set_coordinates(kwargs['x1'], kwargs['y1'], kwargs['x2'], kwargs['y2'])
@@ -606,8 +605,8 @@ class AppFrame(wx.Frame):
                 pdb.pm()
             else:
                 raise
-        if sys.platform=="linux2":
-            os.system("evince ""%s""" % self.filename +".pdf")
+        if sys.platform.startswith("linux"):
+            os.system("xdg-open ""%s""" % self.filename +".pdf")
         else:
             os.startfile(self.filename +".pdf")
 

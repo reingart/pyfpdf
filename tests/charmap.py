@@ -1,8 +1,11 @@
 "Print all charters"
 
-from fpdf import FPDF, FPDF_VERSION, TTFontFile
+import os, sys
 
-print FPDF_VERSION
+from fpdf import FPDF, FPDF_VERSION
+from fpdf.ttfonts import TTFontFile
+
+print (FPDF_VERSION)
 
 class MyTTFontFile(TTFontFile):
     def getCMAP4(self, unicode_cmap_offset, glyphToChar, charToGlyph):
@@ -18,11 +21,14 @@ pdf=FPDF()
 pdf.compression = True
 pdf.add_page()
 
-fontpath = "DroidSansFallback.ttf"
+#fontpath = "font/DroidSansFallback.ttf"
+fontpath = "font/DejaVuSans.ttf"
 pdf.add_font("font", '', fontpath, uni = True)
 ttf = MyTTFontFile()
 ttf.getMetrics(fontpath)
 
+if sys.version_info >= (3, 0):
+    unichr = chr
 
 pdf.set_font("font", '', 10)
 
@@ -38,7 +44,6 @@ for char in ttf.saveChar:
 fn = 'charmap.pdf'
 pdf.output(fn,'F')
 
-import os
 
 try:
     os.startfile(fn)
