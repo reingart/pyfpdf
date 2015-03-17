@@ -34,14 +34,14 @@ def hashpath(fn):
 
 # Check if PIL is available (tries importing both pypi version and corrected or manually installed versions).
 # Necessary for JPEG and GIF support.
+# TODO: Pillow support
 try:
+    from PIL import Image
+except ImportError:
     try:
         import Image
-    except:
-        from PIL import Image
-        # TODO: Pillow support
-except ImportError:
-    Image = None
+    except ImportError:
+        Image = None
 
 try:
 	from HTMLParser import HTMLParser

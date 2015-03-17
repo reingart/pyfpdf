@@ -6,6 +6,11 @@ import cover
 import shutil
 import traceback
 
+try:
+    from urllib2 import urlopen
+except ImportError:
+    from urllib.request import urlopen
+
 def search_python_posix():
     lst = []
     path = os.environ.get("PATH")
@@ -119,7 +124,7 @@ def search_tests():
     base = os.path.join(cover.basepath, "cover")
     lst = []
     for item in os.listdir(base):
-        if item[:5] != "test_":
+        if item[:5] != "test_" or item[-3:] != ".py":
             continue
         lst.append(os.path.join(base, item))
     lst.sort()
@@ -146,7 +151,7 @@ def do_test_one(testfile, interp, info, dest):
             return ("skip", "not for python 2")
         copy = True
 
-    # check if fpdf instaled
+    # check if fpdf installed
     if destenv.get("ver", "None") == "None":
         return ("nofpdf", "")
 
@@ -247,7 +252,7 @@ def do_test(testfile, interps, dests, stats, hint = ""):
         cover.err("All hashes wrong")
 
 def print_interps(interps):
-    cover.log(">> Interpretors:", len(interps))
+    cover.log(">> Interpreters:", len(interps))
     dests = {}
     stats = {"_": {"_": 0}}
     for idx, interp in enumerate(interps):
@@ -282,15 +287,21 @@ def do_all_test(interps, tests):
         cover.log(interp[1] + ":", stat_str(stats[interp[1]]))
     cover.log("-"*10)
     cover.log("All:", stat_str(stats["_"]))
-
+    
     # check if no FPDF at all
     total = stats["_"]["_"]
     fpdf = stats["_"].get("nofpdf", 0)
     skip = stats["_"].get("skip", 0)
     if skip == total:
-        cover.log("All tests skipped. Install some modules (PIL, PyBIDI, Gluon etc)")
+        cover.log("*** All tests skipped. Install some modules (PIL, PyBIDI, " +
+            "Gluon, etc)")
     elif fpdf + skip == total:
         hint_prepare()
+    # check if NORES
+    nores = stats["_"].get("nores", 0)
+    if nores > 0:
+        cover.log("*** Some resources are not found. You can try download " +
+            "fonts with '--downloadfonts' option")
 
 
 def list_tests():
@@ -308,11 +319,11 @@ def list_tests():
 def usage():
     cover.log("Usage: runtest.py [...]")
     cover.log("  --listtests      - list all tests")
-    cover.log("  --listinterps    - list all availiable interpretors")
+    cover.log("  --listinterps    - list all availiable interpreters")
     cover.log("  --test issuexx   - add test issuexx")
     cover.log("  --test @file     - add test from file")
-    cover.log("  --interp path    - test against specified interpretors")
-    cover.log("  --interp @file   - read interpretors list from file")
+    cover.log("  --interp path    - test against specified interpreters")
+    cover.log("  --interp @file   - read interpreters list from file")
     cover.log("  --downloadfonts  - download font set")
     cover.log("  --help           - this page")
 
@@ -387,10 +398,12 @@ def download_fonts():
     if not os.path.exists(fntdir):
         os.makedirs(fntdir)
     if not os.path.exists(zippath):
-        import urllib2
-        u = urllib2.urlopen(URL)
+        u = urlopen(URL)
         meta = u.info()
-        file_size = int(meta.getheaders("Content-Length")[0])
+        try:
+            file_size = int(meta.getheaders("Content-Length")[0])
+        except AttributeError:
+            file_size = int(meta.get_all("Content-Length")[0])
         cover.log("Downloading:", file_size, "bytes")
         f = open(zippath, "wb")
         file_size_dl = 0
@@ -492,7 +505,7 @@ def main():
             if os.path.exists(fn):
                 interps.append(fn)
             else:
-                cover.err("Interpretor \"%s\" not found" % test)
+                cover.err("Interpreter \"%s\" not found" % test)
                 return
         interps = find_python_version(interps)
 

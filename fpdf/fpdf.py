@@ -29,7 +29,7 @@ from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, 
 # Global variables
 FPDF_VERSION = '1.7.2'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
-FPDF_CACHE_MODE = 0 # 0 - in same foder, 1 - none, 2 - hash
+FPDF_CACHE_MODE = 0 # 0 - in same folder, 1 - none, 2 - hash
 FPDF_CACHE_DIR = None
 SYSTEM_TTFONTS = None
 
@@ -37,6 +37,15 @@ SYSTEM_TTFONTS = None
 def set_global(var, val):
     globals()[var] = val
 
+def load_cache(filename):
+    """Return unpickled object, or None if cache unavailable"""
+    if not filename:
+        return None
+    try:
+        with open(filename, "rb") as fh:
+            return pickle.load(fh)
+    except (IOError, ValueError):  # File missing, unsupported pickle, etc
+        return None
 
 class FPDF(object):
     "PDF Generation class"
@@ -64,6 +73,7 @@ class FPDF(object):
         self.font_family=''             # current font family
         self.font_style=''              # current font style
         self.font_size_pt=12            # current font size in points
+        self.font_stretching=100        # current font stretching
         self.underline=0                # underlining flag
         self.draw_color='0 G'
         self.fill_color='0 g'
@@ -84,7 +94,7 @@ class FPDF(object):
         elif(unit=='cm'):
             self.k=72/2.54
         elif(unit=='in'):
-            self.k=72
+            self.k=72.
         else:
             self.error('Incorrect unit: '+unit)
         # Page format
@@ -260,6 +270,7 @@ class FPDF(object):
         fc=self.fill_color
         tc=self.text_color
         cf=self.color_flag
+        stretching=self.font_stretching
         if(self.page>0):
             #Page footer
             self.in_footer=1
@@ -304,6 +315,9 @@ class FPDF(object):
             self._out(fc)
         self.text_color=tc
         self.color_flag=cf
+        #Restore stretching
+        if(stretching != 100):
+            self.set_stretching(stretching)
 
     def header(self):
         "Header to be implemented in your own inherited class"
@@ -364,6 +378,8 @@ class FPDF(object):
         else:
             for i in range(0, l):
                 w += cw.get(s[i],0)
+        if self.font_stretching != 100:
+            w = w * self.font_stretching / 100.0
         return w*self.font_size/1000.0
 
     def set_line_width(self, width):
@@ -475,13 +491,8 @@ class FPDF(object):
                     hashpath(ttffilename) + ".pkl")
             else:
                 unifilename = None
-            if unifilename and os.path.exists(unifilename):
-                fh = open(unifilename, "rb")
-                try:
-                    font_dict = pickle.load(fh)
-                finally:
-                    fh.close()
-            else:
+            font_dict = load_cache(unifilename)
+            if font_dict is None:
                 ttf = TTFontFile()
                 ttf.getMetrics(ttffilename)
                 desc = {
@@ -542,6 +553,7 @@ class FPDF(object):
                 fontfile.close()
             self.fonts[fontkey] = {'i': len(self.fonts)+1}
             self.fonts[fontkey].update(font_dict)
+            diff = font_dict.get('diff')
             if (diff):
                 #Search existing encodings
                 d = 0
@@ -556,11 +568,12 @@ class FPDF(object):
                 self.fonts[fontkey]['diff'] = d
             filename = font_dict.get('filename')
             if (filename):
-                if (type == 'TrueType'):
+                if (font_dict['type'] == 'TrueType'):
+                    originalsize = font_dict['originalsize']
                     self.font_files[filename]={'length1': originalsize}
                 else:
-                    self.font_files[filename]={'length1': size1,
-                                               'length2': size2}
+                    self.font_files[filename]={'length1': font_dict['size1'],
+                                               'length2': font_dict['size2']}
 
     def set_font(self, family,style='',size=0):
         "Select a font; size given in points"
@@ -619,6 +632,14 @@ class FPDF(object):
         self.font_size=size/self.k
         if(self.page>0):
             self._out(sprintf('BT /F%d %.2f Tf ET',self.current_font['i'],self.font_size_pt))
+
+    def set_stretching(self, factor):
+        "Set from stretch factor percents (default: 100.0)"
+        if(self.font_stretching == factor):
+            return
+        self.font_stretching = factor
+        if (self.page > 0):
+            self._out(sprintf('BT %.2f Tz ET', self.font_stretching))
 
     def add_link(self):
         "Create a new internal link"
@@ -1262,14 +1283,14 @@ class FPDF(object):
                 cw=font['cw']
                 s='['
                 for i in range(32,256):
-                    # Get doesn't rise exception; returns 0 instead of None if not set
+                    # Get doesn't raise exception; returns 0 instead of None if not set
                     s+=str(cw.get(chr(i)) or 0)+' '
                 self._out(s+']')
                 self._out('endobj')
                 #Descriptor
                 self._newobj()
                 s='<</Type /FontDescriptor /FontName /'+name
-                for k in ('Ascent', 'Descent', 'CapHeight', 'Falgs', 'FontBBox', 'ItalicAngle', 'StemV', 'MissingWidth'):
+                for k in ('Ascent', 'Descent', 'CapHeight', 'Flags', 'FontBBox', 'ItalicAngle', 'StemV', 'MissingWidth'):
                     s += ' /%s %s' % (k, font['desc'][k])
                 filename=font['file']
                 if(filename):
@@ -1405,20 +1426,8 @@ class FPDF(object):
             cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
         else:
             cw127fname = None
-        if cw127fname and os.path.exists(cw127fname):
-            fh = open(cw127fname, "rb");
-            try:
-                font_dict = pickle.load(fh)
-            finally:
-                fh.close()
-            rangeid = font_dict['rangeid']
-            range_ = font_dict['range']
-            prevcid = font_dict['prevcid']
-            prevwidth = font_dict['prevwidth']
-            interval = font_dict['interval']
-            range_interval = font_dict['range_interval']
-            startcid = 128
-        else:
+        font_dict = load_cache(cw127fname)
+        if font_dict is None:    
             rangeid = 0
             range_ = {}
             range_interval = {}
@@ -1426,6 +1435,14 @@ class FPDF(object):
             prevwidth = -1
             interval = False
             startcid = 1
+        else:
+            rangeid = font_dict['rangeid']
+            range_ = font_dict['range']
+            prevcid = font_dict['prevcid']
+            prevwidth = font_dict['prevwidth']
+            interval = font_dict['interval']
+            range_interval = font_dict['range_interval']
+            startcid = 128
         cwlen = maxUni + 1
 
         # for each character
@@ -1671,6 +1688,7 @@ class FPDF(object):
         self.x=self.l_margin
         self.y=self.t_margin
         self.font_family=''
+        self.font_stretching=100
         #Page orientation
         if(not orientation):
             orientation=self.def_orientation
@@ -1712,29 +1730,36 @@ class FPDF(object):
 
     def _parsejpg(self, filename):
         # Extract info from a JPEG file
-        if Image is None:
-            self.error('PIL not installed')
         try:
             f = open(filename, 'rb')
-            im = Image.open(f)
+            while True:
+                markerHigh, markerLow = struct.unpack('BB', f.read(2))
+                if markerHigh != 0xFF or markerLow < 0xC0:
+                    raise SyntaxError('No JPEG marker found')
+                elif markerLow == 0xDA: # SOS
+                    raise SyntaxError('No JPEG SOF marker found')
+                elif (markerLow == 0xC8 or # JPG
+                      (markerLow >= 0xD0 and markerLow <= 0xD9) or # RSTx
+                      (markerLow >= 0xF0 and markerLow <= 0xFD)): # JPGx
+                    pass
+                else:
+                    dataSize, = struct.unpack('>H', f.read(2))
+                    data = f.read(dataSize - 2) if dataSize > 2 else ''
+                    if ((markerLow >= 0xC0 and markerLow <= 0xC3) or # SOF0 - SOF3
+                        (markerLow >= 0xC5 and markerLow <= 0xC7) or # SOF4 - SOF7
+                        (markerLow >= 0xC9 and markerLow <= 0xCB) or # SOF9 - SOF11
+                        (markerLow >= 0xCD and markerLow <= 0xCF)): # SOF13 - SOF15
+                        bpc, height, width, layers = struct.unpack_from('>BHHB', data)
+                        colspace = 'DeviceRGB' if layers == 3 else ('DeviceCMYK' if layers == 4 else 'DeviceGray')
+                        break
         except Exception:
             self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
-        else:
-            a = im.size
-        # We shouldn't get into here, as Jpeg is RGB=8bpp right(?), but, just in case...
-        bpc=8
-        if im.mode == 'RGB':
-            colspace='DeviceRGB'
-        elif im.mode == 'CMYK':
-            colspace='DeviceCMYK'
-        else:
-            colspace='DeviceGray'
 
         # Read whole file from the start
         f.seek(0)
         data = f.read()
         f.close()
-        return {'w':a[0],'h':a[1],'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
+        return {'w':width,'h':height,'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
 
     def _parsegif(self, filename):
         # Extract info from a GIF file (via PNG conversion)

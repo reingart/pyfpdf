@@ -71,8 +71,8 @@ def dotest(outputname, nostamp):
     t0 = time.time()
     pdf = testfile(f1, f2)
     t1 = time.time()
-    assert os.path.exists(f1[:-3] + "pkl")
-    assert os.path.exists(f2[:-3] + "pkl")
+    assert os.path.exists(f1[:-3] + "pkl"), "Pickle for DejaVuSansCondensed not found"
+    assert os.path.exists(f2[:-3] + "pkl"), "Pickle for DejaVuSans not found"
     # load cached
     t2 = time.time()
     pdf = testfile(f1, f2)
@@ -87,8 +87,8 @@ def dotest(outputname, nostamp):
     pdf.write(10, "Hello")
     pdf.output(os.path.join(cachepath, "pdf0.pdf"), "F")
     # check cw127
-    assert not os.path.exists(f1[:-3] + "cw127.pkl")
-    assert os.path.exists(f2[:-3] + "cw127.pkl")
+    assert not os.path.exists(f1[:-3] + "cw127.pkl"), "Cw127 for DejaVuSansCondensed not found"
+    assert os.path.exists(f2[:-3] + "cw127.pkl"), "Unnecessary cw127 for DejaVuSans"
         
     # --- disable cache reading ---
     fpdf.set_global("FPDF_CACHE_MODE", 1)
@@ -116,10 +116,10 @@ def dotest(outputname, nostamp):
     pdf.write(10, "Hello")
     pdf.output(os.path.join(cachepath, "pdf1.pdf"), "F")
     # test no files created
-    assert not os.path.exists(f1[:-3] + "pkl")
-    assert not os.path.exists(f2[:-3] + "pkl")
-    assert not os.path.exists(f1[:-3] + "cw127.pkl")
-    assert not os.path.exists(f2[:-3] + "cw127.pkl")
+    assert not os.path.exists(f1[:-3] + "pkl"), "Unnecessary file DejaVuSansCondensed.pkl"
+    assert not os.path.exists(f2[:-3] + "pkl"), "Unnecessary file DejaVuSans.pkl"
+    assert not os.path.exists(f1[:-3] + "cw127.pkl"), "Unnecessary file DejaVuSansCondensed.127.pkl"
+    assert not os.path.exists(f2[:-3] + "cw127.pkl"), "Unnecessary file DejaVuSans.127.pkl"
 
     # --- hash cache ---
     fpdf.set_global("FPDF_CACHE_MODE", 2)
@@ -127,8 +127,8 @@ def dotest(outputname, nostamp):
     t0 = time.time()
     pdf = testfile(f1, f2)
     t1 = time.time()
-    assert not os.path.exists(f1[:-3] + "pkl")
-    assert not os.path.exists(f2[:-3] + "pkl")
+    assert not os.path.exists(f1[:-3] + "pkl"), "Misplaced file DejaVuSansCondensed.pkl"
+    assert not os.path.exists(f2[:-3] + "pkl"), "Misplaced file DejaVuSans.pkl"
     # load cached
     t2 = time.time()
     pdf = testfile(f1, f2)
@@ -138,14 +138,14 @@ def dotest(outputname, nostamp):
         common.log("Hash load 1st:", t1 - t0)
         common.log("Hash load 2nd:", t3 - t2)
     # check hash
-    assert os.path.exists(os.path.join(hashpath, hashfn(f1) + ".pkl"))            
-    assert os.path.exists(os.path.join(hashpath, hashfn(f2) + ".pkl"))            
+    assert os.path.exists(os.path.join(hashpath, hashfn(f1) + ".pkl")), "Cached pickle for DejaVuSansCondensed not found"
+    assert os.path.exists(os.path.join(hashpath, hashfn(f2) + ".pkl")), "Cached pickle for DejaVuSans not found"            
     pdf.add_page()
-    pdf.write(5, "Хешировали, хешировали, да выдохешиовали.")
+    pdf.write(5, "Хешировали, хешировали, да выдохешировали.")
     pdf.write(10, "Hello")
     pdf.output(os.path.join(cachepath, "pdf2.pdf"), "F")
-    assert not os.path.exists(os.path.join(hashpath, hashfn(f1) + ".cw127.pkl"))            
-    assert os.path.exists(os.path.join(hashpath, hashfn(f2) + ".cw127.pkl"))            
+    assert not os.path.exists(os.path.join(hashpath, hashfn(f1) + ".cw127.pkl")), "Cachecd cw127 for DejaVuSansCondensed not found"
+    assert os.path.exists(os.path.join(hashpath, hashfn(f2) + ".cw127.pkl")), "Unnecessary cached cw127 for DejaVuSans"
 
 if __name__ == "__main__":
     common.testmain(__file__, dotest)

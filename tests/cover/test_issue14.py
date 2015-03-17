@@ -5,7 +5,6 @@
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=issue_14.pdf
 #PyFPDF-cover-test:hash=7e4a5b0a77c4eaefa475bb7db655fcd9
-#PyFPDF-cover-test:pil=yes
 #PyFPDF-cover-test:res=../tutorial/logo_pb.png
 
 import common

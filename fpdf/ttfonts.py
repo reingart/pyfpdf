@@ -720,7 +720,7 @@ class TTFontFile:
             
             if (glyphLen > 0):
                 up = unpack(">H", substr(data,0,2))[0]
-            if (glyphLen > 2 and (up & (1 << 15)) ):     # If number of contours <= -1 i.e. composiste glyph
+            if (glyphLen > 2 and (up & (1 << 15)) ):     # If number of contours <= -1 i.e. composite glyph
                 pos_in_glyph = 10
                 flags = GF_MORE
                 nComponentElements = 0
@@ -865,7 +865,11 @@ class TTFontFile:
     def getHMTX(self, numberOfHMetrics, numGlyphs, glyphToChar, scale):
         start = self.seek_table("hmtx")
         aw = 0
-        self.charWidths = [0] * 256*256
+        self.charWidths = []
+        def resize_cw(size, default):
+            delta = size - len(self.charWidths) + 1
+            if delta > 0:
+                self.charWidths += [default] * delta
         nCharWidths = 0
         if ((numberOfHMetrics*4) < self.maxStrLenRead): 
             data = self.get_chunk(start,(numberOfHMetrics*4))
@@ -887,11 +891,13 @@ class TTFontFile:
                     self.defaultWidth = scale*aw
                     continue
                 
-                for char in glyphToChar[glyph]: 
+                for char in glyphToChar[glyph]:
                     if (char != 0 and char != 65535): 
                         w = int(round(scale*aw+0.001))   # ROUND_HALF_UP in PY3K (like php)
                         if (w == 0):  w = 65535 
-                        if (char < 196608): 
+                        if (char < 196608):
+                            if char >= len(self.charWidths):
+                                resize_cw(char, self.defaultWidth)
                             self.charWidths[char] = w 
                             nCharWidths += 1
             
@@ -907,6 +913,8 @@ class TTFontFile:
                         w = int(round(scale*aw+0.001))  # ROUND_HALF_UP in PY3K (like php)
                         if (w == 0):  w = 65535 
                         if (char < 196608):
+                            if char >= len(self.charWidths):
+                                resize_cw(char, self.defaultWidth)
                             self.charWidths[char] = w
                             nCharWidths += 1 
                         

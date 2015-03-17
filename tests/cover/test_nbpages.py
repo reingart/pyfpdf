@@ -4,7 +4,7 @@
 
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=nb_pages.pdf
-#PyFPDF-cover-test:hash=4f22df85e31007cb275fabdc9fa78f97
+#PyFPDF-cover-test:hash=071fab0d32afcbe780e171c0da50865a
 #PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 
 import common

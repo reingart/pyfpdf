@@ -36,7 +36,7 @@ DEBUG = True
 
 
 class CustomDialog(wx.Dialog):
-    "A dinamyc dialog to ask user about arbitrary fields"
+    "A dynamic dialog to ask user about arbitrary fields"
     
     def __init__(
             self, parent, ID, title, size=wx.DefaultSize, pos=wx.DefaultPosition, 
@@ -192,7 +192,6 @@ class Element(object):
         self.static = static
 
         name = kwargs['name']
-        kwargs['type']
         type = kwargs['type']
         
         x, y, w, h = self.set_coordinates(kwargs['x1'], kwargs['y1'], kwargs['x2'], kwargs['y2'])
@@ -595,7 +594,7 @@ class AppFrame(wx.Frame):
         t = Template(elements=[e.as_dict() for e in self.elements if not e.static])
         t.add_page()
         if not t['logo'] or not os.path.exists(t['logo']):
-            # put a default logo so it doesn't trow an exception
+            # put a default logo so it doesn't throw an exception
             logo = os.path.join(os.path.dirname(__file__), 'tutorial','logo.png')
             t.set('logo', logo)
         try:
@@ -606,8 +605,8 @@ class AppFrame(wx.Frame):
                 pdb.pm()
             else:
                 raise
-        if sys.platform=="linux2":
-            os.system("evince ""%s""" % self.filename +".pdf")
+        if sys.platform.startswith("linux"):
+            os.system("xdg-open ""%s""" % self.filename +".pdf")
         else:
             os.startfile(self.filename +".pdf")
 
