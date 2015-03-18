@@ -13,6 +13,7 @@ import os, shutil, time
 def check_width(req, new):
     return round(new, 4) == round(req, 4)
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     fpdf.set_global("FPDF_CACHE_MODE", 1)
     pdf = fpdf.FPDF()
