@@ -1446,6 +1446,7 @@ class FPDF(object):
         cwlen = maxUni + 1
 
         # for each character
+        subset = set(font['subset'])
         for cid in range(startcid, cwlen):
             if cid == 128 and cw127fname and not os.path.exists(cw127fname):
                 try:
@@ -1462,12 +1463,12 @@ class FPDF(object):
                 except IOError:
                     if not exception().errno == errno.EACCES:
                         raise  # Not a permission error.
+            if cid > 255 and (cid not in subset): #
+                continue
             width = font['cw'][cid]
             if (width == 0):
                 continue
             if (width == 65535): width = 0
-            if cid > 255 and (cid not in font['subset']): #
-                continue
             if ('dw' not in font or (font['dw'] and width != font['dw'])):
                 if (cid == (prevcid + 1)):
                     if (width == prevwidth):
