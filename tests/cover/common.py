@@ -256,25 +256,26 @@ def check_res(settings, verbose):
             
     return True
     
-def check_result(settings, args):
+def check_hash(settings, fn):
     check = True
     if settings.get("fn"):        
-        if args["check"]:
-            # compare with hash
-            hs = file_hash(args["fn"])
-            fhs = settings.get("hash", "")            
-            if fhs != "" and hs != fhs:
-                check = False
-                err("Hash mismatch:")
-                err("       new = %s" % hs)
-                err("  required = %s" % fhs)
+        # compare with hash
+        hs = file_hash(fn)
+        fhs = settings.get("hash", "")            
+        if fhs != "" and hs != fhs:
+            check = False
+            err("Hash mismatch:")
+            err("       new = %s" % hs)
+            err("  required = %s" % fhs)
+    return check
 
+def check_result(settings, args):
+    check = not args["check"] or check_hash(settings, args["fn"])
     if args["autotest"]:
         if check:
             log("OK")
         else:
             log("HASHERROR")
-        return check
     else:
         if settings.get("fn"):        
             start_by_ext(args["fn"])
@@ -291,8 +292,8 @@ def add_unittest(testfunc):
         def runTest(self):
             outputname = self.settings.get("fn")
             testfunc(outputname, nostamp=True)
-            args = {"check": True, "autotest": True, "fn": outputname}
-            self.assertTrue(check_result(self.settings, args))
+            hash_okay = check_hash(self.settings, outputname)
+            self.assertTrue(hash_okay, "Hash mismatch")
     
     name = testfunc.__name__ + "_unittest"
     Test.__name__ = name

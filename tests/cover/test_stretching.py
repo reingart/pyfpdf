@@ -41,6 +41,7 @@ def text(pdf, txt, stretching, nostamp):
     pdf.write(8, "\n")
     
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     fpdf.set_global("FPDF_CACHE_MODE", 1)
     pdf = FPDF()
