@@ -12,4 +12,4 @@ Note: no page is created by this method.
 
 ### See also ###
 
-[AddPage](AddPage.md), [Close](Close.md).
+AddPage, [Close](Close.md).
