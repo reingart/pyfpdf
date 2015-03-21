@@ -4,7 +4,7 @@
 
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=issue_60.pdf
-#PyFPDF-cover-test:hash=bc47380ca9511b96756d1066a3b494c1
+#PyFPDF-cover-test:hash=ef5e4effbe67ced3b1fbb1a7db53d7da
 #PyFPDF-cover-test:res=font/DejaVuSans.ttf
 
 import common
