@@ -2,17 +2,17 @@
 
 # PyFPDF Reference Manual #
 
-  * [AcceptPageBreak](AcceptPageBreak) - accept or not automatic page break
-  * AddFont - add a new font
-  * AddLink - create an internal link
-  * AddPage - add a new page
-  * AliasNbPages - define an alias for number of pages
+  * [AcceptPageBreak](AcceptPageBreak.md) - accept or not automatic page break
+  * [AddFont](AddFont.md) - add a new font
+  * [AddLink](AddLink.md) - create an internal link
+  * [AddPage](AddPage.md) - add a new page
+  * [AliasNbPages](AliasNbPages.md) - define an alias for number of pages
   * [Cell](Cell.md) - print a cell
   * [Close](Close.md) - terminate the document
   * [Error](Error.md) - fatal error
   * [Footer](Footer.md) - page footer
   * [FPDF](FPDF.md) - constructor
-  * GetStringWidth - compute string length
+  * [GetStringWidth](GetStringWidth.md) - compute string length
   * [GetX](GetX.md) - get current x position
   * [GetY](GetY.md) - get current y position
   * [Header](Header.md) - page header
@@ -20,9 +20,9 @@
   * [Line](Line.md) - draw a line
   * [Link](Link.md) - put a link
   * [Ln](Ln.md) - line break
-  * MultiCell - print text with line breaks
+  * [MultiCell](MultiCell.md) - print text with line breaks
   * [Output](Output.md) - save or send the document
-  * PageNo - page number
+  * [PageNo](PageNo.md) - page number
   * [Rect](Rect.md) - draw a rectangle
   * SetAuthor - set the document author
   * SetAutoPageBreak - set the automatic page breaking mode
