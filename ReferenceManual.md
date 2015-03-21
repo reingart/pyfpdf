@@ -1,8 +1,8 @@
 **Important**: original FPDF (PHP) naming convention is CamelCase. This library uses [PEP8](http://www.python.org/dev/peps/pep-0008/) lower\_case\_with\_underscores recommendation.
 
-# PyFPDF 1.6 Reference Manual #
+# PyFPDF Reference Manual #
 
-  * AcceptPageBreak - accept or not automatic page break
+  * [AcceptPageBreak](AcceptPageBreak) - accept or not automatic page break
   * AddFont - add a new font
   * AddLink - create an internal link
   * AddPage - add a new page
