@@ -1,7 +1,7 @@
 ## Link ##
 
 ```
-fpdf.AcceptPageBreak()
+fpdf.accept_page_break()
 ```
 
 ### Description ###
@@ -11,4 +11,4 @@ This method is called automatically and should not be called directly by the app
 
 ### See also ###
 
-SetAutoPageBreak.
+[SetAutoPageBreak](SetAutoPageBreak.md).

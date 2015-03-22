@@ -1,7 +1,7 @@
 ## SetAutoPageBreak ##
 
 ```
-fpdf.set_auto_page_break(auto,margin=0)
+fpdf.set_auto_page_break(auto, margin = 0)
 ```
 
 ### Description ###
@@ -12,9 +12,10 @@ Enables or disables the automatic page breaking mode. When enabling, the second 
 
 auto:
 > Boolean indicating if mode should be on or off.
+
 margin:
 > Distance from the bottom of the page.
 
 ### See also ###
 
-[Cell](Cell.md), MultiCell, AcceptPageBreak.
+[Cell](Cell.md), [MultiCell](MultiCell.md), [AcceptPageBreak](AcceptPageBreak,md).

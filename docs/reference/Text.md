@@ -10,11 +10,13 @@ Prints a character string. The origin is on the left of the first character, on 
 
 x:
 > Abscissa of the origin.
+
 y:
 > Ordinate of the origin.
+
 txt:
 > String to print.
 
 ### See also ###
 
-SetFont, SetTextColor, [Cell](Cell.md), MultiCell, [Write](Write.md).
+[SetFont](SetFont.md), [SetTextColor](SetTextColor.md), [Cell](Cell.md), [MultiCell](MultiCell.md), [Write](Write.md).

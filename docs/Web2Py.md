@@ -2,7 +2,7 @@
 
 # Introduction #
 
-If you use [web2py](http://www.web2py.com), you can make complex reports that can be viewed in a browser, or downloaded as PDF (taking advantage of web2py HTML helper objects to easily diagram a report). See [WriteHTML](WriteHTML.md) for more information, supported tags and attributes, etc.
+If you use [web2py](http://www.web2py.com), you can make complex reports that can be viewed in a browser, or downloaded as PDF (taking advantage of web2py HTML helper objects to easily diagram a report). See [WriteHTML](reference/WriteHTML.md) for more information, supported tags and attributes, etc.
 
 Also, using web2py DAL, you can easily set up a templating engine for PDF documents. See [Templates](Templates.md) for more information.
 

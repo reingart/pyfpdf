@@ -1,7 +1,7 @@
 ## AddFont ##
 
 ```
-fpdf.add_font(family, style='', fname='', uni=False)
+fpdf.add_font(family, style = '', fname = '', uni = False)
 ```
 
 ### Description ###
@@ -16,7 +16,7 @@ Imports a TrueType, OpenType or Type1 font and makes it available.
 
 If the file corresponding to the requested font is not found, the runtime exception _"TTF Font file not found: "_ is raised.
 
-For more information, see [Unicode](Unicode.md) support page.
+For more information, see [Unicode](../Unicode.md) support page.
 
 The method should be called before SetFont method is used, and the font will be available for the whole document.
 
@@ -57,4 +57,4 @@ pdf.add_font('sysfont', '', r"c:\WINDOWS\Fonts\arial.ttf", uni=True)
 
 ### See also ###
 
-SetFont, SetFontSize, [Cell](Cell.md), MultiCell, [Write](Write.md).
+[SetFont](SetFont.md), [SetFontSize](SetFontSize.md), [Cell](Cell.md), [MultiCell](MultiCell.md), [Write](Write.md).

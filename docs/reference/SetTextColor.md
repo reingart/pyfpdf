@@ -12,11 +12,13 @@ Defines the color used for text. It can be expressed in RGB components or gray s
 
 r:
 > If g et b are given, red component; if not, indicates the gray level. Value between 0 and 255.
+
 g:
 > Green component (between 0 and 255).
+
 b:
 > Blue component (between 0 and 255).
 
 ### See also ###
 
-SetDrawColor, SetFillColor, [Text](Text.md), [Cell](Cell.md), MultiCell.
+[SetDrawColor](SetDrawColor.md), [SetFillColor](SetFillColor.md), [Text](Text.md), [Cell](Cell.md), [MultiCell](MultiCell.md).

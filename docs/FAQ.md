@@ -2,7 +2,7 @@
 
 Apologies in advance: Spanish is our main language, so there may be errors or inaccuracies with our written English.
 
-See [Project Home](http://code.google.com/p/pyfpdf/) for an overall introduction.
+See [Project Home](https://github.com/reingart/pyfpdf) for an overall introduction.
 
 # What is FPDF? #
 
@@ -17,7 +17,7 @@ For more information see: http://www.fpdf.org/en/links.php
 This library is not a:
   * charts or widgets library (you can import PNG or JPG images, use PIL or any other library, or draw the figures yourself, see examples)
   * "flexible page layout engine" like [Reportlab](http://www.reportlab.com/software/opensource/) PLATYPUS (but can do columns, chapters, etc., see [Tutorial](Tutorial.md))
-  * XML /object definition language like [Geraldo Reports](http://www.geraldoreports.org/), Jasper Reports or similar (look at [WriteHTML](WriteHTML.md) for simple HTML reports and [Templates](Templates.md) for fill-in-the-blank documents)
+  * XML /object definition language like [Geraldo Reports](http://www.geraldoreports.org/), Jasper Reports or similar (look at [WriteHTML](reference/WriteHTML.md) for simple HTML reports and [Templates](Templates.md) for fill-in-the-blank documents)
   * PDF text extractor/conversor, spltiter or similar. Look at [pyPdf](http://pybrary.net/pyPdf/)
 
 # How does this library compares to ...? #

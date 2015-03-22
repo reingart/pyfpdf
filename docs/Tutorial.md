@@ -14,7 +14,7 @@ pdf.output('tuto1.pdf','F')
 
 [Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto1.pdf)
 
-After including the library file, we create an FPDF object. The [FPDF](FPDF.md) constructor is used here with the default values: pages are in A4 portrait and the measure unit is millimeter. It could have been specified explicitly with:
+After including the library file, we create an FPDF object. The [FPDF](reference/FPDF.md) constructor is used here with the default values: pages are in A4 portrait and the measure unit is millimeter. It could have been specified explicitly with:
 
 ```
 pdf=FPDF('P','mm','A4')
@@ -32,7 +32,7 @@ pdf.set_font('Arial','B',16)
 
 We could have specified italics with I, underlined with U or a regular font with an empty string (or any combination). Note that the font size is given in points, not millimeters (or another user unit); it is the only exception. The other standard fonts are Times, Courier, Symbol and ZapfDingbats.
 
-We can now print a cell with [Cell](Cell.md). A cell is a rectangular area, possibly framed, which contains some text. It is output at the current position. We specify its dimensions, its text (centered or aligned), if borders should be drawn, and where the current position moves after it (to the right, below or to the beginning of the next line). To add a frame, we would do this:
+We can now print a cell with [Cell](reference/Cell.md). A cell is a rectangular area, possibly framed, which contains some text. It is output at the current position. We specify its dimensions, its text (centered or aligned), if borders should be drawn, and where the current position moves after it (to the right, below or to the beginning of the next line). To add a frame, we would do this:
 
 ```
 pdf.cell(40,10,'Hello World !',1)
@@ -44,9 +44,9 @@ To add a new cell next to it with centered text and go to the next line, we woul
 pdf.cell(60,10,'Powered by FPDF.',0,1,'C')
 ```
 
-**Remark**: the line break can also be done with [Ln](Ln.md). This method allows to specify in addition the height of the break.
+**Remark**: the line break can also be done with [Ln](reference/Ln.md). This method allows to specify in addition the height of the break.
 
-Finally, the document is closed and sent to the browser with [Output](Output.md). We could have saved it in a file by passing the desired file name.
+Finally, the document is closed and sent to the browser with [Output](reference/Output.md). We could have saved it in a file by passing the desired file name.
 
 **Caution**: in case when the PDF is sent to the browser, nothing else must be output, not before nor after (the least space or carriage return matters). If you send some data before, you will get the error message: "Some data has already been output to browser, can't send PDF file". If you send after, your browser may display a blank page.
 
@@ -91,12 +91,12 @@ pdf.output('tuto2.pdf','F')
 ```
 [Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto2.pdf)
 
-This example makes use of the [Header](Header.md) and [Footer](Footer.md) methods to process page headers and footers. They are called automatically. They already exist in the FPDF class but do nothing, therefore we have to extend the class and override them.
+This example makes use of the [Header](reference/Header.md) and [Footer](reference/Footer.md) methods to process page headers and footers. They are called automatically. They already exist in the FPDF class but do nothing, therefore we have to extend the class and override them.
 
-The logo is printed with the [Image](Image.md) method by specifying its upper-left corner and its width. The height is calculated automatically to respect the image proportions.
+The logo is printed with the [Image](reference/Image.md) method by specifying its upper-left corner and its width. The height is calculated automatically to respect the image proportions.
 
 To print the page number, a null value is passed as the cell width. It means that the cell should extend up to the right margin of the page; it is handy to center text. The current page number is returned by the PageNo method; as for the total number of pages, it is obtained by means of the special value {nb} which will be substituted on document closure (provided you first called AliasNbPages).
-Note the use of the [SetY](SetY.md) method which allows to set position at an absolute location in the page, starting from the top or the bottom.
+Note the use of the [SetY](reference/SetY.md) method which allows to set position at an absolute location in the page, starting from the top or the bottom.
 
 Another interesting feature is used here: the automatic page breaking. As soon as a cell would cross a limit in the page (at 2 centimeters from the bottom by default), a break is performed and the font restored. Although the header and footer select their own font (Arial), the body continues with Times. This mechanism of automatic restoration also applies to colors and line width. The limit which triggers page breaks can be set with SetAutoPageBreak.
 
