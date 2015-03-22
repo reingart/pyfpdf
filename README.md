@@ -41,11 +41,11 @@ installers. For example, using pip:
 (PIL) is needed for GIF support. PNG and JPG support is built-in and don't 
 require any external dependency. For Python > 3.0 
 [Pillow - The friendly PIL fork](https://github.com/python-pillow/Pillow) are 
-suuported.
+supported.
 
 Documentation:
 --------------
-[![Documentation Status](https://readthedocs.org/projects/pyfpdf-wiki/badge/?version=latest)](https://readthedocs.org/projects/pyfpdf-wiki/?badge=latest)
+[![Documentation Status](https://readthedocs.org/projects/pyfpdf/badge/?version=latest)](https://readthedocs.org/projects/pyfpdf/?badge=latest)
 
  * Tutorial: https://code.google.com/p/pyfpdf/wiki/Tutorial
  * Reference Manual: https://code.google.com/p/pyfpdf/wiki/ReferenceManual 
