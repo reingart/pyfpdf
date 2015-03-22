@@ -1,6 +1,6 @@
 ## SetY ##
 ```
-fpdf.sety(y)
+fpdf.sety(y: float)
 ```
 ### Description ###
 

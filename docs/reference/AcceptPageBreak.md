@@ -1,4 +1,4 @@
-## Link ##
+## AcceptPageBreak ##
 
 ```
 fpdf.accept_page_break()

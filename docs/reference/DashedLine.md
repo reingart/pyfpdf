@@ -6,7 +6,7 @@ fpdf.dashed_line(x1, y1, x2, y2, dash_length = 1, space_length = 1)
 
 ### Description ###
 
-Draw a dashed line between two points. Same interface as line() except the two parameters dash\_length and space\_length.
+Draw a dashed line between two points. Same interface as [Line](Line.md) except the two parameters dash\_length and space\_length.
 
 ### Parameters ###
 

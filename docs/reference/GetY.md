@@ -9,4 +9,4 @@ Returns the ordinate of the current position.
 
 ### See also ###
 
-GetX, SetX, SetY, SetXY.
+[GetX](GetX.md), [SetX](SetX.md), [SetY](SetY.md), [SetXY](SetXY.md).

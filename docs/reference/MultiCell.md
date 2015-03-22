@@ -1,7 +1,8 @@
 ## MultiCell ##
 
 ```
-fpdf.multi_cell(w: float, h: float, txt: str, border = 0, align: str = 'J', fill: bool = 0)
+fpdf.multi_cell(w: float, h: float, txt: str, border = 0, 
+                align: str = 'J', fill: bool = False)
 ```
 
 ### Description ###
@@ -39,8 +40,8 @@ align:
 >>    * J: justification (default value)
 
 fill
-> Indicates if the cell background must be painted (true) or transparent (false). Default  value: false.
+> Indicates if the cell background must be painted (True) or transparent (False). Default  value: False.
 
 ### See also ###
 
-[SetFont](SetFont.md), [SetDrawColor](SetDrawColor.md), [SetFillColor](SetFillColor.md), [SetTextColor](SetTextColor.md), SetLineWidth, [Cell](Cell.md), [Write](Write.md), [SetAutoPageBreak](SetAutoPageBreak.md).
+[SetFont](SetFont.md), [SetDrawColor](SetDrawColor.md), [SetFillColor](SetFillColor.md), [SetTextColor](SetTextColor.md), [SetLineWidth](SetLineWidth.md), [Cell](Cell.md), [Write](Write.md), [SetAutoPageBreak](SetAutoPageBreak.md).

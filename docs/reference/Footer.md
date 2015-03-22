@@ -6,7 +6,7 @@ fpdf.footer()
 
 ### Description ###
 
-This method is used to render the page footer. It is automatically called by AddPage and [Close](Close.md) and should not be called directly by the application. The implementation in FPDF is empty, so you have to subclass it and override the method if you want a specific processing.
+This method is used to render the page footer. It is automatically called by [AddPage](AddPage.md) and [Close](Close.md) and should not be called directly by the application. The implementation in FPDF is empty, so you have to subclass it and override the method if you want a specific processing.
 
 ### Example ###
 ```
@@ -22,4 +22,4 @@ class PDF(FPDF):
 
 ### See also ###
 
-Header.
+[AddPage](AddPage.md), [Header](Header.md).

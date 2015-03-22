@@ -32,4 +32,4 @@ pdf.write(5,'www.fpdf.org','http://www.fpdf.org');
 
 ### See also ###
 
-[SetFont](SetFont.md), [SetTextColor](SetTextColor.md), [AddLink](AddLink.md), [MultiCell](MultiCell.md), SetAutoPageBreak](SetAutoPageBreak.md), [WriteHTML](WriteHTML.md)
+[SetFont](SetFont.md), [SetTextColor](SetTextColor.md), [AddLink](AddLink.md), [MultiCell](MultiCell.md), [SetAutoPageBreak](SetAutoPageBreak.md), [WriteHTML](WriteHTML.md)

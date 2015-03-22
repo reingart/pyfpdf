@@ -1,6 +1,6 @@
 ## SetXY ##
 ```
-fpdf.setxy(float x, float y)
+fpdf.setxy(x: float, y: float)
 ```
 ### Description ###
 
@@ -10,9 +10,10 @@ Defines the abscissa and ordinate of the current position. If the passed values 
 
 x:
 > The value of the abscissa.
+
 y:
 > The value of the ordinate.
 
 ### See also ###
 
-GetX, GetY, SetX, SetY.
+[GetX](GetX.md), [GetY](GetY.md), [SetX](SetX.md), [SetY](SetY.md).

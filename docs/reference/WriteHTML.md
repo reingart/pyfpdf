@@ -1,6 +1,11 @@
-# Introduction #
+## Write ##
+```
+HTMLMixin.write_html(text: str, image_map = None)
+```
 
-PyFPDF now supports basic HTML, mainly intended to write reports from web frameworks.
+### Description ###
+
+PyFPDF supports basic HTML, mainly intended to write reports from web frameworks.
 
 It understands a limited subset of the HTML language, and it doesn't support advanced features nor CSS (look below).
 
@@ -8,9 +13,18 @@ HTMLMixin could be used along with FPDF class to implement this functionality (s
 
 Sample: [html.pdf](http://pyfpdf.googlecode.com/files/html.pdf)
 
-# Details #
+### Parameters ###
+
+test:
+> string with HTML markup
+
+image_map:
+> dictionary with image map
+
+### Details ###
 
 HTML tags and attributes supported:
+
   * H1 to H8: headings (align attribute)
   * P: paragraphs (align attributes)
   * B, I, U: bold, italic, underline
@@ -29,7 +43,7 @@ HTML tags and attributes supported:
 
 Note: Tables should have at least a first TH row with width attribute.
 
-# Example #
+### Example ###
 
 ```
 html = """
@@ -68,5 +82,8 @@ pdf.add_page()
 pdf.write_html(html)
 pdf.output('html.pdf','F')
 ```
-
 See html.py or Web2Py for a complete example
+
+### See also ###
+[Write](Write.md), [AddFont](AddFont.md), [Image](Image.md).
+

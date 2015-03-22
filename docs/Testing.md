@@ -52,7 +52,7 @@ Distributive copy:
   * In root of distributive folder
   * `PYTHON_PATH=. python tests/runtest.py`
 
-You can specify tests and/or interpretors list with `--test` and `--interp` arguments. For detailed information see `--help`.
+You can specify tests and/or interpreters list with `--test` and `--interp` arguments. For detailed information see `--help`.
 
 Please note, batch operations test required minimum in library, but when you call any test directly with `python test/cover/text_xx.py`.
 

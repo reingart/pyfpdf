@@ -1,6 +1,6 @@
 ## SetX ##
 ```
-fpdf.setx(x)
+fpdf.setx(x: float)
 ```
 ### Description ###
 
@@ -13,4 +13,4 @@ x:
 
 ### See also ###
 
-GetX, GetY, SetY, SetXY.
+[GetX](GetX.md), [GetY](GetY.md), [SetY](SetY.md), [SetXY](SetXY.md).

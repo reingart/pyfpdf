@@ -6,7 +6,7 @@ fdpf.header()
 
 ### Description ###
 
-This method is used to render the page header. It is automatically called by AddPage and should not be called directly by the application. The implementation in FPDF is empty, so you have to subclass it and override the method if you want a specific processing.
+This method is used to render the page header. It is automatically called by [AddPage](AddPage.md) and should not be called directly by the application. The implementation in FPDF is empty, so you have to subclass it and override the method if you want a specific processing.
 
 ### Example ###
 
@@ -25,4 +25,4 @@ class PDF(FPDF):
 
 ### See also ###
 
-[Footer](Footer.md).
+[AddPage](AddPage.md), [Footer](Footer.md).

@@ -9,4 +9,4 @@ Returns the abscissa of the current position.
 
 ### See also ###
 
-GetY, SetX, SetY, SetXY.
+[GetY](GetY.md), [SetX](SetX.md), [SetY](SetY.md), [SetXY](SetXY.md).
