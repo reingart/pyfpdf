@@ -1,4 +1,8 @@
-# Minimal Example #
+# Tutorial #
+
+[TOC]
+
+## Minimal Example ##
 
 Let's start with the classic example:
 
@@ -51,7 +55,7 @@ Finally, the document is closed and sent to the browser with [Output](reference/
 **Caution**: in case when the PDF is sent to the browser, nothing else must be output, not before nor after (the least space or carriage return matters). If you send some data before, you will get the error message: "Some data has already been output to browser, can't send PDF file". If you send after, your browser may display a blank page.
 
 
-# Header, footer, page break and image #
+## Header, footer, page break and image ##
 
 Here is a two page example with header, footer and logo:
 
@@ -89,6 +93,7 @@ for i in range(1,41):
         pdf.cell(0,10,'Printing line number '+str(i),0,1)
 pdf.output('tuto2.pdf','F')
 ```
+
 [Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto2.pdf)
 
 This example makes use of the [Header](reference/Header.md) and [Footer](reference/Footer.md) methods to process page headers and footers. They are called automatically. They already exist in the FPDF class but do nothing, therefore we have to extend the class and override them.
@@ -101,9 +106,10 @@ Note the use of the [SetY](reference/SetY.md) method which allows to set positio
 Another interesting feature is used here: the automatic page breaking. As soon as a cell would cross a limit in the page (at 2 centimeters from the bottom by default), a break is performed and the font restored. Although the header and footer select their own font (Arial), the body continues with Times. This mechanism of automatic restoration also applies to colors and line width. The limit which triggers page breaks can be set with SetAutoPageBreak.
 
 
-# Line breaks and colors #
+## Line breaks and colors ##
 
 Let's continue with an example which prints justified paragraphs. It also illustrates the use of colors.
+
 ```
 from fpdf import FPDF
 
@@ -173,6 +179,7 @@ pdf.print_chapter(1,'A RUNAWAY REEF','20k_c1.txt')
 pdf.print_chapter(2,'THE PROS AND CONS','20k_c2.txt')
 pdf.output('tuto3.pdf','F')
 ```
+
 [Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto3.pdf)
 
 The GetStringWidth method allows to determine the length of a string in the current font, which is used here to calculate the position and the width of the frame surrounding the title. Then colors are set (via SetDrawColor, SetFillColor and SetTextColor) and the thickness of the line is set to 1 mm (against 0.2 by default) with SetLineWidth. Finally, we output the cell (the last parameter to true indicates that the background must be filled).

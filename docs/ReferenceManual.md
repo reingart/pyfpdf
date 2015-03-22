@@ -1,6 +1,10 @@
-**Important**: original FPDF (PHP) naming convention is CamelCase. This library uses [PEP8](http://www.python.org/dev/peps/pep-0008/) lower\_case\_with\_underscores recommendation.
-
 # PyFPDF Reference Manual #
+
+[TOC]
+
+## Original FPDF API ##
+
+**Important**: original FPDF (PHP) naming convention is CamelCase. This library uses [PEP8](http://www.python.org/dev/peps/pep-0008/) lower\_case\_with\_underscores recommendation.
 
   * [AcceptPageBreak](reference/AcceptPageBreak.md) - accept or not automatic page break
   * [AddFont](reference/AddFont.md) - add a new font
@@ -24,29 +28,36 @@
   * [Output](reference/Output.md) - save or send the document
   * [PageNo](reference/PageNo.md) - page number
   * [Rect](reference/Rect.md) - draw a rectangle
-  * [SetAuthor]](reference/SetAuthor.md) - set the document author
+  * [SetAuthor](reference/SetAuthor.md) - set the document author
   * [SetAutoPageBreak](reference/SetAutoPageBreak.md) - set the automatic page breaking mode
-  * SetCompression - turn compression on or off
-  * SetCreator - set document creator
-  * SetDisplayMode - set display mode
+  * [SetCompression](reference/SetCompression.md) - turn compression on or off
+  * [SetCreator](reference/SetCreator.md) - set document creator
+  * [SetDisplayMode](reference/SetDisplayMode.md) - set display mode
   * [SetDrawColor](reference/SetDrawColor.md) - set drawing color
   * [SetFillColor](reference/SetFillColor.md) - set filling color
   * [SetFont](reference/SetFont.md) - set font
-  * SetFontSize - set font size
-  * SetKeywords - associate keywords with document
-  * SetLeftMargin - set left margin
-  * SetLineWidth - set line width
-  * SetLink - set internal link destination
+  * [SetFontSize](reference/SetFontSize.md) - set font size
+  * [SetKeywords](reference/SetKeywords.md) - associate keywords with document
+  * [SetLeftMargin](reference/SetLeftMargin.md) - set left margin
+  * [SetLineWidth](reference/SetLineWidth.md) - set line width
+  * [SetLink](reference/SetLink.md) - set internal link destination
   * [SetMargins](reference/SetMargins.md) - set margins
-  * SetRightMargin - set right margin
-  * [SetStretching](reference/SetStretching.md) - set horizontal font stretching
-  * SetSubject - set document subject
+  * [SetRightMargin](reference/SetLeftMargin.md) - set right margin
+  * [SetSubject](reference/SetSubject) - set document subject
   * [SetTextColor](reference/SetTextColor.md) - set text color
   * [SetTitle](reference/SetTitle.md) - set document title
-  * SetTopMargin - set top margin
+  * [SetTopMargin](reference/SetLeftMargin.md) - set top margin
   * [SetX](reference/SetX.md) - set current x position
   * [SetXY](reference/SetXY.md) - set current x and y positions
   * [SetY](reference/SetY.md) - set current y position
   * [Text](reference/Text.md) - print a string
   * [Write](reference/Write.md) - print flowing text
+
+## Additional API ##
+  
+This features not available in original FPDF and implemented after fork.
+
+  * [DashedLine](reference/DashedLine.md) - draw a dashed line
+  * [SetStretching](reference/SetStretching.md) - set horizontal font stretching
   * [WriteHTML](reference/WriteHTML.md) - print text with HTML markup
+

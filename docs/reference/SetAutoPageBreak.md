@@ -1,7 +1,7 @@
 ## SetAutoPageBreak ##
 
 ```
-fpdf.set_auto_page_break(auto, margin = 0)
+fpdf.set_auto_page_break(auto; bool, margin = 0.0)
 ```
 
 ### Description ###

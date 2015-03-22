@@ -1,7 +1,7 @@
 ## SetTextColor ##
 
 ```
-fpdf.set_text_color(r:int [, g:int, b:int])
+fpdf.set_text_color(r: int, g: int = -1, b: int = -1)
 ```
 
 ### Description ###
@@ -11,7 +11,7 @@ Defines the color used for text. It can be expressed in RGB components or gray s
 ### Parameters ###
 
 r:
-> If g et b are given, red component; if not, indicates the gray level. Value between 0 and 255.
+> If `g` and `b` are given, red component; if not, indicates the gray level. Value between 0 and 255.
 
 g:
 > Green component (between 0 and 255).

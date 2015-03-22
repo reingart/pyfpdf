@@ -1,7 +1,7 @@
 ## Rect ##
 
 ```
-fpdf.rect(float x, float y, float w, float h [, string style])
+fpdf.rect(x: float, y: float, w: float, h: float, style = '')
 ```
 
 ### Description ###
@@ -12,17 +12,21 @@ Outputs a rectangle. It can be drawn (border only), filled (with no border) or b
 
 x:
 > Abscissa of upper-left corner.
+
 y:
 > Ordinate of upper-left corner.
+
 w:
 > Width.
+
 h:
 > Height.
+
 style:
 > Style of rendering. Possible values are:
->> D or empty string: draw. This is the default value.
->> F: fill
->> DF or FD: draw and fill
+>>  * `D` or empty string: draw. This is the default value.
+>>  * `F`: fill
+>>  * `DF` or `FD`: draw and fill
 
 ### See also ###
 

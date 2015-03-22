@@ -1,6 +1,6 @@
 ## Write ##
 ```
-write(h: float, txt: str , link)
+write(h: float, txt: str, link)
 ```
 
 ### Description ###
@@ -12,10 +12,12 @@ It is possible to put a link on the text.
 
 h:
 > Line height.
+
 txt:
 > String to print.
+
 link:
-> URL or identifier returned by AddLink().
+> URL or identifier returned by [AddLink](AddLink.md).
 
 ### Example ###
 ```
@@ -27,6 +29,7 @@ pdf.set_text_color(0,0,255);
 pdf.set_font('','U');
 pdf.write(5,'www.fpdf.org','http://www.fpdf.org');
 ```
+
 ### See also ###
 
-SetFont(), SetTextColor(), AddLink(), MultiCell(), SetAutoPageBreak().
+[SetFont](SetFont.md), [SetTextColor](SetTextColor.md), [AddLink](AddLink.md), [MultiCell](MultiCell.md), SetAutoPageBreak](SetAutoPageBreak.md), [WriteHTML](WriteHTML.md)

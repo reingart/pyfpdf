@@ -1,7 +1,7 @@
 ## Line ##
 
 ```
-fpdf.line(x1,y1,x2,y2)
+fpdf.line(x1, y1, x2, y2)
 ```
 
 ### Description ###
@@ -12,10 +12,13 @@ Draw a line between two points.
 
 x1:
 > Abscissa of first point
+
 y1:
 > Ordinate of first point
+
 x2:
 > Abscissa of second point
+
 y2:
 > Ordinate of second point
 
@@ -28,4 +31,4 @@ pdf.line(10, 30, 110, 30)
 
 ### See also ###
 
-DashedLine
+[DashedLine](DashedLine.md).

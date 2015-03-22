@@ -1,6 +1,8 @@
 ## AliasNbPages ##
 
-fpdf.alias\_nb\_pages()
+```
+fpdf.alias_nb_pages()
+```
 
 ### Description ###
 
@@ -29,4 +31,4 @@ pdf.alias_nb_pages()
 
 ### See also ###
 
-PageNo, [Footer](Footer.md).
+[PageNo](PageNo.md), [Footer](Footer.md).

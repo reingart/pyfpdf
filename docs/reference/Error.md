@@ -1,7 +1,7 @@
 ## Error ##
 
 ```
-fpdf.error(string msg)
+fpdf.error(msg: str)
 ```
 
 ### Description ###

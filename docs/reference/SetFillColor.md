@@ -1,7 +1,7 @@
 ## SetFillColor ##
 
 ```
-fpdf.set_fill_color(r:int [, g:int, b:int])
+fpdf.set_fill_color(r: int, g: int = -1, b: int = -1)
 ```
 
 ### Description ###
@@ -11,12 +11,14 @@ Defines the color used for all filling operations (filled rectangles and cell ba
 ### Parameters ###
 
 r:
-> If g and b are given, red component; if not, indicates the gray level. Value between 0 and 255.
+> If `g` and `b` are given, red component; if not, indicates the gray level. Value between 0 and 255.
+
 g:
 > Green component (between 0 and 255).
+
 b:
 > Blue component (between 0 and 255).
 
 ### See also ###
 
-SetDrawColor, SetTextColor, [Rect](Rect.md), [Cell](Cell.md), MultiCell.
+[SetDrawColor](SetDrawColor.md), [SetTextColor](SetTextColor.md), [Rect](Rect.md), [Cell](Cell.md), [MultiCell](MultiCell.md).

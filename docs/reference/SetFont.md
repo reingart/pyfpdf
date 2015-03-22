@@ -16,15 +16,15 @@ If you just wish to change the current font size, it is simpler to call [SetFont
 
 **Note**: the font metric files must be accessible. They are searched successively in:
 
-The directory defined by the FPDF\_FONTPATH constant (if this constant is defined)
-The font directory located in the directory containing fpdf.py (if it exists)
-<a href='Hidden comment: 
+ * The directory defined by the FPDF\_FONTPATH constant (if this constant is defined)
+ * The font directory located in the directory containing fpdf.py (if it exists)
+
 The directories accessible through include()
 Example defining FPDF_FONTPATH (note the mandatory trailing slash):
 define("FPDF_FONTPATH","/home/www/font/");
 require("fpdf.php");
 If the file corresponding to the requested font is not found, the error "Could not include font metric file" is issued.
-'></a>
+
 
 ### Parameters ###
 
