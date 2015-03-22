@@ -1,0 +1,9 @@
+site_name: PyFPDF
+site_url: https://github.com/reingart/pyfpdf
+repo_url: https://github.com/reingart/pyfpdf.git
+site_description: Simple PDF generation for Python (FPDF PHP port)
+docs_dir: .
+site_dir: html
+#markdown_extensions: toc, tables
+use_directory_urls: false
+theme: readthedocs
