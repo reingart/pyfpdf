@@ -13,7 +13,7 @@ advanced capabilities and easy to learn, extend and maintain.
 Features:
 ---------
 
- * Python 2.5 to 2.7 support (with experimental Python3 support)
+ * Python 2.5 to 3.4 support
  * Unicode (UTF-8) TrueType font subset embedding
  * Barcode I2of5 and code39, QR code coming soon ...
  * PNG, GIF and JPG support (including transparency and alpha channel)
@@ -26,7 +26,7 @@ Installation Instructions:
 To get the latest development version you can download the source code running:
 
 ```
-   hg clone https://code.google.com/p/pyfpdf/ 
+   git clone https://github.com/reingart/pyfpdf.git
    cd pyfpdf
    python setup.py install
 ```
@@ -39,14 +39,19 @@ installers. For example, using pip:
 
 **Note:** [Python Imaging Library](http://www.pythonware.com/products/pil/) 
 (PIL) is needed for GIF support. PNG and JPG support is built-in and don't 
-require any external dependency.
+require any external dependency. For Python > 3.0 
+[Pillow - The friendly PIL fork](https://github.com/python-pillow/Pillow) are 
+suuported.
 
 Documentation:
 --------------
+[![Documentation Status](https://readthedocs.org/projects/pyfpdf-wiki/badge/?version=latest)](https://readthedocs.org/projects/pyfpdf-wiki/?badge=latest)
 
  * Tutorial: https://code.google.com/p/pyfpdf/wiki/Tutorial
  * Reference Manual: https://code.google.com/p/pyfpdf/wiki/ReferenceManual 
    (spanish translation available)
 
-For further information, see the project site: https://code.google.com/p/pyfpdf/
-or the GitHub mirror: https://github.com/reingart/pyfpdf
+For further information, see the project site:
+https://github.com/reingart/pyfpdf or old google code project page
+https://code.google.com/p/pyfpdf/
+
