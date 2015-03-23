@@ -48,6 +48,7 @@ Documentation:
 [![Documentation Status](https://readthedocs.org/projects/pyfpdf/badge/?version=latest)](http://pyfpdf.rtfd.org)
 
  * [Read the Docs](http://pyfpdf.readthedocs.org/en/latest/)
+ * [FAQ](docs/FAQ.md)
  * [Tutorial](docs/Tutorial.md)
  * [Reference Manual](docs/ReferenceManual.md) (spanish translation available)
 
