@@ -1,6 +1,6 @@
 ## SetStretching ##
 
-```
+```python
 fpdf.set_stretching(stretching: float = 100.0)
 ```
 
@@ -19,7 +19,7 @@ stretching:
 
 ### Example ###
 
-```
+```python
 # Arial regular 14
 pdf.set_font('Arial')
 # Set stretching to 50%, narrow text

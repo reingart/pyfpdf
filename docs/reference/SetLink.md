@@ -1,5 +1,6 @@
 ## SetLink ##
-```
+
+```python
 fpdf.set_link(link, y = 0.0, page = -1)
 ```
 ### Description ###

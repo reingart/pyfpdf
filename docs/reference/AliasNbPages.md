@@ -1,6 +1,6 @@
 ## AliasNbPages ##
 
-```
+```python
 fpdf.alias_nb_pages()
 ```
 
@@ -14,7 +14,7 @@ alias:
 > The alias. Default value: {nb}.
 
 ### Example ###
-```
+```python
 class PDF(FPDF):
   def footer(this):
     # Go to 1.5 cm from bottom

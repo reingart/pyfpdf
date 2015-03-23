@@ -1,6 +1,6 @@
 ## Image ##
 
-```
+```python
 fpdf.image(filename, x = None, y = None, w = 0, h = 0, type = '', link = '')
 ```
 

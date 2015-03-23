@@ -1,6 +1,6 @@
 ## AddPage ##
 
-```
+```python
 fpdf.add_page(orientation = '')
 ```
 

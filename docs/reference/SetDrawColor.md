@@ -1,6 +1,6 @@
 ## SetDrawColor ##
 
-```
+```python
 fpdf.set_draw_color(r: int, g: int = -1, b: int = -1)
 ```
 

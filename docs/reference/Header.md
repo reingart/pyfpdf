@@ -1,6 +1,6 @@
 ### Header ###
 
-```
+```python
 fdpf.header()
 ```
 
@@ -10,7 +10,7 @@ This method is used to render the page header. It is automatically called by [Ad
 
 ### Example ###
 
-```
+```python
 class PDF(FPDF):
   def header(self):
     # Select Arial bold 15

@@ -1,6 +1,6 @@
 ## SetTopMargin ##
 
-```
+```python
 fpdf.set_top_margin(margin: float)
 ```
 

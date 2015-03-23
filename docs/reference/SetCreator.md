@@ -1,5 +1,6 @@
 ## SetCreator ##
-```
+
+```python
 fpdf.set_creator(creator: str, isUTF8 = False)
 ```
 ### Description ###

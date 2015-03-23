@@ -1,6 +1,6 @@
 ## Cell ##
 
-```
+```python
 fpdf.cell(w, h = 0, txt = '', border = 0, ln = 0, 
           align = '', fill = False, link = '')
 ```
@@ -54,7 +54,7 @@ link:
 
 ### Example ###
 
-```
+```python
 # Set font
 pdf.set_font('Arial','B',16)
 # Move to 8 cm to the right

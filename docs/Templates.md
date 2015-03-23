@@ -40,7 +40,7 @@ Note the following, the definition of a template will contain the elements. The 
 
 # Example - Hardcoded #
 
-```
+```python
 
 from pyfpdf import Template
 
@@ -86,7 +86,7 @@ Remember that each line represents an Element and each field represents one of t
 
 Then you can use the file like this:
 
-```
+```python
 def test_template():
     f = Template(format="A4",
                  title="Sample Invoice")
@@ -106,6 +106,7 @@ Input files are CSV spreadsheets describing the design (see above).
 Once opened, the designer displays the template with the elements as how they will be located.
 
 The toolbar has buttons for:
+
   * Open, save and print (preview) template
   * Add, delete and duplicate
   * Find items by name or by text
@@ -123,7 +124,7 @@ python designer.py
 
 if you are having problems making it work, so change the imports on designer.py file for the following (it should be fixed in the next version):
 
-```
+```python
 import os, sys
 import wx
 import wx.lib

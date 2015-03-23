@@ -1,5 +1,6 @@
 ## GetX ##
-```
+
+```python
 fpdf.getx()
 ```
 ### Description ###

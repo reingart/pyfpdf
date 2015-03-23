@@ -1,6 +1,6 @@
 ## GetStringWidth ##
 
-```
+```python
 self.get_string_width(s: str)
 ```
 

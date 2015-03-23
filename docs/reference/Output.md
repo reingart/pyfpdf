@@ -1,6 +1,6 @@
 ## Output ##
 
-```
+```python
 fpdf.output(name = '', dest = '')
 ```
 

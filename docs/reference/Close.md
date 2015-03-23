@@ -1,6 +1,6 @@
 ## Close ##
 
-```
+```python
 fpdf.close()
 ```
 

@@ -1,6 +1,6 @@
 ## SetRightMargin ##
 
-```
+```python
 fpdf.set_right_margin(margin: float)
 ```
 

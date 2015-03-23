@@ -1,5 +1,6 @@
 ## Write ##
-```
+
+```python
 write(h: float, txt: str, link)
 ```
 
@@ -20,7 +21,7 @@ link:
 > URL or identifier returned by [AddLink](AddLink.md).
 
 ### Example ###
-```
+```python
 # Begin with regular font
 pdf.set_font('Arial','',14)
 pdf.write(5,'Visit ');

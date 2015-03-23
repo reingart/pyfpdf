@@ -1,6 +1,6 @@
 ## Rect ##
 
-```
+```python
 fpdf.rect(x: float, y: float, w: float, h: float, style = '')
 ```
 

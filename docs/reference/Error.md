@@ -1,6 +1,6 @@
 ## Error ##
 
-```
+```python
 fpdf.error(msg: str)
 ```
 

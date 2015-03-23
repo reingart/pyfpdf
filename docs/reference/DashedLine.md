@@ -1,6 +1,6 @@
 ## DashedLine ##
 
-```
+```python
 fpdf.dashed_line(x1, y1, x2, y2, dash_length = 1, space_length = 1)
 ```
 
@@ -30,7 +30,7 @@ space\_length:
 
 ### Example ###
 
-```
+```python
 # Adds a dashed line beginning at point (10,30), 
 #  ending at point(110,30) with a 
 #  dash length of 1 and a space length of 10.

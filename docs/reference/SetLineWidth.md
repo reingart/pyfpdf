@@ -1,6 +1,6 @@
 ## SetLineWidth ##
 
-```
+```python
 fpdf.set_line_width(width: float)
 ```
 

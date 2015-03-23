@@ -1,5 +1,6 @@
 ## SetSubject ##
-```
+
+```python
 fpdf.set_subject(subject: str, isUTF8 = False)
 ```
 ### Description ###

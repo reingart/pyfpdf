@@ -1,5 +1,6 @@
 ## SetDisplayMode ##
-```
+
+```python
 fpdf.set_display_mode(zoom, layout: str)
 ```
 ### Description ###

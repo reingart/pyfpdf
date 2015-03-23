@@ -1,5 +1,6 @@
 ## SetX ##
-```
+
+```python
 fpdf.setx(x: float)
 ```
 ### Description ###

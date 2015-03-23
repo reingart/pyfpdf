@@ -1,6 +1,6 @@
 ## SetFillColor ##
 
-```
+```python
 fpdf.set_fill_color(r: int, g: int = -1, b: int = -1)
 ```
 

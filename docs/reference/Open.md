@@ -1,6 +1,6 @@
 ## Open ##
 
-```
+```python
 fpdf.open()
 ```
 

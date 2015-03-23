@@ -1,6 +1,6 @@
 ## SetCompression ##
 
-```
+```python
 fpdf.set_compression(compress: bool)
 ```
 

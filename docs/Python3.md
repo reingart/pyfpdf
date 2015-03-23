@@ -1,5 +1,7 @@
 # Python 3000 #
 
+[TOC]
+
 Python 3.x is a new version of the language, with some backward compatibility issues.
 
 In general, Python 2.x code does not run unmodified under Python 3.x, mostly because the "unicode/string/buffer issue", so some steps are taking place to port this library to the new version.
@@ -35,6 +37,7 @@ c:\Python32\python.exe tests\py3k.py
 # Status #
 
 Currently (version 1.7.2, January 2014) there is early experimental support for Python 3:
+
   * most directives are supported (at least `add_page`, `set_font`, `ln`, `write`, `output`)
   * compression is not yet supported (zlib support should be rewritten)
   * ttf unicode fonts are not yet supported, use windows-1252 standards fonts (latin1)
@@ -44,7 +47,7 @@ Currently (version 1.7.2, January 2014) there is early experimental support for 
 
 The following example runs unmodified on Python 2.x and Python 3.x
 
-```
+```python
 from fpdf import FPDF
     
 pdf = FPDF()

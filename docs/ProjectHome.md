@@ -14,7 +14,8 @@ _PyFPDF_ is a library for PDF document generation under Python, ported from php 
   * Small and compact code, useful for testing new features and teaching
 
 This repository is a fork of the library [original port by Max Pat](http://www.fpdf.org/dl.php?id=94), with the following enhancements:
-  * Python 2.5 to 2.7 support (with experimental [Python3](Python3.md) support)
+
+  * Python 2.5 to 3.4+ support (see [Python3](Python3.md) support)
   * [Unicode](Unicode.md) (UTF-8) TrueType font subset embedding (Central European, Cyrillic, Greek, Baltic, Thai, Chinese, Japanese, Korean, Hindi and almost any other language in the world) **New!** based on [sFPDF](http://www.fpdf.org/en/script/script91.php) LGPL3 PHP version from [Ian Back](mailto:ian@bpm1.com?subject=sFPDF)
   * Improved installers (setup.py, py2exe, PyPI) support
   * Barcode I2of5 and code39, QR code coming soon ...
@@ -23,6 +24,7 @@ This repository is a fork of the library [original port by Max Pat](http://www.f
   * Port of [Tutorial](Tutorial.md) and [ReferenceManual](ReferenceManual.md)  (spanish translation available)
 
 FPDF original features:
+
   * Choice of measure unit, page format and margins
   * Page header and footer management
   * Automatic page break
@@ -44,7 +46,7 @@ For your convenience, some installers include the optional ["Free Unicode TrueTy
 
 ## Support ##
 
-For community support, please fell free to fill an [issue](https://code.google.com/p/pyfpdf/issues/list)
+For community support, please fell free to fill an [issue](https://github.com/reingart/pyfpdf/issues)
 
 For priority technical support, you can contact [Mariano Reingart](mailto:reingart@gmail.com) (current maintainer and project owner). Online payments accepted through PayPal.
 

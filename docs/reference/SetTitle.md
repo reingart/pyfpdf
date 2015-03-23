@@ -1,5 +1,6 @@
 ## SetTitle ##
-```
+
+```python
 fpdf.set_title(title: str, isUTF8 = False)
 ```
 ### Description ###

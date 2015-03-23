@@ -1,5 +1,6 @@
 ## PageNo ##
-```
+
+```python
 fpdf.page_no()
 ```
 

@@ -1,6 +1,6 @@
 ## Link ##
 
-```
+```python
 fpdf.link(x: float, y: float, w: float, h: float, link)
 ```
 

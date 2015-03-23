@@ -1,6 +1,6 @@
 ## AddFont ##
 
-```
+```python
 fpdf.add_font(family: str, style = '', fname = '', uni = False)
 ```
 
@@ -50,7 +50,7 @@ Calling this method with uni=False is discouraged as legacy font support is comp
 
 ### Example ###
 
-```
+```python
 # Add a Unicode free font
 pdf.add_font('DejaVu', '', 'DejaVuSansCondensed.ttf', uni=True)
 

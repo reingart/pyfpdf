@@ -1,6 +1,6 @@
 ## SetFont ##
 
-```
+```python
 fpdf.set_font(family, style = '', size = 0)
 ```
 

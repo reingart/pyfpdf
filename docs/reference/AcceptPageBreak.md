@@ -1,6 +1,6 @@
 ## AcceptPageBreak ##
 
-```
+```python
 fpdf.accept_page_break()
 ```
 

@@ -1,5 +1,6 @@
 ## SetKeywords ##
-```
+
+```python
 fpdf.set_keywords(keywords: str, isUTF8 = False)
 ```
 ### Description ###

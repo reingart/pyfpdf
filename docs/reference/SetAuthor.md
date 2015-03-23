@@ -1,5 +1,6 @@
 ## SetAutor ##
-```
+
+```python
 fpdf.set_autor(autor: str, isUTF8 = False)
 ```
 ### Description ###

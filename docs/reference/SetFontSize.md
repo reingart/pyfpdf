@@ -1,6 +1,6 @@
 ## SetFontSize ##
 
-```
+```python
 fpdf.set_font_size(float size)
 ```
 

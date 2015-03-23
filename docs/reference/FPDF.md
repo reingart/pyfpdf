@@ -1,6 +1,6 @@
 ## FPDF ##
 
-```
+```python
 fpdf = FPDF(orientation = 'P', unit = 'mm', format='A4')
 ```
 
@@ -40,6 +40,6 @@ format:
 ### Example ###
 
 Example with a custom 100x150 mm page format:
-```
+```python
 pdf = FPDF('P', 'mm', (100, 150))
 ```

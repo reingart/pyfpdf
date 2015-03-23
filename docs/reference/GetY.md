@@ -1,5 +1,6 @@
 ## GetY ##
-```
+
+```python
 fpdf.gety()
 ```
 ### Description ###

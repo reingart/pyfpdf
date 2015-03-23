@@ -1,6 +1,6 @@
 ## Ln ##
 
-```
+```python
 fpdf.ln(h = '')
 ```
 

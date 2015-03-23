@@ -1,6 +1,6 @@
 ## MultiCell ##
 
-```
+```python
 fpdf.multi_cell(w: float, h: float, txt: str, border = 0, 
                 align: str = 'J', fill: bool = False)
 ```

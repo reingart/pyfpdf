@@ -1,6 +1,6 @@
 ## AddLink ##
 
-```
+```python
 fpdf.add_link()
 ```
 

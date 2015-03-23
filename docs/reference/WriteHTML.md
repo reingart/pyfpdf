@@ -1,5 +1,6 @@
 ## Write ##
-```
+
+```python
 HTMLMixin.write_html(text: str, image_map = None)
 ```
 
@@ -45,7 +46,7 @@ Note: Tables should have at least a first TH row with width attribute.
 
 ### Example ###
 
-```
+```python
 html = """
 <H1 align="center">html2fpdf</H1>
 <h2>Basic usage</h2>
