@@ -1,4 +1,4 @@
-## Write ##
+## WriteHTML ##
 
 ```python
 HTMLMixin.write_html(text: str, image_map = None)

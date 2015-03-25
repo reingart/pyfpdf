@@ -25,6 +25,7 @@ Te main advantage of this method is that the same report can be rendered in a HT
 Sample: [report.pdf](http://pyfpdf.googlecode.com/files/report.pdf)
 
 Updated Live Demo (HTML and PDF version):
+
   * http://www.web2py.com.ar/fpdf/default/report
   * http://www.web2py.com.ar/fpdf/default/report.pdf
 
