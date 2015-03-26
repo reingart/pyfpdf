@@ -37,8 +37,7 @@ SYSTEM_TTFONTS = None
 FPDF_CACHE = None
 
 def change_cache():
-    global FPDF_CACHE, FPDF_CACHE_MODE, FPDF_CACHE_DIR
-    global FPDF_FONT_DIR, SYSTEM_TTFONTS
+    global FPDF_CACHE
     FPDF_CACHE = instance_cache(cache_mode = FPDF_CACHE_MODE, 
         cache_dir = FPDF_CACHE_DIR, font_dir = FPDF_FONT_DIR, 
         system_fonts = SYSTEM_TTFONTS)
@@ -489,7 +488,6 @@ class FPDF(object):
             # Font already added!
             return
         if (uni):
-            global FPDF_CACHE
             cache = self.cache or FPDF_CACHE
             ttffilename = cache.find_font(fname)
             if not ttffilename:

@@ -61,7 +61,7 @@ complex and deprecated.
 pdf.add_font('DejaVu', '', 'DejaVuSansCondensed.ttf', uni = True)
 
 # Add a Unicode system font (using full path)
-pdf.add_font('sysfont', '', r"c:\WINDOWS\Fonts\arial.ttf", uni =T rue)
+pdf.add_font('sysfont', '', r"c:\WINDOWS\Fonts\arial.ttf", uni = True)
 ```
 
 ### See also ###
