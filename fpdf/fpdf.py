@@ -1127,13 +1127,13 @@ class FPDF(object):
 
     def set_cache(self, cache):
         "Change cache"
-        global FPDF_FONT_DIR, SYSTEM_TTFONTS
-        if isinstance(cache, int): # 0 - same folder, 1 - none
-            self.cache = instance_cache(cache, 
-                    cache_dir = None, font_dir = FPDF_FONT_DIR, 
+        if cache is None: cache = 0
+        if isinstance(cache, int): # 0 - none, 1 - same folder
+            self.cache = instance_cache(0 if cache else 1,
+                    cache_dir = None, font_dir = FPDF_FONT_DIR,
                     system_fonts = SYSTEM_TTFONTS)
         elif isinstance(cache, str): # hash path
-            self.cache = instance_cache(2, 
+            self.cache = instance_cache(2,
                     cache_dir = cache, font_dir = FPDF_FONT_DIR, 
                     system_fonts = SYSTEM_TTFONTS)
         else:

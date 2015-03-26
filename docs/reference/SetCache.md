@@ -10,7 +10,7 @@ This method change caching mechanism for current fpdf class instance.
 If this method not called before [AddFont](AddFont.md) cached files are
 created in same folder with fonts.
 
-**Note**: Prior version `1.7.2` caching behaviour can be changed 
+**Note**: Prior to version `1.7.2` caching behaviour can be changed 
 by `FPDF_CACHE_MODE` constant:
 
   * 0 - (by default), store cache in the same folder as font file
@@ -22,8 +22,8 @@ by `FPDF_CACHE_MODE` constant:
 cache:
 > This value can be int, str or cache class.
 >> * int instance:
->>>  * 0 - standard cache behaviour
->>>  * 1 - do not create or load cache files
+>>>  * False, 0 or None - do not create or load cache files
+>>>  * True or 1 - standard cache behaviour
 >> * str instance - path to cache folder
 >> * cache instance - caching class (see Builtin cache classes)
 

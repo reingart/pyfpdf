@@ -98,13 +98,13 @@ def dotest(outputname, nostamp):
     # --- normal cache mode ---
     # first load
     t0 = time.time()
-    pdf = testfile(f1, f2, 0)
+    pdf = testfile(f1, f2, 1)
     t1 = time.time()
     assert os.path.exists(f1[:-3] + "pkl"), "Pickle for DejaVuSansCondensed not found"
     assert os.path.exists(f2[:-3] + "pkl"), "Pickle for DejaVuSans not found"
     # load cached
     t2 = time.time()
-    pdf = testfile(f1, f2, 0)
+    pdf = testfile(f1, f2, True)
     t3 = time.time()
     if not nostamp:
         common.log("Cache fonts:  ", t1 - t0)
@@ -126,7 +126,7 @@ def dotest(outputname, nostamp):
     trashfile(f2[:-3] + "cw127.pkl")
     # test same file
     t0 = time.time()
-    pdf = testfile(f1, f2, 1)
+    pdf = testfile(f1, f2, None)
     t1 = time.time()
     # remove pkl files
     os.remove(f1[:-3] + "pkl")
@@ -134,7 +134,7 @@ def dotest(outputname, nostamp):
     os.remove(f2[:-3] + "cw127.pkl")
     # test reload
     t2 = time.time()
-    pdf = testfile(f1, f2, 1)
+    pdf = testfile(f1, f2, False)
     t3 = time.time()
     if not nostamp:
         common.log("No cache 1st: ", t1 - t0)
