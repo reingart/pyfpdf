@@ -12,6 +12,8 @@
 #PyFPDF-cover-test:hash=44624598b76bd4a18c6b14d3e00563e7
 #PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 
+import os
+
 import common
 from fpdf import FPDF
 
@@ -21,8 +23,9 @@ def dotest(outputname, nostamp):
     if nostamp:
         pdf._putinfo = lambda: common.test_putinfo(pdf)
     pdf.add_page()
-    pdf.add_font('DejaVu','','font/DejaVuSansCondensed.ttf',uni=True)
-    pdf.set_font('DejaVu','',14)
+    pdf.add_font('DejaVu', '', os.path.join(common.basepath, 
+        'font/DejaVuSansCondensed.ttf'), uni = True)
+    pdf.set_font('DejaVu', '', 14)
 
     # Note: this line cause syntax error in Python 3.0-3.2
     text = u"""
