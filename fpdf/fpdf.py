@@ -33,6 +33,13 @@ FPDF_CACHE_MODE = 0 # 0 - in same folder, 1 - none, 2 - hash
 FPDF_CACHE_DIR = None
 SYSTEM_TTFONTS = None
 
+PAGE_FORMATS = {
+    "a3": (841.89, 1190.55),
+    "a4": (595.28, 841.89),
+    "a5": (420.94, 595.28),
+    "letter": (612, 792),
+    "legal": (612, 1008),
+}
 
 def set_global(var, val):
     globals()[var] = val
@@ -59,7 +66,6 @@ class FPDF(object):
         self.n=2                        # current object number
         self.buffer=''                  # buffer holding in-memory PDF
         self.pages = {}                 # array containing pages and metadata
-        #self.orientation_changes={}     # array indicating orientation changes
         self.state=0                    # current document state
         self.fonts={}                   # array of used fonts
         self.font_files={}              # array of font files
@@ -87,38 +93,20 @@ class FPDF(object):
             'times':'Times-Roman','timesB':'Times-Bold','timesI':'Times-Italic','timesBI':'Times-BoldItalic',
             'symbol':'Symbol','zapfdingbats':'ZapfDingbats'}
         # Scale factor
-        if(unit=='pt'):
-            self.k=1
-        elif(unit=='mm'):
-            self.k=72/25.4
-        elif(unit=='cm'):
-            self.k=72/2.54
-        elif(unit=='in'):
-            self.k=72.
+        if unit == "pt":
+            self.k = 1
+        elif unit == "mm":
+            self.k = 72 / 25.4
+        elif unit == "cm":
+            self.k = 72 / 2.54
+        elif unit == 'in':
+            self.k = 72.
         else:
-            self.error('Incorrect unit: '+unit)
+            self.error("Incorrect unit: " + unit)
         # Page format
-        if(isinstance(format,basestring)):
-            format=format.lower()
-            if(format=='a3'):
-                format=(841.89,1190.55)
-            elif(format=='a4'):
-                format=(595.28,841.89)
-            elif(format=='a5'):
-                format=(420.94,595.28)
-            elif(format=='letter'):
-                format=(612,792)
-            elif(format=='legal'):
-                format=(612,1008)
-            else:
-                self.error('Unknown page format: '+format)
-            self.fw_pt=format[0]
-            self.fh_pt=format[1]
-        else:
-            self.fw_pt=format[0]*self.k
-            self.fh_pt=format[1]*self.k
-        self.fw=self.fw_pt/self.k
-        self.fh=self.fh_pt/self.k
+        self.fw_pt, self.fh_pt = self.get_page_format(format, self.k)
+        self.fw = self.fw_pt / self.k
+        self.fh = self.fh_pt / self.k
         # Page orientation
         orientation=orientation.lower()
         if(orientation=='p' or orientation=='portrait'):
@@ -149,6 +137,18 @@ class FPDF(object):
         self.set_compression(1)
         # Set default PDF version number
         self.pdf_version='1.3'
+
+    @staticmethod
+    def get_page_format(format, k):
+        "Return scale factor, page w and h size in points"
+        if isinstance(format, basestring):
+            format = format.lower()
+            if format in PAGE_FORMATS:
+                return PAGE_FORMATS[format]
+            else:
+                self.error("Unknown page format: " + format)
+        else:
+            return (format[0] * k, format[1] * k)
 
     def check_page(fn):
         "Decorator to protect drawing methods"
