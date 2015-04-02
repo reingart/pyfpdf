@@ -58,6 +58,7 @@
 This features not available in original FPDF and implemented after fork.
 
   * [DashedLine](reference/DashedLine.md) - draw a dashed line
+  * [Ellipse](reference/Ellipse.md) - draw an ellipse
   * [SetStretching](reference/SetStretching.md) - set horizontal font stretching
   * [WriteHTML](reference/WriteHTML.md) - print text with HTML markup
 

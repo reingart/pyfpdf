@@ -26,6 +26,7 @@ pages:
 - ["reference/Cell.md", "Reference manual", "Cell"]
 - ["reference/Close.md", "Reference manual", "Close"]
 - ["reference/DashedLine.md", "Reference manual", "DashedLine"]
+- ["reference/Ellipse.md", "Reference manual", "Ellipse"]
 - ["reference/Error.md", "Reference manual", "Error"]
 - ["reference/FPDF.md", "Reference manual", "FPDF"]
 - ["reference/Footer.md", "Reference manual", "Footer"]

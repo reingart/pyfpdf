@@ -6,7 +6,8 @@ fpdf.rect(x: float, y: float, w: float, h: float, style = '')
 
 ### Description ###
 
-Outputs a rectangle. It can be drawn (border only), filled (with no border) or both.
+Outputs a rectangle. It can be drawn (border only), filled (with no border) or 
+both.
 
 ### Parameters ###
 
@@ -30,4 +31,4 @@ style:
 
 ### See also ###
 
-[Cell](Cell.md).
+[Cell](Cell.md), [Ellipse](Ellipse.md).
