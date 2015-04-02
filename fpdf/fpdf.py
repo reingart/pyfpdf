@@ -58,8 +58,8 @@ class FPDF(object):
         self.page=0                     # current page number
         self.n=2                        # current object number
         self.buffer=''                  # buffer holding in-memory PDF
-        self.pages={}                   # array containing pages
-        self.orientation_changes={}     # array indicating orientation changes
+        self.pages = {}                 # array containing pages and metadata
+        #self.orientation_changes={}     # array indicating orientation changes
         self.state=0                    # current document state
         self.fonts={}                   # array of used fonts
         self.font_files={}              # array of font files
@@ -1146,11 +1146,14 @@ class FPDF(object):
             # Replace number of pages in fonts using subsets (unicode)
             alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False)
             r = UTF8ToUTF16BE(str(nb), False)
-            for n in range(1, nb+1):
-                self.pages[n] = self.pages[n].replace(alias, r)
+            for n in range(1, nb + 1):
+                self.pages[n]["content"] = \
+                    self.pages[n]["content"].replace(alias, r)
             # Now repeat for no pages in non-subset fonts
-            for n in range(1,nb+1):
-                self.pages[n]=self.pages[n].replace(self.str_alias_nb_pages,str(nb))
+            for n in range(1,nb + 1):
+                self.pages[n]["content"] = \
+                    self.pages[n]["content"].replace(self.str_alias_nb_pages,
+                        str(nb))
         if(self.def_orientation=='P'):
             w_pt=self.fw_pt
             h_pt=self.fh_pt
@@ -1166,8 +1169,8 @@ class FPDF(object):
             self._newobj()
             self._out('<</Type /Page')
             self._out('/Parent 1 0 R')
-            if n in self.orientation_changes:
-                self._out(sprintf('/MediaBox [0 0 %.2f %.2f]',h_pt,w_pt))
+            if self.pages[n]["orientation"] != self.def_orientation:
+                self._out(sprintf('/MediaBox [0 0 %.2f %.2f]', h_pt, w_pt))
             self._out('/Resources 2 0 R')
             if self.page_links and n in self.page_links:
                 #Links
@@ -1190,12 +1193,13 @@ class FPDF(object):
             self._out('/Contents '+str(self.n+1)+' 0 R>>')
             self._out('endobj')
             #Page content
+            content = self.pages[n]["content"]
             if self.compress:
                 # manage binary data as latin1 until PEP461 or similar is implemented
-                p = self.pages[n].encode("latin1") if PY3K else self.pages[n] 
+                p = content.encode("latin1") if PY3K else content
                 p = zlib.compress(p)
             else:
-                p = self.pages[n]
+                p = content
             self._newobj()
             self._out('<<'+filter+'/Length '+str(len(p))+'>>')
             self._putstream(p)
@@ -1687,34 +1691,33 @@ class FPDF(object):
         self.state=3
 
     def _beginpage(self, orientation):
-        self.page+=1
-        self.pages[self.page]=''
-        self.state=2
-        self.x=self.l_margin
-        self.y=self.t_margin
-        self.font_family=''
-        self.font_stretching=100
+        self.page += 1
+        self.pages[self.page] = {"content": ""}
+        self.state = 2
+        self.x = self.l_margin
+        self.y = self.t_margin
+        self.font_family = ''
+        self.font_stretching = 100
         #Page orientation
-        if(not orientation):
-            orientation=self.def_orientation
+        if not orientation:
+            orientation = self.def_orientation
         else:
-            orientation=orientation[0].upper()
-            if(orientation!=self.def_orientation):
-                self.orientation_changes[self.page]=1
-        if(orientation!=self.cur_orientation):
+            orientation = orientation[0].upper()
+        self.pages[self.page]["orientation"] = orientation
+        if orientation != self.cur_orientation:
             #Change orientation
-            if(orientation=='P'):
-                self.w_pt=self.fw_pt
-                self.h_pt=self.fh_pt
-                self.w=self.fw
-                self.h=self.fh
+            if orientation == 'P':
+                self.w_pt = self.fw_pt
+                self.h_pt = self.fh_pt
+                self.w = self.fw
+                self.h = self.fh
             else:
-                self.w_pt=self.fh_pt
-                self.h_pt=self.fw_pt
-                self.w=self.fh
-                self.h=self.fw
-            self.page_break_trigger=self.h-self.b_margin
-            self.cur_orientation=orientation
+                self.w_pt = self.fh_pt
+                self.h_pt = self.fw_pt
+                self.w = self.fh
+                self.h = self.fw
+            self.page_break_trigger = self.h - self.b_margin
+            self.cur_orientation = orientation
 
     def _endpage(self):
         #End of page contents
@@ -1935,10 +1938,10 @@ class FPDF(object):
             s = s.encode("latin1")    # default encoding (font name and similar)      
         elif not isinstance(s, basestring):
             s = str(s)
-        if(self.state==2):
-            self.pages[self.page]+=s+"\n"
+        if(self.state == 2):
+            self.pages[self.page]["content"] += (s + "\n")
         else:
-            self.buffer+=s+"\n"
+            self.buffer += (s + "\n")
 
     @check_page
     def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
