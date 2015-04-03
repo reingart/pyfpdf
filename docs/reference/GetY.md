@@ -1,7 +1,7 @@
 ## GetY ##
 
 ```python
-fpdf.gety()
+fpdf.get_y()
 ```
 ### Description ###
 

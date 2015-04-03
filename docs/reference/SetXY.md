@@ -1,7 +1,7 @@
 ## SetXY ##
 
 ```python
-fpdf.setxy(x: float, y: float)
+fpdf.set_xy(x: float, y: float)
 ```
 ### Description ###
 

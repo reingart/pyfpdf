@@ -9,7 +9,7 @@ Defines the creator of the document. This is typically the name of the applicati
 
 ### Parameters ###
 
-author:
+creator:
 > The name of the creator.
 
 isUTF8:

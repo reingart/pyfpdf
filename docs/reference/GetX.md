@@ -1,7 +1,7 @@
 ## GetX ##
 
 ```python
-fpdf.getx()
+fpdf.get_x()
 ```
 ### Description ###
 

@@ -1,7 +1,7 @@
-## SetAutor ##
+## SetAuthor ##
 
 ```python
-fpdf.set_autor(autor: str, isUTF8 = False)
+fpdf.set_author(author: str, isUTF8 = False)
 ```
 ### Description ###
 

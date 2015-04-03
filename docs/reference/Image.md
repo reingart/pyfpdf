@@ -1,7 +1,7 @@
 ## Image ##
 
 ```python
-fpdf.image(filename, x = None, y = None, w = 0, h = 0, type = '', link = '')
+fpdf.image(name, x = None, y = None, w = 0, h = 0, type = '', link = '')
 ```
 
 ### Description ###
@@ -43,7 +43,7 @@ It is possible to put a link on the image.
 
 ### Parameters ###
 
-file:
+name:
 > Path or URL of the image.
 
 x:
