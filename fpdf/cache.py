@@ -17,35 +17,18 @@ from .py3k import pickle, hashpath
 
 CACHE_VERSION = 3 # This constant will be updated with any format changes
 
-def instance_cache(cache_mode, cache_dir = None, font_dir = None, 
-        system_fonts = None): # match with FPDF_CACHE_MODE
+def instance_cache(cache_mode, cache_dir = None): # match with FPDF_CACHE_MODE
     if cache_mode == 0: # 
-        return StdCache(font_dir = font_dir, system_fonts = system_fonts)
+        return StdCache()
     elif (cache_mode == 1) or (cache_mode == 2 and not cache_dir):
-        return NoneCache(font_dir = font_dir, system_fonts = system_fonts)
+        return NoneCache()
     elif cache_mode == 2:
-        return HashCache(font_dir = font_dir, system_fonts = system_fonts,
-            cache_dir = cache_dir)
+        return HashCache(cache_dir = cache_dir)
     else:
         raise Exception("Unknown FPDF_CACHE_MODE mode")
 
 class NoneCache:
     """Do not store file cache (FPDF_CACHE_MODE == 1)"""
-    def __init__(self, font_dir = None, system_fonts = None):
-        self.font_dir = font_dir
-        self.system_fonts = system_fonts
-
-    def find_font(self, fname):
-        ttffilename = None
-        if os.path.exists(fname):
-            return fname
-        if (self.font_dir and
-            os.path.exists(os.path.join(self.font_dir, fname))):
-            return os.path.join(self.font_dir, fname)
-        if (self.system_fonts and
-            os.path.exists(os.path.join(self.system_fonts, fname))):
-            return os.path.join(self.system_fonts, fname)
-        return None
 
     def cache_for(self, fname, ext = ".pkl"):
         return None
@@ -94,8 +77,7 @@ class StdCache(NoneCache):
         
 class HashCache(StdCache):
     "Store cache files in specified folder (FPDF_CACHE_MODE == 2)"
-    def __init__(self, font_dir = None, system_fonts = None, cache_dir = None):
-        StdCache.__init__(self, font_dir, system_fonts)
+    def __init__(self, cache_dir = None):
         self.cache_dir = cache_dir
         assert self.cache_dir is not None, "Cache dir must be specified"
     
@@ -103,4 +85,4 @@ class HashCache(StdCache):
         fname = os.path.abspath(fname)
         return os.path.join(self.cache_dir, \
                     hashpath(fname) + ext)
-    
+

@@ -39,8 +39,7 @@ FPDF_CACHE = None
 def change_cache():
     global FPDF_CACHE
     FPDF_CACHE = instance_cache(cache_mode = FPDF_CACHE_MODE, 
-        cache_dir = FPDF_CACHE_DIR, font_dir = FPDF_FONT_DIR, 
-        system_fonts = SYSTEM_TTFONTS)
+        cache_dir = FPDF_CACHE_DIR)
 change_cache()
     
 def set_global(var, val):
@@ -473,6 +472,20 @@ class FPDF(object):
             (cx+rx)*self.k, (self.h-cy)*self.k, 
             op))
 
+    def find_font(self, fname):
+        "Search font in standart folders"
+        ttffilename = None
+        if os.path.exists(fname):
+            return fname
+        if (self.font_dir and
+            os.path.exists(os.path.join(FPDF_FONT_DIR, fname))):
+            return os.path.join(FPDF_FONT_DIR, fname)
+        if (self.system_fonts and
+            os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
+            return os.path.join(SYSTEM_TTFONTS, fname)
+        return None
+        
+
     def add_font(self, family, style='', fname='', uni=False):
         "Add a TrueType or Type1 font"
         family = family.lower()
@@ -488,11 +501,11 @@ class FPDF(object):
             # Font already added!
             return
         if (uni):
-            cache = self.cache or FPDF_CACHE
-            ttffilename = cache.find_font(fname)
+            ttffilename = self.find_font(fname)
             if not ttffilename:
                 raise RuntimeError("TTF Font file not found: %s" % fname)
             name = ''
+            cache = self.cache or FPDF_CACHE
             unifilename = cache.cache_for(ttffilename)
             font_dict = cache.load_cache(unifilename, 
                 os.path.abspath(ttffilename))
@@ -1127,15 +1140,9 @@ class FPDF(object):
 
     def set_cache(self, cache):
         "Change cache"
-        if cache is None: cache = 0
-        if isinstance(cache, int): # 0 - none, 1 - same folder
-            self.cache = instance_cache(0 if cache else 1,
-                    cache_dir = None, font_dir = FPDF_FONT_DIR,
-                    system_fonts = SYSTEM_TTFONTS)
-        elif isinstance(cache, str): # hash path
+        if isinstance(cache, str): # hash path
             self.cache = instance_cache(2,
-                    cache_dir = cache, font_dir = FPDF_FONT_DIR, 
-                    system_fonts = SYSTEM_TTFONTS)
+                    cache_dir = cache)
         else:
             self.cache = cache
 

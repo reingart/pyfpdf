@@ -20,10 +20,6 @@ by `FPDF_CACHE_MODE` constant:
 ### Parameters ###
 
 cache:
-> This value can be int, str or cache class.
->> * int instance:
->>>  * False, 0 or None - do not create or load cache files
->>>  * True or 1 - standard cache behaviour
 >> * str instance - path to cache folder
 >> * cache instance - caching class (see Builtin cache classes)
 
@@ -31,21 +27,15 @@ cache:
 
 #### NoneCache ####
 
-This class are base for all other classes. Instanced when `cache` parameter is
-`1`.
+This class are base for all other classes.
 
- * `__init__(font_dir = None, system_fonts = None)` - constructor, `font_dir`
-   and `system_fonts` are used to search font by its name.
- * `find_font(fname)` - return full path to font if exists
  * `cache_for(fname, ext = ".pkl")` - return full name of cache file, with
-    specified extension, or None if not applicable
+   specified extension, or None if not applicable
 
 #### StdCache ####
 
 This is default class instanted with fpdf library by default and applied to all
-instances of FPDF class. `font_dir` are set to `FPDF_FONT_DIR` and 
-`system_fonts` are set to `SYSTEM_TTFONTS`. Instanced when `cache` parameter is
-`0`.
+instances of FPDF class.
 
  * `load_cache(filename, ttf = None)` - load cached data, with optional check 
     TTF filename
@@ -55,7 +45,7 @@ instances of FPDF class. `font_dir` are set to `FPDF_FONT_DIR` and
 #### HashCache ####
 
 This class can be used to store all cache in one folder, where full font path 
-encoded as hash. Instanced when `cache` parameter is `str` type.
+encoded as hash. Instantiated when `cache` parameter is `str`.
 
 ### Example ###
 
@@ -64,7 +54,7 @@ For complex example refer to `tests/cover/test_cache_cls.py`.
 ```python
 pdf = FPDF('P', 'mm', (100, 150))
 # disable cache
-pdf.set_cache(1)
+pdf.set_cache(NoneCache())
 # add font, no .pkl files
 pdf.add_font('DejaVu', '', "./fonts/DejaVuSans.ttf", uni = True) 
 ```
