@@ -5,11 +5,12 @@
 #PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 #PyFPDF-cover-test:res=font/DejaVuSans.ttf
 
-import common
-import fpdf
-
 import os, shutil, time
 import gzip
+from hashlib import md5
+
+import common
+import fpdf
 
 def testfile(f1, f2, cache):
     # create pdf
@@ -27,13 +28,6 @@ def trashfile(fn):
     f.write("1234567890")
     f.close()
 
-try:
-    from hashlib import md5
-except ImportError:
-    try:
-        from md5 import md5
-    except ImportError:
-        md5 = None
 def hashfn(fn):
     h = md5()
     fn = os.path.abspath(fn)

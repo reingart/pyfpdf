@@ -67,10 +67,10 @@ class StdCache(NoneCache):
         try:
             with open(filename, "rb") as fh:
                 data = pickle.load(fh)
-                assert data["CACHE_VERSION"] == CACHE_VERSION
-                assert data["SYS_VERSION"] == tuple(sys.version_info)
+                assert data.get("CACHE_VERSION", 0) == CACHE_VERSION
+                assert data.get("SYS_VERSION", 0) == tuple(sys.version_info)
                 if ttf:
-                    assert data["TTF_PATH"] == ttf
+                    assert data.get("TTF_PATH", "") == ttf
                 return data
         except (IOError, pickle.UnpicklingError, ValueError, AssertionError):
             return None
