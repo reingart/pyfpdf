@@ -55,11 +55,11 @@ size:
 # Times regular 12
 pdf.set_font('Times')
 # Arial bold 14
-pdf.set_font('Arial','B',14)
+pdf.set_font('Arial', 'B', 14)
 # Removes bold
 pdf.set_font('')
 # Times bold, italic and underlined 14
-pdf.set_font('Times','BIU')
+pdf.set_font('Times', 'BIU')
 ```
 
 ### See also ###

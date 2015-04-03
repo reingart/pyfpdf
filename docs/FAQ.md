@@ -62,17 +62,17 @@ from fpdf import FPDF
 def get_me_a_pyfpdf():
     title = "This The Doc Title"
     heading = "First Paragraph"
-    text = 'bla '* 10000
+    text = 'bla ' * 10000
 
-    pdf=FPDF()
+    pdf = FPDF()
     pdf.add_page()
-    pdf.set_font('Times','B',15)
-    pdf.cell(w=210,h=9,txt=title,border=0,ln=1,align='C',fill=0)
-    pdf.set_font('Times','B',15)
-    pdf.cell(w=0,h=6,txt=heading,border=0,ln=1,align='L',fill=0)
-    pdf.set_font('Times','',12)
-    pdf.multi_cell(w=0,h=5,txt=text)
-    response.headers['Content-Type']='application/pdf'
+    pdf.set_font('Times', 'B', 15)
+    pdf.cell(w=210, h=9, txt=title, border=0, ln=1, align='C', fill=0)
+    pdf.set_font('Times', 'B', 15)
+    pdf.cell(w=0, h=6, txt=heading, border=0, ln=1, align='L', fill=0)
+    pdf.set_font('Times', '', 12)
+    pdf.multi_cell(w=0, h=5, txt=text)
+    response.headers['Content-Type'] = 'application/pdf'
     return pdf.output(dest='S')
 ```
 
@@ -91,20 +91,20 @@ import os
 def get_me_a_pdf():
     title = "This The Doc Title"
     heading = "First Paragraph"
-    text = 'bla '* 10000
+    text = 'bla ' * 10000
 
     styles = getSampleStyleSheet()
-    tmpfilename=os.path.join(request.folder,'private',str(uuid4()))
+    tmpfilename = os.path.join(request.folder, 'private', str(uuid4()))
     doc = SimpleDocTemplate(tmpfilename)
     story = []
-    story.append(Paragraph(escape(title),styles["Title"]))
-    story.append(Paragraph(escape(heading),styles["Heading2"]))
-    story.append(Paragraph(escape(text),styles["Normal"]))
-    story.append(Spacer(1,2*inch))
+    story.append(Paragraph(escape(title), styles["Title"]))
+    story.append(Paragraph(escape(heading), styles["Heading2"]))
+    story.append(Paragraph(escape(text), styles["Normal"]))
+    story.append(Spacer(1, 2 * inch))
     doc.build(story)
-    data = open(tmpfilename,"rb").read()
+    data = open(tmpfilename, "rb").read()
     os.unlink(tmpfilename)
-    response.headers['Content-Type']='application/pdf'
+    response.headers['Content-Type'] = 'application/pdf'
     return data
 ```
 

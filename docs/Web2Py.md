@@ -35,42 +35,42 @@ def report():
     
     # include a google chart (download it dynamically!)
     url = "http://chart.apis.google.com/chart?cht=p3&chd=t:60,40&chs=500x200&chl=Hello|World&.png"
-    chart = IMG(_src=url, _width="250",_height="100")
+    chart = IMG(_src=url, _width="250", _height="100")
 
     # create a small table with some data:
-    rows = [THEAD(TR(TH("Key",_width="70%"), TH("Value",_width="30%"))),
-            TBODY(TR(TD("Hello"),TD("60")), 
-                  TR(TD("World"),TD("40")))]
+    rows = [THEAD(TR(TH("Key", _width="70%"), TH("Value", _width="30%"))),
+            TBODY(TR(TD("Hello"), TD("60")), 
+                  TR(TD("World"), TD("40")))]
     table = TABLE(*rows, _border="0", _align="center", _width="50%")
 
-    if request.extension=="pdf":
+    if request.extension == "pdf":
         from gluon.contrib.pyfpdf import FPDF, HTMLMixin
 
         # create a custom class with the required functionalities 
         class MyFPDF(FPDF, HTMLMixin):
             def header(self): 
                 "hook to draw custom page header (logo and title)"
-                logo=os.path.join(request.env.web2py_path,"gluon","contrib","pyfpdf","tutorial","logo_pb.png")
-                self.image(logo,10,8,33)
-                self.set_font('Arial','B',15)
+                logo = os.path.join(request.env.web2py_path, "gluon", "contrib", "pyfpdf", "tutorial", "logo_pb.png")
+                self.image(logo, 10, 8, 33)
+                self.set_font('Arial', 'B', 15)
                 self.cell(65) # padding
-                self.cell(60,10,response.title,1,0,'C')
+                self.cell(60, 10, response.title, 1, 0, 'C')
                 self.ln(20)
                 
             def footer(self):
                 "hook to draw custom page footer (printing page numbers)"
                 self.set_y(-15)
-                self.set_font('Arial','I',8)
+                self.set_font('Arial', 'I', 8)
                 txt = 'Page %s of %s' % (self.page_no(), self.alias_nb_pages())
-                self.cell(0,10,txt,0,0,'C')
+                self.cell(0, 10, txt, 0, 0, 'C')
                     
-        pdf=MyFPDF()
+        pdf = MyFPDF()
         # create a page and serialize/render HTML objects
         pdf.add_page()
         pdf.write_html(str(XML(table, sanitize=False)))
         pdf.write_html(str(XML(CENTER(chart), sanitize=False)))
         # prepare PDF to download:
-        response.headers['Content-Type']='application/pdf'
+        response.headers['Content-Type'] = 'application/pdf'
         return pdf.output(dest='S')
     else:
         # normal html view:
@@ -93,13 +93,13 @@ def listing():
     response.title = "web2py sample listing"
     
     # define header and footers:
-    head = THEAD(TR(TH("Header 1",_width="50%"), 
-                    TH("Header 2",_width="30%"),
-                    TH("Header 3",_width="20%"), 
+    head = THEAD(TR(TH("Header 1", _width="50%"), 
+                    TH("Header 2", _width="30%"),
+                    TH("Header 3", _width="20%"), 
                     _bgcolor="#A0A0A0"))
-    foot = TFOOT(TR(TH("Footer 1",_width="50%"), 
-                    TH("Footer 2",_width="30%"),
-                    TH("Footer 3",_width="20%"),
+    foot = TFOOT(TR(TH("Footer 1", _width="50%"), 
+                    TH("Footer 2", _width="30%"),
+                    TH("Footer 3", _width="20%"),
                     _bgcolor="#E0E0E0"))
     
     # create several rows:
@@ -113,30 +113,30 @@ def listing():
 
     # make the table object
     body = TBODY(*rows)
-    table = TABLE(*[head,foot, body], 
+    table = TABLE(*[head, foot, body], 
                   _border="1", _align="center", _width="100%")
 
-    if request.extension=="pdf":
+    if request.extension == "pdf":
         from gluon.contrib.pyfpdf import FPDF, HTMLMixin
 
         # define our FPDF class (move to modules if it is reused  frequently)
         class MyFPDF(FPDF, HTMLMixin):
             def header(self):
-                self.set_font('Arial','B',15)
-                self.cell(0,10, response.title ,1,0,'C')
+                self.set_font('Arial', 'B', 15)
+                self.cell(0, 10, response.title, 1, 0, 'C')
                 self.ln(20)
                 
             def footer(self):
                 self.set_y(-15)
-                self.set_font('Arial','I',8)
+                self.set_font('Arial', 'I', 8)
                 txt = 'Page %s of %s' % (self.page_no(), self.alias_nb_pages())
-                self.cell(0,10,txt,0,0,'C')
+                self.cell(0, 10, txt, 0, 0, 'C')
                     
-        pdf=MyFPDF()
+        pdf = MyFPDF()
         # first page:
         pdf.add_page()
         pdf.write_html(str(XML(table, sanitize=False)))
-        response.headers['Content-Type']='application/pdf'
+        response.headers['Content-Type'] = 'application/pdf'
         return pdf.output(dest='S')
     else:
         # normal html view:
@@ -166,20 +166,20 @@ To handle multiples templates, we can define two tables in web2py:
 In `db.py` write:
 ```python
 db.define_table("pdf_template",
-    Field("pdf_template_id","id"),
+    Field("pdf_template_id", "id"),
     Field("title"),
-    Field("format", requires=IS_IN_SET(["A4","legal","letter"])),
+    Field("format", requires=IS_IN_SET(["A4", "legal", "letter"])),
 )
 
 db.define_table("pdf_element",
-    Field("pdf_template_id", db.pdf_template, requires=IS_IN_DB(db,'pdf_template.pdf_template_id', 'pdf_template.title')),
+    Field("pdf_template_id", db.pdf_template, requires=IS_IN_DB(db, 'pdf_template.pdf_template_id', 'pdf_template.title')),
     Field("name", requires=IS_NOT_EMPTY()),
     Field("type", length=2, requires=IS_IN_SET(['T', 'L', 'I', 'B', 'BC'])),
     Field("x1", "double", requires=IS_NOT_EMPTY()),
     Field("y1", "double", requires=IS_NOT_EMPTY()),
     Field("x2", "double", requires=IS_NOT_EMPTY()),
     Field("y2", "double", requires=IS_NOT_EMPTY()),
-    Field("font", default="Arial", requires=IS_IN_SET(['Courier','Arial','Times','Symbol','Zapfdingbats'])),
+    Field("font", default="Arial", requires=IS_IN_SET(['Courier', 'Arial', 'Times', 'Symbol', 'Zapfdingbats'])),
     Field("size", "double", default="10", requires=IS_NOT_EMPTY()),
     Field("bold", "boolean"),
     Field("italic", "boolean"),
@@ -195,7 +195,7 @@ db.define_table("pdf_element",
 **Warning**: the fields "type", "size" and "text" are reserved words for some DB engines, so validation:
 
 ```python
-db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['ALL'])
+db = DAL('sqlite://storage.sqlite', pool_size=1, check_reserved=['ALL'])
 ```
 will fail. sqlite, MySQL and postgres work OK. Proposals for new naming ideas are welcomed.
 
@@ -239,7 +239,7 @@ def invoice():
 
     # read elements from db 
     
-    elements = db(db.pdf_element.pdf_template_id==1).select(orderby=db.pdf_element.priority)
+    elements = db(db.pdf_element.pdf_template_id == 1).select(orderby=db.pdf_element.priority)
 
     f = Template(format="A4",
              elements = elements,
@@ -251,13 +251,13 @@ def invoice():
     items = []
     for i in range(1, 30):
         ds = "Sample product %s" % i
-        qty = random.randint(1,10)
-        price = round(random.random()*100,3)
-        code = "%s%s%02d" % (chr(random.randint(65,90)), chr(random.randint(65,90)),i)
+        qty = random.randint(1, 10)
+        price = round(random.random() * 100, 3)
+        code = "%s%s%02d" % (chr(random.randint(65, 90)), chr(random.randint(65, 90)), i)
         items.append(dict(code=code, unit='u',
                           qty=qty, price=price, 
-                          amount=qty*price,
-                          ds="%s: %s" % (i,ds)))
+                          amount=qty * price,
+                          ds="%s: %s" % (i, ds)))
 
     # divide and count lines
     lines = 0
@@ -287,17 +287,17 @@ def invoice():
     if lines % (max_lines_per_page - 1): pages = pages + 1
 
     # fill placeholders for each page
-    for page in range(1, pages+1):
+    for page in range(1, pages + 1):
         f.add_page()
         f['page'] = 'Page %s of %s' % (page, pages)
-        if pages>1 and page<pages:
-            s = 'Continues on page %s' % (page+1)
+        if pages > 1 and page < pages:
+            s = 'Continues on page %s' % (page + 1)
         else:
             s = ''
-        f['item_description%02d' % (max_lines_per_page+1)] = s
+        f['item_description%02d' % (max_lines_per_page + 1)] = s
 
         f["company_name"] = "Sample Company"
-        f["company_logo"] = os.path.join(request.env.web2py_path,"gluon","contrib","pyfpdf","tutorial","logo.png")
+        f["company_logo"] = os.path.join(request.env.web2py_path, "gluon", "contrib", "pyfpdf", "tutorial", "logo.png")
         f["company_header1"] = "Some Address - somewhere -"
         f["company_header2"] = "http://www.example.com"        
         f["company_footer1"] = "Tax Code ..."
@@ -334,14 +334,14 @@ def invoice():
 
         # last page? print totals:
         if pages == page:
-            f['net'] = "%0.2f" % (total/Decimal("1.21"))
-            f['vat'] = "%0.2f" % (total*(1-1/Decimal("1.21")))
+            f['net'] = "%0.2f" % (total / Decimal("1.21"))
+            f['vat'] = "%0.2f" % (total * (1 - 1 / Decimal("1.21")))
             f['total_label'] = 'Total:'
         else:
             f['total_label'] = 'SubTotal:'
         f['total'] = "%0.2f" % total
 
-    response.headers['Content-Type']='application/pdf'
+    response.headers['Content-Type'] = 'application/pdf'
     return f.render('invoice.pdf', dest='S')
 ```
 

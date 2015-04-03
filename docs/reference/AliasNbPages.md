@@ -16,15 +16,15 @@ alias:
 ### Example ###
 ```python
 class PDF(FPDF):
-  def footer(this):
-    # Go to 1.5 cm from bottom
-    this.set_y(-15)
-    # Select Arial italic 8
-    this.set_font('Arial','I',8)
-    # Print current and total page numbers
-    this.cell(0,10,'Page %s' % this.PageNo() + '/{nb}',0,0,'C')
+    def footer(self):
+        # Go to 1.5 cm from bottom
+        self.set_y(-15)
+        # Select Arial italic 8
+        self.set_font('Arial', 'I', 8)
+        # Print current and total page numbers
+        self.cell(0, 10, 'Page %s' % self.page_no() + '/{nb}', 0, 0, 'C')
 
-pdf=PDF()
+pdf = PDF()
 pdf.alias_nb_pages()
 
 ```

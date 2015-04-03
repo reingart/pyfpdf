@@ -23,12 +23,12 @@ link:
 ### Example ###
 ```python
 # Begin with regular font
-pdf.set_font('Arial','',14)
-pdf.write(5,'Visit ');
+pdf.set_font('Arial', '', 14)
+pdf.write(5, 'Visit ')
 # Then put a blue underlined link
-pdf.set_text_color(0,0,255);
-pdf.set_font('','U');
-pdf.write(5,'www.fpdf.org','http://www.fpdf.org');
+pdf.set_text_color(0, 0, 255)
+pdf.set_font('', 'U')
+pdf.write(5, 'www.fpdf.org', 'http://www.fpdf.org')
 ```
 
 ### See also ###

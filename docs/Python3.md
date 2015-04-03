@@ -59,7 +59,7 @@ pdf.set_font('Arial', '', 14)
 pdf.ln(10)
 pdf.write(5, 'hello world %s áéíóúüñ' % sys.version)
 pdf.image("pyfpdf/tutorial/logo.png", 50, 50)
-pdf.output('py3k.pdf','F')
+pdf.output('py3k.pdf', 'F')
 ```
 
 View the result here: [py3k.pdf](https://pyfpdf.googlecode.com/hg/tests/py3k.pdf)

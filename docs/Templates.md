@@ -42,7 +42,7 @@ Note the following, the definition of a template will contain the elements. The 
 
 ```python
 
-from pyfpdf import Template
+from fpdf import Template
 
 #this will define the ELEMENTS that will compose the template. 
 elements = [
@@ -55,7 +55,7 @@ elements = [
 ]
 
 #here we instantiate the template and define the HEADER
-f = Template(format="A4",elements=elements,
+f = Template(format="A4", elements=elements,
              title="Sample Invoice")
 f.add_page()
 
@@ -93,8 +93,8 @@ def test_template():
     f.parse_csv("mycsvfile.csv")
     f.add_page()
     f["company_name"] = "Sample Company"
-    response.headers['Content-Type']='application/pdf'
-    return f.render("./template.pdf",dest='S')
+    response.headers['Content-Type'] = 'application/pdf'
+    return f.render("./template.pdf", dest='S')
 
 ```
 

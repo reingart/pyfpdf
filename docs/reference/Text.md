@@ -1,7 +1,7 @@
 ## Text ##
 
 ```python
-fpdf.text(x: float, y: float, txt : str)
+fpdf.text(x: float, y: float, txt: str)
 ```
 ### Description ###
 

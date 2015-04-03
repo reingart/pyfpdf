@@ -11,13 +11,13 @@ This method is used to render the page footer. It is automatically called by [Ad
 ### Example ###
 ```python
 class PDF(FPDF):
-  def footer(this):
-    # Go to 1.5 cm from bottom
-    this.set_y(-15)
-    # Select Arial italic 8
-    this.set_font('Arial','I',8)
-    # Print centered page number
-    this.cell(0,10,'Page %s' % this.PageNo(),0,0,'C')
+    def footer(self):
+        # Go to 1.5 cm from bottom
+        self.set_y(-15)
+        # Select Arial italic 8
+        self.set_font('Arial', 'I', 8)
+        # Print centered page number
+        self.cell(0, 10, 'Page %s' % self.page_no(), 0, 0, 'C')
 ```
 
 ### See also ###

@@ -12,15 +12,15 @@ This method is used to render the page header. It is automatically called by [Ad
 
 ```python
 class PDF(FPDF):
-  def header(self):
-    # Select Arial bold 15
-    self.set_font('Arial','B',15)
-    # Move to the right
-    self.cell(80)
-    # Framed title
-    self.cell(30,10,'Title',1,0,'C')
-    # Line break
-    self.ln(20)
+    def header(self):
+        # Select Arial bold 15
+        self.set_font('Arial', 'B', 15)
+        # Move to the right
+        self.cell(80)
+        # Framed title
+        self.cell(30, 10, 'Title', 1, 0, 'C')
+        # Line break
+        self.ln(20)
 ```
 
 ### See also ###

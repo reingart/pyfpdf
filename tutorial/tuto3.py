@@ -2,7 +2,7 @@ from __future__ import with_statement
 
 from fpdf import FPDF
 
-title='20000 Leagues Under the Seas'
+title = '20000 Leagues Under the Seas'
 
 class PDF(FPDF):
     def header(self):
@@ -48,11 +48,11 @@ class PDF(FPDF):
             txt = fh.read().decode('latin-1')
         # Times 12
         self.set_font('Times', '', 12)
-        #Output justified text
+        # Output justified text
         self.multi_cell(0, 5, txt)
-        #Line break
+        # Line break
         self.ln()
-        #Mention in italics
+        # Mention in italics
         self.set_font('', 'I')
         self.cell(0, 5, '(end of excerpt)')
 
