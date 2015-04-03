@@ -4,6 +4,7 @@
 "Special module to handle differences between Python 2 and 3 versions"
 
 import sys
+from hashlib import md5
 
 PY3K = sys.version_info >= (3, 0)
 
@@ -17,13 +18,6 @@ try:
 except ImportError:
 	from urllib.request import urlopen
 
-try:
-    from hashlib import md5
-except ImportError:
-    try:
-        from md5 import md5
-    except ImportError:
-        md5 = None
 def hashpath(fn):
     h = md5()
     if PY3K:
