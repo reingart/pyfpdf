@@ -33,7 +33,7 @@ Elements have the following properties (columns in a CSV, fields in a database):
 A template can be created in 3 ways:
   * By defining everything manually in a hardcoded way
   * By using a template definition in a CSV document and parsing the CSV with Template.parse\_dict()
-  * By defining the template in a database (this applies to Web2Py integration)
+  * By defining the template in a database (this applies to [Web2Py](Web2Py.md) integration)
 
 
 Note the following, the definition of a template will contain the elements. The header will be given during instantiation (except for the database method).
@@ -69,7 +69,7 @@ f.render("./template.pdf")
 
 ```
 
-See template.py or Web2Py for a complete example.
+See template.py or [Web2Py](Web2Py.md) for a complete example.
 
 # Example - Elements defined in CSV  file #
 You define your elements in a csv file "mycsvfile.csv"

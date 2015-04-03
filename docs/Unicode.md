@@ -42,7 +42,7 @@ of [AddFont](reference/AddFont.md).
 This example uses several free fonts to display some Unicode strings. Be sure to
 install the fonts in the `font` directory first.
 
-```
+```python
 #!/usr/bin/env python
 # -*- coding: utf8 -*-
 

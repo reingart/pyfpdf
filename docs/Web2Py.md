@@ -29,7 +29,7 @@ Updated Live Demo (HTML and PDF version):
   * http://www.web2py.com.ar/fpdf/default/report
   * http://www.web2py.com.ar/fpdf/default/report.pdf
 
-```
+```python
 def report():
     response.title = "web2py sample report"
     
@@ -88,7 +88,7 @@ Updated Live Demo (HTML and PDF version):
   * http://www.web2py.com.ar/fpdf/default/listing
   * http://www.web2py.com.ar/fpdf/default/listing.pdf
 
-```
+```python
 def listing():
     response.title = "web2py sample listing"
     
@@ -164,7 +164,7 @@ To handle multiples templates, we can define two tables in web2py:
   * pdf\_element: several rows for each document, describing graphics primitives and placeholders.
 
 In `db.py` write:
-```
+```python
 db.define_table("pdf_template",
     Field("pdf_template_id","id"),
     Field("title"),
@@ -194,7 +194,7 @@ db.define_table("pdf_element",
 
 **Warning**: the fields "type", "size" and "text" are reserved words for some DB engines, so validation:
 
-```
+```python
 db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['ALL'])
 ```
 will fail. sqlite, MySQL and postgres work OK. Proposals for new naming ideas are welcomed.
@@ -227,7 +227,7 @@ A simple python script should do the trick.
 After defining and filling your database, you can use PyFPDF [Templates](Templates.md) directly reading rows elements from the web2py database:
 
 For example, for an invoice, in a controller you could write:
-```
+```python
 def invoice():
     from gluon.contrib.pyfpdf import Template
     import os.path

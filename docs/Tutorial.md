@@ -6,7 +6,7 @@
 
 Let's start with the classic example:
 
-```
+```python
 from fpdf import FPDF
 
 pdf = FPDF()
@@ -23,7 +23,7 @@ After including the library file, we create an FPDF object. The
 pages are in A4 portrait and the measure unit is millimeter. It could have been
 specified explicitly with:
 
-```
+```python
 pdf = FPDF('P', 'mm', 'A4')
 ```
 
@@ -33,13 +33,13 @@ It is possible to use landscape (`L`), other page formats (such as `Letter` and
 There is no page for the moment, so we have to add one with 
 [AddPage](reference/AddPage.md). The origin is at the upper-left corner and the
 current position is by default placed at 1 cm from the borders; the margins can
-be changed with SetMargins.
+be changed with [SetMargins](reference/SetMargins.md).
 
 Before we can print text, it is mandatory to select a font with 
 [SetFont](reference/SetFont.md), otherwise the document would be invalid. We
 choose Arial bold 16:
 
-```
+```python
 pdf.set_font('Arial', 'B', 16)
 ```
 
@@ -54,14 +54,14 @@ position. We specify its dimensions, its text (centered or aligned), if borders
 should be drawn, and where the current position moves after it (to the right,
 below or to the beginning of the next line). To add a frame, we would do this:
 
-```
+```python
 pdf.cell(40, 10, 'Hello World!', 1)
 ```
 
 To add a new cell next to it with centered text and go to the next line, we
 would do:
 
-```
+```python
 pdf.cell(60, 10, 'Powered by FPDF.', 0, 1, 'C')
 ```
 
@@ -82,7 +82,7 @@ browser may display a blank page.
 
 Here is a two page example with header, footer and logo:
 
-```
+```python
 from fpdf import FPDF
 
 class PDF(FPDF):
@@ -131,7 +131,8 @@ respect the image proportions.
 
 To print the page number, a null value is passed as the cell width. It means
 that the cell should extend up to the right margin of the page; it is handy to
-center text. The current page number is returned by the PageNo method; as for
+center text. The current page number is returned by
+the [PageNo](reference/PageNo.md) method; as for
 the total number of pages, it is obtained by means of the special value `{nb}`
 which will be substituted on document closure (provided you first called 
 [AliasNbPages](reference/AliasNbPages.md)).
@@ -153,7 +154,7 @@ limit which triggers page breaks can be set with
 Let's continue with an example which prints justified paragraphs. It also
 illustrates the use of colors.
 
-```
+```python
 from fpdf import FPDF
 
 title = '20000 Leagues Under the Seas'
@@ -252,13 +253,13 @@ plug-in, is to right-click and select Document Properties.
 
 Previously, to import the object you should use the pyfpdf package:
 
-```
+```python
 from pyfpdf import FPDF
 ```
 
 After version 1.7, to import it you should use the fpdf package:
 
-```
+```python
 from fpdf import FPDF
 ```
 

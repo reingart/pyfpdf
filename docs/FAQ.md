@@ -116,7 +116,7 @@ browser, or donwloaded as PDF.
 Also, using web2py DAL, you can easily set up a templating engine for PDF 
 documents.
 
-Look at Web2Py for examples
+Look at [Web2Py](Web2Py.md) for examples
 
 # What is the development status of this library? #
 
@@ -164,7 +164,7 @@ http://www.fpdf.org/es/dl.php?v=16&f=zip
 fpdf.py is a revision of a port by Max Pat, in the original source uses the same
 licence: http://www.fpdf.org/dl.php?id=94
 
-```
+```python
 # * Software: FPDF
 # * Version:  1.53
 # * Date:     2004-12-31

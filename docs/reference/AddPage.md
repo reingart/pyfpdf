@@ -8,7 +8,7 @@ fpdf.add_page(orientation = '')
 
 Adds a new page to the document. If a page is already present, the [Footer](Footer.md) method is called first to output the footer. Then the page is added, the current position set to the top-left corner according to the left and top margins, and [Header](Header.md) is called to display the header.
 
-The font which was set before calling is automatically restored. There is no need to call SetFont again if you want to continue with the same font. The same is true for colors and line width.
+The font which was set before calling is automatically restored. There is no need to call [SetFont](SetFont.md) again if you want to continue with the same font. The same is true for colors and line width.
 
 The origin of the coordinate system is at the top-left corner and increasing ordinates go downwards.
 

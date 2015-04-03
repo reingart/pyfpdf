@@ -32,7 +32,7 @@ Files created in same folder by default. This can be changed by `FPDF_CACHE_MODE
 ### Parameters ###
 
 family:
-> Family font. Used as a reference for SetFont, for example: `'dejavu'`
+> Family font. Used as a reference for [SetFont](SetFont.md), for example: `'dejavu'`
 
 style:
 > Font style. Deprecated, maintained only for backward compatibility.

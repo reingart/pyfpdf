@@ -83,7 +83,7 @@ pdf.add_page()
 pdf.write_html(html)
 pdf.output('html.pdf','F')
 ```
-See html.py or Web2Py for a complete example
+See html.py or [Web2Py](../Web2Py.md) for a complete example
 
 ### See also ###
 [Write](Write.md), [AddFont](AddFont.md), [Image](Image.md).
