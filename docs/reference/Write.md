@@ -1,4 +1,4 @@
-## Write ##
+## write ##
 
 ```python
 write(h: float, txt: str, link)
@@ -18,7 +18,7 @@ txt:
 > String to print.
 
 link:
-> URL or identifier returned by [AddLink](AddLink.md).
+> URL or identifier returned by [add_link](AddLink.md).
 
 ### Example ###
 ```python
@@ -33,4 +33,4 @@ pdf.write(5, 'www.fpdf.org', 'http://www.fpdf.org')
 
 ### See also ###
 
-[SetFont](SetFont.md), [SetTextColor](SetTextColor.md), [AddLink](AddLink.md), [MultiCell](MultiCell.md), [SetAutoPageBreak](SetAutoPageBreak.md), [WriteHTML](WriteHTML.md)
+[set_font](SetFont.md), [set_text_color](SetTextColor.md), [add_link](AddLink.md), [multi_cell](MultiCell.md), [set_auto_page_break](SetAutoPageBreak.md), [write_html](WriteHTML.md)

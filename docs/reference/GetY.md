@@ -1,4 +1,4 @@
-## GetY ##
+## get_y ##
 
 ```python
 fpdf.get_y()
@@ -10,4 +10,4 @@ Returns the ordinate of the current position.
 
 ### See also ###
 
-[GetX](GetX.md), [SetX](SetX.md), [SetY](SetY.md), [SetXY](SetXY.md).
+[get_x](GetX.md), [set_x](SetX.md), [set_y](SetY.md), [set_xy](SetXY.md).

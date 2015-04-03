@@ -1,4 +1,4 @@
-## Link ##
+## link ##
 
 ```python
 fpdf.link(x: float, y: float, w: float, h: float, link)
@@ -6,7 +6,7 @@ fpdf.link(x: float, y: float, w: float, h: float, link)
 
 ### Description ###
 
-Puts a link on a rectangular area of the page. Text or image links are generally put via [Cell](Cell.md), [Write](Write.md) or [Image](Image.md), but this method can be useful for instance to define a clickable area inside an image.
+Puts a link on a rectangular area of the page. Text or image links are generally put via [cell](Cell.md), [write](Write.md) or [image](Image.md), but this method can be useful for instance to define a clickable area inside an image.
 
 ### Parameters ###
 
@@ -23,8 +23,8 @@ h:
 > Height of the rectangle.
 
 link:
-> URL or identifier returned by [AddLink](AddLink.md).
+> URL or identifier returned by [add_link](AddLink.md).
 
 ### See also ###
 
-[AddLink](AddLink.md), [Cell](Cell.md), [Write](Write.md), [Image](Image.md).
+[add_link](AddLink.md), [cell](Cell.md), [write](Write.md), [image](Image.md).

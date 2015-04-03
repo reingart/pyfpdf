@@ -1,4 +1,4 @@
-## SetTitle ##
+## set_title ##
 
 ```python
 fpdf.set_title(title: str)
@@ -14,4 +14,4 @@ title:
 
 ### See also ###
 
-[SetAuthor](SetAuthor.md), [SetCreator](SetCreator.md), [SetKeywords](SetKeywords.md), [SetSubject](SetSubject.md).
+[set_author](SetAuthor.md), [set_creator](SetCreator.md), [set_keywords](SetKeywords.md), [set_subject](SetSubject.md).

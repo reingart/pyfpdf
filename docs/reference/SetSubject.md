@@ -1,4 +1,4 @@
-## SetSubject ##
+## set_subject ##
 
 ```python
 fpdf.set_subject(subject: str)
@@ -14,4 +14,4 @@ subject:
 
 ### See also ###
 
-[SetAuthor](SetAuthor.md), [SetCreator](SetCreator.md), [SetKeywords](SetKeywords.md), [SetTitle](SetTitle.md).
+[set_author](SetAuthor.md), [set_creator](SetCreator.md), [set_keywords](SetKeywords.md), [set_title](SetTitle.md).

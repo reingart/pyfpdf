@@ -1,4 +1,4 @@
-## SetLink ##
+## set_link ##
 
 ```python
 fpdf.set_link(link, y = 0.0, page = -1)
@@ -10,7 +10,7 @@ Defines the page and position a link points to.
 ### Parameters ###
 
 link:
-> The link identifier returned by [AddLink](AddLink.md).
+> The link identifier returned by [add_link](AddLink.md).
 
 y:
 > Ordinate of target position; -1 indicates the current position. The default value is 0 (top of page).
@@ -21,4 +21,4 @@ page:
 
 ### See also ###
 
-[AddLink](AddLink.md).
+[add_link](AddLink.md).

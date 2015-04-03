@@ -1,4 +1,4 @@
-## SetFont ##
+## set_font ##
 
 ```python
 fpdf.set_font(family, style = '', size = 0)
@@ -8,11 +8,11 @@ fpdf.set_font(family, style = '', size = 0)
 
 Sets the font used to print character strings. It is mandatory to call this method at least once before printing text or the resulting document would not be valid.
 
-The font can be either a standard one or a font added via the [AddFont](AddFont.md) method. Standard fonts use Windows encoding cp1252 (Western Europe).
+The font can be either a standard one or a font added via the [add_font](AddFont.md) method. Standard fonts use Windows encoding cp1252 (Western Europe).
 
 The method can be called before the first page is created and the font is retained from page to page.
 
-If you just wish to change the current font size, it is simpler to call [SetFontSize](SetFontSize.md).
+If you just wish to change the current font size, it is simpler to call [set_font_size](SetFontSize.md).
 
 **Note**: the font metric files must be accessible. They are searched successively in:
 
@@ -29,7 +29,7 @@ If the file corresponding to the requested font is not found, the error "Could n
 ### Parameters ###
 
 family:
-> Family font. It can be either a name defined by [AddFont](AddFont.md) or one of the standard families (case insensitive):
+> Family font. It can be either a name defined by [add_font](AddFont.md) or one of the standard families (case insensitive):
 >>  * Courier (fixed-width)
 >>  * Helvetica or Arial (synonymous; sans serif)
 >>  * Times (serif)
@@ -66,4 +66,4 @@ pdf.set_font('Times', 'BIU')
 
 ### See also ###
 
-[AddFont](AddFont.md), [SetFontSize](SetFontSize.md), [Cell](Cell.md), [MultiCell](MultiCell.md), [Write](Write.md), [SetStretching](SetStretching.md).
+[add_font](AddFont.md), [set_font_size](SetFontSize.md), [cell](Cell.md), [multi_cell](MultiCell.md), [write](Write.md), [set_stretching](SetStretching.md).

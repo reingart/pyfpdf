@@ -1,4 +1,4 @@
-## SetTopMargin ##
+## set_top_margin ##
 
 ```python
 fpdf.set_top_margin(margin: float)
@@ -15,4 +15,4 @@ margin:
 
 ### See also ###
 
-[SetLeftMargin](SetLeftMargin.md), [SetRightMargin](SetRightMargin.md), [SetAutoPageBreak](SetAutoPageBreak.md), [SetMargins](SetMargins.md).
+[set_left_margin](SetLeftMargin.md), [set_right_margin](SetRightMargin.md), [set_auto_page_break](SetAutoPageBreak.md), [set_margins](SetMargins.md).

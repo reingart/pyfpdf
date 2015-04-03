@@ -1,4 +1,4 @@
-## Image ##
+## image ##
 
 ```python
 fpdf.image(name, x = None, y = None, w = 0, h = 0, type = '', link = '')
@@ -62,9 +62,9 @@ type:
 > Image format. Possible values are (case insensitive): JPG, JPEG, PNG and GIF. If not specified, the type is inferred from the file extension.
 
 link:
-> URL or identifier returned by [AddLink](AddLink.md).
+> URL or identifier returned by [add_link](AddLink.md).
 
 ### See also ###
 
-[AddLink](AddLink.md).
+[add_link](AddLink.md).
 

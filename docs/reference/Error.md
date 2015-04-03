@@ -1,4 +1,4 @@
-## Error ##
+## error ##
 
 ```python
 fpdf.error(msg: str)

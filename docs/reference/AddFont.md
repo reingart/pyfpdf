@@ -1,4 +1,4 @@
-## AddFont ##
+## add_font ##
 
 ```python
 fpdf.add_font(family: str, style = '', fname = '', uni = False)
@@ -19,7 +19,7 @@ If the file corresponding to the requested font is not found, the runtime except
 
 For more information, see [Unicode](../Unicode.md) support page.
 
-The method should be called before SetFont method is used, and the font will be available for the whole document.
+The method should be called before [set_font](SetFont.md) method is used, and the font will be available for the whole document.
 
 **Note**: due font processing can occupy large amount of time some data are cached.
 
@@ -32,7 +32,7 @@ Files created in same folder by default. This can be changed by `FPDF_CACHE_MODE
 ### Parameters ###
 
 family:
-> Family font. Used as a reference for [SetFont](SetFont.md), for example: `'dejavu'`
+> Family font. Used as a reference for [set_font](SetFont.md), for example: `'dejavu'`
 
 style:
 > Font style. Deprecated, maintained only for backward compatibility.
@@ -43,7 +43,7 @@ fname:
 uni:
 > TTF Unicode flag (if set to `True`, TrueType font subset embedding will be enabled and text will be treated as `utf8` by default).
 
-You must _not call_ AddFont for PDF Standard Latin-1 fonts (Courier, Helvetica, Times, Symbol, Zapfdingbats), use SetFont directly in that case.
+You must _not_ call _add_font_ for PDF Standard Latin-1 fonts (Courier, Helvetica, Times, Symbol, Zapfdingbats), use [set_font](SetFont.md) directly in that case.
 
 Calling this method with uni=False is discouraged as legacy font support is complex and deprecated.
 
@@ -60,4 +60,4 @@ pdf.add_font('sysfont', '', r"c:\WINDOWS\Fonts\arial.ttf", uni=True)
 
 ### See also ###
 
-[SetFont](SetFont.md), [SetFontSize](SetFontSize.md), [Cell](Cell.md), [MultiCell](MultiCell.md), [Write](Write.md).
+[set_font](SetFont.md), [set_font_size](SetFontSize.md), [cell](Cell.md), [multi_cell](MultiCell.md), [write](Write.md).

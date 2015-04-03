@@ -1,4 +1,4 @@
-## SetCreator ##
+## set_creator ##
 
 ```python
 fpdf.set_creator(creator: str)
@@ -14,4 +14,4 @@ creator:
 
 ### See also ###
 
-[SetAuthor](SetAuthor.md), [SetKeywords](SetKeywords.md), [SetSubject](SetSubject.md), [SetTitle](SetTitle.md).
+[set_author](SetAuthor.md), [set_keywords](SetKeywords.md), [set_subject](SetSubject.md), [set_title](SetTitle.md).

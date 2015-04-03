@@ -1,4 +1,4 @@
-## MultiCell ##
+## multi_cell ##
 
 ```python
 fpdf.multi_cell(w: float, h: float, txt: str, border = 0, 
@@ -44,4 +44,4 @@ fill
 
 ### See also ###
 
-[SetFont](SetFont.md), [SetDrawColor](SetDrawColor.md), [SetFillColor](SetFillColor.md), [SetTextColor](SetTextColor.md), [SetLineWidth](SetLineWidth.md), [Cell](Cell.md), [Write](Write.md), [SetAutoPageBreak](SetAutoPageBreak.md).
+[set_font](SetFont.md), [set_draw_color](SetDrawColor.md), [set_fill_color](SetFillColor.md), [set_text_color](SetTextColor.md), [set_line_width](SetLineWidth.md), [cell](Cell.md), [write](Write.md), [set_auto_page_break](SetAutoPageBreak.md).

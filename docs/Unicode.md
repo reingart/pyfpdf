@@ -35,7 +35,7 @@ These fonts are included with this library installers, see
 more information.
 
 Then, to use a Unicode font in your script, pass `True` as the fourth parameter 
-of [AddFont](reference/AddFont.md).
+of [add_font](reference/AddFont.md).
 
 ## Example ##
 

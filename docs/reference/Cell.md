@@ -1,4 +1,4 @@
-## Cell ##
+## cell ##
 
 ```python
 fpdf.cell(w, h = 0, txt = '', border = 0, ln = 0, 
@@ -40,7 +40,7 @@ ln:
 >>    * 1: to the beginning of the next line
 >>    * 2: below
 > 
-> Putting 1 is equivalent to putting 0 and calling [Ln](Ln.md) just after. Default value: 0.
+> Putting 1 is equivalent to putting 0 and calling [ln](Ln.md) just after. Default value: 0.
 
 align:
 > Allows to center or align the text. Possible values are:
@@ -52,7 +52,7 @@ fill:
 > Indicates if the cell background must be painted (True) or transparent (False). Default value: False.
 
 link:
-> URL or identifier returned by [AddLink](AddLink.md).
+> URL or identifier returned by [add_link](AddLink.md).
 
 ### Example ###
 
@@ -67,4 +67,4 @@ pdf.cell(20, 10, 'Title', 1, 1, 'C')
 
 ### See also ###
 
-[SetFont](SetFont.md), [SetDrawColor](SetDrawColor.md), [SetFillColor](SetFillColor.md), [SetTextColor](SetTextColor.md), [SetLineWidth](SetLineWidth.md), [AddLink](AddLink.md), [Ln](Ln.md), [MultiCell](MultiCell.md), [Write](Write.md), [SetAutoPageBreak](SetAutoPageBreak.md).
+[set_font](SetFont.md), [set_draw_color](SetDrawColor.md), [set_fill_color](SetFillColor.md), [set_text_color](SetTextColor.md), [set_line_width](SetLineWidth.md), [add_link](AddLink.md), [ln](Ln.md), [multi_cell](MultiCell.md), [write](Write.md), [set_auto_page_break](SetAutoPageBreak.md).

@@ -31,7 +31,7 @@ This library is not a:
     columns, chapters, etc., see [Tutorial](Tutorial.md))
   * XML /object definition language like 
     [Geraldo Reports](http://www.geraldoreports.org/), Jasper Reports or similar
-    (look at [WriteHTML](reference/WriteHTML.md) for simple HTML reports and 
+    (look at [write_html](reference/WriteHTML.md) for simple HTML reports and 
     [Templates](Templates.md) for fill-in-the-blank documents)
   * PDF text extractor/conversor, spltiter or similar. Look at 
     [pyPdf](https://pypi.python.org/pypi/pyPdf)
@@ -138,7 +138,7 @@ For further information see:
   * <http://code.google.com/p/pyafipws/>
   * <http://groups.google.com/group/pyafipws>
 
-In contrast, WriteHTML support is not complete, so it must be considered in 
+In contrast, _write_html_ support is not complete, so it must be considered in 
 alpha state. Further enhancements using web2py helpers and xml parser will 
 enable to parse more complex HTML files.
 

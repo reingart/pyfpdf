@@ -1,4 +1,4 @@
-## Ln ##
+## ln ##
 
 ```python
 fpdf.ln(h = '')
@@ -17,4 +17,4 @@ h:
 
 ### See also ###
 
-[Cell](Cell.md).
+[cell](Cell.md).

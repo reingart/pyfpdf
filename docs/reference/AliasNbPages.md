@@ -1,4 +1,4 @@
-## AliasNbPages ##
+## alias_nb_pages ##
 
 ```python
 fpdf.alias_nb_pages()
@@ -31,4 +31,4 @@ pdf.alias_nb_pages()
 
 ### See also ###
 
-[PageNo](PageNo.md), [Footer](Footer.md).
+[page_no](PageNo.md), [footer](Footer.md).

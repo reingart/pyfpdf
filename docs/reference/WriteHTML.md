@@ -1,4 +1,4 @@
-## WriteHTML ##
+## write_html ##
 
 ```python
 HTMLMixin.write_html(text: str, image_map = None)
@@ -86,5 +86,5 @@ pdf.output('html.pdf', 'F')
 See html.py or [Web2Py](../Web2Py.md) for a complete example
 
 ### See also ###
-[Write](Write.md), [AddFont](AddFont.md), [Image](Image.md).
+[write](Write.md), [add_font](AddFont.md), [image](Image.md).
 

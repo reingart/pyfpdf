@@ -1,4 +1,4 @@
-## Ellipse ##
+## ellipse ##
 
 ```python
 fpdf.ellipse(x: float, y: float, w: float, h: float, style = '')
@@ -8,7 +8,7 @@ fpdf.ellipse(x: float, y: float, w: float, h: float, style = '')
 
 Outputs an ellipse. It can be drawn (border only), filled (with no border) or 
 both. Unlike the PHP version, this function uses the top-left position and 
-width and height of the ellipse, like [Rect](Rect.md), not the center point and 
+width and height of the ellipse, like [rect](Rect.md), not the center point and 
 radius.
 
 ### Parameters ###
@@ -33,4 +33,4 @@ style:
 
 ### See also ###
 
-[Cell](Cell.md), [Rect](Rect.md).
+[cell](Cell.md), [rect](Rect.md).

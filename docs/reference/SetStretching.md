@@ -1,4 +1,4 @@
-## SetStretching ##
+## set_stretching ##
 
 ```python
 fpdf.set_stretching(stretching: float)
@@ -28,4 +28,4 @@ pdf.set_stretching(50.0)
 
 ### See also ###
 
-[SetFont](SetFont.md), [SetFontSize](SetFontSize.md), [GetStringWidth](GetStringWidth.md).
+[set_font](SetFont.md), [set_font_size](SetFontSize.md), [get_string_width](GetStringWidth.md).

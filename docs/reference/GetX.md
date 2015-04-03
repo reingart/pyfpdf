@@ -1,4 +1,4 @@
-## GetX ##
+## get_x ##
 
 ```python
 fpdf.get_x()
@@ -10,4 +10,4 @@ Returns the abscissa of the current position.
 
 ### See also ###
 
-[GetY](GetY.md), [SetX](SetX.md), [SetY](SetY.md), [SetXY](SetXY.md).
+[get_y](GetY.md), [set_x](SetX.md), [set_y](SetY.md), [set_xy](SetXY.md).

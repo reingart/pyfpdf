@@ -1,4 +1,4 @@
-## Header ##
+## header ##
 
 ```python
 fdpf.header()
@@ -6,7 +6,7 @@ fdpf.header()
 
 ### Description ###
 
-This method is used to render the page header. It is automatically called by [AddPage](AddPage.md) and should not be called directly by the application. The implementation in FPDF is empty, so you have to subclass it and override the method if you want a specific processing.
+This method is used to render the page header. It is automatically called by [add_page](AddPage.md) and should not be called directly by the application. The implementation in FPDF is empty, so you have to subclass it and override the method if you want a specific processing.
 
 ### Example ###
 
@@ -25,4 +25,4 @@ class PDF(FPDF):
 
 ### See also ###
 
-[AddPage](AddPage.md), [Footer](Footer.md).
+[add_page](AddPage.md), [footer](Footer.md).

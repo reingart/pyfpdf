@@ -1,4 +1,4 @@
-## SetFillColor ##
+## set_fill_color ##
 
 ```python
 fpdf.set_fill_color(r: int, g: int = -1, b: int = -1)
@@ -21,4 +21,4 @@ b:
 
 ### See also ###
 
-[SetDrawColor](SetDrawColor.md), [SetTextColor](SetTextColor.md), [Rect](Rect.md), [Cell](Cell.md), [MultiCell](MultiCell.md).
+[set_draw_color](SetDrawColor.md), [set_text_color](SetTextColor.md), [rect](Rect.md), [cell](Cell.md), [multi_cell](MultiCell.md).

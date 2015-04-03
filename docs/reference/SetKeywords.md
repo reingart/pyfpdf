@@ -1,4 +1,4 @@
-## SetKeywords ##
+## set_keywords ##
 
 ```python
 fpdf.set_keywords(keywords: str)
@@ -14,4 +14,4 @@ keywords:
 
 ### See also ###
 
-[SetAuthor](SetAuthor.md), [SetCreator](SetCreator.md), [SetSubject](SetSubject.md), [SetTitle](SetTitle.md).
+[set_author](SetAuthor.md), [set_creator](SetCreator.md), [set_subject](SetSubject.md), [set_title](SetTitle.md).

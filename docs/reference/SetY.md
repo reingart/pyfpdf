@@ -1,4 +1,4 @@
-## SetY ##
+## set_y ##
 
 ```python
 fpdf.set_y(y: float)
@@ -14,4 +14,4 @@ y:
 
 ### See also ###
 
-[GetX](GetX.md), [GetY](GetY.md), [SetX](SetX.md), [SetXY](SetXY.md).
+[get_x](GetX.md), [get_y](GetY.md), [set_x](SetX.md), [set_xy](SetXY.md).

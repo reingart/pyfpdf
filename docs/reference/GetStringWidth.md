@@ -1,4 +1,4 @@
-## GetStringWidth ##
+## get_string_width ##
 
 ```python
 self.get_string_width(s: str)
@@ -17,4 +17,4 @@ s:
 
 ### See also ###
 
-[SetStretching](SetStretching.md).
+[set_stretching](SetStretching.md).

@@ -1,4 +1,4 @@
-## PageNo ##
+## page_no ##
 
 ```python
 fpdf.page_no()
@@ -10,4 +10,4 @@ Returns the current page number.
 
 ### See also ###
 
-[AliasNbPages](AliasNbPages.md).
+[alias_nb_pages](AliasNbPages.md).

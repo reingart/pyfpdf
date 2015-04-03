@@ -1,4 +1,4 @@
-## SetLineWidth ##
+## set_line_width ##
 
 ```python
 fpdf.set_line_width(width: float)
@@ -15,4 +15,4 @@ width:
 
 ### See also ###
 
-[Line](Line.md), [Rect](Rect.md), [Cell](Cell.md), [MultiCell](MultiCell.md).
+[line](Line.md), [rect](Rect.md), [cell](Cell.md), [multi_cell](MultiCell.md).

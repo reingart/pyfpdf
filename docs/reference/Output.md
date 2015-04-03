@@ -1,4 +1,4 @@
-## Output ##
+## output ##
 
 ```python
 fpdf.output(name = '', dest = '')
@@ -8,7 +8,7 @@ fpdf.output(name = '', dest = '')
 
 Send the document to some destination: standard output, a file or a byte string.
 
-The method first calls [Close](Close.md) if necessary to terminate the document.
+The method first calls [close](Close.md) if necessary to terminate the document.
 
 ### Parameters ###
 
@@ -23,4 +23,4 @@ dest:
 
 ### See also ###
 
-[Close](Close.md).
+[close](Close.md).

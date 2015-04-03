@@ -1,4 +1,4 @@
-## Line ##
+## line ##
 
 ```python
 fpdf.line(x1, y1, x2, y2)
@@ -31,4 +31,4 @@ pdf.line(10, 30, 110, 30)
 
 ### See also ###
 
-[DashedLine](DashedLine.md).
+[dashed_line](DashedLine.md).

@@ -1,4 +1,4 @@
-## Footer ##
+## footer ##
 
 ```python
 fpdf.footer()
@@ -6,7 +6,7 @@ fpdf.footer()
 
 ### Description ###
 
-This method is used to render the page footer. It is automatically called by [AddPage](AddPage.md) and [Close](Close.md) and should not be called directly by the application. The implementation in FPDF is empty, so you have to subclass it and override the method if you want a specific processing.
+This method is used to render the page footer. It is automatically called by [add_page](AddPage.md) and [close](Close.md) and should not be called directly by the application. The implementation in FPDF is empty, so you have to subclass it and override the method if you want a specific processing.
 
 ### Example ###
 ```python
@@ -22,4 +22,4 @@ class PDF(FPDF):
 
 ### See also ###
 
-[AddPage](AddPage.md), [Header](Header.md).
+[add_page](AddPage.md), [header](Header.md).

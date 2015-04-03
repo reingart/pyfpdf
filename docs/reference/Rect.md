@@ -1,4 +1,4 @@
-## Rect ##
+## rect ##
 
 ```python
 fpdf.rect(x: float, y: float, w: float, h: float, style = '')
@@ -31,4 +31,4 @@ style:
 
 ### See also ###
 
-[Cell](Cell.md), [Ellipse](Ellipse.md).
+[cell](Cell.md), [ellipse](Ellipse.md).
