@@ -104,7 +104,7 @@ Variables:
 
 ## Fonts ##
 
-Some (most) tests uses font pack http://pyfpdf.googlecode.com/files/fpdf_unicode_font_pack.zip
+Some (most) tests uses font pack <http://pyfpdf.googlecode.com/files/fpdf_unicode_font_pack.zip>
 
 Place .ttf files in tests/font folder. You can use `--downloadfonts` option for `runtest.py` to download and extract them.
 

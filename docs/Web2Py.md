@@ -26,8 +26,8 @@ Sample: [report.pdf](http://pyfpdf.googlecode.com/files/report.pdf)
 
 Updated Live Demo (HTML and PDF version):
 
-  * http://www.web2py.com.ar/fpdf/default/report
-  * http://www.web2py.com.ar/fpdf/default/report.pdf
+  * <http://www.web2py.com.ar/fpdf/default/report>
+  * <http://www.web2py.com.ar/fpdf/default/report.pdf>
 
 ```python
 def report():
@@ -85,8 +85,8 @@ Also, you can make nice tables that automatically spreads over several pages, wi
 Sample: [listing.pdf](http://pyfpdf.googlecode.com/files/listing.pdf)
 
 Updated Live Demo (HTML and PDF version):
-  * http://www.web2py.com.ar/fpdf/default/listing
-  * http://www.web2py.com.ar/fpdf/default/listing.pdf
+  * <http://www.web2py.com.ar/fpdf/default/listing>
+  * <http://www.web2py.com.ar/fpdf/default/listing.pdf>
 
 ```python
 def listing():
@@ -156,7 +156,7 @@ PyFPDF and web2py can be used to make PDF documents using templates like invoice
 
 Sample: [invoice.pdf](http://pyfpdf.googlecode.com/files/invoice.pdf)
 
-Updated Live Demo: http://www.web2py.com.ar/fpdf/default/invoice.pdf
+Updated Live Demo: <http://www.web2py.com.ar/fpdf/default/invoice.pdf>
 
 To handle multiples templates, we can define two tables in web2py:
 

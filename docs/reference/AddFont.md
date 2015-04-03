@@ -8,7 +8,7 @@ fpdf.add_font(family: str, style = '', fname = '', uni = False)
 
 Imports a TrueType, OpenType or Type1 font and makes it available.
 
-**Warning:** For !Type1 and legacy fonts it is necessary to generate a font definition file first with the `MakeFont` utility. This feature is currently deprecated in favour to TrueType unicode font support (whose are automatically processed with the `ttfonts.py` included utility).
+**Warning:** For Type1 and legacy fonts it is necessary to generate a font definition file first with the `MakeFont` utility. This feature is currently deprecated in favour to TrueType unicode font support (whose are automatically processed with the `ttfonts.py` included utility).
 
 **Note**: the font source files must be accessible. They are searched successively in (if this constants are defined):
 

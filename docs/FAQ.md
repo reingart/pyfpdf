@@ -18,7 +18,7 @@ Originally developed in PHP several years ago (as a free alternative to
 propietary C libraries), it has been ported to many programming languages, 
 including ASP, C++, Java, Pl/SQL, Ruby, Visual Basic, and of course, Python.
 
-For more information see: http://www.fpdf.org/en/links.php
+For more information see: <http://www.fpdf.org/en/links.php>
 
 # What this library **is not**? #
 
@@ -53,7 +53,7 @@ invoices, listings/reports, and basic support for HTML rendering.
 
 Following is a example similar to the reportlab one at the book of web2py, note
 the simplified import and usage:
-(http://www.web2py.com/book/default/chapter/09?search=pdf#ReportLab-and-PDF)
+(<http://www.web2py.com/book/default/chapter/09?search=pdf#ReportLab-and-PDF>)
 
 PyFPDF:
 ```python
@@ -134,9 +134,9 @@ downloads to date.
 
 For further information see:
 
-  * http://www.pyafipws.com.ar/
-  * http://code.google.com/p/pyafipws/
-  * http://groups.google.com/group/pyafipws
+  * <http://www.pyafipws.com.ar/>
+  * <http://code.google.com/p/pyafipws/>
+  * <http://groups.google.com/group/pyafipws>
 
 In contrast, WriteHTML support is not complete, so it must be considered in 
 alpha state. Further enhancements using web2py helpers and xml parser will 
@@ -145,14 +145,14 @@ enable to parse more complex HTML files.
 # What is the license of this library (pyfpdf)? #
 
 Original FPDF uses a permissive license:
-http://www.fpdf.org/en/FAQ.php#q1
+<http://www.fpdf.org/en/FAQ.php#q1>
 
 > "FPDF is released under a permissive license: there is no usage
 > restriction. You may embed it freely in your application (commercial
 > or not), with or without modifications."
 
 FPDF Version 1.6 license.txt says:
-http://www.fpdf.org/es/dl.php?v=16&f=zip
+<http://www.fpdf.org/es/dl.php?v=16&f=zip>
 
 > Permission is hereby granted, free of charge, to any person obtaining a copy
 > of this software to use, copy, modify, distribute, sublicense, and/or sell
@@ -162,7 +162,7 @@ http://www.fpdf.org/es/dl.php?v=16&f=zip
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
 
 fpdf.py is a revision of a port by Max Pat, in the original source uses the same
-licence: http://www.fpdf.org/dl.php?id=94
+licence: <http://www.fpdf.org/dl.php?id=94>
 
 ```python
 # * Software: FPDF
@@ -180,7 +180,7 @@ licenses), LGPL was chosen for this googlecode project (as Freeware isn't
 listed).
 
 Some FPDF ports had chosen similar licences (wxWindows Licence for C++ port, 
-MIT licence for java port, etc.): http://www.fpdf.org/en/links.php
+MIT licence for java port, etc.): <http://www.fpdf.org/en/links.php>
 
 Other FPDF derivatives also choose LGPL, as 
 [sFPDF](http://www.fpdf.org/en/script/script91.php) by 
