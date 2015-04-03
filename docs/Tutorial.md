@@ -18,7 +18,7 @@ pdf.cell(40, 10, 'Hello World!')
 pdf.output('tuto1.pdf', 'F')
 ```
 
-[Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto1.pdf)
+[Demo](https://github.com/reingart/pyfpdf/raw/master/tutorial/tuto1.pdf)
 
 After including the library file, we create an FPDF object. The 
 [FPDF](reference/FPDF.md) constructor is used here with the default values: 
@@ -119,7 +119,7 @@ for i in range(1, 41):
 pdf.output('tuto2.pdf', 'F')
 ```
 
-[Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto2.pdf)
+[Demo](https://github.com/reingart/pyfpdf/raw/master/tutorial/tuto2.pdf)
 
 This example makes use of the [Header](reference/Header.md) and 
 [Footer](reference/Footer.md) methods to process page headers and footers. They
@@ -225,7 +225,7 @@ pdf.print_chapter(2, 'THE PROS AND CONS', '20k_c2.txt')
 pdf.output('tuto3.pdf', 'F')
 ```
 
-[Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto3.pdf)
+[Demo](https://github.com/reingart/pyfpdf/raw/master/tutorial/tuto3.pdf)
 
 The [GetStringWidth](reference/GetStringWidth.md) method allows to determine
 the length of a string in the current font, which is used here to calculate the

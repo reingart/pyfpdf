@@ -38,7 +38,7 @@ FPDF original features:
   * Using [PyPI](http://pypi.python.org/pypi?:action=display&name=fpdf&version=1.7)
   * Using [EasyInstall](http://peak.telecommunity.com/DevCenter/EasyInstall) `c:\python27\Scripts\easy_install.exe fpdf`
   * From Source:
-    * [Download](https://code.google.com/p/pyfpdf/adminDownloads) and unpack source package (zip) or pull from the [repo](https://code.google.com/p/pyfpdf/source/checkout)
+    * [Download](https://github.com/reingart/pyfpdf/releases) and unpack source package (zip) or pull from the [Git repository](https://github.com/reingart/pyfpdf)
     * Run `python setup.py install`
   * Using [MSI](http://pyfpdf.googlecode.com/files/fpdf-1.7.win32.msi) or [Windows Installers](http://pyfpdf.googlecode.com/files/fpdf-1.7.hg.zip)
 
