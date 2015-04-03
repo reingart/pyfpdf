@@ -40,7 +40,7 @@ pdf.write(8, u'Hindi: नमस्ते दुनिया')
 pdf.ln(20)
 
 # Add a AR PL New Sung Unicode font (uses UTF-8)
-# The Open Source Chinese Font (also supports others east-asia languages)
+# The Open Source Chinese Font (also supports other east Asian languages)
 pdf.add_font('fireflysung', '','fireflysung.ttf', uni=True)
 pdf.set_font('fireflysung', '', 14)
 pdf.write(8, u'Chinese: 你好世界\n')
@@ -48,7 +48,7 @@ pdf.write(8, u'Japanese: こんにちは世界\n')
 pdf.ln(10)
 
 # Add a Alee Unicode font (uses UTF-8)
-# General purpose Hangul truetype fonts that Contain Korean syllable 
+# General purpose Hangul truetype fonts that contain Korean syllable 
 # and Latin9 (iso8859-15) characters.
 pdf.add_font('eunjin', '', 'Eunjin.ttf', uni=True)
 pdf.set_font('eunjin','', 14)

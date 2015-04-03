@@ -109,7 +109,7 @@ class PDF(FPDF):
         # Page number
         self.cell(0, 10, 'Page ' + str(self.page_no()) + '/{nb}', 0, 0, 'C')
 
-# Instanciation of inherited class
+# Instantiation of inherited class
 pdf = PDF()
 pdf.alias_nb_pages()
 pdf.add_page()
@@ -227,7 +227,7 @@ pdf.output('tuto3.pdf', 'F')
 
 [Demo](https://github.com/reingart/pyfpdf/raw/master/tutorial/tuto3.pdf)
 
-The [get_string_width](reference/get_string_width.md) method allows to determine
+The [get_string_width](reference/get_string_width.md) method allows determining
 the length of a string in the current font, which is used here to calculate the
 position and the width of the frame surrounding the title. Then colors are set
 (via [set_draw_color](reference/set_draw_color.md), 

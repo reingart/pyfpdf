@@ -1,29 +1,29 @@
-# Delopment #
+# Development #
 
 [TOC]
 
-## Inroduction ##
+## Introduction ##
 
-This page summary information about development PyPDF library.
+This page has summary information about developing the PyPDF library.
 
-This project started as python fork of [FPDF](http://fpdf.org/) PHP library. 
-Later code for native reading TTF fonts was added. FPDF was not updated since
-2011. See also [TCPDF](http://www.tcpdf.org/) library.
+This project started as Python fork of the [FPDF](http://fpdf.org/) PHP library. 
+Later, code for native reading TTF fonts was added. FPDF has not been updated since
+2011. See also the [TCPDF](http://www.tcpdf.org/) library.
 
-Until 2015 code developed at [Google code](https://code.google.com/p/pyfpdf/).
-Now main repository at [Github](https://github.com/reingart/pyfpdf).
+Until 2015 the code was developed at [Google Code](https://code.google.com/p/pyfpdf/).
+Now the main repository is at [Github](https://github.com/reingart/pyfpdf).
 
-You can also view 
+You can also view the
 [old repository](https://github.com/reingart/pyfpdf_googlecode),
 [old issues](https://github.com/reingart/pyfpdf_googlecode/issues), and 
 [old wiki](https://github.com/reingart/pyfpdf_googlecode/tree/wiki).
 
-After commit to master repository code documentation will be uploaded to 
-[Read the Docs](http://pyfpdf.rtfd.org/) site.
+After being committed to the master branch, code documentation is automatically uploaded to 
+the [Read the Docs](http://pyfpdf.rtfd.org/) site.
 
 ## Repository structure ##
 
- * `[attic]` - folder with old code and usefull, but unsupported things
+ * `[attic]` - folder with old code and useful, but unsupported things
  * `[docs]` - documenation folder
  * `[examples]` - some examples
  * `[fpdf]` - library source
@@ -32,36 +32,36 @@ After commit to master repository code documentation will be uploaded to
  * `[tutorial]` - tutorials (see also [Tutorial](Tutorial.md))
  * `LICENSE` - license information
  * `setup.cfg` - wheel configuration (see [wheel](https://wheel.rtfd.org))
- * `setup.py` - distutils installator (see [Python Packaging User Guide](https://python-packaging-user-guide.rtfd.org))
+ * `setup.py` - distutils installer (see [Python Packaging User Guide](https://python-packaging-user-guide.rtfd.org))
  * `mkdocs.yml` - config for [MkDocs](http://www.mkdocs.org/)
 
 ## Tips ##
 
 ### Code ###
 
-Get master branch of code.
+To get the master branch of the code:
 ```shell
 git clone https://github.com/reingart/pyfpdf.git
 ```
 
-You can also use issues and pull requests at github.
+You can also use issues and pull requests at Github.
 
 ### Testing ###
 
-Testing described in standalone page [Testing](Testing.md).
+Testing described in the standalone page [Testing](Testing.md).
 
 ### Documentation ###
 
-Documentation are in `docs` subfolder in 
-[Markdown](http://daringfireball.net/projects/markdown/) format. To build use
-`mkdocs` utility, which directed by `mkdocs.yml`.
+Documentation is in the `docs` subfolder in 
+[Markdown](http://daringfireball.net/projects/markdown/) format. To build it,
+the `mkdocs` utility is used, which is directed by `mkdocs.yml`.
 
-To build documentation use in repository root:
+To build documentation, run in the repository root:
 
 ```
 mkdocs build
 ```
-HTML files are generated in `html` subfolder.
+HTML files are generated in a `html` subfolder.
 
 To continiously rebuild docs on changing any `.md` files use:
 
@@ -69,16 +69,16 @@ To continiously rebuild docs on changing any `.md` files use:
 mkdocs serve
 ```
 
-Then open browser at <http://localhost:8000>. (Port and address can be changed).
+Then open a browser at <http://localhost:8000>. (The port and address can be changed.)
 
-**Note**: `mkdocs` internally chack internal links consistency. But somhow
+**Note**: `mkdocs` internally checks the consistency of internal links. But somehow
 code like this:
 
 ```
 [Page Name][refe/PageName,md]
 ```
 
-Lead to nowhere and gives no error. To avoid this use:
+leads to nowhere and gives no error. To avoid this use:
 
 ```
 grep -r * -e ',md'

@@ -22,7 +22,7 @@ class PDF(FPDF):
         # Page number
         self.cell(0, 10, 'Page ' + str(self.page_no()) + '/{nb}', 0, 0, 'C')
 
-# Instanciation of inherited class
+# Instantiation of inherited class
 pdf = PDF()
 pdf.alias_nb_pages()
 pdf.add_page()

@@ -6,11 +6,11 @@ This elements can act as placeholders, so the program can change the default tex
 
 Also, the elements can be defined in a CSV file or in a database, so the user can easily adapt the form to his printing needs.
 
-Template is used like a dict, setting it items values.
+A template is used like a dict, setting its items' values.
 
 # Details - Template definition #
 
-A template is composed of a Header and a list of elements.
+A template is composed of a header and a list of elements.
 
 The header contains the page format, title of the document and other metadata.
 
@@ -19,14 +19,14 @@ Elements have the following properties (columns in a CSV, fields in a database):
   * name: placeholder identification
   * type: 'T': texts, 'L': lines, 'I': images, 'B': boxes, 'BC': barcodes
   * x1, y1, x2, y2: top-left, bottom-right coordinates (in mm)
-  * font: ie "Arial"
-  * size: text size in points, ie. 10
+  * font: e.g. "Arial"
+  * size: text size in points, e.g. 10
   * bold, italic, underline: text style (non-empty to enable)
-  * foreground, background: text and fill colors, ie. 0xFFFFFF
-  * align: text aling, 'L': left, 'R': right, 'C': center
+  * foreground, background: text and fill colors, e.g. 0xFFFFFF
+  * align: text alignment, 'L': left, 'R': right, 'C': center
   * text: default string, can be replaced at runtime
-  * priority: Z-Order
-  * multiline: None for single line (default), True to for multicells (multiples lines), False trims to fit exactly the space defined
+  * priority: Z-order
+  * multiline: None for single line (default), True to for multicells (multiple lines), False trims to exactly fit the space defined
 
 # How to create a template #
 
@@ -72,8 +72,8 @@ f.render("./template.pdf")
 
 See template.py or [Web2Py](Web2Py.md) for a complete example.
 
-# Example - Elements defined in CSV  file #
-You define your elements in a csv file "mycsvfile.csv"
+# Example - Elements defined in CSV file #
+You define your elements in a CSV file "mycsvfile.csv"
 that will look like:
 ```
 line0;T;20.0;13.0;190.0;13.0;times;10.0;0;0;0;0;65535;C;;0
@@ -82,7 +82,7 @@ name0;T;21;14;104;25;times;16.0;0;0;0;0;0;C;;2
 title0;T;64;26;104;30;times;10.0;0;0;0;0;0;C;;2
 ```
 
-Remember that each line represents an Element and each field represents one of the properties of the element in the following order:
+Remember that each line represents an element and each field represents one of the properties of the element in the following order:
 ('name','type','x1','y1','x2','y2','font','size','bold','italic','underline','foreground','background','align','text','priority', 'multiline')
 
 Then you can use the file like this:
@@ -101,7 +101,7 @@ def test_template():
 
 # Designer - GUI tool to design templates #
 
-This library includes a program `designer.py` to visually modify the designs of a template (i.e., an invoice, report, etc.)
+This library includes a program `designer.py` to visually modify the designs of a template (e.g., an invoice, report, etc.).
 
 Input files are CSV spreadsheets describing the design (see above).
 Once opened, the designer displays the template with the elements as how they will be located.
@@ -114,7 +114,7 @@ The toolbar has buttons for:
   * Find and replace (modify selected elements, mainly move x/y)
 
 Over an element, double left click opens a dialog to edit its text and right click opens a dialog with the properties window.
-You can select multiple items by holding down shift and left click them.
+You can select multiple items by holding down shift and left clicking them.
 To move the elements you can use the arrow keys or drag the elements.
 
 To run it, just go to the directory and run:
@@ -123,7 +123,7 @@ python designer.py
 ```
 (you need to have wx installed).
 
-if you are having problems making it work, so change the imports on designer.py file for the following (it should be fixed in the next version):
+If you are having problems making it work, change the imports on designer.py file to the following (it should be fixed in the next version):
 
 ```python
 import os, sys

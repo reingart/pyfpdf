@@ -1,12 +1,12 @@
-pyfpdf: FPDF for python
+pyfpdf: FPDF for Python
 =======================
 
 PyFPDF is a library for PDF document generation under Python, ported from PHP
-(see [FPDF][1] "Free"-PDF, a well-known PDFlib-extension replacement with many
+(see [FPDF][1]: "Free"-PDF, a well-known PDFlib-extension replacement with many
 examples, scripts and derivatives).
 
 Compared with other PDF libraries, PyFPDF is simple, small and versatile, with
-advanced capabilities and easy to learn, extend and maintain.
+advanced capabilities, and is easy to learn, extend and maintain.
 
   [1]: http://www.fpdf.org/
 
@@ -37,10 +37,10 @@ installers. For example, using pip:
    pip install fpdf
 ```
 
-**Note:** [Python Imaging Library](http://www.pythonware.com/products/pil/) 
-(PIL) is needed for GIF support. PNG and JPG support is built-in and don't 
-require any external dependency. For Python > 3.0 
-[Pillow - The friendly PIL fork](https://github.com/python-pillow/Pillow) are 
+**Note:** the [Python Imaging Library](http://www.pythonware.com/products/pil/) 
+(PIL) is needed for GIF support. PNG and JPG support is built-in and doesn't 
+require any external dependency. For Python 3, 
+[Pillow - The friendly PIL fork](https://github.com/python-pillow/Pillow) is 
 supported.
 
 Documentation:
@@ -53,6 +53,6 @@ Documentation:
  * [Reference Manual](docs/ReferenceManual.md)
 
 For further information, see the project site:
-https://github.com/reingart/pyfpdf or old google code project page
-https://code.google.com/p/pyfpdf/
+https://github.com/reingart/pyfpdf or the old Google Code project page
+https://code.google.com/p/pyfpdf/.
 

@@ -30,19 +30,19 @@ HTML tags and attributes supported:
   * P: paragraphs (align attributes)
   * B, I, U: bold, italic, underline
   * FONT: (face, size, color attributes)
-  * CENTER for aling
-  * A: links (href attribute))
+  * CENTER for aligning
+  * A: links (href attribute)
   * IMG: images (src, width, height attributes)
-  * OL/UL/LI: ordered, unordered and list items (can be nested)
+  * OL, UL, LI: ordered, unordered and list items (can be nested)
   * TABLE: (border, width attributes)
     * THEAD: header (opens each page)
     * TFOOT: footer (closes each page)
     * TBODY: actual rows
       * TR: rows (bgcolor attribute)
         * TH: highlight cells (align, bgcolor, width attributes)
-        * TD: rows (align, bgcolor, width attribute)
+        * TD: rows (align, bgcolor, width attributes)
 
-Note: Tables should have at least a first TH row with width attribute.
+Note: Tables should have at least a first TH row with a width attribute.
 
 ### Example ###
 
@@ -83,7 +83,7 @@ pdf.add_page()
 pdf.write_html(html)
 pdf.output('html.pdf', 'F')
 ```
-See html.py or [Web2Py](../Web2Py.md) for a complete example
+See html.py or [Web2Py](../Web2Py.md) for a complete example.
 
 ### See also ###
 [write](write.md), [add_font](add_font.md), [image](image.md).

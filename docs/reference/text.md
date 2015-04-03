@@ -5,7 +5,7 @@ fpdf.text(x: float, y: float, txt: str)
 ```
 ### Description ###
 
-Prints a character string. The origin is on the left of the first character, on the baseline. This method allows to place a string precisely on the page, but it is usually easier to use [cell](cell.md), [multi_cell](multi_cell.md) or [write](write.md) which are the standard methods to print text.
+Prints a character string. The origin is on the left of the first character, on the baseline. This method allows placing a string precisely on the page, but it is usually easier to use [cell](cell.md), [multi_cell](multi_cell.md) or [write](write.md), which are the standard methods to print text.
 
 ### Parameters ###
 

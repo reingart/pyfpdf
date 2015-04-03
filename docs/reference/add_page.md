@@ -13,7 +13,7 @@ and top margins, and [header](header.md) is called to display the header.
 
 The font which was set before calling is automatically restored. There is no 
 need to call [set_font](set_font.md) again if you want to continue with the same 
-font. Colors and line width also preserved.
+font. Colors and the line width are also preserved.
 
 The origin of the coordinate system is at the top-left corner and increasing 
 ordinates go downwards.
@@ -35,8 +35,9 @@ insensitive):
 >>    * A5
 >>    * Letter
 >>    * Legal
->>    * or a tuple containing the width and the height (expressed in the unit
-given by unit). In portrait orientation, the tuple should be in the order
+> 
+> or a tuple containing the width and the height (expressed in the
+given unit). In portrait orientation, the tuple should be in the order
 (_width_, _height_), but in landscape orientation, the order should be
 (_height_, _width_). In either case, the first tuple element is usually less
 than the second.

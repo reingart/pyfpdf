@@ -11,7 +11,7 @@ Defines the color used for text. It can be expressed in RGB components or gray s
 ### Parameters ###
 
 r:
-> If `g` and `b` are given, red component; if not, indicates the gray level. Value between 0 and 255.
+> If `g` and `b` are given, this indicates the red component; if not, this indicates the gray level. The value is between 0 and 255.
 
 g:
 > Green component (between 0 and 255).
