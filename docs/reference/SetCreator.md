@@ -1,7 +1,7 @@
 ## SetCreator ##
 
 ```python
-fpdf.set_creator(creator: str, isUTF8 = False)
+fpdf.set_creator(creator: str)
 ```
 ### Description ###
 
@@ -11,10 +11,6 @@ Defines the creator of the document. This is typically the name of the applicati
 
 creator:
 > The name of the creator.
-
-isUTF8:
-> Indicates if the string is encoded in ISO-8859-1 (False) or UTF-8 (True).
-> Default value: False.
 
 ### See also ###
 

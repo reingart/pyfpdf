@@ -1,7 +1,7 @@
 ## SetSubject ##
 
 ```python
-fpdf.set_subject(subject: str, isUTF8 = False)
+fpdf.set_subject(subject: str)
 ```
 ### Description ###
 
@@ -11,10 +11,6 @@ Defines the subject of the document.
 
 subject:
 > The subject.
-
-isUTF8:
-> Indicates if the string is encoded in ISO-8859-1 (False) or UTF-8 (True).
-> Default value: False.
 
 ### See also ###
 
