@@ -49,8 +49,8 @@ Documentation:
 
  * [Read the Docs](http://pyfpdf.readthedocs.org/en/latest/)
  * [FAQ](docs/FAQ.md)
- * [Tutorial](docs/Tutorial.md)
- * [Reference Manual](docs/ReferenceManual.md) (spanish translation available)
+ * [Tutorial](docs/Tutorial.md) (Spanish translation available)
+ * [Reference Manual](docs/ReferenceManual.md)
 
 For further information, see the project site:
 https://github.com/reingart/pyfpdf or old google code project page
