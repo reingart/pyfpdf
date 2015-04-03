@@ -20,16 +20,6 @@ orientation:
 >>    * L or Landscape
 > The default value is the one passed to the constructor.
 
-format:
-> Page format. It can be either one of the following values (case insensitive):
->>    * A3
->>    * A4
->>    * A5
->>    * Letter
->>    * Legal
-> or an array containing the width and the height (expressed in user unit).
-> The default value is the one passed to the constructor.
-
 ### See also ###
 
 [FPDF](FPDF.md), [Header](Header.md), [Footer](Footer.md), [SetMargins](SetMargins.md).
