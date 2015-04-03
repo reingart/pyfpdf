@@ -31,7 +31,7 @@ This library is not a:
     columns, chapters, etc., see [Tutorial](Tutorial.md))
   * XML /object definition language like 
     [Geraldo Reports](http://www.geraldoreports.org/), Jasper Reports or similar
-    (look at [write_html](reference/WriteHTML.md) for simple HTML reports and 
+    (look at [write_html](reference/write_html.md) for simple HTML reports and 
     [Templates](Templates.md) for fill-in-the-blank documents)
   * PDF text extractor/conversor, spltiter or similar. Look at 
     [pyPdf](https://pypi.python.org/pypi/pyPdf)
