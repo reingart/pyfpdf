@@ -1,12 +1,12 @@
 ## SetStretching ##
 
 ```python
-fpdf.set_stretching(stretching: float = 100.0)
+fpdf.set_stretching(stretching: float)
 ```
 
 ### Description ###
 
-Sets horizontal font stretching. 
+Sets horizontal font stretching. By default, if this method is not called, no stretching is set (equivalent to a value of 100).
 
 ### Version ###
 
@@ -15,7 +15,7 @@ Since 1.7.3
 ### Parameters ###
 
 stretching:
-> Define horizontal stretching (scaling) in percents. Default value 100 (i.e. no stretching).
+> Define horizontal stretching (scaling) in percents.
 
 ### Example ###
 
