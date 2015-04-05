@@ -1,5 +1,7 @@
 # try all ttf fonts 
 
+from __future__ import with_statement
+
 from fpdf import FPDF
 import fpdf
 import sys
@@ -14,7 +16,8 @@ pdf.add_page()
 #font_dir = fpdf.FPDF_FONT_DIR
 font_dir = os.path.join(base, 'font')
 
-txt = open(os.path.join(base, 'HelloWorld.txt')).read()
+with open(os.path.join(base, 'HelloWorld.txt')) as file:
+    txt = file.read()
 
 # Add a Unicode font (uses UTF-8)
 for font in os.listdir(font_dir):

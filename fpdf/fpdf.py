@@ -13,7 +13,7 @@
 # * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT  *
 # ****************************************************************************
 
-from __future__ import division
+from __future__ import division, with_statement
 
 from datetime import datetime
 from functools import wraps
@@ -557,11 +557,8 @@ class FPDF(object):
                                         'type': "TTF", 'ttffile': ttffilename}
             self.font_files[fname] = {'type': "TTF"}
         else:
-            fontfile = open(fname)
-            try:
+            with open(fname, 'rb') as fontfile:
                 font_dict = pickle.load(fontfile)
-            finally:
-                fontfile.close()
             self.fonts[fontkey] = {'i': len(self.fonts)+1}
             self.fonts[fontkey].update(font_dict)
             diff = font_dict.get('diff')
@@ -618,7 +615,8 @@ class FPDF(object):
                     name=os.path.join(FPDF_FONT_DIR,family)
                     if(family=='times' or family=='helvetica'):
                         name+=style.lower()
-                    exec(compile(open(name+'.font').read(), name+'.font', 'exec'))
+                    with open(name+'.font') as file:
+                        exec(compile(file.read(), name+'.font', 'exec'))
                     if fontkey not in fpdf_charwidths:
                         self.error('Could not include font metric file for'+fontkey)
                 i=len(self.fonts)+1
@@ -1117,11 +1115,8 @@ class FPDF(object):
             stdout.write(buffer)
         elif dest=='F':
             #Save to local file
-            f=open(name,'wb')
-            if(not f):
-                self.error('Unable to create output file: '+name)
-            f.write(buffer)
-            f.close()
+            with open(name,'wb') as f:
+                f.write(buffer)
         elif dest=='S':
             #Return as a string
             return buffer
@@ -1243,12 +1238,8 @@ class FPDF(object):
                 #Font file embedding
                 self._newobj()
                 self.font_files[name]['n']=self.n
-                font=''
-                f=open(self._getfontpath()+name,'rb',1)
-                if(not f):
-                    self.error('Font file not found')
-                font=f.read()
-                f.close()
+                with open(self._getfontpath()+name,'rb',1) as f:
+                    font=f.read()
                 compressed=(substr(name,-2)=='.z')
                 if(not compressed and 'length2' in info):
                     header=(ord(font[0])==128)
@@ -1562,7 +1553,7 @@ class FPDF(object):
             self._out('/Width '+str(info['w']))
             self._out('/Height '+str(info['h']))
             if(info['cs']=='Indexed'):
-                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(int(len(info['pal'])/3)-1)+' '+str(self.n+1)+' 0 R]')
+                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(len(info['pal'])//3-1)+' '+str(self.n+1)+' 0 R]')
             else:
                 self._out('/ColorSpace /'+info['cs'])
                 if(info['cs']=='DeviceCMYK'):
@@ -1750,6 +1741,7 @@ class FPDF(object):
 
     def _parsejpg(self, filename):
         # Extract info from a JPEG file
+        f = None
         try:
             f = open(filename, 'rb')
             while True:
@@ -1773,12 +1765,14 @@ class FPDF(object):
                         colspace = 'DeviceRGB' if layers == 3 else ('DeviceCMYK' if layers == 4 else 'DeviceGray')
                         break
         except Exception:
+            if f:
+                f.close()
             self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
 
-        # Read whole file from the start
-        f.seek(0)
-        data = f.read()
-        f.close()
+        with f:
+            # Read whole file from the start
+            f.seek(0)
+            data = f.read()
         return {'w':width,'h':height,'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
 
     def _parsegif(self, filename):
@@ -1791,9 +1785,9 @@ class FPDF(object):
             self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
         else:
             # Use temporary file
-            f = tempfile.NamedTemporaryFile(delete=False, suffix=".png")
-            tmp = f.name
-            f.close()
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as \
+                    f:
+                tmp = f.name
             if "transparency" in im.info:
                 im.save(tmp, transparency = im.info['transparency'])
             else:
@@ -1808,8 +1802,6 @@ class FPDF(object):
                f = urlopen(name)
         else:
             f=open(name,'rb')
-        if(not f):
-            self.error("Can't open image file: "+name)
         #Check signature
         magic = f.read(8).decode("latin1")
         signature = '\x89'+'PNG'+'\r'+'\n'+'\x1a'+'\n'

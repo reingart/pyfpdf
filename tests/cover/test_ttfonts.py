@@ -2,6 +2,8 @@
 
 "Basic test of TrueType Unicode font handling"
 
+from __future__ import with_statement
+
 #PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 #PyFPDF-cover-test:res=dejavusanscondensed.cw.dat
 
@@ -29,9 +31,10 @@ def dotest(outputname, nostamp):
     # note: after fixing issue 82 this raw data started to be wrong
     #  1. total length - 65536, DejaVuSansCondensed.ttf maximal char is 65533, round to nearest 1024 size
     #  2. missing char width should be 540 instead of zero
-    data = open(os.path.join(common.basepath, "dejavusanscondensed.cw.dat"),\
-        "rb").read()
-    char_widths = struct.unpack(">%dH" % int(len(data) / 2), data)
+    with open(os.path.join(common.basepath, "dejavusanscondensed.cw.dat"),\
+            "rb") as file:
+        data = file.read()
+    char_widths = struct.unpack(">%dH" % (len(data) // 2), data)
     assert len(char_widths) == 65536, "Check cw.dat char_widths 65536"
     assert len(ttf.charWidths) == 65536, "Check ttf char_widths 65536"
     diff = []

@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 from fpdf import FPDF
 
 title='20000 Leagues Under the Seas'
@@ -42,7 +44,8 @@ class PDF(FPDF):
 
 	def chapter_body(self,name):
 		#Read text file
-		txt=file(name).read()
+		with open(name,'rb') as file:
+			txt=file.read().decode('latin1')
 		#Times 12
 		self.set_font('Times','',12)
 		#Output justified text
