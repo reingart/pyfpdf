@@ -43,21 +43,11 @@ def change_cache():
 change_cache()
     
 def set_global(var, val):
-    warnings.warn("Setting global wariable are deprecated and will be removed",
+    warnings.warn("Setting global variable are deprecated and will be removed",
         DeprecationWarning)
     globals()[var] = val
     if var in ["FPDF_CACHE_MODE", "FPDF_CACHE_DIR"]:
         change_cache()
-        
-def load_cache(filename):
-    """Return unpickled object, or None if cache unavailable"""
-    if not filename:
-        return None
-    try:
-        with open(filename, "rb") as fh:
-            return pickle.load(fh)
-    except (IOError, ValueError):  # File missing, unsupported pickle, etc
-        return None
 
 class FPDF(object):
     "PDF Generation class"
@@ -1135,7 +1125,7 @@ class FPDF(object):
 
     def set_cache(self, cache):
         "Change cache"
-        if isinstance(cache, str): # hash path
+        if isinstance(cache, basestring): # hash path
             self.cache = instance_cache(2,
                     cache_dir = cache)
         else:

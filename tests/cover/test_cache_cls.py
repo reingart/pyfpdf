@@ -5,7 +5,7 @@
 #PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 #PyFPDF-cover-test:res=font/DejaVuSans.ttf
 
-import os, shutil, time
+import sys, os, shutil, time
 import gzip
 from hashlib import md5
 
@@ -43,27 +43,31 @@ class CacheGzip(fpdf.HashCache):
         if not filename:
             return None
         try:
-            with gzip.GzipFile(filename + ".gz", "rb") as fh:
+            fh = gzip.GzipFile(filename + ".gz", "rb")
+            try:
                 data = fpdf.py3k.pickle.load(fh)
                 if ttf:
                     assert data["TTF_PATH"] == ttf
                 return data
+            finally:
+                fh.close()
         except (IOError, ValueError, AssertionError):
             return None
 
-    # Note: if standard cache loaded will work, then save_cache 
-    #   will not be called
+    # Note: if standard cache loaded, then save_cache will not be called
     def save_cache(self, filename, data, ttf = None):
         if not filename:
             return None
         try:
-            with gzip.GzipFile(filename + ".gz", "wb", compresslevel = 1) as fh:
+            fh = gzip.GzipFile(filename + ".gz", "wb", compresslevel = 1)
+            try:
                 if ttf:
                     data["TTF_PATH"] = ttf
                 fpdf.py3k.pickle.dump(data, fh)
+            finally:
+                fh.close()
         except Exception as e:  
             return None
-        
 
 @common.add_unittest
 def dotest(outputname, nostamp):
