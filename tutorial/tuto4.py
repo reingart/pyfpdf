@@ -1,3 +1,5 @@
+from __future__ import with_statement
+
 from fpdf import *
 
 class PDF(FPDF):
@@ -59,7 +61,8 @@ class PDF(FPDF):
 
 	def chapter_body(self, fichier):
 		#Read text file
-		txt=file(fichier).read()
+		with open(fichier,'rb') as stream:
+			txt=stream.read().decode('latin1')
 		#Font
 		self.set_font('Times','',12)
 		#Output text in a 6 cm width column

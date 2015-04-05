@@ -5,6 +5,8 @@
 #       2) import this file before import fpdf
 #       3) assert this file in tests/cover folder
 
+from __future__ import with_statement
+
 import sys, os, subprocess
 import unittest, inspect
 
@@ -95,21 +97,17 @@ def test_putinfo(self):
 def file_hash(fn):
     "Calc MD5 hash for file"
     md = md5()
-    f = open(fn, "rb")
-    try:
+    with open(fn, "rb") as f:
         md.update(f.read())
-    finally:
-        f.close()
     return md.hexdigest()
 
 def read_cover_info(fn):
     "Read cover test info"
-    f = open(fn, "rb")
-    da = {"res": []}
-    mark = "#PyFPDF-cover-test:"
-    encmark = "# -*- coding:"
-    enc = None
-    try:
+    with open(fn, "rb") as f:
+        da = {"res": []}
+        mark = "#PyFPDF-cover-test:"
+        encmark = "# -*- coding:"
+        enc = None
         hdr = False
         for line in f.readlines():
             if enc is None:
@@ -133,9 +131,6 @@ def read_cover_info(fn):
             else:
                 if hdr and len(line) == 0:
                     break
-                
-    finally:
-        f.close()
     return da
 
 def parse_test_args(args, deffn):
@@ -165,23 +160,24 @@ def parse_test_args(args, deffn):
 def load_res_file(path):
     items = {}
     res = None
-    for line in open(path):
-        line = line.strip()
-        if line[:1] == "#":
-            continue
-        kv = line.split("=", 1)
-        if len(kv) != 2:
-            continue
-        if kv[0] == "res":
-            res = kv[1]
-            if res not in items:
-                items[res] = ["", []]
-        elif res is None:
-            continue
-        elif kv[0] == "hash":
-            items[res][0] = kv[1]
-        elif kv[0] == "tags":
-            items[res][1] += [kv[1].split(",")]
+    with open(path) as file:
+        for line in file:
+            line = line.strip()
+            if line[:1] == "#":
+                continue
+            kv = line.split("=", 1)
+            if len(kv) != 2:
+                continue
+            if kv[0] == "res":
+                res = kv[1]
+                if res not in items:
+                    items[res] = ["", []]
+            elif res is None:
+                continue
+            elif kv[0] == "hash":
+                items[res][0] = kv[1]
+            elif kv[0] == "tags":
+                items[res][1] += [kv[1].split(",")]
     return items
     
 def skip_reason(settings):

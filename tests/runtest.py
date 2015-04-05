@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+from __future__ import with_statement
 
 import os, sys
 import cover
@@ -56,7 +57,7 @@ def search_python_win():
                     ver = winreg.EnumKey(rl, i)
                     rv = winreg.QueryValue(key, PATH + "\\" + ver + "\\InstallPath")
                     fp = os.path.join(rv, "python.exe")
-                    #print fp
+                    #print(fp)
                     if os.path.exists(fp) and not fp in lst:
                         lst.append(fp)
             except WindowsError:
@@ -164,14 +165,13 @@ def do_test_one(testfile, interp, info, dest):
         shutil.copy(testfile, destpath)
     # start execution
     std, err = cover.exec_cmd([path, "-B", newfile, "--check", "--auto", newres])
-    f = open(os.path.join(destpath, "testlog.txt"), "a")
-    f.write("#" * 40 + "\n")
-    f.write(testname + "\n")
-    f.write("=" * 40 + "\n")
-    f.write(std)
-    f.write("-" * 40 + "\n")
-    f.write(err)
-    f.close()
+    with open(os.path.join(destpath, "testlog.txt"), "a") as f:
+        f.write("#" * 40 + "\n")
+        f.write(testname + "\n")
+        f.write("=" * 40 + "\n")
+        f.write(std)
+        f.write("-" * 40 + "\n")
+        f.write(err)
 
     answ = std.strip()
     if answ.find("\n") >= 0 or len(answ) == 0:
@@ -196,33 +196,32 @@ def prepare_dest(interp):
     src = os.path.join(cover.basepath, "cover")
     shutil.copy(os.path.join(src, "common.py"), destpath)
     shutil.copy(os.path.join(src, "checkenv.py"), destpath)
-    f = open(os.path.join(destpath, "testlog.txt"), "w")
-    f.write("Version: " + interp[1] + "\n")
-    f.write("Path: " + interp[0] + "\n")
-    f.write(str(interp[2:]) + "\n")
+    with open(os.path.join(destpath, "testlog.txt"), "w") as f:
+        f.write("Version: " + interp[1] + "\n")
+        f.write("Path: " + interp[0] + "\n")
+        f.write(str(interp[2:]) + "\n")
 
-    # run checkenv
-    std, err = cover.exec_cmd([interp[0], "-B", os.path.join(destpath, "checkenv.py")])
-    env = {}
-    if len(err.strip()) == 0:
-        # OK
-        f.write("Check environment - ok:\n")
-        f.write(std)
-        lineno = 0
-        for line in std.split("\n"):
-            lineno += 1
-            line = line.strip()
-            if lineno == 1:
-                if line != "CHECK":
-                    break
-            line = line.strip()
-            kv = line.split("=", 1)
-            if len(kv) == 2:
-                env[kv[0].lower().strip()] = kv[1].strip()
-    else:
-        f.write("ERROR:\n")
-        f.write(err)
-    f.close()
+        # run checkenv
+        std, err = cover.exec_cmd([interp[0], "-B", os.path.join(destpath, "checkenv.py")])
+        env = {}
+        if len(err.strip()) == 0:
+            # OK
+            f.write("Check environment - ok:\n")
+            f.write(std)
+            lineno = 0
+            for line in std.split("\n"):
+                lineno += 1
+                line = line.strip()
+                if lineno == 1:
+                    if line != "CHECK":
+                        break
+                line = line.strip()
+                kv = line.split("=", 1)
+                if len(kv) == 2:
+                    env[kv[0].lower().strip()] = kv[1].strip()
+        else:
+            f.write("ERROR:\n")
+            f.write(err)
     return (destpath, env)
 
 def do_test(testfile, interps, dests, stats, hint = ""):
@@ -349,11 +348,8 @@ def hint_prepare():
 
 
 def read_list(fn):
-    f = open(fn, "r")
-    try:
+    with open(fn, "r") as f:
         return f.readlines()
-    finally:
-        f.close()
 
 def hasher(path, args):
     tags = []
@@ -402,30 +398,28 @@ def download_fonts():
         meta = u.info()
         file_size = int(meta.get("Content-Length"))
         cover.log("Downloading:", file_size, "bytes")
-        f = open(zippath, "wb")
-        file_size_dl = 0
-        while True:
-            buff = u.read(64 * 1024)
-            if not buff:
-                break
-            file_size_dl += len(buff)
-            f.write(buff)
-            cover.log("  ", file_size_dl * 100. / file_size, "%")
-        f.close()
+        with open(zippath, "wb") as f:
+            file_size_dl = 0
+            while True:
+                buff = u.read(64 * 1024)
+                if not buff:
+                    break
+                file_size_dl += len(buff)
+                f.write(buff)
+                cover.log("  ", file_size_dl * 100. / file_size, "%")
     # unpack
     cover.log("Extracting")
     import zipfile
-    fh = open(zippath, "rb")
-    z = zipfile.ZipFile(fh)
-    for name in z.namelist():
-        if name[:5] != "font/":
-            continue
-        if name[5:].find("/") >= 0:
-            continue
-        cover.log("  ", name[5:])
-        outfile = open(os.path.join(fntdir, name[5:]), "wb")
-        outfile.write(z.read(name))
-        outfile.close()
+    with open(zippath, "rb") as fh:
+        z = zipfile.ZipFile(fh)
+        for name in z.namelist():
+            if name[:5] != "font/":
+                continue
+            if name[5:].find("/") >= 0:
+                continue
+            cover.log("  ", name[5:])
+            with open(os.path.join(fntdir, name[5:]), "wb") as outfile:
+                outfile.write(z.read(name))
     cover.log("Done")
 
 def main():

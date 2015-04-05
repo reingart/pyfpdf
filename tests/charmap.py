@@ -36,7 +36,7 @@ pdf.set_font("font", '', 10)
 cnt = 0
 for char in ttf.saveChar:
     cnt += 1
-    pdf.write(8, u"%03d) %06x - " % (cnt, char) + unichr(char))
+    pdf.write(8, u"%03d) %06x - %c" % (cnt, char, char))
     pdf.ln()
     if cnt >= 999:
         break

@@ -22,8 +22,8 @@ def dotest(outputname, nostamp):
         uni = True)
     pdf.set_font('DejaVu','',14)
 
-    txt = open(os.path.join(common.basepath, "HelloWorld.txt"), "rb").\
-        read().decode("UTF-8")
+    with open(os.path.join(common.basepath, "HelloWorld.txt"), "rb") as file:
+        txt = file.read().decode("UTF-8")
     std_ln = [27.0849, 37.9455, 30.4927, 25.7711, 41.0175, 38.7406, 30.3445, 
         22.1163, 34.8314, 12.0813, 20.0829, 14.7485, 33.4188]
     for line, reqw in zip(txt.split("\n"), std_ln):
