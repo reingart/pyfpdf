@@ -867,7 +867,8 @@ class TTFontFile:
         aw = 0
         self.charWidths = []
         def resize_cw(size, default):
-            delta = size - len(self.charWidths) + 1
+            size = (((size + 1) // 1024) + 1) * 1024
+            delta = size - len(self.charWidths)
             if delta > 0:
                 self.charWidths += [default] * delta
         nCharWidths = 0

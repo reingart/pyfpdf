@@ -14,8 +14,9 @@
 import common # test utilities
 from fpdf import FPDF
 
-import sys
+import os.path
 
+@common.add_unittest
 def dotest(outputname, nostamp):
     pdf = FPDF()
     if nostamp:
@@ -25,13 +26,13 @@ def dotest(outputname, nostamp):
     pdf.set_font('Arial', '', 14)  
 
     pdf.text(10, 57, 'DeviceGray')
-    pdf.image("img_gray.jpg", 55, 5)
+    pdf.image(os.path.join(common.basepath, "img_gray.jpg"), 55, 5)
 
     pdf.text(10, 157, 'DeviceRGB')
-    pdf.image("img_rgb.jpg", 55, 105)
+    pdf.image(os.path.join(common.basepath, "img_rgb.jpg"), 55, 105)
 
     pdf.text(10, 257, 'DeviceCMYK')
-    pdf.image("img_cmyk.jpg", 55, 205)
+    pdf.image(os.path.join(common.basepath, "img_cmyk.jpg"), 55, 205)
 
     pdf.output(outputname, 'F')
 

@@ -1080,38 +1080,42 @@ class FPDF(object):
         self.set_x(x)
 
     def output(self, name='',dest=''):
-        "Output PDF to some destination"
+        """Output PDF to some destination
+        
+        By default the PDF is written to sys.stdout. If a name is given, the
+        PDF is written to a new file. If dest='S' is given, the PDF data is
+        returned as a byte string."""
+        
         #Finish document if necessary
         if(self.state<3):
             self.close()
         dest=dest.upper()
         if(dest==''):
             if(name==''):
-                name='doc.pdf'
                 dest='I'
             else:
                 dest='F'
-        if dest=='I':
-            print(self.buffer)
-        elif dest=='D':
-            print(self.buffer)
+        if PY3K:
+            # manage binary data as latin1 until PEP461 or similar is implemented
+            buffer = self.buffer.encode("latin1")
+        else:
+            buffer = self.buffer
+        if dest in ('I', 'D'):
+            # Python < 3 writes byte data transparently without "buffer"
+            stdout = getattr(sys.stdout, 'buffer', sys.stdout)
+            stdout.write(buffer)
         elif dest=='F':
             #Save to local file
             f=open(name,'wb')
             if(not f):
                 self.error('Unable to create output file: '+name)
-            if PY3K:
-                # manage binary data as latin1 until PEP461 or similar is implemented
-                f.write(self.buffer.encode("latin1"))
-            else:
-                f.write(self.buffer)
+            f.write(buffer)
             f.close()
         elif dest=='S':
             #Return as a string
-            return self.buffer
+            return buffer
         else:
             self.error('Incorrect output destination: '+dest)
-        return ''
 
     def normalize_text(self, txt):
         "Check that text input is in the correct format/encoding"
@@ -1446,6 +1450,7 @@ class FPDF(object):
         cwlen = maxUni + 1
 
         # for each character
+        subset = set(font['subset'])
         for cid in range(startcid, cwlen):
             if cid == 128 and cw127fname and not os.path.exists(cw127fname):
                 try:
@@ -1462,12 +1467,12 @@ class FPDF(object):
                 except IOError:
                     if not exception().errno == errno.EACCES:
                         raise  # Not a permission error.
-            if (font['cw'][cid] == 0):
+            if cid > 255 and (cid not in subset): #
                 continue
             width = font['cw'][cid]
-            if (width == 65535): width = 0
-            if (cid > 255 and (cid not in font['subset']) or not cid): #
+            if (width == 0):
                 continue
+            if (width == 65535): width = 0
             if ('dw' not in font or (font['dw'] and width != font['dw'])):
                 if (cid == (prevcid + 1)):
                     if (width == prevwidth):
