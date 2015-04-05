@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+    #!/usr/bin/env python
 # -*- coding: latin-1 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
@@ -467,10 +467,10 @@ class FPDF(object):
         ttffilename = None
         if os.path.exists(fname):
             return fname
-        if (self.font_dir and
+        if (FPDF_FONT_DIR and
             os.path.exists(os.path.join(FPDF_FONT_DIR, fname))):
             return os.path.join(FPDF_FONT_DIR, fname)
-        if (self.system_fonts and
+        if (SYSTEM_TTFONTS and
             os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
             return os.path.join(SYSTEM_TTFONTS, fname)
         return None
