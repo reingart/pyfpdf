@@ -18,6 +18,7 @@ orientation:
 > Page orientation. Possible values are (case insensitive):
 >>    * P or Portrait
 >>    * L or Landscape
+> 
 > The default value is the one passed to the constructor.
 
 ### See also ###

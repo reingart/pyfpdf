@@ -31,6 +31,7 @@ border:
 >>      * T: top
 >>      * R: right
 >>      * B: bottom
+> 
 > Default value: 0.
 
 ln:
@@ -38,6 +39,7 @@ ln:
 >>    * 0: to the right
 >>    * 1: to the beginning of the next line
 >>    * 2: below
+> 
 > Putting 1 is equivalent to putting 0 and calling [Ln](Ln.md) just after. Default value: 0.
 
 align:

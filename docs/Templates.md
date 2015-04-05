@@ -31,6 +31,7 @@ Elements have the following properties (columns in a CSV, fields in a database):
 # How to create a template #
 
 A template can be created in 3 ways:
+
   * By defining everything manually in a hardcoded way
   * By using a template definition in a CSV document and parsing the CSV with Template.parse\_dict()
   * By defining the template in a database (this applies to [Web2Py](Web2Py.md) integration)

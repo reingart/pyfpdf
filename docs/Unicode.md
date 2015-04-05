@@ -7,7 +7,7 @@ Moreover, it embeds only the necessary parts of the fonts that are used in the
 document, making the file size much smaller than if the whole fonts were 
 embedded. These features were originally developed for the 
 [mPDF](http://mpdf.bpm1.com/) project, and ported from 
-[Ian Back](mailto:ian@bpm1.com?subject=sFPDF)'s  
+[Ian Back](mailto:ian@bpm1.com?subject=sFPDF)'s
 [sFPDF](http://www.fpdf.org/en/script/script91.php) LGPL PHP version.
 
 Before you can use UTF-8, you have to install at least one Unicode font in the 

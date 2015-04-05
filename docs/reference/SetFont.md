@@ -35,6 +35,7 @@ family:
 >>  * Times (serif)
 >>  * Symbol (symbolic)
 >>  * ZapfDingbats (symbolic)
+> 
 > It is also possible to pass an empty string. In that case, the current family is retained.
 
 style:
@@ -43,6 +44,7 @@ style:
 >>  * B: bold
 >>  * I: italic
 >>  * U: underline
+> 
 > or any combination. The default value is regular. Bold and italic styles do not apply to Symbol and ZapfDingbats.
 
 size:

@@ -26,6 +26,7 @@ layout:
 >>  * `continuous`: displays pages continuously
 >>  * `two`: displays two pages on two columns
 >>  * `default`: uses viewer default mode
+> 
 > Default value is `continuous`.
 
 

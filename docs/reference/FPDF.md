@@ -14,6 +14,7 @@ orientation:
 > Default page orientation. Possible values are (case insensitive):
 >>    * P or Portrait
 >>    * L or Landscape
+> 
 > Default value is P.
 
 unit:
