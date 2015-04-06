@@ -82,7 +82,7 @@ class PDF(FPDF):
                 # Arial italic 8
                 this.set_font('Arial','I',8)
                 # Page number
-                this.cell(0,10,'Page '+str(this.PageNo())+'/{nb}',0,0,'C')
+                this.cell(0,10,'Page '+str(this.page_no())+'/{nb}',0,0,'C')
 
 # Instanciation of inherited class
 pdf=PDF()
