@@ -18,6 +18,7 @@ pages:
 - [Unicode.md, "Unicode"]
 - [Web2Py.md, "Web2Py framework"]
 - [Testing.md, "Testing"]
+- [Development.md, "Development"]
 - ["reference/AcceptPageBreak.md", "Reference manual", "AcceptPageBreak"]
 - ["reference/AddFont.md", "Reference manual", "AddFont"]
 - ["reference/AddLink.md", "Reference manual", "AddLink"]
