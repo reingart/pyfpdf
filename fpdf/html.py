@@ -79,7 +79,7 @@ class HTML2FPDF(HTMLParser):
             else:
                 l = [self.td.get('width','240')]
             w = sum([self.width2mm(length) for length in l])
-            h = int(self.td.get('height', 0)) / 4 or self.h*1.30
+            h = int(self.td.get('height', 0)) // 4 or self.h*1.30
             self.table_h = h
             border = int(self.table.get('border', 0))
             if not self.th:

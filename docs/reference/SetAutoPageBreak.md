@@ -1,7 +1,7 @@
 ## SetAutoPageBreak ##
 
 ```python
-fpdf.set_auto_page_break(auto; bool, margin = 0.0)
+fpdf.set_auto_page_break(auto: bool, margin = 0.0)
 ```
 
 ### Description ###
@@ -18,4 +18,4 @@ margin:
 
 ### See also ###
 
-[Cell](Cell.md), [MultiCell](MultiCell.md), [AcceptPageBreak](AcceptPageBreak,md).
+[Cell](Cell.md), [MultiCell](MultiCell.md), [AcceptPageBreak](AcceptPageBreak.md).

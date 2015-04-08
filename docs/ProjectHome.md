@@ -9,7 +9,7 @@ _PyFPDF_ is a library for PDF document generation under Python, ported from php 
 ## Main features ##
   * Easy to use (and easy to extend)
   * Many simple examples and scripts available in many languages
-  * No external dependencies or extensions (optionally PIL for JPG support)
+  * No external dependencies or extensions (optionally PIL for GIF support)
   * No installation, no compilation or other libraries (DLL) required
   * Small and compact code, useful for testing new features and teaching
 

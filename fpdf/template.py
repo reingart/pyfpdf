@@ -2,6 +2,8 @@
 
 "PDF Template Helper for FPDF.py"
 
+from __future__ import with_statement
+
 __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2010 Mariano Reingart"
 __license__ = "LGPL 3.0"
@@ -45,19 +47,20 @@ class Template:
             f = open(infile, 'rb')
         else:
             f = open(infile)
-        for row in csv.reader(f, delimiter=delimiter):
-            kargs = {}
-            for i,v in enumerate(row):
-                if not v.startswith("'") and decimal_sep!=".": 
-                    v = v.replace(decimal_sep,".")
-                else:
-                    v = v
-                if v=='':
-                    v = None
-                else:
-                    v = eval(v.strip())
-                kargs[keys[i]] = v
-            self.elements.append(kargs)
+        with f:
+            for row in csv.reader(f, delimiter=delimiter):
+                kargs = {}
+                for i,v in enumerate(row):
+                    if not v.startswith("'") and decimal_sep!=".": 
+                        v = v.replace(decimal_sep,".")
+                    else:
+                        v = v
+                    if v=='':
+                        v = None
+                    else:
+                        v = eval(v.strip())
+                    kargs[keys[i]] = v
+                self.elements.append(kargs)
         self.keys = [v['name'].lower() for v in self.elements]
 
     def add_page(self):

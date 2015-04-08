@@ -3,6 +3,8 @@
 "Example of unicode support winfonts based on tfPDF"
 # http://www.fpdf.org/en/script/script92.php
 
+from __future__ import with_statement
+
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=winfonts.pdf
 #PyFPDF-cover-test:platform=win32
@@ -33,8 +35,8 @@ def dotest(outputname, nostamp):
         common.log("ttf loading time", t1-t0)
 
     # Load a UTF-8 string from a file and print it
-    txt = open(os.path.join(common.basepath, "HelloWorld.txt"), "rb").\
-        read().decode("UTF-8")
+    with open(os.path.join(common.basepath, "HelloWorld.txt"), "rb") as file:
+        txt = file.read().decode("UTF-8")
     pdf.multi_cell(25, 5, txt)
 
     pdf.text(100, 5, '1234')

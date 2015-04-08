@@ -54,8 +54,8 @@ def dotest(outputname, nostamp):
         os.path.join(common.basepath, "font", 'DejaVuSans.ttf'), \
         uni = True)
     pdf.set_font('DejaVu', '', 14)
-    txt = open(os.path.join(common.basepath, "HelloWorld.txt"), "rb").\
-        read().decode("UTF-8")
+    with open(os.path.join(common.basepath, "HelloWorld.txt"), "rb") as file:
+        txt = file.read().decode("UTF-8")
 
     if not nostamp:
         text(pdf, txt, 100, nostamp)

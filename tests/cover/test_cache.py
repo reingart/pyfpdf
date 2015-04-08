@@ -2,6 +2,8 @@
 
 "Test caching"
 
+from __future__ import with_statement
+
 #PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 #PyFPDF-cover-test:res=font/DejaVuSans.ttf
 
@@ -21,9 +23,8 @@ def testfile(f1, f2):
     return pdf
 
 def trashfile(fn):
-    f = open(fn, "w")
-    f.write("1234567890")
-    f.close()
+    with open(fn, "w") as f:
+        f.write("1234567890")
 
 try:
     from hashlib import md5
