@@ -255,8 +255,8 @@ class FPDF(object):
         #close document
         self._enddoc()
 
-    def add_page(self, orientation=''):
-        "Start a new page"
+    def add_page(self, orientation = '', same = False):
+        "Start a new page, if same page format will be same as previous"
         if(self.state==0):
             self.open()
         family=self.font_family
@@ -279,7 +279,7 @@ class FPDF(object):
             #close page
             self._endpage()
         #Start new page
-        self._beginpage(orientation)
+        self._beginpage(orientation, same)
         #Set line cap style to square
         self._out('2 J')
         #Set line width
@@ -709,7 +709,7 @@ class FPDF(object):
             if(ws>0):
                 self.ws=0
                 self._out('0 Tw')
-            self.add_page(self.cur_orientation)
+            self.add_page(same = True)
             self.x=x
             if(ws>0):
                 self.ws=ws
@@ -1029,7 +1029,7 @@ class FPDF(object):
             if (self.y + h > self.page_break_trigger and not self.in_footer and self.accept_page_break()):
                 #Automatic page break
                 x = self.x
-                self.add_page(self.cur_orientation)
+                self.add_page(same = True)
                 self.x = x
             y = self.y
             self.y += h
@@ -1679,7 +1679,7 @@ class FPDF(object):
         self._out('%%EOF')
         self.state=3
 
-    def _beginpage(self, orientation):
+    def _beginpage(self, orientation, same):
         self.page += 1
         self.pages[self.page] = {"content": ""}
         self.state = 2
@@ -1687,26 +1687,27 @@ class FPDF(object):
         self.y = self.t_margin
         self.font_family = ''
         self.font_stretching = 100
-        #Page orientation
-        if not orientation:
-            orientation = self.def_orientation
-        else:
-            orientation = orientation[0].upper()
-        self.pages[self.page]["orientation"] = orientation
-        if orientation != self.cur_orientation:
-            #Change orientation
-            if orientation == 'P':
-                self.w_pt = self.fw_pt
-                self.h_pt = self.fh_pt
-                self.w = self.fw
-                self.h = self.fh
+        if not same:
+            # Page orientation
+            if not orientation:
+                orientation = self.def_orientation
             else:
-                self.w_pt = self.fh_pt
-                self.h_pt = self.fw_pt
-                self.w = self.fh
-                self.h = self.fw
-            self.page_break_trigger = self.h - self.b_margin
-            self.cur_orientation = orientation
+                orientation = orientation[0].upper()
+            if orientation != self.cur_orientation:
+                # Change orientation
+                if orientation == 'P':
+                    self.w_pt = self.fw_pt
+                    self.h_pt = self.fh_pt
+                    self.w = self.fw
+                    self.h = self.fh
+                else:
+                    self.w_pt = self.fh_pt
+                    self.h_pt = self.fw_pt
+                    self.w = self.fh
+                    self.h = self.fw
+                self.page_break_trigger = self.h - self.b_margin
+                self.cur_orientation = orientation
+        self.pages[self.page]["orientation"] = orientation
 
     def _endpage(self):
         #End of page contents

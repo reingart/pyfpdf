@@ -99,7 +99,7 @@ class HTML2FPDF(HTMLParser):
             height = h + (self.tfooter and self.tfooter[0][0][1] or 0)
             if self.pdf.y+height>self.pdf.page_break_trigger and not self.th:
                 self.output_table_footer()
-                self.pdf.add_page()
+                self.pdf.add_page(same = True)
                 self.theader_out = self.tfooter_out = False
             if self.tfoot is None and self.thead is None:
                 if not self.theader_out: 
