@@ -34,7 +34,7 @@ format:
 >>    * A5
 >>    * Letter
 >>    * Legal
->>    * or a tuple containing the width and the height (expressed in the unit given by unit).
+>>    * or a tuple containing the width and the height (expressed in the unit given by unit). In portrait orientation, the tuple should be in the order (_width_, _height_), but in landscape orientation, the order should be (_height_, _width_). In either case, the first tuple element is usually less than the second.
 
 > Default value is A4.
 
