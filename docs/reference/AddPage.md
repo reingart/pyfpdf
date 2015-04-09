@@ -1,7 +1,7 @@
 ## AddPage ##
 
 ```python
-fpdf.add_page(orientation = '')
+fpdf.add_page(orientation = '', format = '', same = False)
 ```
 
 ### Description ###
@@ -19,6 +19,19 @@ orientation:
 >>    * P or Portrait
 >>    * L or Landscape
 > The default value is the one passed to the constructor.
+
+format:
+> The format used for pages. It can be either one of the following values (case insensitive):
+>>    * A3
+>>    * A4
+>>    * A5
+>>    * Letter
+>>    * Legal
+>>    * or a tuple containing the width and the height (expressed in the unit given by unit).
+> The default value is the one passed to the constructor.
+
+same:
+> True if page must be same as previous. In this case other parametres are ignored.
 
 ### See also ###
 
