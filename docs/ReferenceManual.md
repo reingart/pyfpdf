@@ -42,11 +42,11 @@
   * [SetLineWidth](reference/SetLineWidth.md) - set line width
   * [SetLink](reference/SetLink.md) - set internal link destination
   * [SetMargins](reference/SetMargins.md) - set margins
-  * [SetRightMargin](reference/SetLeftMargin.md) - set right margin
-  * [SetSubject](reference/SetSubject) - set document subject
+  * [SetRightMargin](reference/SetRightMargin.md) - set right margin
+  * [SetSubject](reference/SetSubject.md) - set document subject
   * [SetTextColor](reference/SetTextColor.md) - set text color
   * [SetTitle](reference/SetTitle.md) - set document title
-  * [SetTopMargin](reference/SetLeftMargin.md) - set top margin
+  * [SetTopMargin](reference/SetTopMargin.md) - set top margin
   * [SetX](reference/SetX.md) - set current x position
   * [SetXY](reference/SetXY.md) - set current x and y positions
   * [SetY](reference/SetY.md) - set current y position
