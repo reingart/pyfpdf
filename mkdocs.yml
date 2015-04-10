@@ -47,6 +47,7 @@ pages:
 - ["reference/Rect.md", "Reference manual", "Rect"]
 - ["reference/SetAuthor.md", "Reference manual", "SetAuthor"]
 - ["reference/SetAutoPageBreak.md", "Reference manual", "SetAutoPageBreak"]
+- ["reference/SetCache.md", "Reference manual", "SetCache"]
 - ["reference/SetCompression.md", "Reference manual", "SetCompression"]
 - ["reference/SetCreator.md", "Reference manual", "SetCreator"]
 - ["reference/SetDisplayMode.md", "Reference manual", "SetDisplayMode"]

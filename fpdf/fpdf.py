@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+    #!/usr/bin/env python
 # -*- coding: latin-1 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
@@ -20,11 +20,13 @@ from functools import wraps
 import math
 import errno
 import os, sys, zlib, struct, re, tempfile, struct
+import warnings
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
-from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, b, hashpath
+from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, b
+from .cache import instance_cache, NoneCache
 
 # Global variables
 FPDF_VERSION = '1.7.2'
@@ -32,20 +34,20 @@ FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
 FPDF_CACHE_MODE = 0 # 0 - in same folder, 1 - none, 2 - hash
 FPDF_CACHE_DIR = None
 SYSTEM_TTFONTS = None
+FPDF_CACHE = None
 
-
+def change_cache():
+    global FPDF_CACHE
+    FPDF_CACHE = instance_cache(cache_mode = FPDF_CACHE_MODE, 
+        cache_dir = FPDF_CACHE_DIR)
+change_cache()
+    
 def set_global(var, val):
+    warnings.warn("Setting global variable are deprecated and will be removed",
+        DeprecationWarning)
     globals()[var] = val
-
-def load_cache(filename):
-    """Return unpickled object, or None if cache unavailable"""
-    if not filename:
-        return None
-    try:
-        with open(filename, "rb") as fh:
-            return pickle.load(fh)
-    except (IOError, ValueError):  # File missing, unsupported pickle, etc
-        return None
+    if var in ["FPDF_CACHE_MODE", "FPDF_CACHE_DIR"]:
+        change_cache()
 
 class FPDF(object):
     "PDF Generation class"
@@ -149,6 +151,9 @@ class FPDF(object):
         self.set_compression(1)
         # Set default PDF version number
         self.pdf_version='1.3'
+
+        # Set default cache to None
+        self.cache = None
 
     def check_page(fn):
         "Decorator to protect drawing methods"
@@ -457,6 +462,20 @@ class FPDF(object):
             (cx+rx)*self.k, (self.h-cy)*self.k, 
             op))
 
+    def find_font(self, fname):
+        "Search font in standart folders"
+        ttffilename = None
+        if os.path.exists(fname):
+            return fname
+        if (FPDF_FONT_DIR and
+            os.path.exists(os.path.join(FPDF_FONT_DIR, fname))):
+            return os.path.join(FPDF_FONT_DIR, fname)
+        if (SYSTEM_TTFONTS and
+            os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
+            return os.path.join(SYSTEM_TTFONTS, fname)
+        return None
+        
+
     def add_font(self, family, style='', fname='', uni=False):
         "Add a TrueType or Type1 font"
         family = family.lower()
@@ -472,26 +491,14 @@ class FPDF(object):
             # Font already added!
             return
         if (uni):
-            global SYSTEM_TTFONTS, FPDF_CACHE_MODE, FPDF_CACHE_DIR
-            if os.path.exists(fname):
-                ttffilename = fname
-            elif (FPDF_FONT_DIR and
-                os.path.exists(os.path.join(FPDF_FONT_DIR, fname))):
-                ttffilename = os.path.join(FPDF_FONT_DIR, fname)
-            elif (SYSTEM_TTFONTS and
-                os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
-                ttffilename = os.path.join(SYSTEM_TTFONTS, fname)
-            else:
+            ttffilename = self.find_font(fname)
+            if not ttffilename:
                 raise RuntimeError("TTF Font file not found: %s" % fname)
             name = ''
-            if FPDF_CACHE_MODE == 0:
-                unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
-            elif FPDF_CACHE_MODE == 2:                
-                unifilename = os.path.join(FPDF_CACHE_DIR, \
-                    hashpath(ttffilename) + ".pkl")
-            else:
-                unifilename = None
-            font_dict = load_cache(unifilename)
+            cache = self.cache or FPDF_CACHE
+            unifilename = cache.cache_for(ttffilename)
+            font_dict = cache.load_cache(unifilename, 
+                os.path.abspath(ttffilename))
             if font_dict is None:
                 ttf = TTFontFile()
                 ttf.getMetrics(ttffilename)
@@ -521,13 +528,8 @@ class FPDF(object):
                     'originalsize': os.stat(ttffilename).st_size,
                     'cw': ttf.charWidths,
                     }
-                if unifilename:
-                    try:
-                        with open(unifilename, "wb") as fh:
-                            pickle.dump(font_dict, fh)
-                    except IOError:
-                        if not exception().errno == errno.EACCES:
-                            raise  # Not a permission error.
+                cache.save_cache(unifilename, font_dict, 
+                    os.path.abspath(ttffilename))
                 del ttf
             if hasattr(self,'str_alias_nb_pages'):
                 sbarr = list(range(0,57))   # include numbers in the subset!
@@ -1121,6 +1123,13 @@ class FPDF(object):
             txt = txt.encode('latin1')
         return txt
 
+    def set_cache(self, cache):
+        "Change cache"
+        if isinstance(cache, basestring): # hash path
+            self.cache = instance_cache(2,
+                    cache_dir = cache)
+        else:
+            self.cache = cache
 
     def _dochecks(self):
         #Check for locale-related bug
@@ -1416,11 +1425,14 @@ class FPDF(object):
                 self.mtd(font)
 
     def _putTTfontwidths(self, font, maxUni):
+        global FPDF_CACHE
+        cache = self.cache or FPDF_CACHE
         if font['unifilename']:
             cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
         else:
             cw127fname = None
-        font_dict = load_cache(cw127fname)
+        font_dict = cache.load_cache(cw127fname)
+        font_data = font_dict
         if font_dict is None:    
             rangeid = 0
             range_ = {}
@@ -1442,20 +1454,15 @@ class FPDF(object):
         # for each character
         subset = set(font['subset'])
         for cid in range(startcid, cwlen):
-            if cid == 128 and cw127fname and not os.path.exists(cw127fname):
-                try:
-                    with open(cw127fname, "wb") as fh:
-                        font_dict = {}
-                        font_dict['rangeid'] = rangeid
-                        font_dict['prevcid'] = prevcid
-                        font_dict['prevwidth'] = prevwidth
-                        font_dict['interval'] = interval
-                        font_dict['range_interval'] = range_interval
-                        font_dict['range'] = range_
-                        pickle.dump(font_dict, fh)
-                except IOError:
-                    if not exception().errno == errno.EACCES:
-                        raise  # Not a permission error.
+            if cid == 128 and cw127fname and font_dict is None:
+                font_dict = {}
+                font_dict['rangeid'] = rangeid
+                font_dict['prevcid'] = prevcid
+                font_dict['prevwidth'] = prevwidth
+                font_dict['interval'] = interval
+                font_dict['range_interval'] = range_interval
+                font_dict['range'] = range_
+                cache.save_cache(cw127fname, font_dict)
             if cid > 255 and (cid not in subset): #
                 continue
             width = font['cw'][cid]

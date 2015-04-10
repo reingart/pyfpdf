@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
 
-"Test caching"
-
-from __future__ import with_statement
+"Test new caching classes"
 
 #PyFPDF-cover-test:res=font/DejaVuSansCondensed.ttf
 #PyFPDF-cover-test:res=font/DejaVuSans.ttf
 
+import sys, os, shutil, time
+import gzip
+from hashlib import md5
+
 import common
 import fpdf
 
-import os, shutil, time
-
-def testfile(f1, f2):
+def testfile(f1, f2, cache):
     # create pdf
     pdf = fpdf.FPDF()
+    pdf.set_cache(cache)
     if f1:
         pdf.add_font('DejaVuSansCondensed', '', f1, uni = True)
     if f2:
@@ -23,16 +24,10 @@ def testfile(f1, f2):
     return pdf
 
 def trashfile(fn):
-    with open(fn, "w") as f:
-        f.write("1234567890")
+    f = open(fn, "w")
+    f.write("1234567890")
+    f.close()
 
-try:
-    from hashlib import md5
-except ImportError:
-    try:
-        from md5 import md5
-    except ImportError:
-        md5 = None
 def hashfn(fn):
     h = md5()
     fn = os.path.abspath(fn)
@@ -41,7 +36,38 @@ def hashfn(fn):
     else:
         h.update(fn)
     return h.hexdigest()
-  
+
+class CacheGzip(fpdf.HashCache):
+    # Load cached        
+    def load_cache(self, filename, ttf = None):
+        if not filename:
+            return None
+        try:
+            fh = gzip.GzipFile(filename + ".gz", "rb")
+            try:
+                data = fpdf.py3k.pickle.load(fh)
+                if ttf:
+                    assert data["TTF_PATH"] == ttf
+                return data
+            finally:
+                fh.close()
+        except (IOError, ValueError, AssertionError):
+            return None
+
+    # Note: if standard cache loaded, then save_cache will not be called
+    def save_cache(self, filename, data, ttf = None):
+        if not filename:
+            return None
+        try:
+            fh = gzip.GzipFile(filename + ".gz", "wb", compresslevel = 1)
+            try:
+                if ttf:
+                    data["TTF_PATH"] = ttf
+                fpdf.py3k.pickle.dump(data, fh)
+            finally:
+                fh.close()
+        except Exception as e:  
+            return None
 
 @common.add_unittest
 def dotest(outputname, nostamp):
@@ -68,16 +94,15 @@ def dotest(outputname, nostamp):
     f2 = os.path.join(cachepath, "DejaVuSans.ttf")
 
     # --- normal cache mode ---
-    fpdf.set_global("FPDF_CACHE_MODE", 0)
     # first load
     t0 = time.time()
-    pdf = testfile(f1, f2)
+    pdf = testfile(f1, f2, fpdf.StdCache())
     t1 = time.time()
     assert os.path.exists(f1[:-3] + "pkl"), "Pickle for DejaVuSansCondensed not found"
     assert os.path.exists(f2[:-3] + "pkl"), "Pickle for DejaVuSans not found"
     # load cached
     t2 = time.time()
-    pdf = testfile(f1, f2)
+    pdf = testfile(f1, f2, fpdf.StdCache())
     t3 = time.time()
     if not nostamp:
         common.log("Cache fonts:  ", t1 - t0)
@@ -93,14 +118,13 @@ def dotest(outputname, nostamp):
     assert os.path.exists(f2[:-3] + "cw127.pkl"), "Unnecessary cw127 for DejaVuSans"
         
     # --- disable cache reading ---
-    fpdf.set_global("FPDF_CACHE_MODE", 1)
     # put garbage data to cache files - fpdf should not read pkl
     trashfile(f1[:-3] + "pkl")
     trashfile(f2[:-3] + "pkl")
     trashfile(f2[:-3] + "cw127.pkl")
     # test same file
     t0 = time.time()
-    pdf = testfile(f1, f2)
+    pdf = testfile(f1, f2, fpdf.NoneCache())
     t1 = time.time()
     # remove pkl files
     os.remove(f1[:-3] + "pkl")
@@ -108,7 +132,7 @@ def dotest(outputname, nostamp):
     os.remove(f2[:-3] + "cw127.pkl")
     # test reload
     t2 = time.time()
-    pdf = testfile(f1, f2)
+    pdf = testfile(f1, f2, fpdf.NoneCache())
     t3 = time.time()
     if not nostamp:
         common.log("No cache 1st: ", t1 - t0)
@@ -124,30 +148,61 @@ def dotest(outputname, nostamp):
     assert not os.path.exists(f2[:-3] + "cw127.pkl"), "Unnecessary file DejaVuSans.127.pkl"
 
     # --- hash cache ---
-    fpdf.set_global("FPDF_CACHE_MODE", 2)
-    fpdf.set_global("FPDF_CACHE_DIR", hashpath)
     t0 = time.time()
-    pdf = testfile(f1, f2)
+    pdf = testfile(f1, f2, hashpath)
     t1 = time.time()
     assert not os.path.exists(f1[:-3] + "pkl"), "Misplaced file DejaVuSansCondensed.pkl"
     assert not os.path.exists(f2[:-3] + "pkl"), "Misplaced file DejaVuSans.pkl"
     # load cached
     t2 = time.time()
-    pdf = testfile(f1, f2)
+    pdf = testfile(f1, f2, hashpath)
     t3 = time.time()
     # test reload
     if not nostamp:
         common.log("Hash load 1st:", t1 - t0)
         common.log("Hash load 2nd:", t3 - t2)
     # check hash
-    assert os.path.exists(os.path.join(hashpath, hashfn(f1) + ".pkl")), "Cached pickle for DejaVuSansCondensed not found"
-    assert os.path.exists(os.path.join(hashpath, hashfn(f2) + ".pkl")), "Cached pickle for DejaVuSans not found"            
+    h1 = os.path.join(hashpath, hashfn(f1) + ".pkl")
+    h2 = os.path.join(hashpath, hashfn(f2) + ".pkl")
+    assert os.path.exists(h1), "Cached pickle for DejaVuSansCondensed not found"
+    assert os.path.exists(h2), "Cached pickle for DejaVuSans not found"            
     pdf.add_page()
     pdf.write(5, "Хешировали, хешировали, да выдохешировали.")
     pdf.write(10, "Hello")
     pdf.output(os.path.join(cachepath, "pdf2.pdf"), "F")
-    assert not os.path.exists(os.path.join(hashpath, hashfn(f1) + ".cw127.pkl")), "Cachecd cw127 for DejaVuSansCondensed not found"
-    assert os.path.exists(os.path.join(hashpath, hashfn(f2) + ".cw127.pkl")), "Unnecessary cached cw127 for DejaVuSans"
+    assert not os.path.exists(h1[:-3] + "cw127.pkl"), "Unnecessary cached cw127 for DejaVuSansCondensed "
+    assert os.path.exists(h2[:-3] + "cw127.pkl"), "Cached cw127 for DejaVuSans not found"
+    
+
+    # --- test gzip ---
+    # remove cached files from HashCache
+    os.remove(h1)
+    os.remove(h2)
+    os.remove(h2[:-3] + "cw127.pkl")
+    cgz = CacheGzip(cache_dir = hashpath)
+    t0 = time.time()
+    pdf = testfile(f1, f2, cgz)
+    t1 = time.time()
+    assert not os.path.exists(h1), "Misplaced hash file DejaVuSansCondensed.pkl"
+    assert not os.path.exists(h2), "Misplaced hash file DejaVuSans.pkl"
+
+    # load cached
+    t2 = time.time()
+    pdf = testfile(f1, f2, cgz)
+    t3 = time.time()
+    # test reload
+    if not nostamp:
+        common.log("Gzip hash 1st:", t1 - t0)
+        common.log("Gzip hash 2nd:", t3 - t2)
+    # check hash
+    assert os.path.exists(h1 + ".gz"), "Gzip cached pickle for DejaVuSansCondensed not found"
+    assert os.path.exists(h2 + ".gz"), "Gzip cached pickle for DejaVuSans not found"            
+    pdf.add_page()
+    pdf.write(5, "Сжимай! Сжимаю, сжал")
+    pdf.write(10, "Hello")
+    pdf.output(os.path.join(cachepath, "pdf3.pdf"), "F")
+    assert not os.path.exists(h1[:-3] + "cw127.pkl.gz"), "Unnecessary gzip cached cw127 for DejaVuSansCondensed "
+    assert os.path.exists(h2[:-3] + "cw127.pkl.gz"), "Gzip cached cw127 for DejaVuSans not found"
 
 if __name__ == "__main__":
     common.testmain(__file__, dotest)
