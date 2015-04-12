@@ -33,6 +33,13 @@ FPDF_CACHE_MODE = 0 # 0 - in same folder, 1 - none, 2 - hash
 FPDF_CACHE_DIR = None
 SYSTEM_TTFONTS = None
 
+PAGE_FORMATS = {
+    "a3": (841.89, 1190.55),
+    "a4": (595.28, 841.89),
+    "a5": (420.94, 595.28),
+    "letter": (612, 792),
+    "legal": (612, 1008),
+}
 
 def set_global(var, val):
     globals()[var] = val
@@ -50,105 +57,104 @@ def load_cache(filename):
 class FPDF(object):
     "PDF Generation class"
 
-    def __init__(self, orientation='P',unit='mm',format='A4'):
+    def __init__(self, orientation = 'P', unit = 'mm', format = 'A4'):
         # Some checks
         self._dochecks()
         # Initialization of properties
-        self.offsets={}                 # array of object offsets
-        self.page=0                     # current page number
-        self.n=2                        # current object number
-        self.buffer=''                  # buffer holding in-memory PDF
-        self.pages={}                   # array containing pages
-        self.orientation_changes={}     # array indicating orientation changes
-        self.state=0                    # current document state
-        self.fonts={}                   # array of used fonts
-        self.font_files={}              # array of font files
-        self.diffs={}                   # array of encoding differences
-        self.images={}                  # array of used images
-        self.page_links={}              # array of links in pages
-        self.links={}                   # array of internal links
-        self.in_footer=0                # flag set when processing footer
-        self.lastw=0
-        self.lasth=0                    # height of last cell printed
-        self.font_family=''             # current font family
-        self.font_style=''              # current font style
-        self.font_size_pt=12            # current font size in points
-        self.font_stretching=100        # current font stretching
-        self.underline=0                # underlining flag
-        self.draw_color='0 G'
-        self.fill_color='0 g'
-        self.text_color='0 g'
-        self.color_flag=0               # indicates whether fill and text colors are different
-        self.ws=0                       # word spacing
-        self.angle=0
+        self.offsets = {}               # array of object offsets
+        self.page = 0                   # current page number
+        self.n = 2                      # current object number
+        self.buffer = ''                # buffer holding in-memory PDF
+        self.pages = {}                 # array containing pages and metadata
+        self.state = 0                  # current document state
+        self.fonts = {}                 # array of used fonts
+        self.font_files = {}            # array of font files
+        self.diffs = {}                 # array of encoding differences
+        self.images = {}                # array of used images
+        self.page_links = {}            # array of links in pages
+        self.links = {}                 # array of internal links
+        self.in_footer = 0              # flag set when processing footer
+        self.lastw = 0
+        self.lasth = 0                  # height of last cell printed
+        self.font_family = ''           # current font family
+        self.font_style = ''            # current font style
+        self.font_size_pt = 12          # current font size in points
+        self.font_stretching = 100      # current font stretching
+        self.underline = 0              # underlining flag
+        self.draw_color = '0 G'
+        self.fill_color = '0 g'
+        self.text_color = '0 g'
+        self.color_flag = 0             # indicates whether fill and text colors are different
+        self.ws = 0                     # word spacing
+        self.angle = 0
         # Standard fonts
-        self.core_fonts={'courier':'Courier','courierB':'Courier-Bold','courierI':'Courier-Oblique','courierBI':'Courier-BoldOblique',
-            'helvetica':'Helvetica','helveticaB':'Helvetica-Bold','helveticaI':'Helvetica-Oblique','helveticaBI':'Helvetica-BoldOblique',
-            'times':'Times-Roman','timesB':'Times-Bold','timesI':'Times-Italic','timesBI':'Times-BoldItalic',
-            'symbol':'Symbol','zapfdingbats':'ZapfDingbats'}
+        self.core_fonts={'courier': 'Courier', 'courierB': 'Courier-Bold',
+            'courierI': 'Courier-Oblique', 'courierBI': 'Courier-BoldOblique',
+            'helvetica': 'Helvetica', 'helveticaB': 'Helvetica-Bold',
+            'helveticaI': 'Helvetica-Oblique', 
+            'helveticaBI': 'Helvetica-BoldOblique',
+            'times': 'Times-Roman', 'timesB': 'Times-Bold',
+            'timesI': 'Times-Italic', 'timesBI': 'Times-BoldItalic',
+            'symbol': 'Symbol', 'zapfdingbats': 'ZapfDingbats'}
         # Scale factor
-        if(unit=='pt'):
-            self.k=1
-        elif(unit=='mm'):
-            self.k=72/25.4
-        elif(unit=='cm'):
-            self.k=72/2.54
-        elif(unit=='in'):
-            self.k=72.
+        if unit == "pt":
+            self.k = 1
+        elif unit == "mm":
+            self.k = 72 / 25.4
+        elif unit == "cm":
+            self.k = 72 / 2.54
+        elif unit == 'in':
+            self.k = 72.
         else:
-            self.error('Incorrect unit: '+unit)
+            self.error("Incorrect unit: " + unit)
         # Page format
-        if(isinstance(format,basestring)):
-            format=format.lower()
-            if(format=='a3'):
-                format=(841.89,1190.55)
-            elif(format=='a4'):
-                format=(595.28,841.89)
-            elif(format=='a5'):
-                format=(420.94,595.28)
-            elif(format=='letter'):
-                format=(612,792)
-            elif(format=='legal'):
-                format=(612,1008)
-            else:
-                self.error('Unknown page format: '+format)
-            self.fw_pt=format[0]
-            self.fh_pt=format[1]
-        else:
-            self.fw_pt=format[0]*self.k
-            self.fh_pt=format[1]*self.k
-        self.fw=self.fw_pt/self.k
-        self.fh=self.fh_pt/self.k
+        self.fw_pt, self.fh_pt = self.get_page_format(format, self.k)
+        self.dw_pt = self.fw_pt
+        self.dh_pt = self.fh_pt
+        self.fw = self.fw_pt / self.k
+        self.fh = self.fh_pt / self.k
         # Page orientation
-        orientation=orientation.lower()
-        if(orientation=='p' or orientation=='portrait'):
-            self.def_orientation='P'
-            self.w_pt=self.fw_pt
-            self.h_pt=self.fh_pt
-        elif(orientation=='l' or orientation=='landscape'):
-            self.def_orientation='L'
-            self.w_pt=self.fh_pt
-            self.h_pt=self.fw_pt
+        orientation = orientation.lower()
+        if orientation in ('p', 'portrait'):
+            self.def_orientation = 'P'
+            self.w_pt = self.fw_pt
+            self.h_pt = self.fh_pt
+        elif orientation in ('l', 'landscape'):
+            self.def_orientation = 'L'
+            self.w_pt = self.fh_pt
+            self.h_pt = self.fw_pt
         else:
-            self.error('Incorrect orientation: '+orientation)
-        self.cur_orientation=self.def_orientation
-        self.w=self.w_pt/self.k
-        self.h=self.h_pt/self.k
+            self.error('Incorrect orientation: ' + orientation)
+        self.cur_orientation = self.def_orientation
+        self.w = self.w_pt / self.k
+        self.h = self.h_pt / self.k
         # Page margins (1 cm)
-        margin=28.35/self.k
-        self.set_margins(margin,margin)
+        margin = 28.35 / self.k
+        self.set_margins(margin, margin)
         # Interior cell margin (1 mm)
-        self.c_margin=margin/10.0
+        self.c_margin = margin / 10.0
         # line width (0.2 mm)
-        self.line_width=.567/self.k
+        self.line_width = .567 / self.k
         # Automatic page break
-        self.set_auto_page_break(1,2*margin)
+        self.set_auto_page_break(1, 2 * margin)
         # Full width display mode
         self.set_display_mode('fullwidth')
         # Enable compression
         self.set_compression(1)
         # Set default PDF version number
-        self.pdf_version='1.3'
+        self.pdf_version = '1.3'
+
+    @staticmethod
+    def get_page_format(format, k):
+        "Return scale factor, page w and h size in points"
+        if isinstance(format, basestring):
+            format = format.lower()
+            if format in PAGE_FORMATS:
+                return PAGE_FORMATS[format]
+            else:
+                self.error("Unknown page format: " + format)
+        else:
+            return (format[0] * k, format[1] * k)
 
     def check_page(fn):
         "Decorator to protect drawing methods"
@@ -255,8 +261,8 @@ class FPDF(object):
         #close document
         self._enddoc()
 
-    def add_page(self, orientation=''):
-        "Start a new page"
+    def add_page(self, orientation = '', format = '', same = False):
+        "Start a new page, if same page format will be same as previous"
         if(self.state==0):
             self.open()
         family=self.font_family
@@ -279,7 +285,7 @@ class FPDF(object):
             #close page
             self._endpage()
         #Start new page
-        self._beginpage(orientation)
+        self._beginpage(orientation, format, same)
         #Set line cap style to square
         self._out('2 J')
         #Set line width
@@ -709,7 +715,7 @@ class FPDF(object):
             if(ws>0):
                 self.ws=0
                 self._out('0 Tw')
-            self.add_page(self.cur_orientation)
+            self.add_page(same = True)
             self.x=x
             if(ws>0):
                 self.ws=ws
@@ -1029,7 +1035,7 @@ class FPDF(object):
             if (self.y + h > self.page_break_trigger and not self.in_footer and self.accept_page_break()):
                 #Automatic page break
                 x = self.x
-                self.add_page(self.cur_orientation)
+                self.add_page(same = True)
                 self.x = x
             y = self.y
             self.y += h
@@ -1135,75 +1141,86 @@ class FPDF(object):
         return FPDF_FONT_DIR+'/'
 
     def _putpages(self):
-        nb=self.page
-        if hasattr(self,'str_alias_nb_pages'):
+        nb = self.page
+        if hasattr(self, 'str_alias_nb_pages'):
             # Replace number of pages in fonts using subsets (unicode)
             alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False)
             r = UTF8ToUTF16BE(str(nb), False)
-            for n in range(1, nb+1):
-                self.pages[n] = self.pages[n].replace(alias, r)
+            for n in range(1, nb + 1):
+                self.pages[n]["content"] = \
+                    self.pages[n]["content"].replace(alias, r)
             # Now repeat for no pages in non-subset fonts
-            for n in range(1,nb+1):
-                self.pages[n]=self.pages[n].replace(self.str_alias_nb_pages,str(nb))
-        if(self.def_orientation=='P'):
-            w_pt=self.fw_pt
-            h_pt=self.fh_pt
+            for n in range(1,nb + 1):
+                self.pages[n]["content"] = \
+                    self.pages[n]["content"].replace(self.str_alias_nb_pages,
+                        str(nb))
+        if self.def_orientation == 'P':
+            dw_pt = self.dw_pt
+            dh_pt = self.dh_pt
         else:
-            w_pt=self.fh_pt
-            h_pt=self.fw_pt
+            dw_pt = self.dh_pt
+            dh_pt = self.dw_pt
         if self.compress:
-            filter='/Filter /FlateDecode '
+            filter = '/Filter /FlateDecode '
         else:
-            filter=''
-        for n in range(1,nb+1):
-            #Page
+            filter = ''
+        for n in range(1, nb + 1):
+            # Page
             self._newobj()
             self._out('<</Type /Page')
             self._out('/Parent 1 0 R')
-            if n in self.orientation_changes:
-                self._out(sprintf('/MediaBox [0 0 %.2f %.2f]',h_pt,w_pt))
+            w_pt = self.pages[n]["w_pt"]
+            h_pt = self.pages[n]["h_pt"]
+            if w_pt != dw_pt or h_pt != dh_pt:
+                self._out(sprintf('/MediaBox [0 0 %.2f %.2f]', w_pt, h_pt))
             self._out('/Resources 2 0 R')
             if self.page_links and n in self.page_links:
-                #Links
-                annots='/Annots ['
+                # Links
+                annots = '/Annots ['
                 for pl in self.page_links[n]:
-                    rect=sprintf('%.2f %.2f %.2f %.2f',pl[0],pl[1],pl[0]+pl[2],pl[1]-pl[3])
-                    annots+='<</Type /Annot /Subtype /Link /Rect ['+rect+'] /Border [0 0 0] '
-                    if(isinstance(pl[4],basestring)):
-                        annots+='/A <</S /URI /URI '+self._textstring(pl[4])+'>>>>'
+                    rect = sprintf('%.2f %.2f %.2f %.2f', pl[0], pl[1],
+                        pl[0] + pl[2], pl[1] - pl[3])
+                    annots += '<</Type /Annot /Subtype /Link /Rect [' + \
+                        rect + '] /Border [0 0 0] '
+                    if isinstance(pl[4], basestring):
+                        annots += '/A <</S /URI /URI ' + \
+                            self._textstring(pl[4]) + '>>>>'
                     else:
-                        l=self.links[pl[4]]
+                        l = self.links[pl[4]]
                         if l[0] in self.orientation_changes:
-                            h=w_pt
+                            h = w_pt
                         else:
-                            h=h_pt
-                        annots+=sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',1+2*l[0],h-l[1]*self.k)
-                self._out(annots+']')
-            if(self.pdf_version>'1.3'):
-                self._out('/Group <</Type /Group /S /Transparency /CS /DeviceRGB>>')
-            self._out('/Contents '+str(self.n+1)+' 0 R>>')
+                            h = h_pt
+                        annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',
+                            1 + 2 * l[0], h - l[1] * self.k)
+                self._out(annots + ']')
+            if self.pdf_version > '1.3':
+                self._out('/Group <</Type /Group /S /Transparency"\
+                    "/CS /DeviceRGB>>')
+            self._out('/Contents ' + str(self.n + 1) + ' 0 R>>')
             self._out('endobj')
-            #Page content
+            # Page content
+            content = self.pages[n]["content"]
             if self.compress:
                 # manage binary data as latin1 until PEP461 or similar is implemented
-                p = self.pages[n].encode("latin1") if PY3K else self.pages[n] 
+                p = content.encode("latin1") if PY3K else content
                 p = zlib.compress(p)
             else:
-                p = self.pages[n]
+                p = content
             self._newobj()
-            self._out('<<'+filter+'/Length '+str(len(p))+'>>')
+            self._out('<<' + filter + '/Length ' + str(len(p)) + '>>')
             self._putstream(p)
             self._out('endobj')
-        #Pages root
-        self.offsets[1]=len(self.buffer)
+        # Pages root
+        self.offsets[1] = len(self.buffer)
         self._out('1 0 obj')
         self._out('<</Type /Pages')
-        kids='/Kids ['
-        for i in range(0,nb):
-            kids+=str(3+2*i)+' 0 R '
-        self._out(kids+']')
-        self._out('/Count '+str(nb))
-        self._out(sprintf('/MediaBox [0 0 %.2f %.2f]',w_pt,h_pt))
+        kids = '/Kids ['
+        for i in range(0, nb):
+            kids += str(3 + 2 * i) + ' 0 R '
+        self._out(kids + ']')
+        self._out('/Count ' + str(nb))
+        self._out(sprintf('/MediaBox [0 0 %.2f %.2f]', dw_pt, dh_pt))
         self._out('>>')
         self._out('endobj')
 
@@ -1675,35 +1692,43 @@ class FPDF(object):
         self._out('%%EOF')
         self.state=3
 
-    def _beginpage(self, orientation):
-        self.page+=1
-        self.pages[self.page]=''
-        self.state=2
-        self.x=self.l_margin
-        self.y=self.t_margin
-        self.font_family=''
-        self.font_stretching=100
-        #Page orientation
-        if(not orientation):
-            orientation=self.def_orientation
-        else:
-            orientation=orientation[0].upper()
-            if(orientation!=self.def_orientation):
-                self.orientation_changes[self.page]=1
-        if(orientation!=self.cur_orientation):
-            #Change orientation
-            if(orientation=='P'):
-                self.w_pt=self.fw_pt
-                self.h_pt=self.fh_pt
-                self.w=self.fw
-                self.h=self.fh
+    def _beginpage(self, orientation, format, same):
+        self.page += 1
+        self.pages[self.page] = {"content": ""}
+        self.state = 2
+        self.x = self.l_margin
+        self.y = self.t_margin
+        self.font_family = ''
+        self.font_stretching = 100
+        if not same:
+            # Page format
+            if format:
+                # Change page format
+                self.fw_pt, self.fh_pt = self.get_page_format(format, self.k)
             else:
-                self.w_pt=self.fh_pt
-                self.h_pt=self.fw_pt
-                self.w=self.fh
-                self.h=self.fw
-            self.page_break_trigger=self.h-self.b_margin
-            self.cur_orientation=orientation
+                # Set to default format
+                self.fw_pt = self.dw_pt
+                self.fh_pt = self.dh_pt
+            self.fw = self.fw_pt / self.k
+            self.fh = self.fh_pt / self.k
+            # Page orientation
+            if not orientation:
+                orientation = self.def_orientation
+            else:
+                orientation = orientation[0].upper()
+            if orientation == 'P':
+                self.w_pt = self.fw_pt
+                self.h_pt = self.fh_pt
+            else:                    
+                self.w_pt = self.fh_pt
+                self.h_pt = self.fw_pt
+            self.w = self.w_pt / self.k
+            self.h = self.h_pt / self.k
+            self.cur_orientation = orientation
+            self.page_break_trigger = self.h - self.b_margin
+            self.cur_orientation = orientation
+        self.pages[self.page]["w_pt"] = self.w_pt
+        self.pages[self.page]["h_pt"] = self.h_pt
 
     def _endpage(self):
         #End of page contents
@@ -1925,10 +1950,10 @@ class FPDF(object):
             s = s.encode("latin1")    # default encoding (font name and similar)      
         elif not isinstance(s, basestring):
             s = str(s)
-        if(self.state==2):
-            self.pages[self.page]+=s+"\n"
+        if(self.state == 2):
+            self.pages[self.page]["content"] += (s + "\n")
         else:
-            self.buffer+=s+"\n"
+            self.buffer += (s + "\n")
 
     @check_page
     def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):

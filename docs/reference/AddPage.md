@@ -1,16 +1,22 @@
-## AddPage ##
+## add_page ##
 
 ```python
-fpdf.add_page(orientation = '')
+fpdf.add_page(orientation = '', format = '', same = False)
 ```
 
 ### Description ###
 
-Adds a new page to the document. If a page is already present, the [Footer](Footer.md) method is called first to output the footer. Then the page is added, the current position set to the top-left corner according to the left and top margins, and [Header](Header.md) is called to display the header.
+Adds a new page to the document. If a page is already present, the 
+[footer](Footer.md) method is called first to output the footer. Then the page 
+is added, the current position set to the top-left corner according to the left
+and top margins, and [header](Header.md) is called to display the header.
 
-The font which was set before calling is automatically restored. There is no need to call [SetFont](SetFont.md) again if you want to continue with the same font. The same is true for colors and line width.
+The font which was set before calling is automatically restored. There is no 
+need to call [set_font](SetFont.md) again if you want to continue with the same 
+font. Colors and line width also preserved.
 
-The origin of the coordinate system is at the top-left corner and increasing ordinates go downwards.
+The origin of the coordinate system is at the top-left corner and increasing 
+ordinates go downwards.
 
 ### Parameters ###
 
@@ -21,6 +27,23 @@ orientation:
 > 
 > The default value is the one passed to the constructor.
 
+format:
+> The format used for pages. It can be either one of the following values (case
+insensitive):
+>>    * A3
+>>    * A4
+>>    * A5
+>>    * Letter
+>>    * Legal
+>>    * or a tuple containing the width and the height (expressed in the unit
+given by unit).
+> The default value is the one passed to the constructor.
+
+same:
+> True if page must be same as previous. In this case other parameters are
+ignored.
+
 ### See also ###
 
-[FPDF](FPDF.md), [Header](Header.md), [Footer](Footer.md), [SetMargins](SetMargins.md).
+[FPDF](FPDF.md), [header](Header.md), [footer](Footer.md), 
+[set_margins](SetMargins.md).
