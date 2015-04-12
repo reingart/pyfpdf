@@ -123,7 +123,7 @@ TTF font files to speed up their processing.
 Such metrics are stored using the Python Pickle format (`.pkl` extension), by 
 default in the font directory (ensure Read/Write permission!), additional 
 information about caching mechanism are defined in 
-[AddFont](reference/AddFont.md) reference.
+[add_font](reference/add_font.md) reference.
 
 TTF metric files often weight about 650K, so keep that in mind if you use many
 TTF fonts and have disk size or memory limitations.
