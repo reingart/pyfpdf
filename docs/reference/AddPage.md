@@ -37,6 +37,7 @@ insensitive):
 >>    * Legal
 >>    * or a tuple containing the width and the height (expressed in the unit
 given by unit).
+> 
 > The default value is the one passed to the constructor.
 
 same:
