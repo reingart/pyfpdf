@@ -6,59 +6,59 @@
 
 **Important**: original FPDF (PHP) naming convention is CamelCase. This library uses [PEP8](http://www.python.org/dev/peps/pep-0008/) lower\_case\_with\_underscores recommendation.
 
-  * [AcceptPageBreak](reference/AcceptPageBreak.md) - accept or not automatic page break
-  * [AddFont](reference/AddFont.md) - add a new font
-  * [AddLink](reference/AddLink.md) - create an internal link
-  * [AddPage](reference/AddPage.md) - add a new page
-  * [AliasNbPages](reference/AliasNbPages.md) - define an alias for number of pages
-  * [Cell](reference/Cell.md) - print a cell
-  * [Close](reference/Close.md) - terminate the document
-  * [Error](reference/Error.md) - fatal error
-  * [Footer](reference/Footer.md) - page footer
+  * [accept_page_break](reference/accept_page_break.md) - accept or not automatic page break
+  * [add_font](reference/add_font.md) - add a new font
+  * [add_link](reference/add_link.md) - create an internal link
+  * [add_page](reference/add_page.md) - add a new page
+  * [alias_nb_pages](reference/alias_nb_pages.md) - define an alias for number of pages
+  * [cell](reference/cell.md) - print a cell
+  * [close](reference/close.md) - terminate the document
+  * [error](reference/error.md) - fatal error
+  * [footer](reference/footer.md) - page footer
   * [FPDF](reference/FPDF.md) - constructor
-  * [GetStringWidth](reference/GetStringWidth.md) - compute string length
-  * [GetX](reference/GetX.md) - get current x position
-  * [GetY](reference/GetY.md) - get current y position
-  * [Header](reference/Header.md) - page header
-  * [Image](reference/Image.md) - output an image
-  * [Line](reference/Line.md) - draw a line
-  * [Link](reference/Link.md) - put a link
-  * [Ln](reference/Ln.md) - line break
-  * [MultiCell](reference/MultiCell.md) - print text with line breaks
-  * [Output](reference/Output.md) - save or send the document
-  * [PageNo](reference/PageNo.md) - page number
-  * [Rect](reference/Rect.md) - draw a rectangle
-  * [SetAuthor](reference/SetAuthor.md) - set the document author
-  * [SetAutoPageBreak](reference/SetAutoPageBreak.md) - set the automatic page breaking mode
-  * [SetCompression](reference/SetCompression.md) - turn compression on or off
-  * [SetCreator](reference/SetCreator.md) - set document creator
-  * [SetDisplayMode](reference/SetDisplayMode.md) - set display mode
-  * [SetDrawColor](reference/SetDrawColor.md) - set drawing color
-  * [SetFillColor](reference/SetFillColor.md) - set filling color
-  * [SetFont](reference/SetFont.md) - set font
-  * [SetFontSize](reference/SetFontSize.md) - set font size
-  * [SetKeywords](reference/SetKeywords.md) - associate keywords with document
-  * [SetLeftMargin](reference/SetLeftMargin.md) - set left margin
-  * [SetLineWidth](reference/SetLineWidth.md) - set line width
-  * [SetLink](reference/SetLink.md) - set internal link destination
-  * [SetMargins](reference/SetMargins.md) - set margins
-  * [SetRightMargin](reference/SetLeftMargin.md) - set right margin
-  * [SetSubject](reference/SetSubject) - set document subject
-  * [SetTextColor](reference/SetTextColor.md) - set text color
-  * [SetTitle](reference/SetTitle.md) - set document title
-  * [SetTopMargin](reference/SetLeftMargin.md) - set top margin
-  * [SetX](reference/SetX.md) - set current x position
-  * [SetXY](reference/SetXY.md) - set current x and y positions
-  * [SetY](reference/SetY.md) - set current y position
-  * [Text](reference/Text.md) - print a string
-  * [Write](reference/Write.md) - print flowing text
+  * [get_string_width](reference/get_string_width.md) - compute string length
+  * [get_x](reference/get_x.md) - get current x position
+  * [get_y](reference/get_y.md) - get current y position
+  * [header](reference/header.md) - page header
+  * [image](reference/image.md) - output an image
+  * [line](reference/line.md) - draw a line
+  * [link](reference/link.md) - put a link
+  * [ln](reference/ln.md) - line break
+  * [multi_cell](reference/multi_cell.md) - print text with line breaks
+  * [output](reference/output.md) - save or send the document
+  * [page_no](reference/page_no.md) - page number
+  * [rect](reference/rect.md) - draw a rectangle
+  * [set_author](reference/set_author.md) - set the document author
+  * [set_auto_page_break](reference/set_auto_page_break.md) - set the automatic page breaking mode
+  * [set_compression](reference/set_compression.md) - turn compression on or off
+  * [set_creator](reference/set_creator.md) - set document creator
+  * [set_display_mode](reference/set_display_mode.md) - set display mode
+  * [set_draw_color](reference/set_draw_color.md) - set drawing color
+  * [set_fill_color](reference/set_fill_color.md) - set filling color
+  * [set_font](reference/set_font.md) - set font
+  * [set_font_size](reference/set_font_size.md) - set font size
+  * [set_keywords](reference/set_keywords.md) - associate keywords with document
+  * [set_left_margin](reference/set_left_margin.md) - set left margin
+  * [set_line_width](reference/set_line_width.md) - set line width
+  * [set_link](reference/set_link.md) - set internal link destination
+  * [set_margins](reference/set_margins.md) - set margins
+  * [set_right_margin](reference/set_right_margin.md) - set right margin
+  * [set_subject](reference/set_subject.md) - set document subject
+  * [set_text_color](reference/set_text_color.md) - set text color
+  * [set_title](reference/set_title.md) - set document title
+  * [set_top_margin](reference/set_top_margin.md) - set top margin
+  * [set_x](reference/set_x.md) - set current x position
+  * [set_xy](reference/set_xy.md) - set current x and y positions
+  * [set_y](reference/set_y.md) - set current y position
+  * [text](reference/text.md) - print a string
+  * [write](reference/write.md) - print flowing text
 
 ## Additional API ##
   
 This features not available in original FPDF and implemented after fork.
 
-  * [DashedLine](reference/DashedLine.md) - draw a dashed line
-  * [Ellipse](reference/Ellipse.md) - draw an ellipse
-  * [SetStretching](reference/SetStretching.md) - set horizontal font stretching
-  * [WriteHTML](reference/WriteHTML.md) - print text with HTML markup
+  * [dashed_line](reference/dashed_line.md) - draw a dashed line
+  * [ellipse](reference/ellipse.md) - draw an ellipse
+  * [set_stretching](reference/set_stretching.md) - set horizontal font stretching
+  * [write_html](reference/write_html.md) - print text with HTML markup
 
