@@ -33,12 +33,12 @@ It is possible to use landscape (`L`), other page formats (such as `Letter` and
  `Legal`) and measure units (`pt`, `cm`, `in`).
 
 There is no page for the moment, so we have to add one with 
-[AddPage](reference/AddPage.md). The origin is at the upper-left corner and the
+[add_page](reference/add_page.md). The origin is at the upper-left corner and the
 current position is by default placed at 1 cm from the borders; the margins can
-be changed with [SetMargins](reference/SetMargins.md).
+be changed with [set_margins](reference/set_margins.md).
 
 Before we can print text, it is mandatory to select a font with 
-[SetFont](reference/SetFont.md), otherwise the document would be invalid. We
+[set_font](reference/set_font.md), otherwise the document would be invalid. We
 choose Arial bold 16:
 
 ```python
@@ -50,7 +50,7 @@ with an empty string (or any combination). Note that the font size is given in
 points, not millimeters (or another user unit); it is the only exception. The
 other standard fonts are `Times`, `Courier`, `Symbol` and `ZapfDingbats`.
 
-We can now print a cell with [Cell](reference/Cell.md). A cell is a rectangular
+We can now print a cell with [cell](reference/cell.md). A cell is a rectangular
 area, possibly framed, which contains some text. It is output at the current
 position. We specify its dimensions, its text (centered or aligned), if borders
 should be drawn, and where the current position moves after it (to the right,
@@ -67,11 +67,11 @@ would do:
 pdf.cell(60, 10, 'Powered by FPDF.', 0, 1, 'C')
 ```
 
-**Remark**: the line break can also be done with [Ln](reference/Ln.md). This
+**Remark**: the line break can also be done with [ln](reference/ln.md). This
 method allows to specify in addition the height of the break.
 
 Finally, the document is closed and sent to the browser with
-[Output](reference/Output.md). We could have saved it in a file by passing the
+[output](reference/output.md). We could have saved it in a file by passing the
 desired file name.
 
 **Caution**: in case when the PDF is sent to the browser, nothing else must be
@@ -121,23 +121,23 @@ pdf.output('tuto2.pdf', 'F')
 
 [Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto2.pdf)
 
-This example makes use of the [Header](reference/Header.md) and 
-[Footer](reference/Footer.md) methods to process page headers and footers. They
+This example makes use of the [header](reference/header.md) and 
+[footer](reference/footer.md) methods to process page headers and footers. They
 are called automatically. They already exist in the FPDF class but do nothing,
 therefore we have to extend the class and override them.
 
-The logo is printed with the [Image](reference/Image.md) method by specifying
+The logo is printed with the [image](reference/image.md) method by specifying
 its upper-left corner and its width. The height is calculated automatically to
 respect the image proportions.
 
 To print the page number, a null value is passed as the cell width. It means
 that the cell should extend up to the right margin of the page; it is handy to
 center text. The current page number is returned by
-the [PageNo](reference/PageNo.md) method; as for
+the [page_no](reference/page_no.md) method; as for
 the total number of pages, it is obtained by means of the special value `{nb}`
 which will be substituted on document closure (provided you first called 
-[AliasNbPages](reference/AliasNbPages.md)).
-Note the use of the [SetY](reference/SetY.md) method which allows to set
+[alias_nb_pages](reference/alias_nb_pages.md)).
+Note the use of the [set_y](reference/set_y.md) method which allows to set
 position at an absolute location in the page, starting from the top or the
 bottom.
 
@@ -147,7 +147,7 @@ default), a break is performed and the font restored. Although the header and
 footer select their own font (`Arial`), the body continues with `Times`. This
 mechanism of automatic restoration also applies to colors and line width. The
 limit which triggers page breaks can be set with 
-[SetAutoPageBreak](reference/SetAutoPageBreak.md).
+[set_auto_page_break](reference/set_auto_page_break.md).
 
 
 ## Line breaks and colors ##
@@ -227,24 +227,24 @@ pdf.output('tuto3.pdf', 'F')
 
 [Demo](http://pyfpdf.googlecode.com/hg/tutorial/tuto3.pdf)
 
-The [GetStringWidth](reference/GetStringWidth.md) method allows to determine
+The [get_string_width](reference/get_string_width.md) method allows to determine
 the length of a string in the current font, which is used here to calculate the
 position and the width of the frame surrounding the title. Then colors are set
-(via [SetDrawColor](reference/SetDrawColor.md), 
-[SetFillColor](reference/SetFillColor.md) and 
-[SetTextColor](reference/SetTextColor.md)) and the thickness of the line is set
+(via [set_draw_color](reference/set_draw_color.md), 
+[set_fill_color](reference/set_fill_color.md) and 
+[set_text_color](reference/set_text_color.md)) and the thickness of the line is set
 to 1 mm (against 0.2 by default) with
-[SetLineWidth](reference/SetLineWidth.md). Finally, we output the cell (the
+[set_line_width](reference/set_line_width.md). Finally, we output the cell (the
 last parameter to true indicates that the background must be filled).
 
-The method used to print the paragraphs is [MultiCell](reference/MultiCell.md).
+The method used to print the paragraphs is [multi_cell](reference/multi_cell.md).
 Each time a line reaches the right extremity of the cell or a carriage return
 character is met, a line break is issued and a new cell automatically created
 under the current one. Text is justified by default.
 
 Two document properties are defined: the title 
-([SetTitle](reference/SetTitle.md)) and the author 
-([SetAuthor](reference/SetAuthor.md)). Properties can be viewed by two means.
+([set_title](reference/set_title.md)) and the author 
+([set_author](reference/set_author.md)). Properties can be viewed by two means.
 First is to open the document directly with Acrobat Reader, go to the File menu
 and choose the Document Properties option. The second, also available from the
 plug-in, is to right-click and select Document Properties.
