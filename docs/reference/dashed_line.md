@@ -32,7 +32,7 @@ space\_length:
 
 ```python
 # Adds a dashed line beginning at point (10,30), 
-#  ending at point(110,30) with a 
+#  ending at point (110,30) with a 
 #  dash length of 1 and a space length of 10.
 pdf.dashed_line(10, 30, 110, 30, 1, 10)
 ```

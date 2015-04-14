@@ -12,25 +12,25 @@ embedded. These features were originally developed for the
 
 Before you can use UTF-8, you have to install at least one Unicode font in the 
 font directory (or system font folder). Some free font packages are available 
-for download (extract them into font folder):
+for download (extract them into the font folder):
 
   * [DejaVu](http://dejavu-fonts.org/) family: Sans, Sans Condensed, Serif, 
     Serif Condensed, Sans Mono (Supports more than 200 languages)
   * [GNU FreeFont](http://www.gnu.org/software/freefont/) family: FreeSans, 
     FreeSerif, FreeMono
   * [Indic](http://en.wikipedia.org/wiki/Help:Multilingual_support_(Indic)) 
-    (ttf-indic-fonts debian/ubuntu package) for Bengali, Devanagari, Gujarati, 
-    Gurmukhi (including the variants for Punjabi),  Kannada, Malayalam, Oriya, 
+    (ttf-indic-fonts Debian and Ubuntu package) for Bengali, Devanagari, Gujarati, 
+    Gurmukhi (including the variants for Punjabi), Kannada, Malayalam, Oriya, 
     Tamil, Telugu, Tibetan
   * [AR PL New Sung](http://www.study-area.org/apt/firefly-font/) (firefly): 
-    The Open Source Chinese Font (also supports others east-asia languages)
+    The Open Source Chinese Font (also supports other east Asian languages)
   * [Alee](https://wiki.archlinux.org/index.php/Fonts) 
-    (ttf-alee arch linux package): General purpose Hangul truetype fonts that 
+    (ttf-alee Arch Linux package): General purpose Hangul Truetype fonts that 
     contain Korean syllable and Latin9 (iso8859-15) characters.
   * [Fonts-TLWG](http://linux.thai.net/projects/fonts-tlwg/) (formerly 
     ThaiFonts-Scalable)
 
-These fonts are included with this library installers, see 
+These fonts are included with this library's installers; see 
 [Free Font Pack for FPDF](#free-font-pack-and-copyright-restrictions) below for
 more information.
 
@@ -82,7 +82,7 @@ pdf.write(8, u'Hindi: नमस्ते दुनिया')
 pdf.ln(20)
 
 # Add a AR PL New Sung Unicode font (uses UTF-8)
-# The Open Source Chinese Font (also supports others east-asia languages)
+# The Open Source Chinese Font (also supports other east Asian languages)
 pdf.add_font('fireflysung', '', 'fireflysung.ttf', uni=True)
 pdf.set_font('fireflysung', '', 14)
 pdf.write(8, u'Chinese: 你好世界\n')
@@ -90,7 +90,7 @@ pdf.write(8, u'Japanese: こんにちは世界\n')
 pdf.ln(10)
 
 # Add a Alee Unicode font (uses UTF-8)
-# General purpose Hangul truetype fonts that Contain Korean syllable 
+# General purpose Hangul truetype fonts that contain Korean syllable 
 # and Latin9 (iso8859-15) characters.
 pdf.add_font('eunjin', '', 'Eunjin.ttf', uni=True)
 pdf.set_font('eunjin', '', 14)
@@ -113,7 +113,7 @@ pdf.output("unicode.pdf", 'F')
 
 
 View the result here: 
-[unicode.pdf](https://pyfpdf.googlecode.com/hg/tutorial/unicode.pdf)
+[unicode.pdf](https://github.com/reingart/pyfpdf/raw/master/tutorial/unicode.pdf)
 
 ## Metric Files ##
 
@@ -121,23 +121,23 @@ FPDF will try to automatically generate metrics (i.e. character widths) about
 TTF font files to speed up their processing.
 
 Such metrics are stored using the Python Pickle format (`.pkl` extension), by 
-default in the font directory (ensure Read/Write permission!), additional 
-information about caching mechanism are defined in 
+default in the font directory (ensure read and write permission!). Additional 
+information about the caching mechanism is defined in the
 [add_font](reference/add_font.md) reference.
 
-TTF metric files often weight about 650K, so keep that in mind if you use many
+TTF metric files often weigh about 650K, so keep that in mind if you use many
 TTF fonts and have disk size or memory limitations.
 
 By design, metric files are not imported as they could cause a temporary memory
-leak if not managed properly (this could be an issue in  a webserver environment
-with many processes/threads, so the current implementation discards metrics when
+leak if not managed properly (this could be an issue in a webserver environment
+with many processes or threads, so the current implementation discards metrics when
 FPDF objects are disposed).
 
 In most circumstances, you will not notice any difference about storing metric
 files vs. generating them in each run on-the-fly (according basic tests, elapsed
-time is equivalent, YMMV)
+time is equivalent; YMMV).
 
-Like the original php implementation, this library should work even if it could
+Like the original PHP implementation, this library should work even if it could
 not store the metric file, and as no source code file is generated at runtime,
 it should work in restricted environments.
 
@@ -146,9 +146,9 @@ it should work in restricted environments.
 For your convenience, this library collected 96 TTF files in an optional 
 ["Free Unicode TrueType Font Pack for FPDF"](http://pyfpdf.googlecode.com/files/fpdf_unicode_font_pack.zip), 
 with useful fonts commonly distributed with GNU/Linux operating systems (see 
-above for a complete description). This pack is included in the windows 
+above for a complete description). This pack is included in the Windows 
 installers, or can be downloaded separately (for any operating system).
 
 You could use any TTF font file as long embedding usage is allowed in the licence.
-If not, a runtime exception will be raised saying: _"ERROR - Font file 
-filename.ttf cannot be embedded due to copyright restrictions."_
+If not, a runtime exception will be raised saying: "ERROR - Font file 
+filename.ttf cannot be embedded due to copyright restrictions."

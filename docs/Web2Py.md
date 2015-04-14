@@ -7,20 +7,20 @@ If you use [web2py](http://www.web2py.com), you can make complex reports that ca
 Also, using web2py DAL, you can easily set up a templating engine for PDF documents. See [Templates](Templates.md) for more information.
 
 The following examples are packaged in a ready to run application:
-[web2py.app.fpdf.w2p](http://pyfpdf.googlecode.com/files/web2py.app.fpdf.w2p)
+[web2py.app.fpdf.w2p](http://pyfpdf.googlecode.com/files/web2py.app.fpdf.w2p).
 
-PyFPDF is included in [web2py](http://www.web2py.com/) since release [1.85.2](http://www.web2py.com/examples/default/download)
+PyFPDF is included in [web2py](http://www.web2py.com/) since release [1.85.2](http://www.web2py.com/examples/default/download).
 
-Also, you can download the latest versión [pyfpdf](http://pyfpdf.googlecode.com/files/pyfpdf-1.54b.zip) and uncompress it in the `web2py, gluon, contrib` folder.
+Also, you can download the latest version of [pyfpdf](http://pyfpdf.googlecode.com/files/pyfpdf-1.54b.zip) and uncompress it in the `web2py, gluon, contrib` folder.
 
-**Note about images**: this sample images are small so they may look like low quality ones. For better results, use bigger images: more DPI (screen is often 72/96DPI, printers are often 300/600DPI). As a rule of thumb, use at least half of the image size when rendering to PDF, ie. if image is 500x200px, use 250x100px as width/height attributes of IMG tag.
+**Note about images**: these sample images are small so they may look like low quality ones. For better results, use bigger images: more DPI (screen is often 72/96DPI, printers are often 300/600DPI). As a rule of thumb, use at least half of the image size when rendering to PDF, ie. if an image is 500x200px, use 250x100px as width and height attributes of the IMG tag.
 
 
 # Sample Report #
 
 You could make a "professional looking" bussiness report just using web2py HTML helpers, mixin headers, logos, charts, text and tables.
 
-Te main advantage of this method is that the same report can be rendered in a HTML view, or can be downloaded as PDF, with a minimal effort:
+The main advantage of this method is that the same report can be rendered in a HTML view, or can be downloaded as PDF, with a minimal effort:
 
 Sample: [report.pdf](http://pyfpdf.googlecode.com/files/report.pdf)
 
@@ -46,7 +46,7 @@ def report():
     if request.extension == "pdf":
         from gluon.contrib.pyfpdf import FPDF, HTMLMixin
 
-        # create a custom class with the required functionalities 
+        # create a custom class with the required functionality 
         class MyFPDF(FPDF, HTMLMixin):
             def header(self): 
                 "hook to draw custom page header (logo and title)"
@@ -80,7 +80,7 @@ def report():
 
 # Sample Table Listing #
 
-Also, you can make nice tables that automatically spreads over several pages, with header/footers, column/row highlight, etc., in a very pythonic way:
+Also, you can make nice tables that automatically spreads over several pages, with headers and footers, column and row highlighting, etc., in a very pythonic way:
 
 Sample: [listing.pdf](http://pyfpdf.googlecode.com/files/listing.pdf)
 
@@ -120,7 +120,7 @@ def listing():
     if request.extension == "pdf":
         from gluon.contrib.pyfpdf import FPDF, HTMLMixin
 
-        # define our FPDF class (move to modules if it is reused  frequently)
+        # define our FPDF class (move to modules if it is reused frequently)
         class MyFPDF(FPDF, HTMLMixin):
             def header(self):
                 self.set_font('Arial', 'B', 15)
@@ -147,7 +147,7 @@ def listing():
 
 # Samples Template Definitions #
 
-As stated in the [Templates](Templates.md) page, there are 3 ways of putting your templates in place. As in that page there are samples for the manually hardcoded way and the CSV document loading, here we will only show a sample of the template engine.
+As stated in the [Templates](Templates.md) page, there are 3 ways of putting your templates in place. As in that page there are samples for the manually hardcoded way and CSV document loading. Here we will only show a sample of the template engine.
 
 
 
@@ -159,9 +159,9 @@ Sample: [invoice.pdf](http://pyfpdf.googlecode.com/files/invoice.pdf)
 
 Updated Live Demo: <http://www.web2py.com.ar/fpdf/default/invoice.pdf>
 
-To handle multiples templates, we can define two tables in web2py:
+To handle multiple templates, we can define two tables in web2py:
 
-  * pdf\_template: document general information (name, paper size, etc.)
+  * pdf\_template: general document information (name, paper size, etc.)
   * pdf\_element: several rows for each document, describing graphics primitives and placeholders.
 
 In `db.py` write:
@@ -198,13 +198,13 @@ db.define_table("pdf_element",
 ```python
 db = DAL('sqlite://storage.sqlite', pool_size=1, check_reserved=['ALL'])
 ```
-will fail. sqlite, MySQL and postgres work OK. Proposals for new naming ideas are welcomed.
+will fail. sqlite, MySQL and postgres work OK. Proposals for new naming ideas are welcome.
 
 At this point you could go to web2py AppAdmin and start to define your document templates, or use import/export functions to reuse your already defined formats!
 
-Note: if you used designer.py to create the templates, and you want to import the templates with the Web2Py database admin you will have to modify the file.
+Note: if you used designer.py to create the templates, and you want to import the templates with the Web2Py database admin, you will have to modify the file.
 
-So; designer.py outputs a file like this:
+So, designer.py outputs a file like this:
 ```
 line0;T;20.0;13.0;190.0;13.0;times;10.0;0;0;0;0;65535;C;;0
 line1;T;20.0;67.0;190.0;67.0;times;10.0;0;0;0;0;65535;C;;0
@@ -223,9 +223,9 @@ pdf_element.pdf_template_id, pdf_element.name, pdf_element.type, pdf_element.x1,
 ```
 Where the first number indicates the template ID (important for the database system), and the first line indicates the database fields to fill.
 
-A simple python script should do the trick.
+A simple Python script should do the trick.
 
-After defining and filling your database, you can use PyFPDF [Templates](Templates.md) directly reading rows elements from the web2py database:
+After defining and filling your database, you can use PyFPDF [Templates](Templates.md) directly reading row elements from the web2py database:
 
 For example, for an invoice, in a controller you could write:
 ```python
@@ -346,4 +346,4 @@ def invoice():
     return f.render('invoice.pdf', dest='S')
 ```
 
-Of course, this is a hardcoded example, you can use the database to store invoices or any other data, there is no rigid class hierachy to follow, just fill your template like a dict!
+Of course, this is a hardcoded example. You can use the database to store invoices or any other data; there is no rigid class hierachy to follow, just fill your template like a dict!

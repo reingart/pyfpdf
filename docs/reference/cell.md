@@ -26,11 +26,12 @@ border:
 > Indicates if borders must be drawn around the cell. The value can be either a number:
 >>    * 0: no border
 >>    * 1: frame
->>    * or a string containing some or all of the following characters (in any order):
->>      * L: left
->>      * T: top
->>      * R: right
->>      * B: bottom
+> 
+> or a string containing some or all of the following characters (in any order):
+>>    * L: left
+>>    * T: top
+>>    * R: right
+>>    * B: bottom
 > 
 > Default value: 0.
 

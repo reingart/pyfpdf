@@ -8,7 +8,7 @@ self.get_string_width(s: str)
 
 Returns the length of a string in user unit. A font must be selected.
 
-Value is culculated with stretching and spacing.
+The value is calculated with stretching and spacing.
 
 ### Parameters ###
 

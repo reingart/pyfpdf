@@ -25,7 +25,7 @@ y2:
 ### Example ###
 
 ```python
-# Adds a line beginning at point (10,30) and ending at point(110,30)
+# Adds a line beginning at point (10,30) and ending at point (110,30)
 pdf.line(10, 30, 110, 30)
 ```
 

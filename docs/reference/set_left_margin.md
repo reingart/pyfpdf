@@ -7,7 +7,7 @@ fpdf.set_left_margin(margin: float)
 ### Description ###
 
 Defines the left margin. The method can be called before creating the first page. 
-If the current abscissa gets out of page, it is brought back to the margin.
+If the current abscissa goes out of the page, it is brought back to the margin.
 
 ### Parameters ###
 

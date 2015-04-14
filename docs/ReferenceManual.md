@@ -4,9 +4,9 @@
 
 ## Original FPDF API ##
 
-**Important**: original FPDF (PHP) naming convention is CamelCase. This library uses [PEP8](http://www.python.org/dev/peps/pep-0008/) lower\_case\_with\_underscores recommendation.
+**Important**: the original FPDF (PHP) naming convention is CamelCase. This library uses [PEP8's](http://www.python.org/dev/peps/pep-0008/) lower\_case\_with\_underscores recommendation.
 
-  * [accept_page_break](reference/accept_page_break.md) - accept or not automatic page break
+  * [accept_page_break](reference/accept_page_break.md) - determine whether to issue automatic page break
   * [add_font](reference/add_font.md) - add a new font
   * [add_link](reference/add_link.md) - create an internal link
   * [add_page](reference/add_page.md) - add a new page
@@ -55,7 +55,7 @@
 
 ## Additional API ##
   
-This features not available in original FPDF and implemented after fork.
+These features are not available in the original FPDF and were implemented after forking.
 
   * [dashed_line](reference/dashed_line.md) - draw a dashed line
   * [ellipse](reference/ellipse.md) - draw an ellipse

@@ -29,7 +29,7 @@ If the file corresponding to the requested font is not found, the error "Could n
 ### Parameters ###
 
 family:
-> Family font. It can be either a name defined by [add_font](add_font.md) or one of the standard families (case insensitive):
+> Font family. It can be either a name defined by [add_font](add_font.md) or one of the standard families (case insensitive):
 >>  * Courier (fixed-width)
 >>  * Helvetica or Arial (synonymous; sans serif)
 >>  * Times (serif)

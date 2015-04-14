@@ -1,19 +1,19 @@
-# FPDF for python #
+# FPDF for Python #
 
 <a href='https://github.com/reingart/pyfpdf'><img src='https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png' alt='Fork me on GitHub' border='0' align='right' /></a>
 
-_PyFPDF_ is a library for PDF document generation under Python, ported from php (see [FPDF](http://www.fpdf.org/) "Free"-PDF, a well-known PDFlib-extension replacement with many examples, scripts and derivatives).
+_PyFPDF_ is a library for PDF document generation under Python, ported from PHP (see [FPDF](http://www.fpdf.org/): "Free"-PDF, a well-known PDFlib-extension replacement with many examples, scripts and derivatives).
 
-**Latest Relesed Version: 1.7 (August 15th, 2012)**  -  **Current Development Version: 1.7.1**
+**Latest Released Version: 1.7 (August 15th, 2012)**  -  **Current Development Version: 1.7.1**
 
 ## Main features ##
   * Easy to use (and easy to extend)
   * Many simple examples and scripts available in many languages
   * No external dependencies or extensions (optionally PIL for GIF support)
-  * No installation, no compilation or other libraries (DLL) required
+  * No installation, no compilation or other libraries (DLLs) required
   * Small and compact code, useful for testing new features and teaching
 
-This repository is a fork of the library [original port by Max Pat](http://www.fpdf.org/dl.php?id=94), with the following enhancements:
+This repository is a fork of the library's [original port by Max Pat](http://www.fpdf.org/dl.php?id=94), with the following enhancements:
 
   * Python 2.5 to 3.4+ support (see [Python3](Python3.md) support)
   * [Unicode](Unicode.md) (UTF-8) TrueType font subset embedding (Central European, Cyrillic, Greek, Baltic, Thai, Chinese, Japanese, Korean, Hindi and almost any other language in the world) **New!** based on [sFPDF](http://www.fpdf.org/en/script/script91.php) LGPL3 PHP version from [Ian Back](mailto:ian@bpm1.com?subject=sFPDF)
@@ -21,15 +21,15 @@ This repository is a fork of the library [original port by Max Pat](http://www.f
   * Barcode I2of5 and code39, QR code coming soon ...
   * PNG, GIF and JPG support (including transparency and alpha channel) **New!**
   * Exceptions support, other minor fixes, improvements and PEP8 code cleanups
-  * Port of [Tutorial](Tutorial.md) and [ReferenceManual](ReferenceManual.md)  (spanish translation available)
+  * Port of the [Tutorial](Tutorial.md) and [ReferenceManual](ReferenceManual.md)  (Spanish translation available)
 
 FPDF original features:
 
-  * Choice of measure unit, page format and margins
+  * Choice of measurement unit, page format and margins
   * Page header and footer management
   * Automatic page break
   * Automatic line break and text justification
-  * Image, Colors and Links support
+  * Image, colors and links support
   * Page compression
   * Extensive [Tutorial](http://www.fpdf.org/en/tutorial/index.php) and complete online [documentation](http://www.fpdf.org/en/doc/index.php)
 
@@ -37,8 +37,8 @@ FPDF original features:
 
   * Using [PyPI](http://pypi.python.org/pypi?:action=display&name=fpdf&version=1.7)
   * Using [EasyInstall](http://peak.telecommunity.com/DevCenter/EasyInstall) `c:\python27\Scripts\easy_install.exe fpdf`
-  * From Source:
-    * [Download](https://code.google.com/p/pyfpdf/adminDownloads) and unpack source package (zip) or pull from the [repo](https://code.google.com/p/pyfpdf/source/checkout)
+  * From source:
+    * [Download](https://github.com/reingart/pyfpdf/releases) and unpack source package (zip) or pull from the [repository](https://github.com/reingart/pyfpdf)
     * Run `python setup.py install`
   * Using [MSI](http://pyfpdf.googlecode.com/files/fpdf-1.7.win32.msi) or [Windows Installers](http://pyfpdf.googlecode.com/files/fpdf-1.7.hg.zip)
 
@@ -46,7 +46,7 @@ For your convenience, some installers include the optional ["Free Unicode TrueTy
 
 ## Support ##
 
-For community support, please fell free to fill an [issue](https://github.com/reingart/pyfpdf/issues)
+For community support, please feel free to file an [issue](https://github.com/reingart/pyfpdf/issues).
 
 For priority technical support, you can contact [Mariano Reingart](mailto:reingart@gmail.com) (current maintainer and project owner). Online payments accepted through PayPal.
 

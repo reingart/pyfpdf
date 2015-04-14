@@ -8,7 +8,7 @@ fpdf.image(name, x = None, y = None, w = 0, h = 0, type = '', link = '')
 
 Puts an image. The size it will take on the page can be specified in different ways:
 
- * explicit width and height (expressed in user unit)
+ * explicit width and height (expressed in user units)
  * one explicit dimension, the other being calculated automatically in order to keep the original proportions
  * no explicit dimension, in which case the image is put at 72 dpi.
 
@@ -20,16 +20,16 @@ For JPEGs, all flavors are allowed:
   * true colors (24 bits)
   * CMYK (32 bits)
   
-For PNGs, are allowed:
+For PNGs, these are allowed:
 
-  * gray scales on at most 8 bits (256 levels)
+  * gray scales of at most 8 bits (256 levels)
   * indexed colors
   * true colors (24 bits)
+  * alpha channel (_version 1.7 and up_)
   
-but are not supported:
+but this is not supported:
 
-  * Interlacing
-  * ~~Alpha channel~~ (_prior version 1.7_)
+  * interlacing
   
 For GIFs: in case of an animated GIF, only the first frame is used.
 

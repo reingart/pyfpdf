@@ -6,7 +6,7 @@ fpdf.ln(h = '')
 
 ### Description ###
 
-Performs a line break. The current abscissa goes back to the left margin and the ordinate increases by the amount passed in parameter.
+Performs a line break. The current abscissa goes back to the left margin and the ordinate increases by the amount passed in the parameter.
 
 ### Parameters ###
 
