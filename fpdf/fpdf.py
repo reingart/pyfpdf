@@ -152,7 +152,7 @@ class FPDF(object):
             if format in PAGE_FORMATS:
                 return PAGE_FORMATS[format]
             else:
-                self.error("Unknown page format: " + format)
+                raise RuntimeError("Unknown page format: " + format)
         else:
             return (format[0] * k, format[1] * k)
 
