@@ -68,6 +68,7 @@ class Template:
         self.texts[self.pg_no] = {}
         
     def __setitem__(self, name, value):
+        name = name.encode('utf8')
         if name.lower() in self.keys:
             if not PY3K and isinstance(value, unicode):
                 value = value.encode("latin1","ignore")
