@@ -20,7 +20,7 @@ __license__ = "GPL 3.0"
 __version__ = "1.01e"
 
 # Based on:
-#  * pySjetch.py wxPython sample application
+#  * pySketch.py wxPython sample application
 #  * OGL.py and other wxPython demo modules
 
 
@@ -35,6 +35,60 @@ except ImportError:
     from fpdf.template import Template
     
 DEBUG = True
+
+########################################################################
+# Constants
+########################################################################
+PAPER_SIZES = ['A4','Letter','Legal']
+PAPER_ORIENTATIONS = ['Portrait', 'Landscape']
+DEFAULT_PAPER_ORIENTATION = 'P'
+DEFAULT_PAPER_SIZE = 'Letter'
+PAPER_SIZE_OPTIONS = dict([
+('Legal_portrait', (216, 356)), 
+('A4_portrait', (210, 297)), 
+('Letter_portrait', (216, 279)), 
+('Legal_landscape', (356, 216)), 
+('A4_landscape', (297, 210)), 
+('Letter_landscape', (279, 216))])
+########################################################################
+
+class SetupDialog(wx.Dialog):
+    
+    def __init__(self, parent, id, title):
+        wx.Dialog.__init__(self, parent, id, title, size=(250, 135))
+        
+        sizer = wx.BoxSizer(wx.VERTICAL)
+        
+        box1 = wx.BoxSizer(wx.HORIZONTAL)
+        box2 = wx.BoxSizer(wx.HORIZONTAL)
+        box3 = wx.BoxSizer(wx.HORIZONTAL)
+        
+        self.cmb_paper_size = wx.ComboBox(self, -1, choices=PAPER_SIZES, style=wx.CB_READONLY)
+        
+        self.cmb_paper_size.SetValue(parent.paper_size)       
+        
+        self.cmb_paper_orientation = wx.ComboBox(self, -1, choices=PAPER_ORIENTATIONS, style=wx.CB_READONLY)
+        
+        self.cmb_paper_orientation.SetValue('Portrait' if parent.paper_orientation=='P' else 'Landscape')  
+        
+        self.ok_btn = wx.Button(self, wx.ID_OK, 'Save')
+        
+        box1.Add(self.cmb_paper_size, wx.ALIGN_CENTRE|wx.ALL, 5)
+        
+        sizer.Add(box1, wx.ALIGN_CENTRE|wx.ALL, 5)
+
+        box2.Add(self.cmb_paper_orientation, wx.ALIGN_CENTRE|wx.ALL, 5)
+        
+        sizer.Add(box2, wx.ALIGN_CENTRE|wx.ALL, 5)
+        
+        box3.Add(self.ok_btn, wx.ALIGN_CENTRE|wx.ALL, 5)
+        
+        sizer.Add(box3, wx.ALIGN_CENTRE|wx.ALL, 5)
+
+        self.SetSizer(sizer)
+
+
+        self.Centre()
 
 
 class CustomDialog(wx.Dialog):
@@ -159,8 +213,27 @@ class MyEvtHandler(ogl.ShapeEvtHandler):
         self.callback()
 
     def OnSizingEndDragLeft(self, pt, x, y, keys, attch):
-        ogl.ShapeEvtHandler.OnSizingEndDragLeft(self, pt, x, y, keys, attch)
+
+        ogl.ShapeEvtHandler.OnSizingEndDragLeft(self, pt, x, y, keys, attch)      
+
+        shape = self.GetShape()
+        if isinstance(shape, ogl.BitmapShape):
+            
+            # Resize bitmap and reassing to shape
+            w, h = pt._controlPointDragEndWidth, pt._controlPointDragEndHeight
+            
+            img = wx.Image(shape.GetFilename())
+            img.Rescale(w, h, quality=wx.IMAGE_QUALITY_HIGH )
+            bmp = wx.BitmapFromImage(img)
+            shape.SetBitmap(bmp)    
+            shape.SetFilename(shape.GetFilename())
+            shape.GetCanvas().Refresh(False)
+
+
         self.callback()
+            
+
+
 
     def OnMovePost(self, dc, x, y, oldX, oldY, display):
         shape = self.GetShape()
@@ -200,10 +273,28 @@ class Element(object):
 
         text = kwargs['text']
      
-        shape = self.shape = ogl.RectangleShape(w, h)
-            
-        if not static:
-            shape.SetDraggable(True, True)        
+        # If type is image, display it.
+        
+        if (type.lower() == 'i'):
+            if os.path.exists(self.text):
+                img = wx.Image(self.text)
+                img.Rescale(w, h, quality=wx.IMAGE_QUALITY_HIGH )
+                bmp = wx.BitmapFromImage(img)
+                self.shape = ogl.BitmapShape()
+                self.shape.SetBitmap(bmp)
+                self.shape.SetFilename(self.text)
+                shape = self.shape
+                shape.SetMaintainAspectRatio(True)
+            else:
+                shape = self.shape = ogl.RectangleShape(w, h)
+                shape.SetMaintainAspectRatio(False)
+                
+        else:
+            shape = self.shape = ogl.RectangleShape(w, h)
+            shape.SetMaintainAspectRatio(False)
+
+        if static:
+            shape.SetDraggable(False)        
 
         shape.SetX(x)
         shape.SetY(y)
@@ -225,7 +316,6 @@ class Element(object):
         evthandler.SetPreviousHandler(shape.GetEventHandler())
         shape.SetEventHandler(evthandler)
         shape.SetCentreResize(False)
-        shape.SetMaintainAspectRatio(False)
 
         canvas.AddShape( shape ) 
                 
@@ -259,6 +349,15 @@ class Element(object):
             self.shape.SetY(y)
             self.shape.SetWidth(w)
             self.shape.SetHeight(h)
+            
+            # Refresh bitmap
+            if data['type'].lower() == 'i':
+                img = wx.Image(self.text)
+                img.Rescale(w, h, quality=wx.IMAGE_QUALITY_HIGH )
+                bmp = wx.BitmapFromImage(img)
+                self.shape.SetBitmap(bmp)
+                self.shape.SetFilename(self.text)
+            
             self.canvas.Refresh(False)
             self.canvas.GetDiagram().ShowAll(1)
         
@@ -296,13 +395,16 @@ class Element(object):
 
     def evt_callback(self, evt_type=None):
         "Event dispatcher"
+        
+        x1, y1, x2, y2 = self.get_coordinates()
         if evt_type=="LeftDoubleClick":
             self.edit_text()
         if evt_type=='RightClick':
             self.edit()
+
         
         # update the status bar
-        x1, y1, x2, y2 = self.get_coordinates()
+        
         self.frame.SetStatusText("%s (%0.2f, %0.2f) - (%0.2f, %0.2f)" %
                                         (self.name, x1, y1, x2, y2))
 
@@ -412,13 +514,19 @@ class AppFrame(wx.Frame):
         self.toolbar.AddSimpleTool(
             wx.ID_SAVEAS, artBmp(wx.ART_FILE_SAVE_AS, wx.ART_TOOLBAR, tsize),
             "Save As...")
+
+        self.toolbar.AddSimpleTool(
+            wx.ID_SETUP, artBmp(wx.ART_EXECUTABLE_FILE, wx.ART_TOOLBAR, tsize),
+            "Template settings")
+            
+            
         #-------
         self.toolbar.AddSeparator()
-        self.toolbar.AddSimpleTool(
-            wx.ID_UNDO, artBmp(wx.ART_UNDO, wx.ART_TOOLBAR, tsize), "Undo")
-        self.toolbar.AddSimpleTool(
-            wx.ID_REDO, artBmp(wx.ART_REDO, wx.ART_TOOLBAR, tsize), "Redo")
-        self.toolbar.AddSeparator()
+        #~ self.toolbar.AddSimpleTool(
+            #~ wx.ID_UNDO, artBmp(wx.ART_UNDO, wx.ART_TOOLBAR, tsize), "Undo")
+        #~ self.toolbar.AddSimpleTool(
+            #~ wx.ID_REDO, artBmp(wx.ART_REDO, wx.ART_TOOLBAR, tsize), "Redo")
+        #~ self.toolbar.AddSeparator()
         #-------
         self.toolbar.AddSimpleTool(
             wx.ID_CUT, artBmp(wx.ART_CUT, wx.ART_TOOLBAR, tsize), "Remove")
@@ -426,11 +534,11 @@ class AppFrame(wx.Frame):
             wx.ID_COPY, artBmp(wx.ART_COPY, wx.ART_TOOLBAR, tsize), "Duplicate")
         self.toolbar.AddSimpleTool(
             wx.ID_PASTE, artBmp(wx.ART_PASTE, wx.ART_TOOLBAR, tsize), "Insert")
+        self.toolbar.AddSimpleTool(
+            wx.ID_REPLACE, artBmp(wx.ART_GO_FORWARD, wx.ART_TOOLBAR, tsize), "Move")
         self.toolbar.AddSeparator()
         self.toolbar.AddSimpleTool(
             wx.ID_FIND, artBmp(wx.ART_FIND, wx.ART_TOOLBAR, tsize), "Find")
-        self.toolbar.AddSimpleTool(
-            wx.ID_REPLACE, artBmp(wx.ART_FIND_AND_REPLACE, wx.ART_TOOLBAR, tsize), "Modify")
         self.toolbar.AddSeparator()
         self.toolbar.AddSimpleTool(
             wx.ID_PRINT, artBmp(wx.ART_PRINT, wx.ART_TOOLBAR, tsize), "Print")
@@ -439,14 +547,16 @@ class AppFrame(wx.Frame):
 
         self.toolbar.Realize()
 
-        self.toolbar.EnableTool(wx.ID_SAVEAS,       False)
+        #~ self.toolbar.EnableTool(wx.ID_SAVEAS,       False)
         self.toolbar.EnableTool(wx.ID_UNDO,         False)
         self.toolbar.EnableTool(wx.ID_REDO,         False)
+        self.toolbar.EnableTool(wx.ID_PRINT,        False)
 
         menu_handlers = [
             (wx.ID_NEW, self.do_new),
             (wx.ID_OPEN, self.do_open),
             (wx.ID_SAVE, self.do_save),
+            (wx.ID_SAVEAS, self.do_save_as),
             (wx.ID_PRINT, self.do_print),
             (wx.ID_FIND, self.do_find),
             (wx.ID_REPLACE, self.do_modify),
@@ -454,6 +564,7 @@ class AppFrame(wx.Frame):
             (wx.ID_COPY, self.do_copy),
             (wx.ID_PASTE, self.do_paste),
             (wx.ID_ABOUT, self.do_about),
+            (wx.ID_SETUP, self.do_setup),
         ]
         for menu_id, handler in menu_handlers:
             self.Bind(wx.EVT_MENU, handler, id = menu_id)
@@ -483,6 +594,43 @@ class AppFrame(wx.Frame):
 
         self.Bind(wx.EVT_CHAR_HOOK, self.on_key_event)
         self.elements = []
+        
+        self.paper_size = DEFAULT_PAPER_SIZE
+        self.paper_orientation = DEFAULT_PAPER_ORIENTATION
+        
+        self.draw_paper_size_guides()
+        
+        self.cur_dir = os.getcwd()
+        
+
+    def draw_paper_size_guides(self):
+        idx = 0
+        # Only one paper size guide
+        for elem in self.elements:
+            if elem.static:
+                idx = self.elements.index(elem)
+                elem.remove()
+        
+        current_paper_properties = "%s_%s" % (self.paper_size, 'portrait' if self.paper_orientation == 'P' else 'landscape')
+
+        #~ self.create_elements( 
+            #~ current_paper_properties, 'R', 0, 0, paper_size_options[current_paper_properties][0], paper_size_options[current_paper_properties][1], 
+            #~ size=70, foreground=0x808080, priority=-100, canvas=self.canvas, frame=self, static=True)
+
+        guide = Element(name=current_paper_properties, type='R', x1=0, y1=0, x2=PAPER_SIZE_OPTIONS[current_paper_properties][0], 
+        y2=PAPER_SIZE_OPTIONS[current_paper_properties][1],font="Arial",size=70, bold=False, italic=False, underline=False, foreground= 0x808080, background=0xFFFFFF,align="L", text='', priority=-100, canvas=self.canvas, frame=self, static=True)
+        
+        # Insert new element and shape respecting template previous z-order
+        self.elements.insert(idx, guide)
+        last_shape = self.canvas.GetDiagram().GetShapeList()[-1]
+        del(self.canvas.GetDiagram().GetShapeList()[-1])
+        self.canvas.GetDiagram().GetShapeList().insert(idx, last_shape)
+        
+        self.diagram.ShowAll( 1 )
+        
+        self.SetStatusText(current_paper_properties.replace("_"," "))
+
+
 
     def on_key_event(self, event):
         """ Respond to a keypress event.
@@ -507,60 +655,113 @@ class AppFrame(wx.Frame):
         else:
             event.Skip()
 
+    def do_setup(self, evt=None):
+        dlg = SetupDialog(self, -1,'Select paper size')
+        if dlg.ShowModal() == wx.ID_OK:
+            self.paper_size = dlg.cmb_paper_size.GetValue()
+            self.paper_orientation = dlg.cmb_paper_orientation.GetValue()[0]
+            
+            self.draw_paper_size_guides()
+        
+        dlg.Destroy()
+        
+             
+       
+    # Only use for empty Templates
     def do_new(self, evt=None):
         for element in self.elements:
             element.remove()
         self.elements = []
+        
+        if evt != "OPEN":
+            self.filename = ''
+            self.SetTitle("New template - " + self.title)
+            
         # draw paper size guides
-        for k, (w, h) in [('legal', (216, 356)), ('A4', (210, 297)), ('letter', (216, 279))]:
-            self.create_elements( 
-                k, 'R', 0, 0, w, h,
-                size=70, foreground=0x808080, priority=-100,
-                canvas=self.canvas, frame=self, static=True)
+        self.draw_paper_size_guides()
+        self.canvas.Refresh(False)
         self.diagram.ShowAll( 1 )
         
     def do_open(self, evt):
         dlg = wx.FileDialog(
             self, message="Choose a file",
             defaultDir=os.getcwd(), 
-            defaultFile="invoice.csv",
+            defaultFile="",
             wildcard="CSV Files (*.csv)|*.csv",
-            style=wx.OPEN 
+            style=wx.OPEN | wx.FD_CHANGE_DIR | wx.FD_FILE_MUST_EXIST
             )
         
         if dlg.ShowModal() == wx.ID_OK:
             # This returns a Python list of files that were selected.
             self.filename = dlg.GetPaths()[0]
-        
+            
+            if self.filename:
+                
+                self.do_new("OPEN")
+                
+                self.toolbar.EnableTool(wx.ID_PRINT,        True)
+                os.chdir(os.path.dirname(self.filename))
+                self.cur_dir = os.getcwd()
+            
+                dlg.Destroy()
+
+                self.SetTitle(self.filename + " - " + self.title)
+                
+                
+                tmp = []
+                with open(self.filename) as file:
+                    for lno, linea in enumerate(file.readlines()):
+                        if DEBUG: print "processing line", lno, linea
+                        args = []
+                        for i,v in enumerate(linea.split(";")):
+                            if not v.startswith("'"): 
+                                v = v.replace(",",".")
+                            else:
+                                v = v#.decode('latin1')
+                            if v.strip()=='':
+                                v = None
+                            else:
+                                v = eval(v.strip())
+                            args.append(v)
+                        tmp.append(args)
+                
+                # sort by z-order (priority)
+                for args in sorted(tmp, key=lambda t: t[-1]):
+                    if DEBUG: print args
+                    self.create_elements(*args)
+                
+                
+                
+                self.diagram.ShowAll( 1 )                       #
+
+                return True
+        else:
+            return False
+            
+
+    def do_save_as(self, evt, filename=None):
+        dlg = wx.FileDialog(
+            self, message="Give the file a name",
+            defaultDir=os.getcwd(), 
+            defaultFile=self.filename,
+            wildcard="CSV Files (*.csv)|*.csv",
+            style=wx.SAVE | wx.FD_OVERWRITE_PROMPT
+            )
+    
+        if dlg.ShowModal() == wx.ID_OK:
+            # This returns a Python list of files that were selected.
+            self.filename = dlg.GetPaths()[0]
+            os.chdir(os.path.dirname(self.filename))
+            self.cur_dir = os.getcwd()
+            self.toolbar.EnableTool(wx.ID_PRINT,        True)
+    
         dlg.Destroy()
-        self.SetTitle(self.filename + " - " + self.title)
         
-        self.do_new()
-        tmp = []
-        with open(self.filename) as file:
-            for lno, linea in enumerate(file.readlines()):
-                if DEBUG: print "processing line", lno, linea
-                args = []
-                for i,v in enumerate(linea.split(";")):
-                    if not v.startswith("'"): 
-                        v = v.replace(",",".")
-                    else:
-                        v = v#.decode('latin1')
-                    if v.strip()=='':
-                        v = None
-                    else:
-                        v = eval(v.strip())
-                    args.append(v)
-                tmp.append(args)
+        if self.filename:
+            self.do_save(evt, filename=self.filename)
         
-        # sort by z-order (priority)
-        for args in sorted(tmp, key=lambda t: t[-1]):
-            if DEBUG: print args
-            self.create_elements(*args)
-        self.diagram.ShowAll( 1 )                       #
-
-        return True      
-
+        
+        
     def do_save(self, evt, filename=None):
         try:
             from time import gmtime, strftime
@@ -569,6 +770,7 @@ class AppFrame(wx.Frame):
         except Exception, e:
             if DEBUG: print e
             pass
+
         
         def csv_repr(v, decimal_sep="."):
             if isinstance(v, float):
@@ -576,24 +778,52 @@ class AppFrame(wx.Frame):
             else:
                 return repr(v)
         
-        with open(self.filename, "w") as f:
-            for element in sorted(self.elements, key=lambda e:e.name):
-                if element.static:
-                    continue
-                d = element.as_dict()
-                l = [d['name'], d['type'],
-                     d['x1'], d['y1'], d['x2'], d['y2'],
-                     d['font'], d['size'],
-                     d['bold'], d['italic'], d['underline'], 
-                     d['foreground'], d['background'],
-                     d['align'], d['text'], d['priority'], 
-                    ]
-                f.write(";".join([csv_repr(v) for v in l]))
-                f.write("\n")
+        # Open Save Dialog
+        if not self.filename:
+            dlg = wx.FileDialog(
+                self, message="Give the file a name",
+                defaultDir=os.getcwd(), 
+                defaultFile="template.csv",
+                wildcard="CSV Files (*.csv)|*.csv",
+                style=wx.SAVE 
+                )
         
+            if dlg.ShowModal() == wx.ID_OK:
+                # This returns a Python list of files that were selected.
+                self.filename = dlg.GetPaths()[0]
+                os.chdir(os.path.dirname(self.filename))
+                self.cur_dir = os.getcwd()
+                self.toolbar.EnableTool(wx.ID_PRINT,        True)
+        
+            dlg.Destroy()
+
+
+        
+        if self.filename:
+            self.SetTitle(self.filename + " - " + self.title)
+
+            with open(self.filename, "w") as f:
+                for element in sorted(self.elements, key=lambda e:e.name):
+                    if element.static:
+                        continue
+                    d = element.as_dict()
+                    l = [d['name'], d['type'],
+                         d['x1'], d['y1'], d['x2'], d['y2'],
+                         d['font'], d['size'],
+                         d['bold'], d['italic'], d['underline'], 
+                         d['foreground'], d['background'],
+                         d['align'], d['text'], d['priority'], 
+                        ]
+                    f.write(";".join([csv_repr(v) for v in l]))
+                    f.write("\n")
+
+
     def do_print(self, evt):
         # genero el renderizador con propiedades del PDF
-        t = Template(elements=[e.as_dict() for e in self.elements if not e.static])
+        paper_size = self.paper_size or DEFAULT_PAPER_SIZE
+        orientation = self.paper_orientation or DEFAULT_PAPER_ORIENTATION
+        
+        t = Template(format=paper_size, orientation=orientation, elements=[e.as_dict() for e in self.elements if not e.static])
         t.add_page()
         if not t['logo'] or not os.path.exists(t['logo']):
             # put a default logo so it doesn't throw an exception
@@ -721,9 +951,9 @@ class AppFrame(wx.Frame):
             "Use arrow keys or drag-and-drop to move elements.\n"
             "For further information see project webpage:"
             )
-        info.WebSite = ("http://code.google.com/p/pyfpdf/wiki/Templates", 
-                        "pyfpdf Google Code Project")
-        info.Developers = [ __author__, ]
+        info.WebSite = ("https://github.com/reingart/pyfpdf/blob/master/docs/Templates.md", 
+                        "pyfpdf GitHub Project")
+        info.Developers = [ __author__,  ]
 
         info.License = wordwrap(__license__, 500, wx.ClientDC(self))
 
@@ -743,4 +973,3 @@ if __name__ == "__main__":
     frame = AppFrame()
     app.MainLoop()
     app.Destroy()
-
