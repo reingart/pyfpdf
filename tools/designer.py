@@ -284,14 +284,13 @@ class Element(object):
                 self.shape.SetBitmap(bmp)
                 self.shape.SetFilename(self.text)
                 shape = self.shape
-                shape.SetMaintainAspectRatio(True)
             else:
                 shape = self.shape = ogl.RectangleShape(w, h)
-                shape.SetMaintainAspectRatio(False)
                 
         else:
             shape = self.shape = ogl.RectangleShape(w, h)
-            shape.SetMaintainAspectRatio(False)
+        
+        shape.SetMaintainAspectRatio(False)
 
         if static:
             shape.SetDraggable(False)        
@@ -328,6 +327,7 @@ class Element(object):
                     foreground= 0x000000, background=0xFFFFFF,
                     align="L", text="", priority=0)
         data = CustomDialog.do_input(parent, 'New element', Class.fields, data)
+            
         if data:
             return Class(canvas=parent.canvas, frame=parent, **data)
     
@@ -973,3 +973,4 @@ if __name__ == "__main__":
     frame = AppFrame()
     app.MainLoop()
     app.Destroy()
+
