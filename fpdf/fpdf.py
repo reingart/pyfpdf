@@ -1113,7 +1113,7 @@ class FPDF(object):
                 f.write(buffer)
         elif dest=='S':
             #Return as a string
-            return buffer
+            return self.buffer
         else:
             self.error('Incorrect output destination: '+dest)
 
