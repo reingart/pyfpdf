@@ -1112,8 +1112,8 @@ class FPDF(object):
             with open(name,'wb') as f:
                 f.write(buffer)
         elif dest=='S':
-            #Return as a string
-            return self.buffer
+            #Return as a byte string
+            return buffer
         else:
             self.error('Incorrect output destination: '+dest)
 
