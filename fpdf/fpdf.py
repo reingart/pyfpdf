@@ -19,7 +19,7 @@ from datetime import datetime
 from functools import wraps
 import math
 import errno
-import os, sys, zlib, struct, re, tempfile, struct
+import os, io, sys, zlib, struct, re, tempfile, struct
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
@@ -1751,7 +1751,10 @@ class FPDF(object):
         # Extract info from a JPEG file
         f = None
         try:
-            f = open(filename, 'rb')
+            if filename.startswith("http://") or filename.startswith("https://"):
+               f = io.BytesIO(urlopen(filename).read())
+            else:
+                f = open(filename, 'rb')
             while True:
                 markerHigh, markerLow = struct.unpack('BB', f.read(2))
                 if markerHigh != 0xFF or markerLow < 0xC0:
