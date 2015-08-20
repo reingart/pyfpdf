@@ -1037,7 +1037,7 @@ class FPDF(object):
             w = max_w
             h *= scaling_ratio
 
-        if max_h and h > max_w:
+        if max_h and h > max_h:
             scaling_ratio = max_h / h
             h = max_h
             w *= scaling_ratio
