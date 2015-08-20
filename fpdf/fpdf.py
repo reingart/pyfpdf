@@ -979,7 +979,7 @@ class FPDF(object):
             self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
     @check_page
-    def image(self, name, x=None, y=None, w=0,h=0,type='',link=''):
+    def image(self, name, x=None, y=None, w=0, h=0, max_w=0, max_h=0, type='', link='', move_x_position=False):
         "Put an image on the page"
         if not name in self.images:
             #First use of image, get info
@@ -1030,6 +1030,18 @@ class FPDF(object):
             w=h*info['w']/info['h']
         elif(h==0):
             h=w*info['h']/info['w']
+
+        # width and height calculation if max_w or max_h are provided
+        if max_w and w > max_w:
+            scaling_ratio = max_w / w
+            w = max_w
+            h *= scaling_ratio
+
+        if max_h and h > max_w:
+            scaling_ratio = max_h / h
+            h = max_h
+            w *= scaling_ratio
+
         # Flowing mode
         if y is None:
             if (self.y + h > self.page_break_trigger and not self.in_footer and self.accept_page_break()):
@@ -1041,6 +1053,9 @@ class FPDF(object):
             self.y += h
         if x is None:
             x = self.x
+            if move_x_position:
+                # Moving the value of abscissa to right end of the image
+                self.x += w
         self._out(sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',w*self.k,h*self.k,x*self.k,(self.h-(y+h))*self.k,info['i']))
         if(link):
             self.link(x,y,w,h,link)
