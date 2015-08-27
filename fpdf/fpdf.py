@@ -979,7 +979,7 @@ class FPDF(object):
             self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
     @check_page
-    def image(self, name, x=None, y=None, w=0, h=0, max_w=0, max_h=0, type='', link='', move_x_position=False):
+    def image(self, name, x=None, y=None, w=0, h=0, type='', link='', max_w=0, max_h=0, move_x_position=False):
         "Put an image on the page"
         if not name in self.images:
             #First use of image, get info
