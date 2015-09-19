@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: latin-1 -*-
+# -*- coding: windows-1252 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
 # * Version:  1.7.1                                                          *
@@ -1120,11 +1120,11 @@ class FPDF(object):
     def normalize_text(self, txt):
         "Check that text input is in the correct format/encoding"
         # - for TTF unicode fonts: unicode object (utf8 encoding)
-        # - for built-in fonts: string instances (latin 1 encoding)
+        # - for built-in fonts: string instances (windows-1252 encoding) (windows-1252 includes both latin1 (iso8859-1) and iso8859-15) 
         if self.unifontsubset and isinstance(txt, str) and not PY3K:
             txt = txt.decode('utf8')
         elif not self.unifontsubset and isinstance(txt, unicode) and not PY3K:
-            txt = txt.encode('latin1')
+            txt = txt.encode('windows-1252')
         return txt
 
 
