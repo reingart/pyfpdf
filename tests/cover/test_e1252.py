@@ -4,7 +4,12 @@
 
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=e1252.pdf
-#PyFPDF-cover-test:hash=84810c2c1d1169c73e6803cbc9390b1f
+#PyFPDF-cover-test:hash=15755a61f1d2eb6a1e8d8372b2e92c52
+
+#
+# Please note: with current PyFPDF state four codepoints:
+# breve, dotaccent, hungarumlaut and ogonek will not shown in Helveltica.
+# 
 
 import common # test utilities
 from fpdf import FPDF
@@ -84,7 +89,7 @@ SYMBOLS = [
     [u"a", "a", 0o141],
     [u"á", "aacute", 0o341],
     [u"â", "acircumflex", 0o342],
-    [u" ́", "acute", 0o264], # Special
+    [u" ́", "acute", 0o264],
     [u"ä", "adieresis", 0o344],
     [u"æ", "ae", 0o346],
     [u"à", "agrave", 0o340],
@@ -103,7 +108,7 @@ SYMBOLS = [
     [u"}", "braceright", 0o175],
     [u"[", "bracketleft", 0o133],
     [u"]", "bracketright", 0o135],
-    [u" ̆", "breve", None], # # Special
+    [u" ̆", "breve", None], 
     [u"¦", "brokenbar", 0o246],
     [u"•", "bullet", 0o225],
     [u"c", "c", 0o143],
@@ -305,37 +310,41 @@ def dotest(outputname, nostamp):
     
     pdf.table_cnt = 0
     def print_char(char, name, code):
-        #print(repr(char), name, code)
         if pdf.table_cnt > 28:
             pdf.add_page()
             pdf.table_cnt = 0
         if pdf.table_cnt == 0:
             tabletop()
         pdf.table_cnt += 1
+
+        # transform char for displaying
         if len(char) != 1:
             if len(char) == 2 and char[:1] == u" ":
-                ocode = ord(char[1])            
+                ocode = ord(char[1])
                 if code is not None:
-                    txt = unichr(code)
-                txt = "O" + char[1:]
+                    pchar = unichr(code)
+                else:
+                    pchar = "O" + char[1:]
             else:
                 raise Exception("bad charter for \"" + name + "\" " + repr(char))
         else:
             ocode = ord(char)
-            txt = char
+            pchar = char
+        
 
+        # external
         if use_exfont:
             pdf.set_font('DejaVu', '', 14)
-            pdf.cell(12, 8, txt = char, border = 1, align = "R")
-        
-        
+            pdf.cell(12, 8, txt = pchar, border = 1, align = "R")
+
         pdf.set_font('Arial', '', 14)
 
         # as latin-1 charter
         bg = False
+        txt = pchar
         try:
-            txt.encode("latin1")
-        except:
+            pchar.encode("latin1")
+        except UnicodeEncodeError:
             txt = ""
             bg = True
         pdf.cell(12, 8, txt = txt, border = 1, align = "R", fill = bg)
@@ -350,14 +359,15 @@ def dotest(outputname, nostamp):
         # as 1252
         bg = False
         try:
-            txt = char.encode("windows-1252").decode("latin-1")
+            txt = pchar.encode("windows-1252").decode("latin-1")
         except:
             txt = ""
             bg = True
         pdf.cell(12, 8, txt = txt, border = 1, align = "R", fill = bg)
 
-        # charter name
+        # char name
         pdf.cell(35, 8, txt = name, border = 1, align = "L")
+        # hex codes
         hcode = ""
         alt = ""
         if code is not None:
@@ -368,6 +378,7 @@ def dotest(outputname, nostamp):
             alt = "0x%02X" % ocode
         pdf.cell(20, 8, txt = hcode, border = 1, align = "L")
         pdf.cell(20, 8, txt = alt, border = 1, align = "L")
+
         pdf.ln()
 
 
