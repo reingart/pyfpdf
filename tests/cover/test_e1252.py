@@ -4,7 +4,7 @@
 
 #PyFPDF-cover-test:format=PDF
 #PyFPDF-cover-test:fn=e1252.pdf
-#PyFPDF-cover-test:hash=15755a61f1d2eb6a1e8d8372b2e92c52
+#PyFPDF-cover-test:hash=e84f193be84c1162538d64e28ee054b6
 
 #
 # Please note: with current PyFPDF state four codepoints:
@@ -89,7 +89,7 @@ SYMBOLS = [
     [u"a", "a", 0o141],
     [u"á", "aacute", 0o341],
     [u"â", "acircumflex", 0o342],
-    [u" ́", "acute", 0o264],
+    [u"\xb4", "acute", 0o264],
     [u"ä", "adieresis", 0o344],
     [u"æ", "ae", 0o346],
     [u"à", "agrave", 0o340],
@@ -114,7 +114,7 @@ SYMBOLS = [
     [u"c", "c", 0o143],
     [u"ˇ", "caron", None],
     [u"ç", "ccedilla", 0o347],
-    [u" ̧", "cedilla", 0o270],
+    [u"\xb8", "cedilla", 0o270],
     [u"¢", "cent", 0o242],
     [u"ˆ", "circumflex", 0o210],
     [u":", "colon", 0o72],
@@ -125,7 +125,7 @@ SYMBOLS = [
     [u"†", "dagger", 0o206],
     [u"‡", "daggerdbl", 0o207],
     [u"°", "degree", 0o260],
-    [u" ̈", "dieresis", 0o250],
+    [u"\xa8", "dieresis", 0o250],
     [u"÷", "divide", 0o367],
     [u"$", "dollar", 0o44],
     [u" ̇", "dotaccent", None],
@@ -175,9 +175,9 @@ SYMBOLS = [
     [u"¬", "logicalnot", 0o254],
     [u"ł", "lslash", None],
     [u"m", "m", 0o155],
-    [u" ̄", "macron", 0o257],
+    [u"\xaf", "macron", 0o257],
     [u"−", "minus", None],
-    [u"μ", "mu", 0o265],
+    [u"\xb5", "mu", 0o265],
     [u"×", "multiply", 0o327],
     [u"n", "n", 0o156],
     [u"9", "nine", 0o71],
@@ -222,7 +222,7 @@ SYMBOLS = [
     [u"'", "quotesingle", 0o47],
     [u"r", "r", 0o162],
     [u"®", "registered", 0o256],
-    [u" ̊", "ring", 0o36],
+    [u" ̊", "ring", None],
     [u"s", "s", 0o163],
     [u"š", "scaron", 0o232],
     [u"§", "section", 0o247],
@@ -259,17 +259,55 @@ SYMBOLS = [
     [u"z", "z", 0o172],
     [u"ž", "zcaron", 0o236],
     [u"0", "zero", 0o60],
-            
-    
 ]
+
+
+CTRL = {
+    0x00: "NUL",
+    0x01: "SOH",
+    0x02: "STX",
+    0x03: "ETX",
+    0x04: "EOT",
+    0x05: "ENQ",
+    0x06: "ACK",
+    0x07: "BEL",
+    0x08: "BS",
+    0x09: "HT",
+    0x0a: "LF",
+    0x0b: "VT",
+    0x0c: "FF",
+    0x0d: "CR",
+    0x0e: "SO",
+    0x0f: "SI",
+    0x10: "DLE",
+    0x11: "DC1",
+    0x12: "DC2",
+    0x13: "DC3",
+    0x14: "DC4",
+    0x15: "NAK",
+    0x16: "SYN",
+    0x17: "ETB",
+    0x18: "CAN",
+    0x19: "EM",
+    0x1a: "SUB",
+    0x1b: "ESC",
+    0x1c: "FS",
+    0x1d: "GS",
+    0x1e: "RS",
+    0x1f: "US",
+    0x20: "SP",
+    0x7F: "DEL",
+    0xA0: "NBSP",
+    0xAD: "SHY"
+}
 
 class MyPDF(FPDF):
     def header(self):
         self.set_font('Arial', 'B', 14)
-        self.write(10, "Latin Character Set and WinAnsiEncoding (1252)")
+        self.write(10, self.p_hdr1)
         self.ln(10)
         self.set_font('Arial', '', 14)
-        self.write(10, "PDF 1.7, annex D.1, pages 997-1000")
+        self.write(10, self.p_hdr2)
         self.ln(10)
 
     def footer(self):
@@ -280,6 +318,8 @@ class MyPDF(FPDF):
 @common.add_unittest
 def dotest(outputname, nostamp):
     pdf = MyPDF()
+    pdf.p_hdr1 = "Latin Character Set and WinAnsiEncoding (1252)"
+    pdf.p_hdr2 = "PDF 1.7, annex D.1, pages 997-1000"
     pdf.alias_nb_pages()
     pdf.compress = False
     use_exfont = False
@@ -382,14 +422,92 @@ def dotest(outputname, nostamp):
         pdf.ln()
 
 
-    used = []
+    used = {}
     for char, name, code in SYMBOLS:
         print_char(char, name, code)
-        used.append(code)
+        used[code] = (char, name)
 
     for i in range(32, 256):
         if i not in used:
             print_char(unichr(i), "Code 0x%02X" % i, i)
+
+    # wiki-like table
+    pdf.p_hdr1 = "Windows-1252"
+    pdf.p_hdr2 = "https://en.wikipedia.org/wiki/Windows-1252"
+    pdf.add_page()
+    cc = {}
+    codec = {}
+    for x in range(256):
+        bgr, bgg, bgb = (0xFF, 0xFF, 0xFF)
+        pdf.set_font('Arial', '', 14)
+        if x in used:
+            txt = used[x][0]
+            if len(txt) > 1:
+                code = ord(used[x][0][1])
+            else:
+                code = ord(used[x][0])
+            txt = txt.encode("windows-1252").decode("latin-1")
+            if code < 256:
+                code = "%02X" % code
+            else:
+                code = "U+%04X" % code
+        else:
+            txt = ""
+            code = ""
+        if x in CTRL:
+            # control
+            txt = CTRL[x]
+            pdf.set_font('Arial', '', 10)
+        # colors
+        if (x <= 0x1F) or (x == 0x7F):
+            bgr, bgg, bgb = (0xFF, 0xFF, 0xEF)
+        elif (x >= 0x20 and x <= 0x2F) or \
+             (x >= 0x3A and x <= 0x40) or \
+             (x >= 0x5B and x <= 0x60) or \
+             (x >= 0x7B and x <= 0x7E):
+            bgr, bgg, bgb = (0xDF, 0xF7, 0xFF)
+            # punctuation
+        elif (x >= 0x30 and x <= 0x39) or (x in [0xB2, 0xB3, 0xB9]):
+            # numeric digit
+            bgr, bgg, bgb = (0xF7, 0xE7, 0xFF)
+        elif x >= 0x41 and x <= 0x7A:
+            # alphabetic
+            bgr, bgg, bgb = (0xE7, 0xFF, 0xE7)
+        elif x in [0x81, 0x8D, 0x8F, 0x90, 0x9D]:
+            # unused
+            bgr, bgg, bgb = (0xD0, 0xD0, 0xD0)
+        elif (x in [0x83, 0x8A, 0x8C, 0x8E, 0x9A, 0x9C, 0x9E, 0x9F,
+            0xAA, 0xBA]) or (x >= 0xC0 and x <= 0xD6) or \
+            (x >= 0xD8 and x <= 0xF6) or (x >= 0xF8 and x <= 0xFF):
+            # international
+            bgr, bgg, bgb = (0xFF, 0xEF, 0xDF)
+        else:
+            # extended punctuation
+            bgr, bgg, bgb = (0xDF, 0xDF, 0xE7)
+
+        try:
+            txt.encode("latin-1")
+        except:
+            bgr, bgg, bgb = (0xFF, 0xBB, 0xBB)
+
+        pdf.set_fill_color(bgr, bgg, bgb)
+        cc[x % 16] = (bgr, bgg, bgb)
+        codec[x % 16] = code
+        pdf.cell(12, 8, txt = txt, border = "LRT", align = "C", fill = True)
+        if x % 16 == 15:
+            pdf.ln()
+            pdf.set_font('Arial', '', 6)
+            for i in range(16):
+                pdf.set_fill_color(*cc[i])
+                pdf.cell(12, 3, txt = codec[i],
+                    border = "LR", align = "C", fill = True)
+            pdf.ln()
+            pdf.set_font('Arial', '', 6)
+            for i in range(16):
+                pdf.set_fill_color(*cc[i])
+                pdf.cell(12, 3, txt = "0x%02X" % (x - 15 + i),
+                    border = "LRB", align = "C", fill = True)
+            pdf.ln()
 
     pdf.output(outputname, 'F')
 
