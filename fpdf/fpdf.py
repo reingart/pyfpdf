@@ -96,6 +96,7 @@ class FPDF(object):
             'times': 'Times-Roman', 'timesB': 'Times-Bold',
             'timesI': 'Times-Italic', 'timesBI': 'Times-BoldItalic',
             'symbol': 'Symbol', 'zapfdingbats': 'ZapfDingbats'}
+        self.core_fonts_encoding = "latin-1"
         # Scale factor
         if unit == "pt":
             self.k = 1
@@ -233,6 +234,13 @@ class FPDF(object):
         "Creator of document"
         self.creator=creator
 
+    def set_doc_option(self, opt, value):
+        "Set document option"
+        if opt == "core_fonts_encoding":
+            self.core_fonts_encoding = value
+        else:
+            self.error("Unknown document option \"%s\"" % str(opt))
+
     def alias_nb_pages(self, alias='{nb}'):
         "Define an alias for total number of pages"
         self.str_alias_nb_pages=alias
@@ -364,9 +372,10 @@ class FPDF(object):
             self.text_color=sprintf('%.3f %.3f %.3f rg',r/255.0,g/255.0,b/255.0)
         self.color_flag=(self.fill_color!=self.text_color)
 
-    def get_string_width(self, s):
+    def get_string_width(self, s, normalized = False):
         "Get width of a string in the current font"
-        s = self.normalize_text(s)
+        # normalized is parameter for internal use
+        s = s if normalized else self.normalize_text(s)
         cw=self.current_font['cw']
         w=0
         l=len(s)
@@ -386,7 +395,7 @@ class FPDF(object):
                 w += cw.get(s[i],0)
         if self.font_stretching != 100:
             w = w * self.font_stretching / 100.0
-        return w*self.font_size/1000.0
+        return w * self.font_size / 1000.0
 
     def set_line_width(self, width):
         "Set line width"
@@ -745,9 +754,9 @@ class FPDF(object):
                 s+=sprintf('%.2f %.2f m %.2f %.2f l S ',x*k,(self.h-(y+h))*k,(x+w)*k,(self.h-(y+h))*k)
         if(txt!=''):
             if(align=='R'):
-                dx=w-self.c_margin-self.get_string_width(txt)
+                dx=w-self.c_margin-self.get_string_width(txt, True)
             elif(align=='C'):
-                dx=(w-self.get_string_width(txt))/2.0
+                dx=(w-self.get_string_width(txt, True))/2.0
             else:
                 dx=self.c_margin
             if(self.color_flag):
@@ -784,7 +793,7 @@ class FPDF(object):
             if(self.color_flag):
                 s+=' Q'
             if(link):
-                self.link(self.x+dx,self.y+.5*h-.5*self.font_size,self.get_string_width(txt),self.font_size,link)
+                self.link(self.x+dx,self.y+.5*h-.5*self.font_size,self.get_string_width(txt, True),self.font_size,link)
         if(s):
             self._out(s)
         self.lasth=h
@@ -858,7 +867,7 @@ class FPDF(object):
                 ls=l
                 ns+=1
             if self.unifontsubset:
-                l += self.get_string_width(c) / self.font_size*1000.0
+                l += self.get_string_width(c, True) / self.font_size*1000.0
             else:
                 l += cw.get(c,0)
             if(l>wmax):
@@ -943,7 +952,7 @@ class FPDF(object):
             if(c==' '):
                 sep=i
             if self.unifontsubset:
-                l += self.get_string_width(c) / self.font_size*1000.0
+                l += self.get_string_width(c, True) / self.font_size*1000.0
             else:
                 l += cw.get(c,0)
             if(l>wmax):
@@ -1120,13 +1129,16 @@ class FPDF(object):
     def normalize_text(self, txt):
         "Check that text input is in the correct format/encoding"
         # - for TTF unicode fonts: unicode object (utf8 encoding)
-        # - for built-in fonts: string instances (latin 1 encoding)
-        if self.unifontsubset and isinstance(txt, str) and not PY3K:
-            txt = txt.decode('utf8')
-        elif not self.unifontsubset and isinstance(txt, unicode) and not PY3K:
-            txt = txt.encode('latin1')
+        # - for built-in fonts: string instances (encoding: latin-1, cp1252)
+        if not PY3K:
+            if self.unifontsubset and isinstance(txt, str):
+                return txt.decode("utf-8")
+            elif not self.unifontsubset and isinstance(txt, unicode):
+                return txt.encode(self.core_fonts_encoding)
+        else:
+            if not self.unifontsubset and self.core_fonts_encoding:
+                return txt.encode(self.core_fonts_encoding).decode("latin-1")
         return txt
-
 
     def _dochecks(self):
         #Check for locale-related bug
@@ -1740,11 +1752,11 @@ class FPDF(object):
         self.offsets[self.n]=len(self.buffer)
         self._out(str(self.n)+' 0 obj')
 
-    def _dounderline(self, x,y,txt):
+    def _dounderline(self, x, y, txt):
         #Underline text
         up=self.current_font['up']
         ut=self.current_font['ut']
-        w=self.get_string_width(txt)+self.ws*txt.count(' ')
+        w=self.get_string_width(txt, True)+self.ws*txt.count(' ')
         return sprintf('%.2f %.2f %.2f %.2f re f',x*self.k,(self.h-(y-up/1000.0*self.font_size))*self.k,w*self.k,-ut/1000.0*self.font_size_pt)
 
     def _parsejpg(self, filename):

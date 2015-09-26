@@ -49,6 +49,7 @@ pages:
 - ["reference/set_auto_page_break.md", "Reference manual", "set_auto_page_break"]
 - ["reference/set_compression.md", "Reference manual", "set_compression"]
 - ["reference/set_creator.md", "Reference manual", "set_creator"]
+- ["reference/set_doc_option.md", "Reference manual", "set_doc_option"]
 - ["reference/set_display_mode.md", "Reference manual", "set_display_mode"]
 - ["reference/set_draw_color.md", "Reference manual", "set_draw_color"]
 - ["reference/set_fill_color.md", "Reference manual", "set_fill_color"]

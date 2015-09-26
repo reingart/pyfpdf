@@ -435,6 +435,9 @@ def dotest(outputname, nostamp):
     pdf.p_hdr1 = "Windows-1252"
     pdf.p_hdr2 = "https://en.wikipedia.org/wiki/Windows-1252"
     pdf.add_page()
+    # without this setting we should use 
+    #  txt.encode("windows-1252").decode("latin-1") for every output
+    pdf.set_doc_option("core_fonts_encoding", "windows-1252")
     cc = {}
     codec = {}
     for x in range(256):
@@ -446,7 +449,6 @@ def dotest(outputname, nostamp):
                 code = ord(used[x][0][1])
             else:
                 code = ord(used[x][0])
-            txt = txt.encode("windows-1252").decode("latin-1")
             if code < 256:
                 code = "%02X" % code
             else:
@@ -484,11 +486,6 @@ def dotest(outputname, nostamp):
         else:
             # extended punctuation
             bgr, bgg, bgb = (0xDF, 0xDF, 0xE7)
-
-        try:
-            txt.encode("latin-1")
-        except:
-            bgr, bgg, bgb = (0xFF, 0xBB, 0xBB)
 
         pdf.set_fill_color(bgr, bgg, bgb)
         cc[x % 16] = (bgr, bgg, bgb)
