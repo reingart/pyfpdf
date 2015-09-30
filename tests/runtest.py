@@ -298,8 +298,29 @@ def do_all_test(interps, tests):
     # check if NORES
     nores = stats["_"].get("nores", 0)
     if nores > 0:
-        cover.log("*** Some resources are not found. You can try download " +
-            "fonts with '--downloadfonts' option")
+        items = cover.load_res_list()
+        tested = []
+        packs = []
+        cover.log("*** Some resources are not found")
+        for test in tests:
+            settings = cover.read_cover_info(test)
+            for res in settings.get("res", []):
+                if res in tested:
+                    continue
+                tested.append(res)
+                fn = os.path.join(cover.basepath, *res.split("/"))
+                if os.path.exists(fn):
+                    continue
+                print("  not found " + res)
+                # check with pack
+                if res in items:
+                    hs, tags, pack = items[res]
+                    if pack not in packs:
+                        packs.append(pack)
+        if len(packs) > 0:
+            cover.log("*** You can download theese resources with:")
+            for pack in packs:
+                cover.log("  runtest.py --download%s" % pack)
 
 def list_tests():
     tst = search_tests()
