@@ -14,7 +14,8 @@ PY3K = sys.version_info >= (3, 0)
 
 basepath = os.path.abspath(os.path.join(__file__, "..", "..")) 
 
-RESHASH = "38db8db76e80a2e75f94d1df9eda307e"
+RESHASH = "b860291c1c23691d21f9ce097480b5c2"
+PACKHASH = "fd08f36367d371f904c5487645256e18"
 
 # if PYFPDFTESTLOCAL is not set - use installed pyfpdf version
 PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
@@ -171,14 +172,58 @@ def load_res_file(path):
             if kv[0] == "res":
                 res = kv[1]
                 if res not in items:
-                    items[res] = ["", []]
+                    items[res] = ["", [], ""]
             elif res is None:
                 continue
             elif kv[0] == "hash":
                 items[res][0] = kv[1]
             elif kv[0] == "tags":
                 items[res][1] += [kv[1].split(",")]
+            elif kv[0] == "pack":
+                items[res][2] = kv[1]
     return items
+
+def load_res_packs():
+    path = os.path.join(basepath, "respacks.txt")
+    if file_hash(path) != PACKHASH:
+        err("File respacks.txt damaged (hash mismatch)")
+        return {}
+    packs = {}
+    pack = None
+    with open(path) as file:
+        for line in file:
+            line = line.strip()
+            if line[:1] == "#":
+                continue
+            kv = line.split("=", 1)
+            if len(kv) != 2:
+                continue
+            if kv[0] == "pack":
+                pack = kv[1]
+                if pack not in packs:
+                    packs[pack] = ["", "", "", [], ".*"]
+            elif pack is None:
+                continue
+            elif kv[0] == "name":
+                packs[pack][0] = kv[1]
+            elif kv[0] == "url":
+                packs[pack][1] = kv[1]
+                if not packs[pack][2]:
+                    packs[pack][2] = kv[1].split('/')[-1]
+            elif kv[0] == "filename":
+                packs[pack][2] = kv[1]
+            elif kv[0] == "dest":
+                packs[pack][3] = kv[1].split("/")
+            elif kv[0] == "valid":
+                packs[pack][4] = kv[1]
+    return packs
+    
+def load_res_list():
+    path = os.path.join(basepath, "resources.txt")
+    if file_hash(path) != RESHASH:
+        err("File resources.txt damaged (hash mismatch)")
+        return {}
+    return load_res_file(path)
     
 def skip_reason(settings):
     "Check if test should be skipped"

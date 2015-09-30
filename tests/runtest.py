@@ -187,7 +187,6 @@ def do_test_one(testfile, interp, info, dest):
             return ("hasherror", nh)
         return (answ.lower(), "")
 
-
 def prepare_dest(interp):
     destpath = os.path.join(cover.basepath, "out-" + interp[1])
     if not os.path.exists(destpath):
@@ -302,7 +301,6 @@ def do_all_test(interps, tests):
         cover.log("*** Some resources are not found. You can try download " +
             "fonts with '--downloadfonts' option")
 
-
 def list_tests():
     tst = search_tests()
     cover.log(">> Tests:", len(tst))
@@ -323,9 +321,17 @@ def usage():
     cover.log("  --test @file     - add test from file")
     cover.log("  --interp path    - test against specified interpreters")
     cover.log("  --interp @file   - read interpreters list from file")
-    cover.log("  --downloadfonts  - download font set")
+    try:
+        packs = cover.load_res_packs()
+        k = list(packs.keys())
+        k.sort()
+        for p in k:
+            cover.log("  --download%s" % p)
+            cover.log("             - download %s" % packs[p][0])
+    except Exception:
+            traceback.print_exc()
+    #cover.log("  --downloadfonts  - download font set")
     cover.log("  --help           - this page")
-
 
 def hint_prepare():
     if cover.PYFPDFTESTLOCAL:
@@ -346,13 +352,13 @@ def hint_prepare():
         else:
             cover.log("***   export PYFPDFTESTLOCAL=1")
 
-
 def read_list(fn):
     with open(fn, "r") as f:
         return f.readlines()
 
 def hasher(path, args):
     tags = []
+    pack = ""
     while len(args):
         arg = args[0]
         args = args[1:]
@@ -364,6 +370,13 @@ def hasher(path, args):
             args = args[1:]
             if value not in tags:
                 tags.append(value)
+        elif arg == "--pack":
+            if len(args) == 0:
+                cover.log("Param without value")
+                return
+            value = args[0]
+            args = args[1:]
+            pack = value
         else:
             cover.log("Unknown param")
             return
@@ -385,16 +398,23 @@ def hasher(path, args):
         cover.log("res=" + item)
         cover.log("hash=" + hs)
         cover.log("tags=" + ",".join(tags))
+        if pack:
+            cover.log("pack=" + pack)
         cover.log()
 
-def download_fonts():
-    URL = "http://pyfpdf.googlecode.com/files/fpdf_unicode_font_pack.zip"
-    fntdir = os.path.join(cover.basepath, "font")
-    zippath = os.path.join(cover.basepath, URL.split('/')[-1])
-    if not os.path.exists(fntdir):
-        os.makedirs(fntdir)
+def download_pack(packname):
+    packs = cover.load_res_packs()
+    if packname not in packs:
+        cover.err("Unknown pack \"%s\"" % packname)
+        return
+    name, url, filename, dest, valid = packs[packname]
+    cover.log("Downloading: " + name)
+    destdir = os.path.join(cover.basepath, *dest)
+    if not os.path.exists(destdir):
+        os.makedirs(destdir)
+    zippath = os.path.join(cover.basepath, filename)
     if not os.path.exists(zippath):
-        u = urlopen(URL)
+        u = urlopen(url)
         meta = u.info()
         file_size = int(meta.get("Content-Length"))
         cover.log("Downloading:", file_size, "bytes")
@@ -409,17 +429,27 @@ def download_fonts():
                 cover.log("  ", file_size_dl * 100. / file_size, "%")
     # unpack
     cover.log("Extracting")
-    import zipfile
+    import zipfile, re
     with open(zippath, "rb") as fh:
         z = zipfile.ZipFile(fh)
         for name in z.namelist():
-            if name[:5] != "font/":
+            if not re.match(valid, name):
+                cover.log("  skip " + name)
                 continue
-            if name[5:].find("/") >= 0:
-                continue
-            cover.log("  ", name[5:])
-            with open(os.path.join(fntdir, name[5:]), "wb") as outfile:
+            cover.log("  ok ", name)
+            with open(os.path.join(destdir, *name.split("/")), "wb") as outfile:
                 outfile.write(z.read(name))
+    # check extracted
+    for res, (hs, tags, pack) in cover.load_res_list().items():
+        if pack != packname: continue
+        fp = os.path.join(cover.basepath, *res.split("/"))
+        if not os.path.exists(fp):
+            cover.err("Resource \"%s\" not found" % res)
+            return
+        if cover.file_hash(fp) != hs:
+            cover.err("Resource \"%s\" damaged (hash mismatch)" % res)
+            return
+        pass
     cover.log("Done")
 
 def main():
@@ -466,8 +496,8 @@ def main():
             return list_tests()
         elif arg == "--listinterps":
             return print_interps(find_python_version(search_python()))
-        elif arg == "--downloadfonts":
-            return download_fonts()
+        elif arg.startswith("--download"):
+            return download_pack(arg[10:])
         else:
             cover.log("Unknown param")
             return usage()
