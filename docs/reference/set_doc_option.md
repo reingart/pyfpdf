@@ -3,6 +3,7 @@
 ```python
 fpdf.set_doc_option(opt: str, value)
 ```
+[TOC]
 
 ### Description ###
 
@@ -16,7 +17,9 @@ opt:
 value:
 > Value.
 
-### core_fonts_encoding ###
+### Options ###
+
+#### core_fonts_encoding ####
 
 Specify encoding used for decoding unicode text for standard (non-unicode) 
 fonts. Supported values are `latin-1` and `windows-1252`. Set this option 
