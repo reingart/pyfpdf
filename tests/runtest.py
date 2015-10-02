@@ -424,6 +424,8 @@ def hasher(path, args):
         cover.log()
 
 def download_pack(packname):
+    if packname[:1] == "-":
+        packname = packname[1:]
     packs = cover.load_res_packs()
     if packname not in packs:
         cover.err("Unknown pack \"%s\"" % packname)
@@ -437,8 +439,12 @@ def download_pack(packname):
     if not os.path.exists(zippath):
         u = urlopen(url)
         meta = u.info()
-        file_size = int(meta.get("Content-Length"))
-        cover.log("Downloading:", file_size, "bytes")
+        try:
+            file_size = int(meta.get("Content-Length"))
+            cover.log("Downloading:", file_size, "bytes")
+        except Exception:
+            file_size = None
+            cover.log("Downloading:")
         with open(zippath, "wb") as f:
             file_size_dl = 0
             while True:
@@ -447,10 +453,14 @@ def download_pack(packname):
                     break
                 file_size_dl += len(buff)
                 f.write(buff)
-                cover.log("  ", file_size_dl * 100. / file_size, "%")
+                if file_size:
+                    cover.log("  ", file_size_dl * 100. / file_size, "%")
+                else:
+                    cover.log("  ", file_size_dl + " bytes")
     # unpack
     cover.log("Extracting")
     import zipfile, re
+    newfiles = []
     with open(zippath, "rb") as fh:
         z = zipfile.ZipFile(fh)
         for name in z.namelist():
@@ -460,6 +470,8 @@ def download_pack(packname):
             cover.log("  ok ", name)
             with open(os.path.join(destdir, *name.split("/")), "wb") as outfile:
                 outfile.write(z.read(name))
+            newfn = "/".join(dest + name.split("/"))
+            newfiles.append(newfn)
     # check extracted
     for res, (hs, tags, pack) in cover.load_res_list().items():
         if pack != packname: continue
@@ -468,9 +480,16 @@ def download_pack(packname):
             cover.err("Resource \"%s\" not found" % res)
             return
         if cover.file_hash(fp) != hs:
-            cover.err("Resource \"%s\" damaged (hash mismatch)" % res)
-            return
-        pass
+            if cover.common.RESHASH == "{IGNORE}":
+                cover.log("  ignore hash " + res)
+            else:
+                cover.err("Resource \"%s\" damaged (hash mismatch)" % res)
+                return
+        if res in newfiles:
+            newfiles.remove(res)
+    # check unchecked
+    for fn in newfiles:
+        print("  no hash for " + fn)
     cover.log("Done")
 
 def main():
@@ -488,6 +507,7 @@ def main():
                 return usage()
             return hasher(args[0], args[1:])
         if arg == "--help":
+            print(cover.PACKHASH)
             return usage()
         elif arg == "--test":
             if len(args) > 0:
@@ -519,6 +539,10 @@ def main():
             return print_interps(find_python_version(search_python()))
         elif arg.startswith("--download"):
             return download_pack(arg[10:])
+        elif arg == "--ignore-res-hash":
+            cover.common.RESHASH = "{IGNORE}"
+        elif arg == "--ignore-pack-hash":
+            cover.common.PACKHASH = "{IGNORE}"
         else:
             cover.log("Unknown param")
             return usage()
