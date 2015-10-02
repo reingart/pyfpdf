@@ -314,8 +314,8 @@ def do_all_test(interps, tests):
                 print("  not found " + res)
                 # check with pack
                 if res in items:
-                    hs, tags, pack, strip = items[res]
-                    if pack not in packs:
+                    hs, tags, pack = items[res]
+                    if pack and pack not in packs:
                         packs.append(pack)
         if len(packs) > 0:
             cover.log("*** You can download theese resources with:")
@@ -342,6 +342,7 @@ def usage():
     cover.log("  --test @file     - add test from file")
     cover.log("  --interp path    - test against specified interpreters")
     cover.log("  --interp @file   - read interpreters list from file")
+    cover.log("  --autodownload   - download used resources automatically")
     try:
         packs = cover.load_res_packs()
         k = list(packs.keys())
@@ -491,6 +492,9 @@ def download_pack(packname):
                 if not os.path.exists(fn):
                     os.makedirs(fn)
             else:
+                base = os.path.dirname(fn)
+                if not os.path.exists(base):
+                    os.makedirs(base)
                 with open(fn, "wb") as outfile:
                     outfile.write(z.read(name))
                 newfn = "/".join(dest + ename.split("/"))
@@ -520,6 +524,7 @@ def main():
 
     testsn = []
     interpsn = []
+    autodownloadres = False
     args = sys.argv[1:]
     while len(args):
         arg = args[0]
@@ -566,6 +571,8 @@ def main():
             cover.common.RESHASH = "{IGNORE}"
         elif arg == "--ignore-pack-hash":
             cover.common.PACKHASH = "{IGNORE}"
+        elif arg == "--autodownload":
+            autodownloadres = True
         else:
             cover.log("Unknown param")
             return usage()
@@ -597,6 +604,26 @@ def main():
                 cover.err("Interpreter \"%s\" not found" % test)
                 return
         interps = find_python_version(interps)
+    
+    # check if need res
+    if autodownloadres:
+        usedres = []
+        usedpacks = []
+        for test in tests:
+            settings = cover.read_cover_info(test)
+            for res in settings.get("res", []):
+                if res in usedres:
+                    continue
+                usedres.append(res)
+        allres = cover.load_res_list()
+        for ures in usedres:
+            print("RES", ures)
+            if ures in allres:
+                hs, tags, pack = allres[ures]
+                if pack and pack not in usedpacks:
+                    usedpacks.append(pack)
+        for pack in usedpacks:
+            download_pack(pack)
 
     do_all_test(interps, tests)
 
