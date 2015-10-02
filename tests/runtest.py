@@ -314,7 +314,7 @@ def do_all_test(interps, tests):
                 print("  not found " + res)
                 # check with pack
                 if res in items:
-                    hs, tags, pack = items[res]
+                    hs, tags, pack, strip = items[res]
                     if pack not in packs:
                         packs.append(pack)
         if len(packs) > 0:
@@ -430,7 +430,7 @@ def download_pack(packname):
     if packname not in packs:
         cover.err("Unknown pack \"%s\"" % packname)
         return
-    name, url, filename, dest, valid = packs[packname]
+    name, url, filename, dest, valid, strip = packs[packname]
     cover.log("Downloading: " + name)
     destdir = os.path.join(cover.basepath, *dest)
     if not os.path.exists(destdir):
@@ -467,11 +467,34 @@ def download_pack(packname):
             if not re.match(valid, name):
                 cover.log("  skip " + name)
                 continue
-            cover.log("  ok ", name)
-            with open(os.path.join(destdir, *name.split("/")), "wb") as outfile:
-                outfile.write(z.read(name))
-            newfn = "/".join(dest + name.split("/"))
-            newfiles.append(newfn)
+            # strip slashes
+            ename = name
+            ns = strip
+            while ns > 0:
+                ns -= 1
+                ps = ename.find("/")
+                if ps > 0:
+                    ename = ename[ps + 1:]
+                else:
+                    ename = ""
+                    break
+            if not ename:
+                cover.log("  strip " + name)
+                continue
+            if name != ename:
+                cover.log("  ok " + name + " -> " + ename)
+            else:
+                cover.log("  ok " + name)
+            # extract
+            fn = os.path.join(destdir, *ename.split("/"))
+            if ename[-1:] == "/":
+                if not os.path.exists(fn):
+                    os.makedirs(fn)
+            else:
+                with open(fn, "wb") as outfile:
+                    outfile.write(z.read(name))
+                newfn = "/".join(dest + ename.split("/"))
+                newfiles.append(newfn)
     # check extracted
     for res, (hs, tags, pack) in cover.load_res_list().items():
         if pack != packname: continue

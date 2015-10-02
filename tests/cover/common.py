@@ -14,8 +14,8 @@ PY3K = sys.version_info >= (3, 0)
 
 basepath = os.path.abspath(os.path.join(__file__, "..", ".."))
 
-RESHASH = "b860291c1c23691d21f9ce097480b5c2"
-PACKHASH = "fd08f36367d371f904c5487645256e18"
+RESHASH = "1c0c6e11910f72db8cd82d3ff9561d95"
+PACKHASH = "b71f83b62339f93bcea35bb267afa230"
 
 # if PYFPDFTESTLOCAL is not set - use installed pyfpdf version
 PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
@@ -200,7 +200,7 @@ def load_res_packs():
             if kv[0] == "pack":
                 pack = kv[1]
                 if pack not in packs:
-                    packs[pack] = ["", "", "", [], ".*"]
+                    packs[pack] = ["", "", "", [], ".*", 0]
             elif pack is None:
                 continue
             elif kv[0] == "name":
@@ -215,6 +215,8 @@ def load_res_packs():
                 packs[pack][3] = kv[1].split("/")
             elif kv[0] == "valid":
                 packs[pack][4] = kv[1]
+            elif kv[0] == "strip":
+                packs[pack][5] = int(kv[1], 10)
     return packs
 
 def load_res_list():
