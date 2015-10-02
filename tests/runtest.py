@@ -617,7 +617,6 @@ def main():
                 usedres.append(res)
         allres = cover.load_res_list()
         for ures in usedres:
-            print("RES", ures)
             if ures in allres:
                 hs, tags, pack = allres[ures]
                 if pack and pack not in usedpacks:
