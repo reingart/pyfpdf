@@ -25,6 +25,10 @@ from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
 from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, b, hashpath
+try:
+    from .appengine_ndb import FontDB, FontCWDB
+except:
+    pass
 
 # Global variables
 FPDF_VERSION = '1.7.2'
@@ -44,20 +48,25 @@ PAGE_FORMATS = {
 def set_global(var, val):
     globals()[var] = val
 
-def load_cache(filename):
+def load_cache(filename, gae_record):
     """Return unpickled object, or None if cache unavailable"""
-    if not filename:
+    if (not filename) and (not gae_record):
         return None
     try:
         with open(filename, "rb") as fh:
             return pickle.load(fh)
-    except (IOError, ValueError):  # File missing, unsupported pickle, etc
+    except (IOError, ValueError):  # File missing, GAE searching, unsupported pickle, etc
+        if gae_record:
+            font_dict = gae_record
+            if getattr(font_dict, 'cw', None):
+                font_dict.cw = pickle.loads(font_dict.cw)
+            return font_dict
         return None
 
 class FPDF(object):
     "PDF Generation class"
 
-    def __init__(self, orientation = 'P', unit = 'mm', format = 'A4'):
+    def __init__(self, orientation = 'P', unit = 'mm', format = 'A4', isAppengine=False):
         # Some checks
         self._dochecks()
         # Initialization of properties
@@ -97,6 +106,9 @@ class FPDF(object):
             'timesI': 'Times-Italic', 'timesBI': 'Times-BoldItalic',
             'symbol': 'Symbol', 'zapfdingbats': 'ZapfDingbats'}
         self.core_fonts_encoding = "latin-1"
+        # Additional properties for GAE
+        self.isAppengine = isAppengine
+
         # Scale factor
         if unit == "pt":
             self.k = 1
@@ -499,14 +511,22 @@ class FPDF(object):
             else:
                 raise RuntimeError("TTF Font file not found: %s" % fname)
             name = ''
-            if FPDF_CACHE_MODE == 0:
-                unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
-            elif FPDF_CACHE_MODE == 2:                
-                unifilename = os.path.join(FPDF_CACHE_DIR, \
-                    hashpath(ttffilename) + ".pkl")
+
+            # google appengine consider
+            font_record = None
+            unifilename = None
+
+            if self.isAppengine:
+                font_record = FontDB.query(FontDB.ttffile == os.path.basename(ttffilename)).get()
             else:
-                unifilename = None
-            font_dict = load_cache(unifilename)
+                if FPDF_CACHE_MODE == 0:
+                    unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
+                elif FPDF_CACHE_MODE == 2:
+                    unifilename = os.path.join(FPDF_CACHE_DIR, \
+                        hashpath(ttffilename) + ".pkl")
+                else:
+                    unifilename = None
+            font_dict = load_cache(unifilename, font_record)
             if font_dict is None:
                 ttf = TTFontFile()
                 ttf.getMetrics(ttffilename)
@@ -543,6 +563,14 @@ class FPDF(object):
                     except IOError:
                         if not exception().errno == errno.EACCES:
                             raise  # Not a permission error.
+                else:
+                    # GAE Save
+                    font_record = FontDB(**font_dict)
+                    font_record.cw = pickle.dumps(ttf.charWidths)
+                    font_record.ttffile = os.path.basename(font_record.ttffile)
+                    font_record.put()
+
+                    font_record.cw = ttf.charWidths
                 del ttf
             if hasattr(self,'str_alias_nb_pages'):
                 sbarr = list(range(0,57))   # include numbers in the subset!
@@ -554,7 +582,7 @@ class FPDF(object):
                 'up': font_dict['up'], 'ut': font_dict['ut'],
                 'cw': font_dict['cw'],
                 'ttffile': font_dict['ttffile'], 'fontkey': fontkey,
-                'subset': sbarr, 'unifilename': unifilename,
+                'subset': sbarr, 'unifilename': unifilename, 'isAppengine': self.isAppengine
                 }
             self.font_files[fontkey] = {'length1': font_dict['originalsize'],
                                         'type': "TTF", 'ttffile': ttffilename}
@@ -1445,11 +1473,14 @@ class FPDF(object):
                 self.mtd(font)
 
     def _putTTfontwidths(self, font, maxUni):
+        gae_cw_record = None
         if font['unifilename']:
             cw127fname = os.path.splitext(font['unifilename'])[0] + '.cw127.pkl'
         else:
             cw127fname = None
-        font_dict = load_cache(cw127fname)
+        if font['isAppengine']:
+            gae_cw_record = FontCWDB.query(FontCWDB.cw_name == "cw127", FontCWDB.ttffile == font['ttffile']).get()
+        font_dict = load_cache(cw127fname, gae_cw_record)
         if font_dict is None:    
             rangeid = 0
             range_ = {}
@@ -1485,6 +1516,17 @@ class FPDF(object):
                 except IOError:
                     if not exception().errno == errno.EACCES:
                         raise  # Not a permission error.
+            if cid == 128 and font['gae_record']:
+                gae_cw_record = FontCWDB(
+                    cw_name="cw127",
+                    rangeid=rangeid,
+                    prevcid=prevcid,
+                    prevwidth=prevwidth,
+                    interval=interval,
+                    range_interval=range_interval,
+                    range=range
+                )
+                gae_cw_record.put()
             if cid > 255 and (cid not in subset): #
                 continue
             width = font['cw'][cid]
