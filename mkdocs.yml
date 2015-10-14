@@ -37,6 +37,7 @@ pages:
 - ["reference/get_y.md", "Reference manual", "get_y"]
 - ["reference/header.md", "Reference manual", "header"]
 - ["reference/image.md", "Reference manual", "image"]
+- ["reference/load_resource.md", "Reference manual", "load_resource"]
 - ["reference/line.md", "Reference manual", "line"]
 - ["reference/link.md", "Reference manual", "link"]
 - ["reference/ln.md", "Reference manual", "ln"]

@@ -1759,14 +1759,23 @@ class FPDF(object):
         w=self.get_string_width(txt, True)+self.ws*txt.count(' ')
         return sprintf('%.2f %.2f %.2f %.2f re f',x*self.k,(self.h-(y-up/1000.0*self.font_size))*self.k,w*self.k,-ut/1000.0*self.font_size_pt)
 
+    def load_resource(self, reason, filename):
+        "Load external file"
+        # by default loading from network is allowed for all images
+        if reason == "image":
+            if filename.startswith("http://") or filename.startswith("https://"):
+                f = io.BytesIO(urlopen(filename).read())
+            else:
+                f = open(filename, "rb")
+            return f
+        else:
+            self.error("Unknown resource loading reason \"%s\"" % reason)
+
     def _parsejpg(self, filename):
         # Extract info from a JPEG file
         f = None
         try:
-            if filename.startswith("http://") or filename.startswith("https://"):
-               f = io.BytesIO(urlopen(filename).read())
-            else:
-                f = open(filename, 'rb')
+            f = self.load_resource("image", filename)
             while True:
                 markerHigh, markerLow = struct.unpack('BB', f.read(2))
                 if markerHigh != 0xFF or markerLow < 0xC0:
@@ -1819,28 +1828,25 @@ class FPDF(object):
             os.unlink(tmp)
         return info
 
-    def _parsepng(self, name):
+    def _parsepng(self, filename):
         #Extract info from a PNG file
-        if name.startswith("http://") or name.startswith("https://"):
-               f = urlopen(name)
-        else:
-            f=open(name,'rb')
+        f = self.load_resource("image", filename)
         #Check signature
         magic = f.read(8).decode("latin1")
         signature = '\x89'+'PNG'+'\r'+'\n'+'\x1a'+'\n'
         if not PY3K: signature = signature.decode("latin1")
         if(magic!=signature):
-            self.error('Not a PNG file: '+name)
+            self.error('Not a PNG file: ' + filename)
         #Read header chunk
         f.read(4)
         chunk = f.read(4).decode("latin1")
         if(chunk!='IHDR'):
-            self.error('Incorrect PNG file: '+name)
+            self.error('Incorrect PNG file: ' + filename)
         w=self._freadint(f)
         h=self._freadint(f)
         bpc=ord(f.read(1))
         if(bpc>8):
-            self.error('16-bit depth not supported: '+name)
+            self.error('16-bit depth not supported: ' + filename)
         ct=ord(f.read(1))
         if(ct==0 or ct==4):
             colspace='DeviceGray'
@@ -1849,13 +1855,13 @@ class FPDF(object):
         elif(ct==3):
             colspace='Indexed'
         else:
-            self.error('Unknown color type: '+name)
+            self.error('Unknown color type: ' + filename)
         if(ord(f.read(1))!=0):
-            self.error('Unknown compression method: '+name)
+            self.error('Unknown compression method: ' + filename)
         if(ord(f.read(1))!=0):
-            self.error('Unknown filter method: '+name)
+            self.error('Unknown filter method: ' + filename)
         if(ord(f.read(1))!=0):
-            self.error('Interlacing not supported: '+name)
+            self.error('Interlacing not supported: ' + filename)
         f.read(4)
         dp='/Predictor 15 /Colors '
         if colspace == 'DeviceRGB':
@@ -1896,7 +1902,7 @@ class FPDF(object):
             else:
                 f.read(n+4)
         if(colspace=='Indexed' and not pal):
-            self.error('Missing palette in '+name)
+            self.error('Missing palette in ' + filename)
         f.close()
         info = {'w':w,'h':h,'cs':colspace,'bpc':bpc,'f':'FlateDecode','dp':dp,'pal':pal,'trns':trns,}
         if(ct>=4):
