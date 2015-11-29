@@ -12,15 +12,15 @@ import unittest, inspect
 
 PY3K = sys.version_info >= (3, 0)
 
-basepath = os.path.abspath(os.path.join(__file__, "..", "..")) 
+basepath = os.path.abspath(os.path.join(__file__, "..", ".."))
 
-RESHASH = "38db8db76e80a2e75f94d1df9eda307e"
+RESHASH = "1c0c6e11910f72db8cd82d3ff9561d95"
+PACKHASH = "b71f83b62339f93bcea35bb267afa230"
 
 # if PYFPDFTESTLOCAL is not set - use installed pyfpdf version
 PYFPDFTESTLOCAL = ("PYFPDFTESTLOCAL" in os.environ)
 if PYFPDFTESTLOCAL:
     sys.path = [os.path.join(basepath, "fpdf_local")] + sys.path
-    
 
 if PY3K:
     #import common3 as _common
@@ -72,13 +72,13 @@ def writer(stream, items):
                 item = str(item)
         stream.write(item)
     stream.write("\n")
-    
+
 def log(*kw):
     writer(sys.stdout, kw)
 
 def err(*kw):
     writer(sys.stderr, kw)
-    
+
 def test_putinfo(self):
     "Replace info stamp with defaults for all automated test objects"
     self._out('/Producer '+self._textstring('PyFPDF TEST http://pyfpdf.googlecode.com/'))
@@ -156,7 +156,7 @@ def parse_test_args(args, deffn):
             da["fn"] = arg
         args = args[1:]
     return da
-    
+
 def load_res_file(path):
     items = {}
     res = None
@@ -171,15 +171,61 @@ def load_res_file(path):
             if kv[0] == "res":
                 res = kv[1]
                 if res not in items:
-                    items[res] = ["", []]
+                    items[res] = ["", [], ""]
             elif res is None:
                 continue
             elif kv[0] == "hash":
                 items[res][0] = kv[1]
             elif kv[0] == "tags":
                 items[res][1] += [kv[1].split(",")]
+            elif kv[0] == "pack":
+                items[res][2] = kv[1]
     return items
-    
+
+def load_res_packs():
+    path = os.path.join(basepath, "respacks.txt")
+    if file_hash(path) != PACKHASH and PACKHASH != "{IGNORE}":
+        err("File respacks.txt damaged (hash mismatch)")
+        return {}
+    packs = {}
+    pack = None
+    with open(path) as file:
+        for line in file:
+            line = line.strip()
+            if line[:1] == "#":
+                continue
+            kv = line.split("=", 1)
+            if len(kv) != 2:
+                continue
+            if kv[0] == "pack":
+                pack = kv[1]
+                if pack not in packs:
+                    packs[pack] = ["", "", "", [], ".*", 0]
+            elif pack is None:
+                continue
+            elif kv[0] == "name":
+                packs[pack][0] = kv[1]
+            elif kv[0] == "url":
+                packs[pack][1] = kv[1]
+                if not packs[pack][2]:
+                    packs[pack][2] = kv[1].split('/')[-1]
+            elif kv[0] == "filename":
+                packs[pack][2] = kv[1]
+            elif kv[0] == "dest":
+                packs[pack][3] = kv[1].split("/")
+            elif kv[0] == "valid":
+                packs[pack][4] = kv[1]
+            elif kv[0] == "strip":
+                packs[pack][5] = int(kv[1], 10)
+    return packs
+
+def load_res_list():
+    path = os.path.join(basepath, "resources.txt")
+    if file_hash(path) != RESHASH and RESHASH != "{IGNORE}":
+        err("File resources.txt damaged (hash mismatch)")
+        return {}
+    return load_res_file(path)
+
 def skip_reason(settings):
     "Check if test should be skipped"
     # check python version
@@ -249,15 +295,15 @@ def check_res(settings, verbose):
             if not verbose:
                 log("RESERR")
             return False
-            
+
     return True
-    
+
 def check_hash(settings, fn):
     check = True
-    if settings.get("fn"):        
+    if settings.get("fn"):
         # compare with hash
         hs = file_hash(fn)
-        fhs = settings.get("hash", "")            
+        fhs = settings.get("hash", "")
         if fhs != "" and hs != fhs:
             check = False
             err("Hash mismatch:")
@@ -273,40 +319,40 @@ def check_result(settings, args):
         else:
             log("HASHERROR")
     else:
-        if settings.get("fn"):        
+        if settings.get("fn"):
             start_by_ext(args["fn"])
         else:
             log("Test passed")
 
 def add_unittest(testfunc):
     """Decorator to add "unittest" test case class"""
-    
+
     class Test(unittest.TestCase):
         def setUp(self):
             self.assertTrue(check_res(self.settings, verbose=True))
-        
+
         def runTest(self):
             outputname = self.settings.get("fn")
             testfunc(outputname, nostamp=True)
             hash_okay = check_hash(self.settings, outputname)
             self.assertTrue(hash_okay, "Hash mismatch")
-    
+
     name = testfunc.__name__ + "_unittest"
     Test.__name__ = name
     Test.__module__ = testfunc.__module__
-    
+
     Test.settings = read_cover_info(inspect.getsourcefile(testfunc))
     reason = skip_reason(Test.settings)
     if reason is not None and sys.version_info >= (2, 7):
         Test = unittest.skip(reason)(Test)  # No skip() in Python 2.6
-    
+
     setattr(inspect.getmodule(testfunc), name, Test)
     return testfunc
 
 def testmain(fn, testfunc):
     si = read_cover_info(fn)
     da = parse_test_args(sys.argv, si.get("fn"))
-    
+
     verbose = not da["autotest"]
     reason = skip_reason(si)
     if reason is not None:
@@ -317,7 +363,7 @@ def testmain(fn, testfunc):
         return
     if not check_res(si, verbose=verbose):
         return
-    
+
     testfunc(da["fn"], da["autotest"] or da["check"])
     check_result(si, da)
 
