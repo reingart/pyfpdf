@@ -18,6 +18,14 @@ except ImportError:
 	from urllib.request import urlopen
 
 try:
+    from io import BytesIO
+except ImportError:
+    try:
+        from cStringIO import StringIO as BytesIO
+    except ImportError:
+        from StringIO import StringIO as BytesIO
+
+try:
     from hashlib import md5
 except ImportError:
     try:
