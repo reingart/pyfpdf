@@ -19,6 +19,7 @@ from datetime import datetime
 from functools import wraps
 import math
 import errno
+import base64
 import os, io, sys, zlib, struct, re, tempfile, struct
 
 from .ttfonts import TTFontFile
@@ -993,10 +994,13 @@ class FPDF(object):
         if not name in self.images:
             #First use of image, get info
             if(type==''):
-                pos=name.rfind('.')
-                if(not pos):
-                    self.error('image file has no extension and no type was specified: '+name)
-                type=substr(name,pos+1)
+                if(name.startswith('data:image/png;base64,')):
+                    type = 'png'
+                else:
+                    pos=name.rfind('.')
+                    if(not pos):
+                        self.error('image file has no extension and no type was specified: '+name)
+                    type=substr(name,pos+1)
             type=type.lower()
             if(type=='jpg' or type=='jpeg'):
                 info=self._parsejpg(name)
@@ -1765,6 +1769,9 @@ class FPDF(object):
         if reason == "image":
             if filename.startswith("http://") or filename.startswith("https://"):
                 f = io.BytesIO(urlopen(filename).read())
+            elif filename.startswith("data:image/"):
+                pos = filename.index(';base64,') + 8
+                f = io.BytesIO(base64.b64decode(filename[pos:]))
             else:
                 f = open(filename, "rb")
             return f
