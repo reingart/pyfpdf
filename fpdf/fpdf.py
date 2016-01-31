@@ -1899,7 +1899,7 @@ class FPDF(object):
                 f.read(4)
             elif(type=='IEND'):
                 break
-            else:
+            elif n is not None:
                 f.read(n+4)
         if(colspace=='Indexed' and not pal):
             self.error('Missing palette in ' + filename)
