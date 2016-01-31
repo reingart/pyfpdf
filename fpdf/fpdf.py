@@ -91,7 +91,7 @@ class FPDF(object):
         self.core_fonts={'courier': 'Courier', 'courierB': 'Courier-Bold',
             'courierI': 'Courier-Oblique', 'courierBI': 'Courier-BoldOblique',
             'helvetica': 'Helvetica', 'helveticaB': 'Helvetica-Bold',
-            'helveticaI': 'Helvetica-Oblique', 
+            'helveticaI': 'Helvetica-Oblique',
             'helveticaBI': 'Helvetica-BoldOblique',
             'times': 'Times-Roman', 'timesB': 'Times-Bold',
             'timesI': 'Times-Italic', 'timesBI': 'Times-BoldItalic',
@@ -197,10 +197,10 @@ class FPDF(object):
 
     def set_display_mode(self, zoom,layout='continuous'):
         """Set display mode in viewer
-        
+
         The "zoom" argument may be 'fullpage', 'fullwidth', 'real',
         'default', or a number, interpreted as a percentage."""
-        
+
         if(zoom=='fullpage' or zoom=='fullwidth' or zoom=='real' or zoom=='default' or not isinstance(zoom,basestring)):
             self.zoom_mode=zoom
         else:
@@ -453,23 +453,23 @@ class FPDF(object):
         lx = 4.0/3.0*(math.sqrt(2)-1)*rx
         ly = 4.0/3.0*(math.sqrt(2)-1)*ry
 
-        self._out(sprintf('%.2f %.2f m %.2f %.2f %.2f %.2f %.2f %.2f c', 
-            (cx+rx)*self.k, (self.h-cy)*self.k, 
-            (cx+rx)*self.k, (self.h-(cy-ly))*self.k, 
-            (cx+lx)*self.k, (self.h-(cy-ry))*self.k, 
+        self._out(sprintf('%.2f %.2f m %.2f %.2f %.2f %.2f %.2f %.2f c',
+            (cx+rx)*self.k, (self.h-cy)*self.k,
+            (cx+rx)*self.k, (self.h-(cy-ly))*self.k,
+            (cx+lx)*self.k, (self.h-(cy-ry))*self.k,
             cx*self.k, (self.h-(cy-ry))*self.k))
-        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c', 
-            (cx-lx)*self.k, (self.h-(cy-ry))*self.k, 
-            (cx-rx)*self.k, (self.h-(cy-ly))*self.k, 
+        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
+            (cx-lx)*self.k, (self.h-(cy-ry))*self.k,
+            (cx-rx)*self.k, (self.h-(cy-ly))*self.k,
             (cx-rx)*self.k, (self.h-cy)*self.k))
-        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c', 
-            (cx-rx)*self.k, (self.h-(cy+ly))*self.k, 
-            (cx-lx)*self.k, (self.h-(cy+ry))*self.k, 
+        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c',
+            (cx-rx)*self.k, (self.h-(cy+ly))*self.k,
+            (cx-lx)*self.k, (self.h-(cy+ry))*self.k,
             cx*self.k, (self.h-(cy+ry))*self.k))
-        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c %s', 
-            (cx+lx)*self.k, (self.h-(cy+ry))*self.k, 
-            (cx+rx)*self.k, (self.h-(cy+ly))*self.k, 
-            (cx+rx)*self.k, (self.h-cy)*self.k, 
+        self._out(sprintf('%.2f %.2f %.2f %.2f %.2f %.2f c %s',
+            (cx+lx)*self.k, (self.h-(cy+ry))*self.k,
+            (cx+rx)*self.k, (self.h-(cy+ly))*self.k,
+            (cx+rx)*self.k, (self.h-cy)*self.k,
             op))
 
     def add_font(self, family, style='', fname='', uni=False):
@@ -501,7 +501,7 @@ class FPDF(object):
             name = ''
             if FPDF_CACHE_MODE == 0:
                 unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
-            elif FPDF_CACHE_MODE == 2:                
+            elif FPDF_CACHE_MODE == 2:
                 unifilename = os.path.join(FPDF_CACHE_DIR, \
                     hashpath(ttffilename) + ".pkl")
             else:
@@ -1093,11 +1093,11 @@ class FPDF(object):
 
     def output(self, name='',dest=''):
         """Output PDF to some destination
-        
+
         By default the PDF is written to sys.stdout. If a name is given, the
         PDF is written to a new file. If dest='S' is given, the PDF data is
         returned as a byte string."""
-        
+
         #Finish document if necessary
         if(self.state<3):
             self.close()
@@ -1450,7 +1450,7 @@ class FPDF(object):
         else:
             cw127fname = None
         font_dict = load_cache(cw127fname)
-        if font_dict is None:    
+        if font_dict is None:
             rangeid = 0
             range_ = {}
             range_interval = {}
@@ -1547,7 +1547,7 @@ class FPDF(object):
     def _putimages(self):
         filter=''
         if self.compress:
-            filter='/Filter /FlateDecode '            
+            filter='/Filter /FlateDecode '
         i = [(x[1]["i"],x[1]) for x in self.images.items()]
         i.sort()
         for idx,info in i:
@@ -1731,7 +1731,7 @@ class FPDF(object):
             if orientation == 'P':
                 self.w_pt = self.fw_pt
                 self.h_pt = self.fh_pt
-            else:                    
+            else:
                 self.w_pt = self.fh_pt
                 self.h_pt = self.fw_pt
             self.w = self.w_pt / self.k
@@ -1966,9 +1966,9 @@ class FPDF(object):
         #Add a line to the document
         if PY3K and isinstance(s, bytes):
             # manage binary data as latin1 until PEP461-like function is implemented
-            s = s.decode("latin1")          
+            s = s.decode("latin1")
         elif not PY3K and isinstance(s, unicode):
-            s = s.encode("latin1")    # default encoding (font name and similar)      
+            s = s.encode("latin1")    # default encoding (font name and similar)
         elif not isinstance(s, basestring):
             s = str(s)
         if(self.state == 2):
