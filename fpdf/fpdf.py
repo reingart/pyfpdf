@@ -1971,17 +1971,12 @@ class FPDF(object):
             s = s.encode("latin1")    # default encoding (font name and similar)      
         elif not isinstance(s, basestring):
             s = str(s)
+        s += "\n"
         if(self.state == 2):
-            self.pages[self.page]["content"] += (s + "\n")
+            self.pages[self.page]["content"] += s
         else:
             if PY3K:
-                if not isinstance(s, bytes):
-                    s = s.encode('latin1')
-                s += b"\n"
-            else:
-                if not instance(s, str):
-                    s = s.encode("latin1")    # default encoding (font name and similar)
-                s += "\n"
+                s = s.encode('latin1')
             self.stream.write(s)
 
     @check_page
