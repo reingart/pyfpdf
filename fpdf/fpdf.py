@@ -2065,8 +2065,10 @@ class FPDF(object):
         # Compute the check digit
         sum=0
         for i in range(1,12,2):
+            print i
             sum += 3*int(barcode_[i])
         for i in range(0,11,2):
+            print i
             sum+=int(barcode_[i])
         r=sum%10
         if(r>0):
