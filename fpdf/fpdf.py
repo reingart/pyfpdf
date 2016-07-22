@@ -1763,7 +1763,7 @@ class FPDF(object):
         "Load external file"
         # by default loading from network is allowed for all images
         if reason == "image":
-            if filename.startswith("http://") or filename.startswith("https://"):
+            if filename.startswith("http://") or filename.startswith("https://") or filename.startswith("data:image/"):
                 f = BytesIO(urlopen(filename).read())
             else:
                 f = open(filename, "rb")
