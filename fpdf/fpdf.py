@@ -1006,26 +1006,11 @@ class FPDF(object):
                 #Allow for additional formats
                 #maybe the image is not showing the correct extension,
                 #but the header is OK,
-                succeed_parsing = False
-                #try all the parsing functions
-                parsing_functions = [self._parsejpg,self._parsepng,self._parsegif]
-                for pf in parsing_functions:
-                    try:
-                        info = pf(name)
-                        succeed_parsing = True
-                        break;
-                    except:
-                        pass
-                #last resource
-                if not succeed_parsing:
-                    mtd='_parse'+type
-                    if not hasattr(self,mtd):
-                        self.error('Unsupported image type: '+type)
-                    info=getattr(self, mtd)(name)
-                mtd='_parse'+type
-                if not hasattr(self,mtd):
-                    self.error('Unsupported image type: '+type)
-                info=getattr(self, mtd)(name)
+                try:
+                    info=self._parseall(name)
+                except Exception:
+                    self.error('Image format not supported: '+name)
+                    
             info['i']=len(self.images)+1
             self.images[name]=info
         else:
@@ -1806,11 +1791,11 @@ class FPDF(object):
             f.seek(0)
             data = f.read()
         return {'w':width,'h':height,'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
-
-    def _parsegif(self, filename):
-        # Extract info from a GIF file (via PNG conversion)
+    
+    def _parseall(self, filename):
+        # Extract info from image file (via PNG conversion with the help of PIL)
         if Image is None:
-            self.error('PIL is required for GIF support')
+            self.error('PIL is required for image conversion')
         try:
             im = Image.open(filename)
         except Exception:
