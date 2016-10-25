@@ -137,13 +137,13 @@ class Template:
         
     def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10, 
              bold=False, italic=False, underline=False, align="", 
-             foreground=0, backgroud=65535, multiline=None,
+             foreground=0, background=65535, multiline=None,
              *args, **kwargs):
         if text:
             if pdf.text_color!=rgb(foreground):
                 pdf.set_text_color(*rgb(foreground))
-            if pdf.fill_color!=rgb(backgroud):
-                pdf.set_fill_color(*rgb(backgroud))
+            if pdf.fill_color!=rgb(background):
+                pdf.set_fill_color(*rgb(background))
 
             font = font.strip().lower()
             if font == 'arial black':
