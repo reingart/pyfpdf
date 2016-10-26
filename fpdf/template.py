@@ -183,7 +183,10 @@ class Template:
         pdf.set_draw_color(*rgb(foreground))
         pdf.set_fill_color(*rgb(background))
         pdf.set_line_width(size)
-        pdf.rect(x1, y1, x2-x1, y2-y1,fill=fill)
+        style = 'D'
+        if fill == 1:
+            style += 'F'
+        pdf.rect(x1, y1, x2-x1, y2-y1,style=style)
 
     def image(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', *args,**kwargs):
         if text:
