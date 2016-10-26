@@ -140,10 +140,8 @@ class Template:
              foreground=0, background=65535, multiline=None,
              *args, **kwargs):
         if text:
-            if pdf.text_color!=rgb(foreground):
-                pdf.set_text_color(*rgb(foreground))
-            if pdf.fill_color!=rgb(background):
-                pdf.set_fill_color(*rgb(background))
+            pdf.set_text_color(*rgb(foreground))
+            pdf.set_fill_color(*rgb(background))
 
             font = font.strip().lower()
             if font == 'arial black':
@@ -177,18 +175,13 @@ class Template:
             #pdf.Text(x=x1,y=y1,txt=text)
 
     def line(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, *args, **kwargs):
-        if pdf.draw_color!=rgb(foreground):
-            #print "SetDrawColor", hex(foreground)
-            pdf.set_draw_color(*rgb(foreground))
-        #print "SetLineWidth", size
+        pdf.set_draw_color(*rgb(foreground))
         pdf.set_line_width(size)
         pdf.line(x1, y1, x2, y2)
 
     def rect(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, background=65535, *args, **kwargs):
-        if pdf.draw_color!=rgb(foreground):
-            pdf.set_draw_color(*rgb(foreground))
-        if pdf.fill_color!=rgb(background):
-            pdf.set_fill_color(*rgb(background))
+        pdf.set_draw_color(*rgb(foreground))
+        pdf.set_fill_color(*rgb(background))
         pdf.set_line_width(size)
         pdf.rect(x1, y1, x2-x1, y2-y1)
 
@@ -198,8 +191,7 @@ class Template:
 
     def barcode(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
              foreground=0, *args, **kwargs):
-        if pdf.draw_color!=rgb(foreground):
-            pdf.set_draw_color(*rgb(foreground))
+        pdf.set_draw_color(*rgb(foreground))
         font = font.lower().strip()
         if font == 'interleaved 2of5 nt':
             pdf.interleaved2of5(text,x1,y1,w=size,h=y2-y1)
@@ -208,8 +200,7 @@ class Template:
     def write(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
               bold=False, italic=False, underline=False, align="", link='http://example.com',
              foreground=0, *args, **kwargs):
-        if pdf.text_color!=rgb(foreground):
-            pdf.set_text_color(*rgb(foreground))
+        pdf.set_text_color(*rgb(foreground))
         font = font.strip().lower()
         if font == 'arial black':
             font = 'arial'
