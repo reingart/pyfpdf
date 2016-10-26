@@ -137,7 +137,7 @@ class Template:
         
     def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10, 
              bold=False, italic=False, underline=False, align="", 
-             foreground=0, background=65535, multiline=None, fill=0,
+             foreground=0, background=0xFFFFFF, multiline=None, fill=0,
              *args, **kwargs):
         if text:
             pdf.set_text_color(*rgb(foreground))
@@ -179,7 +179,7 @@ class Template:
         pdf.set_line_width(size)
         pdf.line(x1, y1, x2, y2)
 
-    def rect(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, background=65535, fill=0, *args, **kwargs):
+    def rect(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, background=0xFFFFFF, fill=0, *args, **kwargs):
         pdf.set_draw_color(*rgb(foreground))
         pdf.set_fill_color(*rgb(background))
         pdf.set_line_width(size)
