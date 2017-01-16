@@ -1,7 +1,7 @@
 ## image ##
 
 ```python
-fpdf.image(name, x = None, y = None, w = 0, h = 0, type = '', link = '')
+fpdf.image(name, x=None, y=None, w=0, h=0, type='', link='', max_w=0, max_h=0, move_x_position=False):
 ```
 
 ### Description ###
@@ -74,6 +74,15 @@ type:
 
 link:
 > URL or identifier returned by [add_link](add_link.md).
+
+max_w:
+> Maximum width of the image in the page.
+
+max_h:
+> Maximum height of the image in the page.
+
+move_x_position:
+> If set to `True` the current abscissa is moved to the right side of the image after the call.
 
 ### See also ###
 
