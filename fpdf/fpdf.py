@@ -1207,8 +1207,8 @@ class FPDF(object):
                             1 + 2 * l[0], h - l[1] * self.k)
                 self._out(annots + ']')
             if self.pdf_version > '1.3':
-                self._out('/Group <</Type /Group /S /Transparency"\
-                    "/CS /DeviceRGB>>')
+                self._out("/Group <</Type /Group /S /Transparency"\
+                    "/CS /DeviceRGB>>")
             self._out('/Contents ' + str(self.n + 1) + ' 0 R>>')
             self._out('endobj')
             # Page content
