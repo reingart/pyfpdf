@@ -988,7 +988,7 @@ class FPDF(object):
             self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
     @check_page
-    def image(self, name, x=None, y=None, w=0,h=0,type='',link='', isMask=False, maskImg=0):
+    def image(self, name, x=None, y=None, w=0,h=0,type='',link='', is_mask=False, mask_image=None):
         "Put an image on the page"
         if not name in self.images:
             #First use of image, get info
@@ -1027,11 +1027,11 @@ class FPDF(object):
                     self.error('Unsupported image type: '+type)
                 info=getattr(self, mtd)(name)
             info['i']=len(self.images)+1
-            # isMask and maskImg
-            if isMask and info['cs'] != 'DeviceGray':
+            # is_mask and mask_image
+            if is_mask and info['cs'] != 'DeviceGray':
                 self.error('Mask must be a gray scale image')
-            if maskImg:
-                info['masked'] = maskImg
+            if mask_image:
+                info['masked'] = mask_image
             self.images[name]=info
         else:
             info=self.images[name]
@@ -1055,7 +1055,7 @@ class FPDF(object):
             self.y += h
         if x is None:
             x = self.x
-        if not isMask:
+        if not is_mask:
             self._out(sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',w*self.k,h*self.k,x*self.k,(self.h-(y+h))*self.k,info['i']))
         if(link):
             self.link(x,y,w,h,link)
@@ -1572,7 +1572,7 @@ class FPDF(object):
             self._out('/Subtype /Image')
             self._out('/Width '+str(info['w']))
             self._out('/Height '+str(info['h']))
-            # set maskImg
+            # set mask object for this image
             if 'masked' in info:
                 self._out('/SMask ' + str(info['masked']['n']+1) + ' 0 R')
 
