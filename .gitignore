@@ -3,6 +3,10 @@
 # C extensions
 *.so
 
+# virtualenv
+include/
+local/
+
 # Packages
 *.egg
 *.egg-info
@@ -20,6 +24,7 @@ lib64
 
 # Installer logs
 pip-log.txt
+pip-selfcheck.json
 
 # Unit test / coverage reports
 .coverage
