@@ -40,7 +40,8 @@ def hashpath(fn):
         h.update(fn)
     return h.hexdigest()
 
-# Check if PIL is available (tries importing both pypi version and corrected or manually installed versions).
+# Check if PIL is available (tries importing both pypi version and
+# corrected or manually installed versions).
 # Necessary for JPEG and GIF support.
 # TODO: Pillow support
 try:
