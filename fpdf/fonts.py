@@ -5,13 +5,13 @@
 
 fpdf_charwidths = {}
 
-fpdf_charwidths['courier']={}
+fpdf_charwidths['courier'] = {}
 
 for i in range(0,256):
-    fpdf_charwidths['courier'][chr(i)]=600
-    fpdf_charwidths['courierB']=fpdf_charwidths['courier']
-    fpdf_charwidths['courierI']=fpdf_charwidths['courier']
-    fpdf_charwidths['courierBI']=fpdf_charwidths['courier']
+    fpdf_charwidths['courier'][chr(i)] = 600
+    fpdf_charwidths['courierB']        = fpdf_charwidths['courier']
+    fpdf_charwidths['courierI']        = fpdf_charwidths['courier']
+    fpdf_charwidths['courierBI']       = fpdf_charwidths['courier']
 
 fpdf_charwidths['helvetica']={
     '\x00':278,'\x01':278,'\x02':278,'\x03':278,'\x04':278,'\x05':278,'\x06':278,'\x07':278,'\x08':278,'\t':278,'\n':278,'\x0b':278,'\x0c':278,'\r':278,'\x0e':278,'\x0f':278,'\x10':278,'\x11':278,'\x12':278,'\x13':278,'\x14':278,'\x15':278,

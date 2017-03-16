@@ -10,14 +10,20 @@ advanced capabilities, and is easy to learn, extend and maintain.
 
   [1]: http://www.fpdf.org/
 
+All developer hands on deck! (See below.) This branch of the library is
+currently not tested so best stick to
+[this version](https://github.com/reingart/pyfpdf) for now.
+
 Features:
 ---------
 
  * Python 2.5 to 3.4 support
  * Unicode (UTF-8) TrueType font subset embedding
- * Barcode I2of5 and code39, QR code coming soon ...
+ * Internal/External Links
  * PNG, GIF and JPG support (including transparency and alpha channel)
- * Templates with a visual designer & basic html2pdf 
+ * Shape, Line Drawing
+ * Cell/Multi-cell/Plaintext writing, Automatic page breaks
+ * Basic html2pdf (Templates with a visual designer in the works)
  * Exceptions support, other minor fixes, improvements and PEP8 code cleanups
  
 Installation Instructions:
@@ -26,18 +32,18 @@ Installation Instructions:
 To get the latest development version you can download the source code running:
 
 ```
-   git clone https://github.com/reingart/pyfpdf.git
-   cd pyfpdf
-   python setup.py install
+  git clone https://github.com/alexanderankin/pyfpdf.git
+  cd pyfpdf
+  python setup.py install
 ```
 
 You can also install PyFPDF from PyPI, with easyinstall or from Windows 
 installers. For example, using pip:
 ```
-   pip install fpdf
+  pip install fpdf
 ```
 
-**Note:** the [Python Imaging Library](http://www.pythonware.com/products/pil/) 
+**Note:** the [Python Imaging Library](http://www.pythonware.com/products/pil/)
 (PIL) is needed for GIF support. PNG and JPG support is built-in and doesn't 
 require any external dependency. For Python 3, 
 [Pillow - The friendly PIL fork](https://github.com/python-pillow/Pillow) is 
@@ -56,3 +62,13 @@ For further information, see the project site:
 https://github.com/reingart/pyfpdf or the old Google Code project page
 https://code.google.com/p/pyfpdf/.
 
+Developers:
+-----------
+
+There's a lot to sift through, please help. Code removal is presently as vital
+as writing tests/features. There's a lot of stuff in this repository that I
+deleted from master, please help sift through it and make it work/be 
+readable/useful. Currently its cut down to what i can deal with. Let's ship
+features, not code.
+
+I'm in the process of learning to publish things to pypi, help!
