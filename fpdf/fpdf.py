@@ -169,7 +169,7 @@ class FPDF(object):
                 return fn(self, *args, **kwargs)
         return wrapper
 
-    def set_margins(self, left,top,right=-1):
+    def set_margins(self, left, top, right=-1):
         "Set left, top and right margins"
         self.l_margin = left
         self.t_margin = top
@@ -191,13 +191,13 @@ class FPDF(object):
         "Set right margin"
         self.r_margin = margin
 
-    def set_auto_page_break(self, auto,margin=0):
+    def set_auto_page_break(self, auto, margin=0):
         "Set auto page break mode and triggering margin"
         self.auto_page_break = auto
         self.b_margin = margin
         self.page_break_trigger = self.h - margin
 
-    def set_display_mode(self, zoom,layout='continuous'):
+    def set_display_mode(self, zoom, layout = 'continuous'):
         """Set display mode in viewer
         
         The "zoom" argument may be 'fullpage', 'fullwidth', 'real',
@@ -245,7 +245,7 @@ class FPDF(object):
         else:
             self.error("Unknown document option \"%s\"" % str(opt))
 
-    def alias_nb_pages(self, alias='{nb}'):
+    def alias_nb_pages(self, alias = '{nb}'):
         "Define an alias for total number of pages"
         self.str_alias_nb_pages = alias
         return alias
@@ -425,7 +425,7 @@ class FPDF(object):
         self._set_dash()
 
     @check_page
-    def rect(self, x, y, w, h, style=''):
+    def rect(self, x, y, w, h, style = ''):
         "Draw a rectangle"
         if   (style == 'F'):                   op = 'f'
         elif (style == 'FD' or style == 'DF'): op = 'B'
@@ -762,6 +762,7 @@ class FPDF(object):
         if (w == 0):
             w = self.w - self.r_margin - self.x
         s = ''
+
         if (fill == 1 or border == 1):
             if (fill == 1):
                 if border == 1:
@@ -794,6 +795,7 @@ class FPDF(object):
                 s += sprintf('%.2f %.2f m %.2f %.2f l S ',
                              x       * k, (self.h - (y + h)) * k,
                              (x + w) * k, (self.h - (y + h)) * k)
+
         if (txt != ''):
             if (align == 'R'):
                 dx = w - self.c_margin - self.get_string_width(txt, True)
@@ -846,8 +848,8 @@ class FPDF(object):
                           self.get_string_width(txt,  True),
                           self.font_size,
                           link)
-        if (s):
-            self._out(s)
+
+        if (s): self._out(s)
         self.lasth = h
 
         if (ln > 0):
@@ -872,6 +874,7 @@ class FPDF(object):
         if (nb > 0 and s[nb-1] == "\n"):
             nb -= 1
         b = 0
+
         if (border):
             if (border == 1):
                 border = 'LTRB'
@@ -883,6 +886,7 @@ class FPDF(object):
                 if ('R' in border): b2 += 'R'
                 if ('T' in border): b = b2 + 'T'
                 else: b = b2
+
         sep = -1
         i   = 0
         j   = 0
