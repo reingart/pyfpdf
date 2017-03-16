@@ -12,7 +12,11 @@
 # * Maintainer:  Mariano Reingart (reingart@gmail.com) et al since 2008 est. *
 # * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT  *
 # ****************************************************************************
+"""fpdf module (in fpdf package housing FPDF class)
 
+This module contains FPDF class inspiring this library. The version number is
+updated here (above and below in variable).
+"""
 from __future__ import division, with_statement
 
 from datetime import datetime
@@ -40,9 +44,6 @@ PAGE_FORMATS = {
     "letter" : (612, 792),
     "legal"  : (612, 1008),
 }
-
-def set_global(var, val):
-    globals()[var] = val
 
 def load_cache(filename):
     """Return unpickled object, or None if cache unavailable"""
