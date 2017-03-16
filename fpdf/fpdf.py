@@ -139,13 +139,13 @@ class FPDF(object):
         # Page spacing
         # Page margins (1 cm)
         margin = 28.35 / self.k
-        self.set_margins(margin, margin)        # Interior cell margin (1 mm)
-        self.c_margin = margin / 10.0           # line width (0.2 mm)
-        self.line_width = .567 / self.k         # Automatic page break
-        self.set_auto_page_break(1, 2 * margin) # Full width display mode
-        self.set_display_mode('fullwidth')      # Enable compression
-        self.set_compression(1)                 # Set default PDF version number
-        self.pdf_version = '1.3'
+        self.set_margins(margin, margin)        
+        self.c_margin = margin / 10.0           # Interior cell margin (1 mm)
+        self.line_width = .567 / self.k         # line width (0.2 mm)
+        self.set_auto_page_break(1, 2 * margin) # Automatic page break
+        self.set_display_mode('fullwidth')      # Full width display mode
+        self.set_compression(1)                 # Enable compression
+        self.pdf_version = '1.3'                # Set default PDF version number
 
     @staticmethod
     def get_page_format(format, k):
