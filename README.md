@@ -25,6 +25,7 @@ Features:
  * Cell/Multi-cell/Plaintext writing, Automatic page breaks
  * Basic html2pdf (Templates with a visual designer in the works)
  * Exceptions support, other minor fixes, improvements and PEP8 code cleanups
+ * Tox tests
  
 Installation Instructions:
 --------------------------

@@ -12,25 +12,6 @@ import subprocess
 
 import unittest
 def run_test_suite():
-  """Runs the tests in test/ folder with unittest
-  
-  Use the default shared TestLoader instance:
-  # test_loader = unittest.defaultTestLoader
-  test_loader = unittest.TestLoader()
-
-
-  Automatically discover all tests in the current dir of the form test/*.py
-  # NOTE: only works for python 2.7 and later
-  test_suite = test_loader.discover('tests', pattern='test/*.py')
-
-  To use the basic test runner that outputs to sys.stderr:
-    # test_runner = unittest.TextTestRunner()
-    # run the test suite
-    # test_runner.run(test_suite)
-
-  To run with setup.py test, tox, and codecov.io, return the test_suite:
-  return test_suite
-  """
   return unittest.TestLoader().discover('test', pattern = '*.py')
 
 import fpdf
