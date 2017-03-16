@@ -18,7 +18,7 @@ import fpdf
 package_dir = 'fpdf'
 
 def read(path):
-  """Build a file path from *paths* and return the contents."""
+  """Read a file's contents."""
   with open(path, 'r') as f:
     return f.read()
 
@@ -36,24 +36,20 @@ setup(
   download_url = "https://github.com/alexanderankin/pyfpdf/tarball/%s" % fpdf.__version__,
   packages     = ['fpdf', ],
   package_dir  = {'fpdf': package_dir},
-  # package_data = {'fpdf': ['font/*.ttf', 'font/*.txt']}, ## WTF
   test_suite   = 'setup.run_test_suite',
   classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2.5",
-    "Programming Language :: Python :: 2.6",
     "Programming Language :: Python :: 2.7",
-    "Programming Language :: Python :: 3.2",
     "Programming Language :: Python :: 3.3",
     "Programming Language :: Python :: 3.4",
+    "Programming Language :: Python :: 3.5",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries :: PHP Classes",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Multimedia :: Graphics",
   ],
   keywords = ["pdf", "unicode", "png", "jpg", "ttf"],
-  # include_package_data = True,
 )
