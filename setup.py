@@ -27,8 +27,8 @@ setup(
   version      = fpdf.__version__,
   description  = 'Simple PDF generation for Python',
   long_description = read('./PyPIReadme.rst'),
-  author       ='Olivier PLATHEY ported by Max',
-  author_email ='maxpat78@yahoo.it',
+  author           = 'Olivier PLATHEY ported by Max',
+  author_email     = 'maxpat78@yahoo.it',
   maintainer       = "David Ankin",
   maintainer_email = "daveankin@gmail.com",
   url          = 'http://code.google.com/p/pyfpdf',
@@ -36,7 +36,7 @@ setup(
   download_url = "https://github.com/alexanderankin/pyfpdf/tarball/%s" % fpdf.__version__,
   packages     = ['fpdf', ],
   package_dir  = {'fpdf': package_dir},
-  package_data = {'fpdf': ['font/*.ttf', 'font/*.txt']},
+  # package_data = {'fpdf': ['font/*.ttf', 'font/*.txt']}, ## WTF
   test_suite   = 'setup.run_test_suite',
   classifiers = [
     "Development Status :: 5 - Production/Stable",
