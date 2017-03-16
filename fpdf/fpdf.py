@@ -861,7 +861,7 @@ class FPDF(object):
 
     @check_page
     def multi_cell(self, w, h, txt = '', border = 0, align = 'J',
-                   fill = 0, split_only = False):
+                   fill = 0, split_only = False, link = ''):
         "Output text with automatic or explicit line breaks"
         txt = self.normalize_text(txt)
         ret = [] # if split_only = True, returns splited text cells
@@ -903,7 +903,8 @@ class FPDF(object):
                     if not split_only:
                         self._out('0 Tw')
                 if not split_only:
-                    self.cell(w, h, substr(s, j, i - j), b, 2, align, fill)
+                    self.cell(w, h = h, txt = substr(s, j, i - j), border = b,
+                              ln = 2, align = align, fill = fill, link = link)
                 else:
                     ret.append(substr(s, j, i - j))
                 i   += 1
@@ -933,7 +934,9 @@ class FPDF(object):
                         if not split_only:
                             self._out('0 Tw')
                     if not split_only:
-                        self.cell(w, h, substr(s, j, i - j), b, 2, align, fill)
+                        self.cell(w, h = h, txt = substr(s, j, i - j),
+                                  border = b, ln = 2, align = align,
+                                  fill = fill, link = link)
                     else:
                         ret.append(substr(s, j, i - j))
                 else:
@@ -945,7 +948,9 @@ class FPDF(object):
                         if not split_only:
                             self._out(sprintf('%.3f Tw', self.ws * self.k))
                     if not split_only:
-                        self.cell(w, h, substr(s, j, sep - j), b, 2, align, fill)
+                        self.cell(w, h = h, txt = substr(s, j, sep - j),
+                                  border = b, ln = 2, align = align,
+                                  fill = fill, link = link)
                     else:
                         ret.append(substr(s, j, sep-j))
                     i = sep + 1
@@ -967,7 +972,8 @@ class FPDF(object):
         if (border and 'B' in border):
             b += 'B'
         if not split_only:
-            self.cell(w, h, substr(s, j, i - j), b, 2, align, fill)
+            self.cell(w, h = h, txt = substr(s, j, i - j), border = b, ln = 2,
+                      align = align, fill = fill, link = link)
             self.x = self.l_margin
         else:
             ret.append(substr(s,j,i-j))
@@ -1253,8 +1259,9 @@ class FPDF(object):
                                   self._textstring(pl[4]) + '>>>>'
                     else:
                         l = self.links[pl[4]]
-                        if l[0] in self.orientation_changes: h = w_pt
-                        else:                                h = h_pt
+                        # if l[0] in self.orientation_changes: h = w_pt
+                        # else:                                h = h_pt
+                        h = h_pt
                         annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',
                                           1 + 2 * l[0], h - l[1] * self.k)
                 self._out(annots + ']')
