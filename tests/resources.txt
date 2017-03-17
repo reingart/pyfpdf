@@ -582,17 +582,17 @@ tags=afm
 pack=adobe-afm
 
 res=adobe-agl/aglfn.txt
-hash=1a37eddbc4246e6582c825387455e84d
+hash=a71a4623a9f98b71c557fe14f6ca7ab7
 tags=
 pack=adobe-agl
 
 res=adobe-agl/glyphlist.txt
-hash=7dfc38b622e5ab07b3daf51ee326dd26
+hash=88c2a7d428e87f99092906d96414587d
 tags=
 pack=adobe-agl
 
 res=adobe-agl/zapfdingbats.txt
-hash=7dd64530cfb1f5ae03fe6d8e3b4c4aff
+hash=1c372b31ba43695a4d8f31a5abed7b0f
 tags=
 pack=adobe-agl
 
