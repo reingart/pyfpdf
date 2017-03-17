@@ -1,8 +1,7 @@
 pyfpdf: FPDF for Python
 =======================
 
-[![codecov](https://codecov.io/gh/alexanderankin/pyfpdf/branch/master/graph/badge.svg)]
-(https://codecov.io/gh/alexanderankin/pyfpdf)
+[![codecov](https://codecov.io/gh/alexanderankin/pyfpdf/branch/master/graph/badge.svg)](https://codecov.io/gh/alexanderankin/pyfpdf)
 
 PyFPDF is a library for PDF document generation under Python, ported from PHP
 (see [FPDF][1]: "Free"-PDF, a well-known PDFlib-extension replacement with many
