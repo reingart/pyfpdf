@@ -734,6 +734,7 @@ class FPDF(object):
                         c, s, -s, c, cx, cy, -cx, -cy)
             self._out(s)
 
+    @property    
     def accept_page_break(self):
         "Accept automatic page break or not"
         return self.auto_page_break
@@ -746,7 +747,7 @@ class FPDF(object):
         k = self.k
         if (self.y + h > self.page_break_trigger and \
             not self.in_footer and \
-            self.accept_page_break()):
+            self.accept_page_break):
             
             # Automatic page break
             x  = self.x
@@ -1103,7 +1104,7 @@ class FPDF(object):
 
         # Flowing mode
         if y is None:
-            if (self.y + h > self.page_break_trigger and not self.in_footer and self.accept_page_break()):
+            if (self.y + h > self.page_break_trigger and not self.in_footer and self.accept_page_break):
                 # Automatic page break
                 x = self.x
                 self.add_page(same = True)
