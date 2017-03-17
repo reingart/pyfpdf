@@ -742,7 +742,8 @@ class FPDF(object):
     @check_page
     def cell(self, w, h = 0, txt = '', border = 0, ln = 0, align = '',
              fill = 0, link = ''):
-        "Output a cell"
+        "Output a cell, return boolean if triggered auto page break"
+        page_break_triggered = False
         txt = self.normalize_text(txt)
         k = self.k
         if (self.y + h > self.page_break_trigger and \
@@ -750,6 +751,7 @@ class FPDF(object):
             self.accept_page_break):
             
             # Automatic page break
+            page_break_triggered = True
             x  = self.x
             ws = self.ws
             if (ws>0):
@@ -757,6 +759,7 @@ class FPDF(object):
                 self._out('0 Tw')
             self.add_page(same = True)
             self.x = x
+            # self.y = 0#self.t_margin
             if (ws > 0):
                 self.ws = ws
                 self._out(sprintf('%.3f Tw', ws * k))
@@ -860,10 +863,14 @@ class FPDF(object):
         else:
             self.x += w
 
+        return page_break_triggered
+
     @check_page
     def multi_cell(self, w, h, txt = '', border = 0, align = 'J',
                    fill = 0, split_only = False, link = ''):
-        "Output text with automatic or explicit line breaks"
+        """Output text with automatic or explicit line breaks, returns
+        boolean if page break triggered in output mode."""
+        page_break_triggered = False
         txt = self.normalize_text(txt)
         ret = [] # if split_only = True, returns splited text cells
         cw  = self.current_font['cw']
@@ -904,6 +911,7 @@ class FPDF(object):
                     if not split_only:
                         self._out('0 Tw')
                 if not split_only:
+                    page_break_triggered = page_break_triggered or \
                     self.cell(w, h = h, txt = substr(s, j, i - j), border = b,
                               ln = 2, align = align, fill = fill, link = link)
                 else:
@@ -935,6 +943,7 @@ class FPDF(object):
                         if not split_only:
                             self._out('0 Tw')
                     if not split_only:
+                        page_break_triggered = page_break_triggered or \
                         self.cell(w, h = h, txt = substr(s, j, i - j),
                                   border = b, ln = 2, align = align,
                                   fill = fill, link = link)
@@ -949,6 +958,7 @@ class FPDF(object):
                         if not split_only:
                             self._out(sprintf('%.3f Tw', self.ws * self.k))
                     if not split_only:
+                        page_break_triggered = page_break_triggered or \
                         self.cell(w, h = h, txt = substr(s, j, sep - j),
                                   border = b, ln = 2, align = align,
                                   fill = fill, link = link)
@@ -973,12 +983,14 @@ class FPDF(object):
         if (border and 'B' in border):
             b += 'B'
         if not split_only:
+            page_break_triggered = page_break_triggered or \
             self.cell(w, h = h, txt = substr(s, j, i - j), border = b, ln = 2,
                       align = align, fill = fill, link = link)
             self.x = self.l_margin
+            return page_break_triggered
         else:
             ret.append(substr(s,j,i-j))
-        return ret
+            return ret
 
     @check_page
     def write(self, h, txt = '', link = ''):
