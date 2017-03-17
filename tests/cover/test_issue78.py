@@ -7,13 +7,20 @@
 #PyFPDF-cover-test:fn=issue_78.pdf
 #PyFPDF-cover-test:hash=295ef37323b3115da64fcc47c1aca8dc
 #PyFPDF-cover-test:res=../tutorial/logo.png
+#PyFPDF-cover-test:pil=yes
 
 import common
 from fpdf import FPDF
 
 import os
-from PIL import Image
 import tempfile
+try:
+    try:
+        import Image
+    except:
+        from PIL import Image
+except ImportError:
+    Image = None
 
 @common.add_unittest
 def dotest(outputname, nostamp):
