@@ -65,7 +65,7 @@ def genbar():
 def dotest(outputname, nostamp):
     plane = genbar()
     palette = (0,0,0, 255,255,255) + (128,128,128)*254
-    img = Image.fromstring("P", plane.size, plane.tostring())
+    img = Image.frombytes("P", plane.size, plane.tobytes())
     img.putpalette(palette)
 
     with tempfile.NamedTemporaryFile(delete = False, suffix = ".gif") as f:
