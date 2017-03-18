@@ -25,6 +25,10 @@ res=lena.gif
 hash=2dea6fb17967bb6b9374ca83c07e9076
 tags=
 
+res=masking.png
+hash=0f87e6fb37f8f5426bac7ee4351f3e3c
+tags=
+
 res=dejavusanscondensed.cw.dat
 hash=61fb165f8f3947da890659ea595f58cf
 tags=
