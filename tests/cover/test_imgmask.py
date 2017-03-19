@@ -11,6 +11,7 @@
 #PyFPDF-cover-test:res=img_gray.jpg
 #PyFPDF-cover-test:res=img_cmyk.jpg
 #PyFPDF-cover-test:res=img_rgb.jpg
+#PyFPDF-cover-test:pil=yes
 
 import common
 from fpdf import FPDF
