@@ -38,7 +38,7 @@ class MyTTFontFile(TTFontFile):
 if sys.version_info >= (3, 0):
   unichr = chr
 
-class TestTopicUM(unittest.TestCase):
+class CharmapTest(unittest.TestCase):
   def setUp(self):
     pass
 
