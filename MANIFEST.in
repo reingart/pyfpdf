@@ -1,0 +1,11 @@
+include           PyPIReadme.rst
+recursive-include fpdf     *
+recursive-include scripts  *
+recursive-include test     *
+recursive-include tutorial *
+
+# added by check_manifest.py
+include *.md
+include *.yml
+include LICENSE
+include tox.ini
