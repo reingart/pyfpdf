@@ -19,7 +19,7 @@ currently not tested so best stick to
 Features:
 ---------
 
- * Python 2.5 to 3.4 support
+ * Python 2.7 to 3.4 support
  * Unicode (UTF-8) TrueType font subset embedding
  * Internal/External Links
  * PNG, GIF and JPG support (including transparency and alpha channel)
