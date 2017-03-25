@@ -5,6 +5,7 @@
 coverage.xml
 
 *.py[cod]
+*.pkl
 
 # C extensions
 *.so
