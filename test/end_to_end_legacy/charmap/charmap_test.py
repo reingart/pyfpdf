@@ -12,11 +12,17 @@ and this seems to be okay.
 import unittest
 import sys
 import os
+sys.path.insert(0,
+  os.path.join(
+    os.path.dirname(os.path.abspath(__file__)),
+    os.path.join('..', '..', '..')
+  )
+)
 
-sys.path.insert(0, os.path.join(os.path.dirname(__file__),
-                                '..', '..', '..'))
 import fpdf
 from fpdf.ttfonts import TTFontFile
+from test.utilities import relative_path_to, \
+                           compare_files_ignoring_CreationDate \
 
 class MyTTFontFile(TTFontFile):
   """MyTTFontFile docstring
@@ -39,12 +45,9 @@ if sys.version_info >= (3, 0):
   unichr = chr
 
 class CharmapTest(unittest.TestCase):
-  def setUp(self):
-    pass
-
   def test_first_999_chars(self):
     # fontpath = 'Roboto-Regular.ttf'
-    fontpath = 'DejaVuSans.ttf'
+    fontpath = relative_path_to('DejaVuSans.ttf')
 
     pdf = fpdf.FPDF()
     pdf.compression = True
@@ -60,32 +63,19 @@ class CharmapTest(unittest.TestCase):
       pdf.write(8, u"%03d) %06x - %c" % (counter, character, character))
       pdf.ln()
 
-      if counter >= 999:
-        break
+      if counter >= 999: break
 
-    def compare_files_ignoring_CreationDate(new, known):
-      """This function compares two files ignoring their /CreationDate line"""
-      from itertools import ifilter
-      predicate = lambda line: '/CreationDate' not in line
-
-      with open(new, 'rt') as newfile, open(known, 'rt') as knownfile:
-        newfile   = ifilter(predicate, newfile)
-        knownfile = ifilter(predicate, knownfile)
-        for line_new, line_known in zip(newfile, knownfile):
-          self.assertEqual(line_new, line_known, "all lines equal")
-
-    testing_output = 'charmap_test_output.pdf'
-    known_output   = 'charmap_test_output_good.pdf'
+    testing_output = relative_path_to('charmap_test_output.pdf')
+    known_output   = relative_path_to('charmap_test_output_good.pdf')
 
     pdf.output(testing_output)
-    compare_files_ignoring_CreationDate(testing_output, known_output)
+    compare_files_ignoring_CreationDate(testing_output, known_output, self.assertEqual)
     os.unlink(testing_output)
 
     # clear out all the pkl files
-    pklList = [f for f in os.listdir(os.path.dirname(os.path.abspath(__file__)))
-               if f.endswith(".pkl")]
+    pklList = [f for f in relative_path_to('.') if f.endswith(".pkl")]
     for f in pklList:
-      os.remove(f)
+      os.remove(relative_path_to(f))
 
 if __name__ == '__main__':
   unittest.main()
