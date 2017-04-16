@@ -4,6 +4,7 @@ import functools
 def multiply(*args):
   return functools.reduce(lambda x, y: x * y, args)
  
+@unittest.skip("example for reference only")
 class TestUM(unittest.TestCase):
  
   def setUp(self):
