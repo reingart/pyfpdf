@@ -15,7 +15,7 @@ import test
 from test.utilities import relative_path_to, \
                            compare_files_ignoring_CreationDate
 
-
+@unittest.skip("skip network tests by default")
 class Issue65Test(unittest.TestCase):
   def test_issue65(self):
     pdf = fpdf.FPDF()
