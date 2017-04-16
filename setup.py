@@ -15,14 +15,13 @@ def run_test_suite():
   return unittest.TestLoader().discover('test', pattern = '*.py')
 
 import fpdf
-package_dir = 'fpdf'
 
 def read(path):
   """Read a file's contents."""
   with open(path, 'r') as f:
     return f.read()
 
-setup(
+if __name__ == '__main__': setup(
   name         = 'fpdf',
   version      = fpdf.__version__,
   description  = 'Simple PDF generation for Python',
@@ -35,7 +34,7 @@ setup(
   license      = 'LGPLv3+',
   download_url = "https://github.com/alexanderankin/pyfpdf/tarball/%s" % fpdf.__version__,
   packages     = ['fpdf', ],
-  package_dir  = {'fpdf': package_dir},
+  package_dir  = {'fpdf': 'fpdf'},
   test_suite   = 'setup.run_test_suite',
   classifiers = [
     "Development Status :: 5 - Production/Stable",
