@@ -53,6 +53,33 @@ PAGE_FORMATS = {
     "legal"  : (612, 1008),
 }
 
+def get_page_format(format, k):
+    """Return page width and height size in points.
+
+    `format` can be either a 2-tuple or one of 'a3', 'a4', 'a5', 'letter', or
+    'legal'.
+
+    If format is a tuple, then the return value is the tuple's values
+    given in the units specified on this document in the constructor,
+    multiplied by the corresponding scale factor `k`, taken from instance
+    variable `self.k`.
+
+    If format is a string, the (width, height) tuple returned is in points.
+    For a width and height of 8.5 * 11, 72 dpi is assumed, so the value
+    returned is (8.5 * 72, 11 * 72), or (612, 792). Additional formats can be
+    added by adding fields to the `fpdf.fpdf.PAGE_FORMATS` dictionary with a
+    case insensitive key (the name of the new format) and 2-tuple value of
+    (width, height) in dots per inch with a 72 dpi resolution.
+    """
+    if isinstance(format, basestring):
+        format = format.lower()
+        if format in PAGE_FORMATS:
+            return PAGE_FORMATS[format]
+        else:
+            raise RuntimeError("Unknown page format: " + format)
+    else:
+        return (format[0] * k, format[1] * k)
+
 
 def load_cache(filename):
     """Return unpickled object, or None if cache unavailable"""
@@ -129,7 +156,7 @@ class FPDF(object):
             self.error("Incorrect unit: " + unit)
 
         # Page format
-        self.fw_pt, self.fh_pt = self.get_page_format(format, self.k)
+        self.fw_pt, self.fh_pt = get_page_format(format, self.k)
         self.dw_pt = self.fw_pt
         self.dh_pt = self.fh_pt
         self.fw = self.fw_pt / self.k
@@ -161,18 +188,6 @@ class FPDF(object):
         self.set_display_mode('fullwidth')       # Full width display mode
         self.set_compression(1)                  # Enable compression
         self.pdf_version = '1.3'                 # Set default PDF version No.
-
-    @staticmethod
-    def get_page_format(format, k):
-        "Return scale factor, page w and h size in points"
-        if isinstance(format, basestring):
-            format = format.lower()
-            if format in PAGE_FORMATS:
-                return PAGE_FORMATS[format]
-            else:
-                raise RuntimeError("Unknown page format: " + format)
-        else:
-            return (format[0] * k, format[1] * k)
 
     def check_page(fn):
         "Decorator to protect drawing methods"
@@ -1893,7 +1908,7 @@ class FPDF(object):
             # Page format
             if format:
                 # Change page format
-                self.fw_pt, self.fh_pt = self.get_page_format(format, self.k)
+                self.fw_pt, self.fh_pt = get_page_format(format, self.k)
             else:
                 # Set to default format
                 self.fw_pt = self.dw_pt
@@ -2191,3 +2206,7 @@ class FPDF(object):
             self.pages[self.page]["content"] += (s + "\n")
         else:
             self.buffer += (s + "\n")
+
+__all__ = [
+    'FPDF', 'load_cache', 'get_page_format', 'PAGE_FORMATS'
+]
