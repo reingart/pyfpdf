@@ -13,7 +13,8 @@ sys.path.insert(0,
 import fpdf
 import test
 from test.utilities import relative_path_to, \
-                           compare_files_ignoring_CreationDate
+                           set_doc_date_0, \
+                           calculate_hash_of_file
 
 class InsertImagesTest(unittest.TestCase):
   def test_insert_jpg(self):
@@ -23,12 +24,12 @@ class InsertImagesTest(unittest.TestCase):
     imagename = relative_path_to('insert_images_insert_jpg.jpg')
     pdf.image(imagename, x = 15, y = 15, h = 140)
 
-    good = relative_path_to('insert_images_jpg_good.pdf')
+    set_doc_date_0(pdf)
     test = relative_path_to('insert_images_jpg_test.pdf')
-
     pdf.output(test, 'F')
 
-    compare_files_ignoring_CreationDate(test, good, self.assertEqual)
+    test_hash = calculate_hash_of_file(test)
+    self.assertEqual(test_hash, "c6997071c5e5f4191327603607d2a32c")
     os.unlink(test)
 
   def test_insert_png(self):
@@ -38,12 +39,12 @@ class InsertImagesTest(unittest.TestCase):
     imagename = relative_path_to('insert_images_insert_png.png')
     pdf.image(imagename, x = 15, y = 15, h = 140)
 
-    good = relative_path_to('insert_images_png_good.pdf')
+    set_doc_date_0(pdf)
     test = relative_path_to('insert_images_png_test.pdf')
-
     pdf.output(test, 'F')
 
-    compare_files_ignoring_CreationDate(test, good, self.assertEqual)
+    test_hash = calculate_hash_of_file(test)
+    self.assertEqual(test_hash, "dd20cb8689d5512b31753b6ab6aa6341")
     os.unlink(test)
 
 if __name__ == '__main__':
@@ -53,13 +54,19 @@ if __name__ == '__main__':
 # doc = fpdf.FPDF()
 # doc.compress = False
 # doc.add_page()
-# imagename = 'insert_images_insert_jpg.jpg'
+# imagename = relative_path_to('insert_images_insert_jpg.jpg')
 # doc.image(imagename, x = 15, y = 15, h = 140) #, w = 30, h = 25)
-# doc.output('insert_images_jpg_good.pdf')
+# set_doc_date_0(doc)
+# output_name = relative_path_to('insert_images_jpg_good.pdf')
+# doc.output(output_name)
+# print calculate_hash_of_file(output_name)
 
 # doc = fpdf.FPDF()
 # doc.compress = False
 # doc.add_page()
-# imagename = 'insert_images_insert_png.png'
+# imagename = relative_path_to('insert_images_insert_png.png')
 # doc.image(imagename, x = 15, y = 15, h = 140) #, w = 30, h = 25)
-# doc.output('insert_images_png_good.pdf')
+# set_doc_date_0(doc)
+# output_name = relative_path_to('insert_images_png_good.pdf')
+# doc.output(output_name)
+# print calculate_hash_of_file(output_name)

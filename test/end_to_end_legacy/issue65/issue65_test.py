@@ -13,7 +13,8 @@ sys.path.insert(0,
 import fpdf
 import test
 from test.utilities import relative_path_to, \
-                           compare_files_ignoring_CreationDate
+                           set_doc_date_0, \
+                           calculate_hash_of_file
 
 @unittest.skip("skip network tests by default")
 class Issue65Test(unittest.TestCase):
@@ -24,13 +25,29 @@ class Issue65Test(unittest.TestCase):
     png = "https://g.twimg.com/Twitter_logo_blue.png"
     pdf.image(png, x = 15, y = 15, w = 30, h = 25)
 
-    good = relative_path_to('issue65_good.pdf')
+    set_doc_date_0(pdf)
     test = relative_path_to('issue65_test.pdf')
-
     pdf.output(test, 'F')
 
-    compare_files_ignoring_CreationDate(test, good, self.assertEqual)
+    known_good_hash = "ed3d7f6430a8868d3e9587170aa2f678"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(test))
     os.unlink(test)
 
 if __name__ == '__main__':
   unittest.main()
+  # pass
+
+## Code used to create test:
+# pdf = fpdf.FPDF()
+# pdf.compress = False
+# pdf.add_page()
+# png = "https://g.twimg.com/Twitter_logo_blue.png"
+# pdf.image(png, x = 15, y = 15, w = 30, h = 25)
+
+# test = relative_path_to('output.pdf')
+
+# set_doc_date_0(pdf)
+# pdf.output(test, 'F')
+
+# print(calculate_hash_of_file(test))
+# os.unlink(test)

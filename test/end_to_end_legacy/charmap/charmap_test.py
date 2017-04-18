@@ -22,7 +22,8 @@ sys.path.insert(0,
 import fpdf
 from fpdf.ttfonts import TTFontFile
 from test.utilities import relative_path_to, \
-                           compare_files_ignoring_CreationDate \
+                           calculate_hash_of_file, \
+                           set_doc_date_0
 
 class MyTTFontFile(TTFontFile):
   """MyTTFontFile docstring
@@ -66,10 +67,13 @@ class CharmapTest(unittest.TestCase):
       if counter >= 999: break
 
     testing_output = relative_path_to('charmap_test_output.pdf')
-    known_output   = relative_path_to('charmap_test_output_good.pdf')
 
+    set_doc_date_0(pdf)
     pdf.output(testing_output)
-    compare_files_ignoring_CreationDate(testing_output, known_output, self.assertEqual)
+
+    output_hash = calculate_hash_of_file(testing_output)
+    known_output_hash = "f2f5784207ad1f26d230bdf40af9d3e0"
+    self.assertEqual(known_output_hash, output_hash)
     os.unlink(testing_output)
 
     # clear out all the pkl files
@@ -79,3 +83,29 @@ class CharmapTest(unittest.TestCase):
 
 if __name__ == '__main__':
   unittest.main()
+
+## Code used to create test:
+# fontpath = relative_path_to('DejaVuSans.ttf')
+
+# pdf = fpdf.FPDF()
+# pdf.compression = True
+# pdf.add_page()
+# pdf.add_font('font', '', fontpath, uni = True)
+# pdf.set_font('font', '', 10)
+
+# ttf = MyTTFontFile()
+# ttf.getMetrics(fontpath)
+
+# for counter, character in enumerate(ttf.saveChar, 0):
+#   # print (counter, character)
+#   pdf.write(8, u"%03d) %06x - %c" % (counter, character, character))
+#   pdf.ln()
+
+#   if counter >= 999: break
+
+# output = relative_path_to('charmap_test_output.pdf')
+
+# set_doc_date_0(pdf)
+# pdf.output(output)
+# print calculate_hash_of_file(output)
+# os.unlink(output)

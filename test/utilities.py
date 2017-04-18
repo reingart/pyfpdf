@@ -2,10 +2,18 @@ import inspect
 import sys
 import os
 import hashlib
+import datetime
+
+def set_doc_date_0(doc):
+  """Sets the document date to unix epoch start."""
+  zero = datetime.datetime.fromtimestamp(0)
+  doc.set_creation_date(zero)
 
 def calculate_hash_of_file(full_path):
   """Finds md5 hash of a file given an abs path, reading in whole file."""
-  return hashlib.md5(open(full_path, 'rb').read()).hexdigest()
+  with open(full_path, 'rb') as file:
+    data = file.read()
+  return hashlib.md5(data).hexdigest()
 
 def relative_path_to(place):
   """Finds Relative Path to a place
