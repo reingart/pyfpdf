@@ -1059,7 +1059,6 @@ table {
         
           
   <ul>
-    <li class="mono"><a href="#fpdf.FPDF.get_page_format">get_page_format</a></li>
     <li class="mono"><a href="#fpdf.FPDF.__init__">__init__</a></li>
     <li class="mono"><a href="#fpdf.FPDF.add_font">add_font</a></li>
     <li class="mono"><a href="#fpdf.FPDF.add_link">add_link</a></li>
@@ -1417,7 +1416,7 @@ given.</p></div>
             <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Incorrect unit: &quot;</span> <span class="o">+</span> <span class="n">unit</span><span class="p">)</span>
 
         <span class="c"># Page format</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_page_format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh_pt</span> <span class="o">=</span> <span class="n">get_page_format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dw_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">dh_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh_pt</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
@@ -1449,18 +1448,6 @@ given.</p></div>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_display_mode</span><span class="p">(</span><span class="s">&#39;fullwidth&#39;</span><span class="p">)</span>       <span class="c"># Full width display mode</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_compression</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>                  <span class="c"># Enable compression</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">pdf_version</span> <span class="o">=</span> <span class="s">&#39;1.3&#39;</span>                 <span class="c"># Set default PDF version No.</span>
-
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span> <span class="nf">get_page_format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-        <span class="s">&quot;Return scale factor, page w and h size in points&quot;</span>
-        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-            <span class="n">format</span> <span class="o">=</span> <span class="n">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-            <span class="k">if</span> <span class="n">format</span> <span class="ow">in</span> <span class="n">PAGE_FORMATS</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">PAGE_FORMATS</span><span class="p">[</span><span class="n">format</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Unknown page format: &quot;</span> <span class="o">+</span> <span class="n">format</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">return</span> <span class="p">(</span><span class="n">format</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">k</span><span class="p">,</span> <span class="n">format</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">check_page</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
         <span class="s">&quot;Decorator to protect drawing methods&quot;</span>
@@ -3181,7 +3168,7 @@ given.</p></div>
             <span class="c"># Page format</span>
             <span class="k">if</span> <span class="n">format</span><span class="p">:</span>
                 <span class="c"># Change page format</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_page_format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh_pt</span> <span class="o">=</span> <span class="n">get_page_format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c"># Set to default format</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dw_pt</span>
@@ -3491,38 +3478,6 @@ given.</p></div>
           <li><a href="#fpdf.FPDF">FPDF</a></li>
           <li>__builtin__.object</li>
           </ul>
-          <h3>Static methods</h3>
-            
-  <div class="item">
-    <div class="name def" id="fpdf.FPDF.get_page_format">
-    <p>def <span class="ident">get_page_format</span>(</p><p>format, k)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Return scale factor, page w and h size in points</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.FPDF.get_page_format', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.FPDF.get_page_format" class="source">
-    <div class="codehilite"><pre><span class="nd">@staticmethod</span>
-<span class="k">def</span> <span class="nf">get_page_format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
-    <span class="s">&quot;Return scale factor, page w and h size in points&quot;</span>
-    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
-        <span class="n">format</span> <span class="o">=</span> <span class="n">format</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
-        <span class="k">if</span> <span class="n">format</span> <span class="ow">in</span> <span class="n">PAGE_FORMATS</span><span class="p">:</span>
-            <span class="k">return</span> <span class="n">PAGE_FORMATS</span><span class="p">[</span><span class="n">format</span><span class="p">]</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s">&quot;Unknown page format: &quot;</span> <span class="o">+</span> <span class="n">format</span><span class="p">)</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span><span class="n">format</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">k</span><span class="p">,</span> <span class="n">format</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
           <h3>Instance variables</h3>
             <div class="item">
             <p id="fpdf.FPDF.accept_page_break" class="name">var <span class="ident">accept_page_break</span></p>
@@ -3985,7 +3940,7 @@ given.</p></div>
     <span class="k">else</span><span class="p">:</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;Incorrect unit: &quot;</span> <span class="o">+</span> <span class="n">unit</span><span class="p">)</span>
     <span class="c"># Page format</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_page_format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh_pt</span> <span class="o">=</span> <span class="n">get_page_format</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dw_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">dh_pt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fh_pt</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">fw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fw_pt</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
