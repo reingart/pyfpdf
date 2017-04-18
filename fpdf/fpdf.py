@@ -254,6 +254,10 @@ class FPDF(object):
         "Creator of document"
         self.creator = creator
 
+    def set_creation_date(self, date = None):
+        """Sets Creation of Date time, or current time if None given."""
+        self.creation_date = datetime.now() if date is None else date
+
     def set_doc_option(self, opt, value):
         "Set document option"
         if opt == "core_fonts_encoding":
@@ -1806,9 +1810,15 @@ class FPDF(object):
         if hasattr(self, 'author'):   so('/Author '   + ts(self.author))
         if hasattr(self, 'keywords'): so('/Keywords ' + ts(self.keywords))
         if hasattr(self, 'creator'):  so('/Creator '  + ts(self.creator))
-        so('/CreationDate ' + ts(
-            'D:' + datetime.now().strftime('%Y%m%d%H%M%S')
-        ))
+        if hasattr(self, 'creation_date'):
+            try:
+                creation_date = self.creation_date
+                date_string = creation_date.strftime('%Y%m%d%H%M%S')
+            except Exception:
+                self.error('Could not format date: ' + str(creation_date))
+        else:
+            date_string = datetime.now().strftime('%Y%m%d%H%M%S')
+        so('/CreationDate ' + ts('D:' + date_string))
 
     def _putcatalog(self):
         self._out('/Type /Catalog')

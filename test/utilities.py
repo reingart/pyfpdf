@@ -1,6 +1,11 @@
 import inspect
 import sys
 import os
+import hashlib
+
+def calculate_hash_of_file(full_path):
+  """Finds md5 hash of a file given an abs path, reading in whole file."""
+  return hashlib.md5(open(full_path, 'rb').read()).hexdigest()
 
 def relative_path_to(place):
   """Finds Relative Path to a place
