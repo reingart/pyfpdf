@@ -926,22 +926,29 @@ class FPDF(object):
 
     @check_page
     def multi_cell(self, w, h, txt = '', border = 0, align = 'J',
-                   fill = 0, split_only = False, link = ''):
+                   fill = 0, split_only = False, link = '', ln = 0):
         """Output text with automatic or explicit line breaks, returns
-        boolean if page break triggered in output mode."""
+        boolean if page break triggered in output mode
+        """
         page_break_triggered = False
-        txt = self.normalize_text(txt)
-        ret = []  # if split_only = True, returns splited text cells
-        cw  = self.current_font['cw']
+        if split_only:
+            _out = self._out
+            self._out = lambda *args, **kwargs: None
+
+        # Store this information for manipulating position.
+        location = (self.get_x(), self.get_y())
+
         if (w == 0):
             w = self.w - self.r_margin - self.x
         wmax = (w - 2 * self.c_margin) * 1000.0 / self.font_size
-        s  = txt.replace("\r", '')
-        nb = len(s)
-        if (nb > 0 and s[nb - 1] == "\n"):
-            nb -= 1
-        b = 0
 
+        txt = self.normalize_text(txt)
+        s  = txt.replace("\r", '')
+        normalized_string_length = len(s)
+        if (normalized_string_length > 0 and s[-1] == "\n"):
+            normalized_string_length -= 1
+
+        b = 0
         if (border):
             if (border == 1):
                 border = 'LTRB'
@@ -954,28 +961,28 @@ class FPDF(object):
                 if ('T' in border): b = b2 + 'T'
                 else: b = b2
 
+        character_widths = self.current_font['cw']
+        text_cells = []
         sep = -1
         i   = 0
         j   = 0
         l   = 0
         ns  = 0
         nl  = 1
-        while(i < nb):
+        while(i < normalized_string_length):
             # Get next character
             c = s[i]
+
+            # Explicit line break
             if (c == "\n"):
-                # Explicit line break
                 if (self.ws > 0):
                     self.ws = 0
-                    if not split_only:
-                        self._out('0 Tw')
-                if not split_only:
-                    page_break_triggered = page_break_triggered or \
-                        self.cell(w, h = h, txt = substr(s, j, i - j),
-                                  border = b, ln = 2, align = align,
-                                  fill = fill, link = link)
-                else:
-                    ret.append(substr(s, j, i - j))
+                    self._out('0 Tw')
+                page_break_triggered = page_break_triggered or \
+                self.cell(w, h = h, txt = substr(s, j, i - j),
+                          border = b, ln = 2, align = align,
+                          fill = fill, link = link)
+                text_cells.append(substr(s, j, i - j))
                 i   += 1
                 sep  = -1
                 j    = i
@@ -985,6 +992,7 @@ class FPDF(object):
                 if (border and nl == 2):
                     b = b2
                 continue
+
             if (c == ' '):
                 sep  = i
                 ls   = l
@@ -992,23 +1000,21 @@ class FPDF(object):
             if self.unifontsubset:
                 l += self.get_string_width(c, True) / self.font_size * 1000.0
             else:
-                l += cw.get(c, 0)
+                l += character_widths.get(c, 0)
+
+            # Automatic line break
             if (l > wmax):
-                # Automatic line break
                 if (sep == -1):
                     if (i == j):
                         i += 1
                     if (self.ws > 0):
                         self.ws = 0
-                        if not split_only:
-                            self._out('0 Tw')
-                    if not split_only:
-                        page_break_triggered = page_break_triggered or \
-                            self.cell(w, h = h, txt = substr(s, j, i - j),
-                                      border = b, ln = 2, align = align,
-                                      fill = fill, link = link)
-                    else:
-                        ret.append(substr(s, j, i - j))
+                        self._out('0 Tw')
+                    page_break_triggered = page_break_triggered or \
+                        self.cell(w, h = h, txt = substr(s, j, i - j),
+                                  border = b, ln = 2, align = align,
+                                  fill = fill, link = link)
+                    text_cells.append(substr(s, j, i - j))
                 else:
                     if (align == 'J'):
                         if ns > 1:
@@ -1023,8 +1029,7 @@ class FPDF(object):
                             self.cell(w, h = h, txt = substr(s, j, sep - j),
                                       border = b, ln = 2, align = align,
                                       fill = fill, link = link)
-                    else:
-                        ret.append(substr(s, j, sep - j))
+                    text_cells.append(substr(s, j, sep - j))
                     i = sep + 1
                 sep  = -1
                 j    = i
@@ -1043,16 +1048,28 @@ class FPDF(object):
                 self._out('0 Tw')
         if (border and 'B' in border):
             b += 'B'
-        if not split_only:
-            page_break_triggered = page_break_triggered or \
-                self.cell(w, h = h, txt = substr(s, j, i - j),
-                          border = b, ln = 2, align = align,
-                          fill = fill, link = link)
-            self.x = self.l_margin
-            return page_break_triggered
+
+        page_break_triggered = page_break_triggered or \
+            self.cell(w, h = h, txt = substr(s, j, i - j),
+                      border = b, ln = 2, align = align,
+                      fill = fill, link = link)
+        self.x = self.l_margin
+        text_cells.append(substr(s, j, i - j))
+        nc = len(text_cells)  # number of cells
+        
+        location_options = {
+            0: lambda : self.set_xy(location[0] + w, location[1]),
+            1: lambda : self.set_x(self.l_margin),  # could control y
+            2: lambda : self.set_xy(location[0], location[1] + nc * h)
+        }
+        location_options.get(ln, lambda : None)()
+
+        if split_only:
+            self._out = _out        # restore writing function
+            self.set_xy(*location)  # restore location
+            return text_cells
         else:
-            ret.append(substr(s, j, i - j))
-            return ret
+            return page_break_triggered
 
     @check_page
     def write(self, h, txt = '', link = ''):
