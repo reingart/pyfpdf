@@ -53,6 +53,7 @@ PAGE_FORMATS = {
     "legal"  : (612, 1008),
 }
 
+
 def get_page_format(format, k):
     """Return page width and height size in points.
 
@@ -803,8 +804,8 @@ class FPDF(object):
                 self.ws = 0
                 self._out('0 Tw')
             self.add_page(same = True)
-            self.x = x
-            # self.y = 0#self.t_margin
+            self.x = x  # restore x but not y after drawing header
+
             if (ws > 0):
                 self.ws = ws
                 self._out(sprintf('%.3f Tw', ws * k))
@@ -938,10 +939,12 @@ class FPDF(object):
         # Store this information for manipulating position.
         location = (self.get_x(), self.get_y())
 
+        # If width is 0, set width to available width between margins
         if (w == 0):
             w = self.w - self.r_margin - self.x
         wmax = (w - 2 * self.c_margin) * 1000.0 / self.font_size
 
+        # Calculate text length
         txt = self.normalize_text(txt)
         s  = txt.replace("\r", '')
         normalized_string_length = len(s)
@@ -978,11 +981,14 @@ class FPDF(object):
                 if (self.ws > 0):
                     self.ws = 0
                     self._out('0 Tw')
-                page_break_triggered = page_break_triggered or \
-                self.cell(w, h = h, txt = substr(s, j, i - j),
-                          border = b, ln = 2, align = align,
-                          fill = fill, link = link)
+                # print('line')
+                # print(self.x, self.y)
+                new_page = self.cell(w, h = h, txt = substr(s, j, i - j),
+                                     border = b, ln = 2, align = align,
+                                     fill = fill, link = link)
+                page_break_triggered = page_break_triggered or new_page
                 text_cells.append(substr(s, j, i - j))
+
                 i   += 1
                 sep  = -1
                 j    = i
@@ -1010,11 +1016,13 @@ class FPDF(object):
                     if (self.ws > 0):
                         self.ws = 0
                         self._out('0 Tw')
-                    page_break_triggered = page_break_triggered or \
-                        self.cell(w, h = h, txt = substr(s, j, i - j),
-                                  border = b, ln = 2, align = align,
-                                  fill = fill, link = link)
+
+                    new_page = self.cell(w, h = h, txt = substr(s, j, i - j),
+                                         border = b, ln = 2, align = align,
+                                         fill = fill, link = link)
+                    page_break_triggered = page_break_triggered or new_page
                     text_cells.append(substr(s, j, i - j))
+
                 else:
                     if (align == 'J'):
                         if ns > 1:
@@ -1022,14 +1030,14 @@ class FPDF(object):
                                        self.font_size / (ns - 1))
                         else:
                             self.ws = 0
-                        if not split_only:
-                            self._out(sprintf('%.3f Tw', self.ws * self.k))
-                    if not split_only:
-                        page_break_triggered = page_break_triggered or \
-                            self.cell(w, h = h, txt = substr(s, j, sep - j),
-                                      border = b, ln = 2, align = align,
-                                      fill = fill, link = link)
+                        self._out(sprintf('%.3f Tw', self.ws * self.k))
+
+                    new_page = self.cell(w, h = h, txt = substr(s, j, sep - j),
+                              border = b, ln = 2, align = align,
+                              fill = fill, link = link)
+                    page_break_triggered = page_break_triggered or new_page
                     text_cells.append(substr(s, j, sep - j))
+
                     i = sep + 1
                 sep  = -1
                 j    = i
@@ -1044,23 +1052,22 @@ class FPDF(object):
         # Last chunk
         if (self.ws > 0):
             self.ws = 0
-            if not split_only:
-                self._out('0 Tw')
+            self._out('0 Tw')
         if (border and 'B' in border):
             b += 'B'
 
-        page_break_triggered = page_break_triggered or \
-            self.cell(w, h = h, txt = substr(s, j, i - j),
-                      border = b, ln = 2, align = align,
-                      fill = fill, link = link)
-        self.x = self.l_margin
+        new_page = self.cell(w, h = h, txt = substr(s, j, i - j),
+                             border = b, ln = 2, align = align,
+                             fill = fill, link = link)
+        page_break_triggered = page_break_triggered or new_page
         text_cells.append(substr(s, j, i - j))
-        nc = len(text_cells)  # number of cells
-        
+        # nc = len(text_cells)  # number of cells
+
         location_options = {
             0: lambda : self.set_xy(location[0] + w, location[1]),
             1: lambda : self.set_x(self.l_margin),  # could control y
-            2: lambda : self.set_xy(location[0], location[1] + nc * h)
+            # 2: lambda : self.set_xy(location[0], location[1] + nc * h)
+            2: lambda : None
         }
         location_options.get(ln, lambda : None)()
 
@@ -1068,8 +1075,8 @@ class FPDF(object):
             self._out = _out        # restore writing function
             self.set_xy(*location)  # restore location
             return text_cells
-        else:
-            return page_break_triggered
+
+        return page_break_triggered
 
     @check_page
     def write(self, h, txt = '', link = ''):
