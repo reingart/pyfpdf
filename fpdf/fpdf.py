@@ -861,15 +861,11 @@ class FPDF(object):
                 for uni in UTF8StringToArray(txt):
                     self.current_font['subset'].append(uni)
                 space = self._escape(UTF8ToUTF16BE(' ', False))
-                # s += sprintf('BT 0 Tw %.2F %.2F Td [',
-                #              ((self.x + dx) * k),
-                #              (self.h -
-                #               self.y +
-                #               (0.5 * h) +
-                #               (0.3 * self.font_size)) * k)
+
                 s += sprintf('BT 0 Tw %.2F %.2F Td [',
                     (self.x + dx)                                            * k,
                     (self.h - (self.y + (0.5 * h) + (0.3 * self.font_size))) * k)
+
 
                 t = txt.split(' ')
                 numt = len(t)
@@ -890,12 +886,6 @@ class FPDF(object):
                 else:
                     txt2 = self._escape(txt)
 
-                # some_value = (self.h - self.y + (.5 * h) +
-                #               (.3 * self.font_size))
-                # s += sprintf('BT %.2f %.2f Td (%s) Tj ET',
-                #              (self.x + dx)  * k,
-                #              (some_value)   * k,
-                #              txt2)
                 s += sprintf('BT %.2f %.2f Td (%s) Tj ET',
                     (self.x + dx)                                          * k,
                     (self.h - (self.y + (.5 * h) + (.3 * self.font_size))) * k,
@@ -981,8 +971,7 @@ class FPDF(object):
                 if (self.ws > 0):
                     self.ws = 0
                     self._out('0 Tw')
-                # print('line')
-                # print(self.x, self.y)
+
                 new_page = self.cell(w, h = h, txt = substr(s, j, i - j),
                                      border = b, ln = 2, align = align,
                                      fill = fill, link = link)
@@ -1061,12 +1050,10 @@ class FPDF(object):
                              fill = fill, link = link)
         page_break_triggered = page_break_triggered or new_page
         text_cells.append(substr(s, j, i - j))
-        # nc = len(text_cells)  # number of cells
 
         location_options = {
             0: lambda : self.set_xy(location[0] + w, location[1]),
             1: lambda : self.set_x(self.l_margin),  # could control y
-            # 2: lambda : self.set_xy(location[0], location[1] + nc * h)
             2: lambda : None
         }
         location_options.get(ln, lambda : None)()
