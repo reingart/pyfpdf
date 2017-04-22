@@ -59,6 +59,10 @@ class CharmapTest(unittest.TestCase):
     ttf = MyTTFontFile()
     ttf.getMetrics(fontpath)
 
+    # the next bit throws four insignificant warnings
+    import warnings
+    warnings.filterwarnings("ignore")
+    
     for counter, character in enumerate(ttf.saveChar, 0):
       # print (counter, character)
       pdf.write(8, u"%03d) %06x - %c" % (counter, character, character))
