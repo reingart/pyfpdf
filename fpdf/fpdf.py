@@ -923,8 +923,9 @@ class FPDF(object):
         """
         page_break_triggered = False
         if split_only:
-            _out = self._out
+            _out, _add_page = self._out, self.add_page
             self._out = lambda *args, **kwargs: None
+            self.add_page = lambda *args, **kwargs: None
 
         # Store this information for manipulating position.
         location = (self.get_x(), self.get_y())
@@ -1059,7 +1060,8 @@ class FPDF(object):
         location_options.get(ln, lambda : None)()
 
         if split_only:
-            self._out = _out        # restore writing function
+            # restore writing functions
+            self._out, self.add_page = _out, _add_page 
             self.set_xy(*location)  # restore location
             return text_cells
 
