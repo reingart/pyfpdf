@@ -1218,11 +1218,11 @@ class FPDF(object):
             self.link(x, y, w, h, link)
 
     @check_page
-    def ln(self, h = ''):
+    def ln(self, h = None):
         "Line Feed; default value is last cell height"
         self.x = self.l_margin
-        if (isinstance(h, basestring)): self.y += self.lasth
-        else:                           self.y += h
+        if h is None: self.y += self.lasth
+        else:         self.y += h
 
     def get_x(self):
         "Get x position"
