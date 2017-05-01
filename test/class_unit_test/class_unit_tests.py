@@ -26,6 +26,28 @@ margin = 10
 class EllipseTest(unittest.TestCase):
   """ShapeWriterTest"""
   PDFClass = fpdf.FPDF
+  def test_ellipse_not_circle(self):
+    pdf = self.PDFClass(unit = 'mm')
+    set_doc_date_0(pdf)
+    pdf.add_page()
+
+    # Styles
+    counter = 0
+    for style in ['', 'F', 'FD', 'DF', None]:
+      counter += 1
+      pdf.ellipse(x=pdf.get_x(), y=pdf.get_y(), w=size/2, h=size, style = style)
+      pdf.set_x(pdf.get_x() + (size / 2) + margin)
+      
+      if counter % 3 == 0:
+        next_row(pdf)
+
+    outfile = relative_path_to("output.pdf")
+    pdf.output(outfile)
+
+    known_good_hash = "169345cb25b662b236d35aa0b473092f"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
+    os.unlink(outfile)
+
   def test_ellipse_style(self):
     pdf = self.PDFClass(unit = 'mm')
     set_doc_date_0(pdf)
@@ -111,6 +133,116 @@ class EllipseTest(unittest.TestCase):
     self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
     os.unlink(outfile)
     
+class RectangleTest(unittest.TestCase):
+  """RectangleTest"""
+  PDFClass = fpdf.FPDF
+  def test_rect_not_square(self):
+    pdf = self.PDFClass(unit = 'mm')
+    set_doc_date_0(pdf)
+    pdf.add_page()
+
+    # Styles
+    counter = 0
+    for style in ['', 'F', 'FD', 'DF', None]:
+      counter += 1
+      pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=size/2, h=size, style = style)
+      pdf.set_x(pdf.get_x() + (size / 2) + margin)
+      
+      if counter % 3 == 0:
+        next_row(pdf)
+
+    outfile = relative_path_to("output.pdf")
+    pdf.output(outfile)
+    # print(calculate_hash_of_file(outfile))
+    known_good_hash = "462a76e02de625f3b3c70a1f8eef9ebc"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
+    os.unlink(outfile)
+
+  def test_rect_style(self):
+    pdf = self.PDFClass(unit = 'mm')
+    set_doc_date_0(pdf)
+    pdf.add_page()
+
+    # Styles
+    counter = 0
+    for style in ['', 'F', 'FD', 'DF', None]:
+      counter += 1
+      pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=size, h=size, style = style)
+      pdf.set_x(pdf.get_x() + size + margin)
+      
+      if counter % 3 == 0:
+        next_row(pdf)
+
+    outfile = relative_path_to("output1.pdf")
+    pdf.output(outfile)
+    # print(calculate_hash_of_file(outfile))
+    known_good_hash = "be8e25fb5f4d3b1822c969d1478cef86"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
+    os.unlink(outfile)
+
+  def test_rect_line_width(self):
+    pdf = self.PDFClass(unit = 'mm')
+    set_doc_date_0(pdf)
+    pdf.add_page()
+
+    # Line Width
+    for line_width in [1, 2, 3]:
+      pdf.set_line_width(line_width)
+      pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=size, h=size, style = None)
+      pdf.set_x(pdf.get_x() + size + margin)
+    next_row(pdf)
+    for line_width in [4, 5, 6]:
+      pdf.set_line_width(line_width)
+      pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=size, h=size, style = None)
+      pdf.set_x(pdf.get_x() + size + margin)
+    pdf.set_line_width(.2)  # reset
+
+    outfile = relative_path_to("output2.pdf")
+    pdf.output(outfile)
+    # print(calculate_hash_of_file(outfile))
+    known_good_hash = "b5b9d94230af38f7429ccd73d3e342bb"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
+    os.unlink(outfile)
+
+  def test_rect_draw_color(self):
+    pdf = self.PDFClass(unit = 'mm')
+    set_doc_date_0(pdf)
+    pdf.add_page()
+
+    # Colors
+    pdf.set_line_width(.5)
+    for gray in [70, 140, 210]:
+      pdf.set_draw_color(gray)
+      pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=size, h=size, style = None)
+      pdf.set_x(pdf.get_x() + size + margin)
+
+    outfile = relative_path_to("output3.pdf")
+    pdf.output(outfile)
+    # print(calculate_hash_of_file(outfile))
+    known_good_hash = "ab22c2b23e19e09387da55fd534d4f4c"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
+    os.unlink(outfile)
+
+  def test_rect_fill_color(self):
+    pdf = self.PDFClass(unit = 'mm')
+    set_doc_date_0(pdf)
+    pdf.add_page()
+
+    pdf.set_fill_color(240)
+    for color in [[230, 30, 180], [30, 180, 30], [30, 30, 70]]:
+      pdf.set_draw_color(*color)
+      pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=size, h=size, style = 'FD')
+      pdf.set_x(pdf.get_x() + size + margin)
+
+    next_row(pdf)
+
+    outfile = relative_path_to("output4.pdf")
+    pdf.output(outfile)
+    # print(calculate_hash_of_file(outfile))
+    known_good_hash = "b3a94f3b3c0282dcbbb5f6127b3dfaab"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
+    os.unlink(outfile)
+
 
 if __name__ == '__main__':
   unittest.main()
