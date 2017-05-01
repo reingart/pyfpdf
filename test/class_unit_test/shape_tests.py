@@ -244,6 +244,81 @@ class RectangleTest(unittest.TestCase):
     os.unlink(outfile)
 
 
+class LineTest(unittest.TestCase):
+  """LineTest"""
+  PDFClass = fpdf.FPDF
+  def test_line(self):
+    pdf = self.PDFClass(unit = 'mm')
+    set_doc_date_0(pdf)
+    pdf.add_page()
+
+    def draw_diagonal_line(pdf, x, y):
+      pdf.line(x, y, x + size, y + (size / 2.0))
+
+    for width in [.71, 1, 2]:
+      pdf.set_line_width(width)
+      draw_diagonal_line(pdf, pdf.get_x(), pdf.get_y())
+      pdf.set_x(pdf.get_x() + size + margin)
+    next_row(pdf)
+
+    for color in [70, 140, 200]:
+      pdf.set_draw_color(color)
+      draw_diagonal_line(pdf, pdf.get_x(), pdf.get_y())
+      pdf.set_x(pdf.get_x() + size + margin)
+    next_row(pdf)
+
+    outfile = relative_path_to('line_output.pdf')
+    pdf.output(outfile)
+    # print(calculate_hash_of_file(outfile))
+    known_good_hash = "684bb1210caf57a77021124e1b8a81ef"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
+    os.unlink(outfile)
+
+  def test_dash(self):
+    pdf = self.PDFClass(unit = 'mm')
+    set_doc_date_0(pdf)
+    pdf.add_page()
+
+    def draw_diagonal_dash(pdf, x, y, *a, **k):
+      pdf.dashed_line(x, y, x + size, y + (size / 2.0), *a, **k)
+
+    for width in [.71, 1, 2]:
+      pdf.set_line_width(width)
+      draw_diagonal_dash(pdf, pdf.get_x(), pdf.get_y(), margin, margin / 2.0)
+      pdf.set_x(pdf.get_x() + size + margin)
+    next_row(pdf)
+
+    for color in [70, 140, 200]:
+      pdf.set_draw_color(color)
+      draw_diagonal_dash(pdf, pdf.get_x(), pdf.get_y(), margin, margin / 2.0)
+      pdf.set_x(pdf.get_x() + size + margin)
+    next_row(pdf)
+
+    pdf.set_draw_color(0)
+    pdf.set_line_width(.2)
+    draw_diagonal_dash(pdf, pdf.get_x(), pdf.get_y(), margin, margin)
+    
+    pdf.set_x(pdf.get_x() + size + margin)
+    draw_diagonal_dash(pdf, pdf.get_x(), pdf.get_y(), margin / 2.0, margin)
+    
+    next_row(pdf)
+    pdf.set_line_width(1)
+    x, y = pdf.get_x(), pdf.get_y()
+    pdf.dashed_line(x, y, x + 100, y + 80, 10, 3)
+    pdf.set_x(pdf.get_x() + 20)
+    x, y = pdf.get_x(), pdf.get_y()
+    pdf.dashed_line(x, y, x + 100, y + 80, 3, 20)
+    pdf.set_x(pdf.get_x() + 20)
+    x, y = pdf.get_x(), pdf.get_y()
+    pdf.dashed_line(x, y, x + 100, y + 80, 6, 17)
+
+    outfile = relative_path_to('line_output1.pdf')
+    pdf.output(outfile)
+    # print(calculate_hash_of_file(outfile))
+    known_good_hash = "4cf8faa9baf3f1835c03fa4ac1e6eb29"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(outfile))
+    os.unlink(outfile)
+
 if __name__ == '__main__':
   unittest.main()
 
