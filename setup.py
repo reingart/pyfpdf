@@ -2,7 +2,7 @@
 
 try:
   from setuptools import setup
-except ImportError:
+except ImportError as e:
   from distutils.core import setup
 
 import os
@@ -36,6 +36,10 @@ if __name__ == '__main__': setup(
   packages     = ['fpdf', ],
   package_dir  = {'fpdf': 'fpdf'},
   test_suite   = 'setup.run_test_suite',
+  install_requires=[
+    'Pillow>=4',
+    'six'
+  ],
   classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",

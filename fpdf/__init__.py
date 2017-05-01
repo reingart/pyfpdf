@@ -59,7 +59,7 @@ __version__ = FPDF_VERSION
 
 try:
   from .html import HTMLMixin
-except ImportError:
+except ImportError as e:
   import warnings
   warnings.warn("web2py gluon package not installed, required for html2pdf")
 

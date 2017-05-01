@@ -34,8 +34,7 @@ from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, UTF8ToUTF16BE, UTF8StringToArray  # print_r
 from .py3k import (
-    PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, exception, b,
-    hashpath
+    PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, b, hashpath
 )
 
 # Global variables
@@ -586,8 +585,8 @@ class FPDF(object):
                     try:
                         with open(unifilename, "wb") as fh:
                             pickle.dump(font_dict, fh)
-                    except IOError:
-                        if not exception().errno == errno.EACCES:
+                    except IOError as e:
+                        if not e.errno == errno.EACCES:
                             raise  # Not a permission error.
                 del ttf
 
@@ -1660,8 +1659,8 @@ class FPDF(object):
                         font_dict['range_interval'] = range_interval
                         font_dict['range']          = range_
                         pickle.dump(font_dict, fh)
-                except IOError:
-                    if not exception().errno == errno.EACCES:
+                except IOError as e:
+                    if not e.errno == errno.EACCES:
                         raise  # Not a permission error.
 
             if cid > 255 and (cid not in subset): continue
@@ -1842,7 +1841,7 @@ class FPDF(object):
             try:
                 creation_date = self.creation_date
                 date_string = creation_date.strftime('%Y%m%d%H%M%S')
-            except Exception:
+            except Exception as e:
                 self.error('Could not format date: ' + str(creation_date))
         else:
             date_string = datetime.now().strftime('%Y%m%d%H%M%S')
@@ -2015,11 +2014,11 @@ class FPDF(object):
                         colspace = 'DeviceRGB' if layers == 3 else \
                             ('DeviceCMYK' if layers == 4 else 'DeviceGray')
                         break
-        except Exception:
+        except Exception as e:
             if f:
                 f.close()
             self.error('Missing or incorrect image file: %s. error: %s' %
-                       (filename, str(exception())))
+                       (filename, str(e)))
 
         with f:
             # Read whole file from the start
@@ -2037,9 +2036,9 @@ class FPDF(object):
             self.error('PIL is required for GIF support')
         try:
             im = Image.open(filename)
-        except Exception:
+        except Exception as e:
             self.error('Missing or incorrect image file: %s. error: %s' %
-                       (filename, str(exception())))
+                       (filename, str(e)))
         else:
             # Use temporary file
             with tempfile.NamedTemporaryFile(delete = False,

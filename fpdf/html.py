@@ -70,7 +70,7 @@ class HTML2FPDF(HTMLParser):
             if 'width' not in self.td and 'colspan' not in self.td:
                 try:
                     l = [self.table_col_width[self.table_col_index]]
-                except IndexError:
+                except IndexError as e:
                     raise RuntimeError("Table column/cell width not specified, unable to continue")
             elif 'colspan' in self.td:
                 i = self.table_col_index
@@ -224,7 +224,7 @@ class HTML2FPDF(HTMLParser):
                 try:
                     self.pdf.set_font(face)
                     self.font_face = face
-                except RuntimeError:
+                except RuntimeError as e:
                     pass # font not found, ignore
             if 'size' in attrs:
                 size = int(attrs.get('size'))
