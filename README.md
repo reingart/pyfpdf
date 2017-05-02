@@ -68,6 +68,17 @@ https://code.google.com/p/pyfpdf/.
 Developers:
 -----------
 
+To get development environment going, on Linux/Ubuntu:
+```bash
+sudo add-apt-repository ppa:fkrull/deadsnakes
+sudo apt-get update
+sudo apt-get install python2.7 python3.3 python3.4 python3.5 \
+  libpython2.7-dev libpython3.3-dev libpython3.4-dev libpython3.5-dev \
+  libpython3.6-dev
+sudo apt-get install python-pip
+sudo pip install tox
+```
+
 There's a lot to sift through, please help. Code removal is presently as vital
 as writing tests/features. There's a lot of stuff in this repository that I
 deleted from master, please help sift through it and make it work/be 
