@@ -6,7 +6,9 @@ import datetime
 
 def set_doc_date_0(doc):
   """Sets the document date to unix epoch start."""
-  zero = datetime.datetime.fromtimestamp(0)
+  # 1969-12-31 19:00:00
+  time_tuple = (1969, 12, 31, 19, 00, 00)
+  zero = datetime.datetime(*time_tuple)
   doc.set_creation_date(zero)
 
 def calculate_hash_of_file(full_path):
