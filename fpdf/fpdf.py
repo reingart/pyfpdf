@@ -2,7 +2,7 @@
 # -*- coding: latin-1 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
-# * Version:  1.7.3                                                          *
+# * Version:  2.0.0                                                          *
 # * Date:     2010-09-10                                                     *
 # * Last update: 2017-05-04                                                  *
 # * License:  LGPL v3.0                                                      *
@@ -44,7 +44,7 @@ from .util import (
 from .errors import fpdf_error
 
 # Global variables
-FPDF_VERSION = '1.7.3'
+FPDF_VERSION = '2.0.0'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__), 'font')
 FPDF_CACHE_MODE = 0  # 0 - in same folder, 1 - none, 2 - hash
 FPDF_CACHE_DIR = None
