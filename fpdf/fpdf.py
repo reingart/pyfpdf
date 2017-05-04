@@ -4,12 +4,13 @@
 # * Software: FPDF for python                                                *
 # * Version:  1.7.3                                                          *
 # * Date:     2010-09-10                                                     *
-# * Last update: 2012-08-16                                                  *
+# * Last update: 2017-05-04                                                  *
 # * License:  LGPL v3.0                                                      *
 # *                                                                          *
 # * Original Author (PHP):  Olivier PLATHEY 2004-12-31                       *
 # * Ported to Python 2.4 by Max (maxpat78@yahoo.it) on 2006-05               *
 # * Maintainer:  Mariano Reingart (reingart@gmail.com) et al since 2008 est. *
+# * Maintainer:  David Alexander (daveankin@gmail.com) et al since 2017 est. *
 # * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT  *
 # ****************************************************************************
 """fpdf module (in fpdf package housing FPDF class)
@@ -36,6 +37,11 @@ from .php import substr, sprintf, UTF8ToUTF16BE, UTF8StringToArray  # print_r
 from .py3k import (
     PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, b, hashpath
 )
+from .util import (
+    freadint as read_integer, textstring as enclose_in_parens,
+    escape as escape_parens
+)
+from .errors import fpdf_error
 
 # Global variables
 FPDF_VERSION = '1.7.3'
@@ -153,7 +159,7 @@ class FPDF(object):
         elif unit == 'in':
             self.k = 72.
         else:
-            self.error("Incorrect unit: " + unit)
+            fpdf_error("Incorrect unit: " + unit)
 
         # Page format
         self.fw_pt, self.fh_pt = get_page_format(format, self.k)
@@ -173,7 +179,7 @@ class FPDF(object):
             self.w_pt = self.fh_pt
             self.h_pt = self.fw_pt
         else:
-            self.error('Incorrect orientation: ' + orientation)
+            fpdf_error('Incorrect orientation: ' + orientation)
         self.cur_orientation = self.def_orientation
         self.w = self.w_pt / self.k
         self.h = self.h_pt / self.k
@@ -194,7 +200,7 @@ class FPDF(object):
         @wraps(fn)
         def wrapper(self, *args, **kwargs):
             if not self.page and not kwargs.get('split_only'):
-                self.error("No page open, you need to call add_page() first")
+                fpdf_error("No page open, you need to call add_page() first")
             else:
                 return fn(self, *args, **kwargs)
         return wrapper
@@ -238,12 +244,12 @@ class FPDF(object):
         elif not isinstance(zoom, basestring):
             self.zoom_mode = zoom
         else:
-            self.error('Incorrect zoom display mode: ' + zoom)
+            fpdf_error('Incorrect zoom display mode: ' + zoom)
 
         if layout in ['single', 'continuous', 'two', 'default']:
             self.layout_mode = layout
         else:
-            self.error('Incorrect layout display mode: ' + layout)
+            fpdf_error('Incorrect layout display mode: ' + layout)
 
     def set_compression(self, compress):
         "Set page compression"
@@ -278,7 +284,7 @@ class FPDF(object):
         if opt == "core_fonts_encoding":
             self.core_fonts_encoding = value
         else:
-            self.error("Unknown document option \"%s\"" % str(opt))
+            fpdf_error("Unknown document option \"%s\"" % str(opt))
 
     def alias_nb_pages(self, alias = '{nb}'):
         "Define an alias for total number of pages"
@@ -675,7 +681,7 @@ class FPDF(object):
                     with open(name + '.font') as file:
                         exec(compile(file.read(), name + '.font', 'exec'))
                     if fontkey not in fpdf_charwidths:
-                        self.error('Could not include font metric file for' +
+                        fpdf_error('Could not include font metric file for' +
                                    fontkey)
                 i = len(self.fonts) + 1
                 self.fonts[fontkey] = {
@@ -687,7 +693,7 @@ class FPDF(object):
                     'cw'   : fpdf_charwidths[fontkey]
                 }
             else:
-                self.error('Undefined font: ' + family + ' ' + style)
+                fpdf_error('Undefined font: ' + family + ' ' + style)
 
         # Select it
         self.font_family   = family
@@ -745,11 +751,11 @@ class FPDF(object):
         "Output a string"
         txt = self.normalize_text(txt)
         if (self.unifontsubset):
-            txt2 = self._escape(UTF8ToUTF16BE(txt, False))
+            txt2 = escape_parens(UTF8ToUTF16BE(txt, False))
             for uni in UTF8StringToArray(txt):
                 self.current_font['subset'].append(uni)
         else:
-            txt2 = self._escape(txt)
+            txt2 = escape_parens(txt)
         s = sprintf('BT %.2f %.2f Td (%s) Tj ET',
                     x            * self.k,
                     (self.h - y) * self.k,
@@ -859,7 +865,7 @@ class FPDF(object):
             if (self.ws and self.unifontsubset):
                 for uni in UTF8StringToArray(txt):
                     self.current_font['subset'].append(uni)
-                space = self._escape(UTF8ToUTF16BE(' ', False))
+                space = escape_parens(UTF8ToUTF16BE(' ', False))
 
                 s += sprintf('BT 0 Tw %.2F %.2F Td [',
                     (self.x + dx)                                            * k,
@@ -870,7 +876,9 @@ class FPDF(object):
                 numt = len(t)
                 for i in range(numt):
                     tx = t[i]
-                    tx = '(' + self._escape(UTF8ToUTF16BE(tx, False)) + ')'
+                    tx = enclose_in_parens(
+                        escape_parens(UTF8ToUTF16BE(tx, False))
+                    )
                     s += sprintf('%s ', tx)
                     if ((i + 1) < numt):
                         adj = -(self.ws * self.k) * 1000 / self.font_size_pt
@@ -879,11 +887,11 @@ class FPDF(object):
                 s += ' ET'
             else:
                 if (self.unifontsubset):
-                    txt2 = self._escape(UTF8ToUTF16BE(txt, False))
+                    txt2 = escape_parens(UTF8ToUTF16BE(txt, False))
                     for uni in UTF8StringToArray(txt):
                         self.current_font['subset'].append(uni)
                 else:
-                    txt2 = self._escape(txt)
+                    txt2 = escape_parens(txt)
 
                 s += sprintf('BT %.2f %.2f Td (%s) Tj ET',
                     (self.x + dx)                                          * k,
@@ -1144,7 +1152,7 @@ class FPDF(object):
             if (type == ''):
                 pos = name.rfind('.')
                 if (not pos):
-                    self.error(('image file has no extension and no '
+                    fpdf_error(('image file has no extension and no '
                                 'type was specified: ' + name))
                 type = substr(name, pos + 1)
 
@@ -1175,12 +1183,12 @@ class FPDF(object):
                 if not succeed_parsing:
                     mtd = '_parse' + type
                     if not hasattr(self, mtd):
-                        self.error('Unsupported image type: ' + type)
+                        fpdf_error('Unsupported image type: ' + type)
                     info = getattr(self, mtd)(name)
                 mtd = '_parse' + type
 
                 if not hasattr(self, mtd):
-                    self.error('Unsupported image type: ' + type)
+                    fpdf_error('Unsupported image type: ' + type)
                 info = getattr(self, mtd)(name)
             info['i'] = len(self.images) + 1
             self.images[name] = info
@@ -1281,7 +1289,7 @@ class FPDF(object):
         elif dest == 'S': return buffer
 
         else:
-            self.error('Incorrect output destination: ' + dest)
+            fpdf_error('Incorrect output destination: ' + dest)
 
     def normalize_text(self, txt):
         "Check that text input is in the correct format/encoding"
@@ -1300,7 +1308,7 @@ class FPDF(object):
     def _dochecks(self):
         # Check for locale-related bug
         # if (1.1==1):
-        #     self.error("Don\'t alter the locale before "
+        #     fpdf_error("Don\'t alter the locale before "
         #                "including class file")
         # Check for decimal separator
         if (sprintf('%.1f', 1.0) != '1.0'):
@@ -1356,7 +1364,7 @@ class FPDF(object):
                               rect + '] /Border [0 0 0] '
                     if isinstance(pl[4], basestring):
                         annots += '/A <</S /URI /URI ' + \
-                                  self._textstring(pl[4]) + '>>>>'
+                                  enclose_in_parens(pl[4]) + '>>>>'
                     else:
                         l = self.links[pl[4]]
                         # if l[0] in self.orientation_changes: h = w_pt
@@ -1512,7 +1520,7 @@ class FPDF(object):
                 self._out('/Subtype /Type0')
                 self._out('/BaseFont /' + fontname + '')
                 self._out('/Encoding /Identity-H')
-                self._out('/DescendantFonts [' + str(self.n + 1) + ' 0 R]')
+                self._out('/DescendantFonts [' + str(self.n + 1) + ' 0 R' + ']')
                 self._out('/ToUnicode ' + str(self.n + 2) + ' 0 R')
                 self._out('>>')
                 self._out('endobj')
@@ -1617,7 +1625,7 @@ class FPDF(object):
                 mtd = '_put' + my_type.lower()
                 # check if self has a attr mtd which is callable (method)
                 if (not callable(getattr(self, mtd, None))):
-                    self.error('Unsupported font type: ' + my_type)
+                    fpdf_error('Unsupported font type: ' + my_type)
                 self.mtd(font)
 
     def _putTTfontwidths(self, font, maxUni):
@@ -1827,7 +1835,7 @@ class FPDF(object):
         self._out('endobj')
 
     def _putinfo(self):
-        ts = lambda a: self._textstring(a)
+        ts = lambda a: enclose_in_parens(a)
         so = self._out
 
         # so('/Producer ' + ts('PyFPDF ' + FPDF_VERSION + \
@@ -1842,7 +1850,7 @@ class FPDF(object):
                 creation_date = self.creation_date
                 date_string = creation_date.strftime('%Y%m%d%H%M%S')
             except Exception as e:
-                self.error('Could not format date: ' + str(creation_date))
+                fpdf_error('Could not format date: ' + str(creation_date))
         else:
             date_string = datetime.now().strftime('%Y%m%d%H%M%S')
         so('/CreationDate ' + ts('D:' + date_string))
@@ -1979,7 +1987,7 @@ class FPDF(object):
                 f = open(filename, "rb")
             return f
         else:
-            self.error("Unknown resource loading reason \"%s\"" % reason)
+            fpdf_error("Unknown resource loading reason \"%s\"" % reason)
 
     def _parsejpg(self, filename):
         # Extract info from a JPEG file
@@ -2017,7 +2025,7 @@ class FPDF(object):
         except Exception as e:
             if f:
                 f.close()
-            self.error('Missing or incorrect image file: %s. error: %s' %
+            fpdf_error('Missing or incorrect image file: %s. error: %s' %
                        (filename, str(e)))
 
         with f:
@@ -2033,11 +2041,11 @@ class FPDF(object):
     def _parsegif(self, filename):
         # Extract info from a GIF file (via PNG conversion)
         if Image is None:
-            self.error('PIL is required for GIF support')
+            fpdf_error('PIL is required for GIF support')
         try:
             im = Image.open(filename)
         except Exception as e:
-            self.error('Missing or incorrect image file: %s. error: %s' %
+            fpdf_error('Missing or incorrect image file: %s. error: %s' %
                        (filename, str(e)))
         else:
             # Use temporary file
@@ -2062,18 +2070,18 @@ class FPDF(object):
         if not PY3K:
             signature = signature.decode("latin1")
         if (magic != signature):
-            self.error('Not a PNG file: ' + filename)
+            fpdf_error('Not a PNG file: ' + filename)
 
         # Read header chunk
         f.read(4)
         chunk = f.read(4).decode("latin1")
         if (chunk != 'IHDR'):
-            self.error('Incorrect PNG file: ' + filename)
-        w = self._freadint(f)
-        h = self._freadint(f)
+            fpdf_error('Incorrect PNG file: ' + filename)
+        w = read_integer(f)
+        h = read_integer(f)
         bpc = ord(f.read(1))
         if (bpc > 8):
-            self.error('16-bit depth not supported: ' + filename)
+            fpdf_error('16-bit depth not supported: ' + filename)
         ct = ord(f.read(1))
         if (ct == 0 or ct == 4):
             colspace = 'DeviceGray'
@@ -2082,14 +2090,14 @@ class FPDF(object):
         elif (ct == 3):
             colspace = 'Indexed'
         else:
-            self.error('Unknown color type: ' + filename)
+            fpdf_error('Unknown color type: ' + filename)
 
         if (ord(f.read(1)) != 0):
-            self.error('Unknown compression method: ' + filename)
+            fpdf_error('Unknown compression method: ' + filename)
         if (ord(f.read(1)) != 0):
-            self.error('Unknown filter method: '     + filename)
+            fpdf_error('Unknown filter method: '     + filename)
         if (ord(f.read(1)) != 0):
-            self.error('Interlacing not supported: ' + filename)
+            fpdf_error('Interlacing not supported: ' + filename)
         f.read(4)
 
         dp = '/Predictor 15 /Colors '
@@ -2102,12 +2110,14 @@ class FPDF(object):
         data = bytes() if PY3K else str()
         n    = 1
         while n is not None:
-            n       = self._freadint(f)
+            n       = read_integer(f)
+
             my_type = f.read(4).decode("latin1")
             if (my_type == 'PLTE'):
                 # Read palette
                 pal = f.read(n)
                 f.read(4)
+
             elif (my_type == 'tRNS'):
                 # Read transparency info
                 t = f.read(n)
@@ -2124,16 +2134,23 @@ class FPDF(object):
                     if (pos != -1):
                         trns = [pos, ]
                 f.read(4)
+
             elif (my_type == 'IDAT'):
                 # Read image data block
                 data += f.read(n)
                 f.read(4)
+
             elif (my_type == 'IEND'):
                 break
-            else:
+
+            # bug fix @4306eaf24e81596af29117cf3d606242a5edfb89
+            # shoutout to https://github.com/klaplong
+            # read_integer returns None if struct#unpack errors out
+            elif n is not None:
                 f.read(n + 4)
+
         if (colspace == 'Indexed' and not pal):
-            self.error('Missing palette in ' + filename)
+            fpdf_error('Missing palette in ' + filename)
         f.close()
         info = {
             'w'  : w,             'h'   : h,
@@ -2179,24 +2196,6 @@ class FPDF(object):
                 self.pdf_version = '1.4'
         info['data'] = data
         return info
-
-    def _freadint(self, f):
-        # Read a 4-byte integer from file
-        try:
-            return struct.unpack('>I', f.read(4))[0]
-        except:
-            return None
-
-    def _textstring(self, s):
-        # Format a text string
-        return '(' + self._escape(s) + ')'
-
-    def _escape(self, s):
-        # Add \ before \, ( and )
-        return s.replace('\\', '\\\\') \
-                .replace(')', '\\)') \
-                .replace('(', '\\(') \
-                .replace('\r', '\\r')
 
     def _putstream(self, s):
         self._out('stream')
