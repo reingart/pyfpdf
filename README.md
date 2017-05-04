@@ -35,6 +35,10 @@ Installation Instructions:
 To get the latest development version you can download the source code running:
 
 ```
+  # Linux only:
+  sudo apt-get install libjpeg-dev libpython-dev zlib1g-dev # libpython3.3-dev #(if necessary)
+
+  # Linux and Windows:
   git clone https://github.com/alexanderankin/pyfpdf.git
   cd pyfpdf
   python setup.py install
