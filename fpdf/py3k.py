@@ -7,14 +7,8 @@ import sys
 
 PY3K = sys.version_info >= (3, 0)
 
-Image = None
-urlopen = None
-try:
-    from PIL import Image
-    from six.moves.urllib.request import urlopen
-except ImportError as e:
-    pass  # we are in setup.py
-
+from PIL import Image
+from six.moves.urllib.request import urlopen
 from hashlib import md5  # python <2.6 not supported
 from io import BytesIO  # python <2.6 not supported
 

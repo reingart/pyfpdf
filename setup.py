@@ -14,16 +14,17 @@ import unittest
 def run_test_suite():
   return unittest.TestLoader().discover('test', pattern = '*.py')
 
-import fpdf
-
 def read(path):
   """Read a file's contents."""
   with open(path, 'r') as f:
     return f.read()
 
+import re
+version = re.findall(r"Version:  (\d+.\d+.\d+)", read('./fpdf/fpdf.py'))[0]
+
 if __name__ == '__main__': setup(
   name         = 'fpdf',
-  version      = fpdf.__version__,
+  version      = version,
   description  = 'Simple PDF generation for Python',
   long_description = read('./PyPIReadme.rst'),
   author           = 'Olivier PLATHEY ported by Max',
@@ -32,7 +33,7 @@ if __name__ == '__main__': setup(
   maintainer_email = "daveankin@gmail.com",
   url          = 'http://code.google.com/p/pyfpdf',
   license      = 'LGPLv3+',
-  download_url = "https://github.com/alexanderankin/pyfpdf/tarball/%s" % fpdf.__version__,
+  download_url = "https://github.com/alexanderankin/pyfpdf/tarball/%s" % version,
   packages     = ['fpdf', ],
   package_dir  = {'fpdf': 'fpdf'},
   test_suite   = 'setup.run_test_suite',
