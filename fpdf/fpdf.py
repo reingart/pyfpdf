@@ -106,8 +106,6 @@ class FPDF(object):
     "PDF Generation class"
 
     def __init__(self, orientation = 'P', unit = 'mm', format = 'A4'):
-        # Some checks
-        self._dochecks()
         # Initialization of properties
         self.offsets = {}               # array of object offsets
         self.page = 0                   # current page number
@@ -1306,21 +1304,6 @@ class FPDF(object):
                 return txt.encode(self.core_fonts_encoding).decode("latin-1")
         return txt
 
-    def _dochecks(self):
-        # Check for locale-related bug
-        # if (1.1==1):
-        #     fpdf_error("Don\'t alter the locale before "
-        #                "including class file")
-        # Check for decimal separator
-        if (sprintf('%.1f', 1.0) != '1.0'):
-            import locale
-            locale.setlocale(locale.LC_NUMERIC, 'C')
-
-    # TODO BUG
-    def _getfontpath(self):
-        # global FPDF_FONT_DIR
-        return FPDF_FONT_DIR + '/'
-
     def _putpages(self):
         nb = self.page
         if hasattr(self, 'str_alias_nb_pages'):
@@ -1419,7 +1402,7 @@ class FPDF(object):
                 # Font file embedding
                 self._newobj()
                 self.font_files[name]['n'] = self.n
-                with open(self._getfontpath() + name, 'rb', 1) as f:
+                with open(os.path.join(FPDF_FONT_DIR, name), 'rb', 1) as f:
                     font = f.read()
                 compressed = (substr(name, -2) == '.z')
                 if (not compressed and 'length2' in info):
