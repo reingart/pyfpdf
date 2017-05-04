@@ -10,8 +10,7 @@ Compared with other PDF libraries, PyFPDF is simple, small and
 versatile, with advanced capabilities, and is easy to learn, extend and
 maintain.
 
-This branch of the library is currently not tested so best stick to `this
-version <https://github.com/reingart/pyfpdf>`__ for now.
+THIS VERSION IS AN UPDATED VERSION OF THE PYPI 'fpdf' PACKAGE.
 
 Features:
 ---------

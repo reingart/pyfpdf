@@ -23,7 +23,7 @@ import re
 version = re.findall(r"Version:  (\d+.\d+.\d+)", read('./fpdf/fpdf.py'))[0]
 
 if __name__ == '__main__': setup(
-  name         = 'fpdf',
+  name         = 'pyfpdf',
   version      = version,
   description  = 'Simple PDF generation for Python',
   long_description = read('./PyPIReadme.rst'),
