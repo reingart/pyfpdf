@@ -42,6 +42,9 @@ from .util import (
     escape as escape_parens
 )
 from .errors import fpdf_error
+from .image_parsing import (
+    get_png_info, get_jpg_info, load_resource as image_parsing_load_resource
+)
 
 # Global variables
 FPDF_VERSION = '2.0.0'
@@ -1190,6 +1193,8 @@ class FPDF(object):
                 if not hasattr(self, mtd):
                     fpdf_error('Unsupported image type: ' + type)
                 info = getattr(self, mtd)(name)
+
+            # print info['i']
             info['i'] = len(self.images) + 1
             self.images[name] = info
         else:
@@ -1975,68 +1980,11 @@ class FPDF(object):
                        w * self.k,
                        -ut / 1000.0 * self.font_size_pt)
 
-    def load_resource(self, reason, filename):
-        "Load external file"
-        # by default loading from network is allowed for all images
-
-        if reason == "image":
-            if filename.startswith("http://") or \
-               filename.startswith("https://"):
-                f = BytesIO(urlopen(filename).read())
-            else:
-                f = open(filename, "rb")
-            return f
-        else:
-            fpdf_error("Unknown resource loading reason \"%s\"" % reason)
-
     def _parsejpg(self, filename):
         # Extract info from a JPEG file
-        f = None
-        try:
-            f = self.load_resource("image", filename)
-            while True:
-                markerHigh, markerLow = struct.unpack('BB', f.read(2))
+        f = image_parsing_load_resource(filename)
 
-                def marker_in_range(ival):
-                    """returns if marker is in the range"""
-                    return markerLow >= ival[0] and markerLow <= ival[1]
-
-                if markerHigh != 0xFF or markerLow < 0xC0:
-                    raise SyntaxError('No JPEG marker found')
-                elif markerLow == 0xDA:  # SOS
-                    raise SyntaxError('No JPEG SOF marker found')
-                elif (markerLow == 0xC8 or              # JPG
-                      marker_in_range((0xD0, 0xD9)) or  # RSTx
-                      marker_in_range((0xF0, 0xFD))):   # JPGx
-                    pass
-                else:
-                    dataSize, = struct.unpack('>H', f.read(2))
-                    data = f.read(dataSize - 2) if dataSize > 2 else ''
-
-                    if ((marker_in_range((0xC0, 0xC3)) or  # SOF0 - SOF3
-                         marker_in_range((0xC5, 0xC7)) or  # SOF4 - SOF7
-                         marker_in_range((0xC9, 0xCB)) or  # SOF9 - SOF11
-                         marker_in_range((0xCD, 0xCF)))):  # SOF13 - SOF15
-                        bpc, height, width, layers = \
-                            struct.unpack_from('>BHHB', data)
-                        colspace = 'DeviceRGB' if layers == 3 else \
-                            ('DeviceCMYK' if layers == 4 else 'DeviceGray')
-                        break
-        except Exception as e:
-            if f:
-                f.close()
-            fpdf_error('Missing or incorrect image file: %s. error: %s' %
-                       (filename, str(e)))
-
-        with f:
-            # Read whole file from the start
-            f.seek(0)
-            data = f.read()
-        return {
-            'w'  : width,       'h'    : height,
-            'cs' : colspace,    'bpc'  : bpc,
-            'f'  : 'DCTDecode', 'data' : data
-        }
+        return get_jpg_info(f)
 
     def _parsegif(self, filename):
         # Extract info from a GIF file (via PNG conversion)
@@ -2062,139 +2010,13 @@ class FPDF(object):
 
     def _parsepng(self, filename):
         # Extract info from a PNG file
-        f = self.load_resource("image", filename)
+        f = image_parsing_load_resource(filename)
+        
+        info = get_png_info(f)
 
-        # Check signature
-        magic = f.read(8).decode("latin1")
-        signature = '\x89' + 'PNG' + '\r' + '\n' + '\x1a' + '\n'
-        if not PY3K:
-            signature = signature.decode("latin1")
-        if (magic != signature):
-            fpdf_error('Not a PNG file: ' + filename)
+        if ('smask' in info):
+            self.pdf_version = '1.4'
 
-        # Read header chunk
-        f.read(4)
-        chunk = f.read(4).decode("latin1")
-        if (chunk != 'IHDR'):
-            fpdf_error('Incorrect PNG file: ' + filename)
-        w = read_integer(f)
-        h = read_integer(f)
-        bpc = ord(f.read(1))
-        if (bpc > 8):
-            fpdf_error('16-bit depth not supported: ' + filename)
-        ct = ord(f.read(1))
-        if (ct == 0 or ct == 4):
-            colspace = 'DeviceGray'
-        elif (ct == 2 or ct == 6):
-            colspace = 'DeviceRGB'
-        elif (ct == 3):
-            colspace = 'Indexed'
-        else:
-            fpdf_error('Unknown color type: ' + filename)
-
-        if (ord(f.read(1)) != 0):
-            fpdf_error('Unknown compression method: ' + filename)
-        if (ord(f.read(1)) != 0):
-            fpdf_error('Unknown filter method: '     + filename)
-        if (ord(f.read(1)) != 0):
-            fpdf_error('Interlacing not supported: ' + filename)
-        f.read(4)
-
-        dp = '/Predictor 15 /Colors '
-        dp += '3' if colspace == 'DeviceRGB' else '1'
-        dp += ' /BitsPerComponent ' + str(bpc) + ' /Columns ' + str(w) + ''
-
-        # Scan chunks looking for palette, transparency and image data
-        pal  = ''
-        trns = ''
-        data = bytes() if PY3K else str()
-        n    = 1
-        while n is not None:
-            n       = read_integer(f)
-
-            my_type = f.read(4).decode("latin1")
-            if (my_type == 'PLTE'):
-                # Read palette
-                pal = f.read(n)
-                f.read(4)
-
-            elif (my_type == 'tRNS'):
-                # Read transparency info
-                t = f.read(n)
-                if (ct == 0):
-                    trns = [ord(substr(t, 1, 1))]
-                elif (ct == 2):
-                    trns = [
-                        ord(substr(t, 1, 1)),
-                        ord(substr(t, 3, 1)),
-                        ord(substr(t, 5, 1))
-                    ]
-                else:
-                    pos = t.find('\x00'.encode("latin1"))
-                    if (pos != -1):
-                        trns = [pos, ]
-                f.read(4)
-
-            elif (my_type == 'IDAT'):
-                # Read image data block
-                data += f.read(n)
-                f.read(4)
-
-            elif (my_type == 'IEND'):
-                break
-
-            # bug fix @4306eaf24e81596af29117cf3d606242a5edfb89
-            # shoutout to https://github.com/klaplong
-            # read_integer returns None if struct#unpack errors out
-            elif n is not None:
-                f.read(n + 4)
-
-        if (colspace == 'Indexed' and not pal):
-            fpdf_error('Missing palette in ' + filename)
-        f.close()
-        info = {
-            'w'  : w,             'h'   : h,
-            'cs' : colspace,      'bpc' : bpc,
-            'f'  : 'FlateDecode', 'dp'  : dp,
-            'pal': pal,           'trns': trns
-        }
-        if (ct >= 4):  # if ct == 4, or == 6
-            # Extract alpha channel
-            make_re = lambda regex: re.compile(regex, flags = re.DOTALL)
-
-            data  = zlib.decompress(data)
-            color = b('')
-            alpha = b('')
-            if (ct == 4):
-                # Gray image
-                length = 2 * w
-                for i in range(h):
-                    pos    = (1 + length) * i
-                    color += b(data[pos])
-                    alpha += b(data[pos])
-                    line   = substr(data, pos + 1, length)
-                    re_c   = make_re('(.).'.encode("ascii"))
-                    re_a   = make_re('.(.)'.encode("ascii"))
-                    color += re_c.sub(lambda m: m.group(1), line)
-                    alpha += re_a.sub(lambda m: m.group(1), line)
-            else:
-                # RGB image
-                length = 4 * w
-                for i in range(h):
-                    pos    = (1 + length) * i
-                    color += b(data[pos])
-                    alpha += b(data[pos])
-                    line   = substr(data, pos + 1, length)
-                    re_c   = make_re('(...).'.encode("ascii"))
-                    re_a   = make_re('...(.)'.encode("ascii"))
-                    color += re_c.sub(lambda m: m.group(1), line)
-                    alpha += re_a.sub(lambda m: m.group(1), line)
-            del data
-            data = zlib.compress(color)
-            info['smask'] = zlib.compress(alpha)
-            if (self.pdf_version < '1.4'):
-                self.pdf_version = '1.4'
-        info['data'] = data
         return info
 
     def _putstream(self, s):

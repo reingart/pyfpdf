@@ -33,6 +33,22 @@ class Issue65Test(unittest.TestCase):
     self.assertEqual(known_good_hash, calculate_hash_of_file(test))
     os.unlink(test)
 
+  def test_jpg(self):
+    pdf = fpdf.FPDF()
+    pdf.compress = False
+    pdf.add_page()
+    jpg = ("https://upload.wikimedia.org/wikipedia/commons/8/8c/"
+           "JPEG_example_JPG_RIP_025.jpg")
+    pdf.image(jpg, x = 15, y = 15)
+
+    set_doc_date_0(pdf)
+    test = relative_path_to('issue65_test.pdf')
+    pdf.output(test, 'F')
+
+    known_good_hash = "0486acfcd75597cc52ca2eb69e74c59c"
+    self.assertEqual(known_good_hash, calculate_hash_of_file(test))
+    os.unlink(test)
+
 if __name__ == '__main__':
   unittest.main()
   # pass
@@ -43,6 +59,21 @@ if __name__ == '__main__':
 # pdf.add_page()
 # png = "https://g.twimg.com/Twitter_logo_blue.png"
 # pdf.image(png, x = 15, y = 15, w = 30, h = 25)
+
+# test = relative_path_to('output.pdf')
+
+# set_doc_date_0(pdf)
+# pdf.output(test, 'F')
+
+# print(calculate_hash_of_file(test))
+# os.unlink(test)
+
+# pdf = fpdf.FPDF()
+# pdf.compress = False
+# pdf.add_page()
+# jpg = ("https://upload.wikimedia.org/wikipedia/commons/8/8c/"
+#        "JPEG_example_JPG_RIP_025.jpg")
+# pdf.image(jpg, x = 15, y = 15)
 
 # test = relative_path_to('output.pdf')
 
