@@ -1560,7 +1560,8 @@ class FPDF(object):
         i.sort()
         for idx,info in i:
             self._putimage(info)
-            del info['data']
+            if 'data' in info :
+                del info['data']
             if 'smask' in info:
                 del info['smask']
 
