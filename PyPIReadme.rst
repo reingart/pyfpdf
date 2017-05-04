@@ -10,20 +10,17 @@ Compared with other PDF libraries, PyFPDF is simple, small and
 versatile, with advanced capabilities, and is easy to learn, extend and
 maintain.
 
-THIS VERSION IS AN UPDATED VERSION OF THE PYPI 'fpdf' PACKAGE.
+THIS VERSION IS AN UPDATED VERSION OF THE PyPI 'fpdf' PACKAGE.
 
 Features:
 ---------
 
--  Python 2.5 to 3.4 support
+-  Python 2.7 to 3.5 support
 -  Unicode (UTF-8) TrueType font subset embedding
 -  Internal/External Links
 -  PNG, GIF and JPG support (including transparency and alpha channel)
 -  Shape, Line Drawing
 -  Cell/Multi-cell/Plaintext writing, Automatic page breaks
--  Basic html2pdf (Templates with a visual designer in the works)
--  Exceptions support, other minor fixes, improvements and PEP8 code
-   cleanups
 
 Installation Instructions:
 --------------------------
@@ -42,13 +39,7 @@ installers. For example, using pip:
 
 ::
 
-      pip install fpdf
-
-**Note:** the `Python Imaging
-Library <http://www.pythonware.com/products/pil/>`__ (PIL) is needed for
-GIF support. PNG and JPG support is built-in and doesn't require any
-external dependency. For Python 3, `Pillow - The friendly PIL
-fork <https://github.com/python-pillow/Pillow>`__ is supported.
+      pip install fpdf2
 
 Documentation:
 --------------

@@ -5,11 +5,6 @@ try:
 except ImportError as e:
   from distutils.core import setup
 
-import os
-import sys
-import warnings
-import subprocess
-
 import unittest
 def run_test_suite():
   return unittest.TestLoader().discover('test', pattern = '*.py')
@@ -31,7 +26,7 @@ if __name__ == '__main__': setup(
   author_email     = 'maxpat78@yahoo.it',
   maintainer       = "David Ankin",
   maintainer_email = "daveankin@gmail.com",
-  url          = 'http://code.google.com/p/pyfpdf',
+  url          = 'https://alexanderankin.github.io/pyfpdf/',
   license      = 'LGPLv3+',
   download_url = "https://github.com/alexanderankin/pyfpdf/tarball/%s" % version,
   packages     = ['fpdf', ],
