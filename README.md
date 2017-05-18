@@ -3,6 +3,18 @@ pyfpdf: FPDF for Python
 
 [![codecov](https://codecov.io/gh/alexanderankin/pyfpdf/branch/master/graph/badge.svg)](https://codecov.io/gh/alexanderankin/pyfpdf)
 
+Minimalist PDF creation library for Python
+
+```python
+from fpdf import FPDF
+
+document = FPDF()
+document.add_page()
+document.set_font('Arial', size=12)
+document.cell(w=0, txt="hello world")
+document.output("hello_world.pdf")
+```
+
 PyFPDF is a library for PDF document generation under Python, ported from PHP
 (see [FPDF][1]: "Free"-PDF, a well-known PDFlib-extension replacement with many
 examples, scripts and derivatives).
@@ -19,7 +31,7 @@ currently not tested so best stick to
 Features:
 ---------
 
- * Python 2.7 to 3.4 support
+ * Python 2.7 to 3.5 support
  * Unicode (UTF-8) TrueType font subset embedding
  * Internal/External Links
  * PNG, GIF and JPG support (including transparency and alpha channel)
@@ -32,7 +44,15 @@ Features:
 Installation Instructions:
 --------------------------
 
-To get the latest development version you can download the source code running:
+You can install PyFPDF from PyPI, with easyinstall or from Windows 
+installers. For example, using pip:
+
+```bash
+pip install fpdf2
+```
+
+To get the latest development version you can download the source code
+running, you will need Pillow (`pip install pillow`)
 
 ```
   # Linux only:
@@ -44,30 +64,12 @@ To get the latest development version you can download the source code running:
   python setup.py install
 ```
 
-You can also install PyFPDF from PyPI, with easyinstall or from Windows 
-installers. For example, using pip:
-```
-  pip install fpdf
-```
-
-**Note:** the [Python Imaging Library](http://www.pythonware.com/products/pil/)
-(PIL) is needed for GIF support. PNG and JPG support is built-in and doesn't 
-require any external dependency. For Python 3, 
-[Pillow - The friendly PIL fork](https://github.com/python-pillow/Pillow) is 
-supported.
-
 Documentation:
 --------------
-[![Documentation Status](https://readthedocs.org/projects/pyfpdf/badge/?version=latest)](http://pyfpdf.rtfd.org)
 
- * [Read the Docs](http://pyfpdf.readthedocs.org/en/latest/)
- * [FAQ](docs/FAQ.md)
- * [Tutorial](docs/Tutorial.md) (Spanish translation available)
- * [Reference Manual](docs/ReferenceManual.md)
+[Documentation Home](https://alexanderankin.github.io/pyfpdf/).
 
-For further information, see the project site:
-https://github.com/reingart/pyfpdf or the old Google Code project page
-https://code.google.com/p/pyfpdf/.
+Also read the design-spec/tests, they're great.
 
 Developers:
 -----------
