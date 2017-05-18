@@ -16,30 +16,13 @@ document.output("hello_world.pdf")
 ```
 
 PyFPDF is a library for PDF document generation under Python, ported from PHP
-(see [FPDF][1]: "Free"-PDF, a well-known PDFlib-extension replacement with many
-examples, scripts and derivatives).
+(see [FPDF](http://www.fpdf.org/): "Free"-PDF, a well-known PDFlib-extension
+replacement with many examples, scripts and derivatives).
 
 Compared with other PDF libraries, PyFPDF is simple, small and versatile, with
 advanced capabilities, and is easy to learn, extend and maintain.
 
-  [1]: http://www.fpdf.org/
-
-All developer hands on deck! (See below.) This branch of the library is
-currently not tested so best stick to
-[this version](https://github.com/reingart/pyfpdf) for now.
-
-Features:
----------
-
- * Python 2.7 to 3.5 support
- * Unicode (UTF-8) TrueType font subset embedding
- * Internal/External Links
- * PNG, GIF and JPG support (including transparency and alpha channel)
- * Shape, Line Drawing
- * Cell/Multi-cell/Plaintext writing, Automatic page breaks
- * Basic html2pdf (Templates with a visual designer in the works)
- * Exceptions support, other minor fixes, improvements and PEP8 code cleanups
- * Tox tests
+Looking for Developer Help!
  
 Installation Instructions:
 --------------------------
@@ -64,6 +47,19 @@ running, you will need Pillow (`pip install pillow`)
   python setup.py install
 ```
 
+Features:
+---------
+
+ * Python 2.7 to 3.5 support
+ * Unicode (UTF-8) TrueType font subset embedding
+ * Internal/External Links
+ * PNG, GIF and JPG support (including transparency and alpha channel)
+ * Shape, Line Drawing
+ * Cell/Multi-cell/Plaintext writing, Automatic page breaks
+ * Basic html2pdf (Templates with a visual designer in the works)
+ * Exceptions support, other minor fixes, improvements and PEP8 code cleanups
+ * Tox tests
+
 Documentation:
 --------------
 
@@ -85,10 +81,6 @@ sudo apt-get install python-pip
 sudo pip install tox
 ```
 
-There's a lot to sift through, please help. Code removal is presently as vital
-as writing tests/features. There's a lot of stuff in this repository that I
-deleted from master, please help sift through it and make it work/be 
-readable/useful. Currently its cut down to what i can deal with. Let's ship
-features, not code.
-
-I'm in the process of learning to publish things to pypi, help!
+Lets try to improve the Code Coverage statistic so that we can safely
+transition to external font and image libraries, and implement BytesIO usage
+over string buffering!
