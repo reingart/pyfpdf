@@ -1,6 +1,8 @@
 pyfpdf: FPDF for Python
 =======================
 
+`Quick Start <https://github.com/alexanderankin/pyfpdf>`__
+
 PyFPDF is a library for PDF document generation under Python, ported
 from PHP (see `FPDF <http://www.fpdf.org/>`__: "Free"-PDF, a well-known
 PDFlib-extension replacement with many examples, scripts and
@@ -26,7 +28,8 @@ Installation Instructions:
 --------------------------
 
 To get the latest development version you can download the source code
-running:
+running (for troubleshooting and additional information, see the GitHub
+Repository: `fpdf2 <https://github.com/alexanderankin/pyfpdf>`__)
 
 ::
 
@@ -34,7 +37,7 @@ running:
       cd pyfpdf
       python setup.py install
 
-You can also install PyFPDF from PyPI, with easyinstall or from Windows
+You can install PyFPDF from PyPI, with easyinstall or from Windows
 installers. For example, using pip:
 
 ::
@@ -44,16 +47,17 @@ installers. For example, using pip:
 Documentation:
 --------------
 
-|Documentation Status|
+-  `Read the Docs <https://alexanderankin.github.io/pyfpdf/mkdocs_docs/>`__
+-  `FAQ <https://alexanderankin.github.io/pyfpdf/mkdocs_docs/FAQ/index.html>`__
+-  `Tutorial <https://alexanderankin.github.io/pyfpdf/mkdocs_docs/Tutorial/index.html>`__ (Spanish translation available)
+-  `Reference Manual <https://alexanderankin.github.io/pyfpdf/mkdocs_docs/ReferenceManual/index.html>`__
 
--  `Read the Docs <http://pyfpdf.readthedocs.org/en/latest/>`__
--  `FAQ <docs/FAQ.md>`__
--  `Tutorial <docs/Tutorial.md>`__ (Spanish translation available)
--  `Reference Manual <docs/ReferenceManual.md>`__
+For further information, see:
 
-For further information, see the project site:
-https://github.com/reingart/pyfpdf or the old Google Code project page
-https://code.google.com/p/pyfpdf/.
-
-.. |Documentation Status| image:: https://readthedocs.org/projects/pyfpdf/badge/?version=latest
-   :target: http://pyfpdf.rtfd.org
+-  `documentation home <https://alexanderankin.github.io/pyfpdf/>`__
+-  `epydocs documentation home <https://alexanderankin.github.io/pyfpdf/epydocs>`__
+-  `pdoc documentation home <https://alexanderankin.github.io/pyfpdf/pdocs/fpdf>`__
+-  `mkdocs documentation home <https://alexanderankin.github.io/pyfpdf/mkdocs_docs>`__
+-  `fpdf library <https://github.com/reingart/pyfpdf>`__ (fpdf v1.x.x).
+-  `fpdf library docs <https://pyfpdf.readthedocs.org/en/latest/>`__ (fpdf v1.x.x).
+-  `pyfpdf google code archive page <https://code.google.com/archive/redirect/a/code.google.com/p/pyfpdf?movedTo=http:%2F%2Fwww.github.com%2Freingart%2Fpyfpdf>`__ 
