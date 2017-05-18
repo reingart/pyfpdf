@@ -262,6 +262,3 @@ After version 1.7, to import it you should use the fpdf package:
 ```python
 from fpdf import FPDF
 ```
-
-
-

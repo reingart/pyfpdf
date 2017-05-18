@@ -83,7 +83,7 @@ pdf.add_page()
 pdf.write_html(html)
 pdf.output('html.pdf', 'F')
 ```
-See html.py or [Web2Py](../Web2Py.md) for a complete example.
+See html.py or [Web2Py] (../Web2Py.md) for a complete example. `# TODO fix links`
 
 ### See also ###
 [write](write.md), [add_font](add_font.md), [image](image.md).

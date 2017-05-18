@@ -1,76 +1,83 @@
+### 
+# MkDocs Configuration File.
+# 
+# To build these docs, change to base of repository and run `mkdocs build` and
+# docs will be build into site_dir variable value in this file.
+# 
+# Alternatively, there is a script in the `scripts` folder for convenience.
+### 
 site_name: PyFPDF
-site_url: https://github.com/reingart/pyfpdf
-repo_url: https://github.com/reingart/pyfpdf.git
-site_description: Simple PDF generation for Python (FPDF PHP port)
+site_url: https://alexanderankin.github.io/pyfpdf/
+repo_url: https://github.com/alexanderankin/pyfpdf
+site_description: Simple PDF generation for Python (FPDF PHP port) [FORK]
 docs_dir: mkdocs_docs
-site_dir: html
-markdown_extensions: [toc,fenced_code]
+site_dir: docs/mkdocs_docs
 use_directory_urls: false
-theme: readthedocs
+edit_uri: edit/master/mkdocs_docs
+theme: material
+# markdown_extensions: [toc, fenced_code, markdown_i18n]
+markdown_extensions: [toc, fenced_code]
 pages:
-- [index.md, "Project Home"]
-- [ProjectHome.md, "Project Home"]
-- [ReferenceManual.md, "Reference manual"]
-- [Tutorial.md, "Tutorial"]
-- [Tutorial-es.md, "Tutorial (Spanish translation)"]
-- [FAQ.md, "FAQ (Frequently asked questions)"]
-- [Python3.md, "Python 3"]
-- [Templates.md, "Templates"]
-- [Unicode.md, "Unicode"]
-- [Web2Py.md, "Web2Py framework"]
-- [Testing.md, "Testing"]
-- [Development.md, "Development"]
-- ["reference/accept_page_break.md", "Reference manual", "accept_page_break"]
-- ["reference/add_font.md", "Reference manual", "add_font"]
-- ["reference/add_link.md", "Reference manual", "add_link"]
-- ["reference/add_page.md", "Reference manual", "add_page"]
-- ["reference/alias_nb_pages.md", "Reference manual", "alias_nb_pages"]
-- ["reference/cell.md", "Reference manual", "cell"]
-- ["reference/close.md", "Reference manual", "close"]
-- ["reference/dashed_line.md", "Reference manual", "dashed_line"]
-- ["reference/ellipse.md", "Reference manual", "ellipse"]
-- ["reference/error.md", "Reference manual", "error"]
-- ["reference/FPDF.md", "Reference manual", "FPDF"]
-- ["reference/footer.md", "Reference manual", "footer"]
-- ["reference/get_string_width.md", "Reference manual", "get_string_width"]
-- ["reference/get_x.md", "Reference manual", "get_x"]
-- ["reference/get_y.md", "Reference manual", "get_y"]
-- ["reference/header.md", "Reference manual", "header"]
-- ["reference/image.md", "Reference manual", "image"]
-- ["reference/load_resource.md", "Reference manual", "load_resource"]
-- ["reference/line.md", "Reference manual", "line"]
-- ["reference/link.md", "Reference manual", "link"]
-- ["reference/ln.md", "Reference manual", "ln"]
-- ["reference/multi_cell.md", "Reference manual", "multi_cell"]
-- ["reference/open.md", "Reference manual", "open"]
-- ["reference/output.md", "Reference manual", "output"]
-- ["reference/page_no.md", "Reference manual", "page_no"]
-- ["reference/rect.md", "Reference manual", "rect"]
-- ["reference/set_author.md", "Reference manual", "set_author"]
-- ["reference/set_auto_page_break.md", "Reference manual", "set_auto_page_break"]
-- ["reference/set_compression.md", "Reference manual", "set_compression"]
-- ["reference/set_creator.md", "Reference manual", "set_creator"]
-- ["reference/set_doc_option.md", "Reference manual", "set_doc_option"]
-- ["reference/set_display_mode.md", "Reference manual", "set_display_mode"]
-- ["reference/set_draw_color.md", "Reference manual", "set_draw_color"]
-- ["reference/set_fill_color.md", "Reference manual", "set_fill_color"]
-- ["reference/set_font.md", "Reference manual", "set_font"]
-- ["reference/set_font_size.md", "Reference manual", "set_font_size"]
-- ["reference/set_keywords.md", "Reference manual", "set_keywords"]
-- ["reference/set_left_margin.md", "Reference manual", "set_left_margin"]
-- ["reference/set_line_width.md", "Reference manual", "set_line_width"]
-- ["reference/set_link.md", "Reference manual", "set_link"]
-- ["reference/set_margins.md", "Reference manual", "set_margins"]
-- ["reference/set_right_margin.md", "Reference manual", "set_right_margin"]
-- ["reference/set_stretching.md", "Reference manual", "set_stretching"]
-- ["reference/set_subject.md", "Reference manual", "set_subject"]
-- ["reference/set_text_color.md", "Reference manual", "set_text_color"]
-- ["reference/set_title.md", "Reference manual", "set_title"]
-- ["reference/set_top_margin.md", "Reference manual", "set_top_margin"]
-- ["reference/set_x.md", "Reference manual", "set_x"]
-- ["reference/set_xy.md", "Reference manual", "set_xy"]
-- ["reference/set_y.md", "Reference manual", "set_y"]
-- ["reference/text.md", "Reference manual", "text"]
-- ["reference/write.md", "Reference manual", "write"]
-- ["reference/write_html.md", "Reference manual", "write_html"]
-
+- 'Project Home': 'index.md'
+- 'Tutorial':     'Tutorial.md'
+- 'Tutorial Translations':
+  - 'Tutorial (Spanish translation)': 'Tutorial-es.md'
+- 'FAQ':          'FAQ.md'
+- 'Development':  'Development.md'
+- 'Templates':    'Templates.md'
+- 'Unicode':      'Unicode.md'
+- 'ReferenceManual':
+  - 'Reference Manual':    'ReferenceManual.md'
+  - 'accept_page_break':   'reference/accept_page_break.md'
+  - 'add_font':            'reference/add_font.md'
+  - 'add_link':            'reference/add_link.md'
+  - 'add_page':            'reference/add_page.md'
+  - 'alias_nb_pages':      'reference/alias_nb_pages.md'
+  - 'cell':                'reference/cell.md'
+  - 'close':               'reference/close.md'
+  - 'dashed_line':         'reference/dashed_line.md'
+  - 'ellipse':             'reference/ellipse.md'
+  - 'error':               'reference/error.md'
+  - 'FPDF':                'reference/FPDF.md'
+  - 'footer':              'reference/footer.md'
+  - 'get_string_width':    'reference/get_string_width.md'
+  - 'get_x':               'reference/get_x.md'
+  - 'get_y':               'reference/get_y.md'
+  - 'header':              'reference/header.md'
+  - 'image':               'reference/image.md'
+  - 'load_resource':       'reference/load_resource.md'
+  - 'line':                'reference/line.md'
+  - 'link':                'reference/link.md'
+  - 'ln':                  'reference/ln.md'
+  - 'multi_cell':          'reference/multi_cell.md'
+  - 'open':                'reference/open.md'
+  - 'output':              'reference/output.md'
+  - 'page_no':             'reference/page_no.md'
+  - 'rect':                'reference/rect.md'
+  - 'set_author':          'reference/set_author.md'
+  - 'set_auto_page_break': 'reference/set_auto_page_break.md'
+  - 'set_compression':     'reference/set_compression.md'
+  - 'set_creator':         'reference/set_creator.md'
+  - 'set_doc_option':      'reference/set_doc_option.md'
+  - 'set_display_mode':    'reference/set_display_mode.md'
+  - 'set_draw_color':      'reference/set_draw_color.md'
+  - 'set_fill_color':      'reference/set_fill_color.md'
+  - 'set_font':            'reference/set_font.md'
+  - 'set_font_size':       'reference/set_font_size.md'
+  - 'set_keywords':        'reference/set_keywords.md'
+  - 'set_left_margin':     'reference/set_left_margin.md'
+  - 'set_line_width':      'reference/set_line_width.md'
+  - 'set_link':            'reference/set_link.md'
+  - 'set_margins':         'reference/set_margins.md'
+  - 'set_right_margin':    'reference/set_right_margin.md'
+  - 'set_stretching':      'reference/set_stretching.md'
+  - 'set_subject':         'reference/set_subject.md'
+  - 'set_text_color':      'reference/set_text_color.md'
+  - 'set_title':           'reference/set_title.md'
+  - 'set_top_margin':      'reference/set_top_margin.md'
+  - 'set_x':               'reference/set_x.md'
+  - 'set_xy':              'reference/set_xy.md'
+  - 'set_y':               'reference/set_y.md'
+  - 'text':                'reference/text.md'
+  - 'write':               'reference/write.md'
+  - 'write_html':          'reference/write_html.md'

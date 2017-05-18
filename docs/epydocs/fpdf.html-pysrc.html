@@ -59,7 +59,7 @@
     </td>
   </tr>
 </table>
-<h1 class="epydoc">Source Code for <a href="fpdf.html-module.html">Module fpdf.html</a></h1>
+<h1 class="epydoc">Source Code for <a href="fpdf.html-module.html" onclick="show_private();">Module fpdf.html</a></h1>
 <pre class="py-src">
 <a name="L1"></a><tt class="py-lineno">  1</tt>  <tt class="py-line"><tt class="py-comment"># -*- coding: latin-1 -*-</tt> </tt>
 <a name="L2"></a><tt class="py-lineno">  2</tt>  <tt class="py-line"> </tt>
@@ -73,8 +73,9 @@
 <a name="L10"></a><tt class="py-lineno"> 10</tt>  <tt class="py-line"> </tt>
 <a name="L11"></a><tt class="py-lineno"> 11</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt id="link-0" class="py-name" targets="Package fpdf=fpdf-module.html,Module fpdf.fpdf=fpdf.fpdf-module.html"><a title="fpdf
 fpdf.fpdf" class="py-name" href="#" onclick="return doclink('link-0', 'fpdf', 'link-0');">fpdf</a></tt> <tt class="py-keyword">import</tt> <tt id="link-1" class="py-name" targets="Class fpdf.fpdf.FPDF=fpdf.fpdf.FPDF-class.html"><a title="fpdf.fpdf.FPDF" class="py-name" href="#" onclick="return doclink('link-1', 'FPDF', 'link-1');">FPDF</a></tt> </tt>
-<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module fpdf.py3k=fpdf.py3k-module.html"><a title="fpdf.py3k" class="py-name" href="#" onclick="return doclink('link-2', 'py3k', 'link-2');">py3k</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Variable fpdf.fpdf.PY3K=fpdf.fpdf-module.html#PY3K,Variable fpdf.html.PY3K=fpdf.html-module.html#PY3K,Variable fpdf.php.PY3K=fpdf.php-module.html#PY3K,Variable fpdf.py3k.PY3K=fpdf.py3k-module.html#PY3K,Variable fpdf.template.PY3K=fpdf.template-module.html#PY3K"><a title="fpdf.fpdf.PY3K
+<a name="L12"></a><tt class="py-lineno"> 12</tt>  <tt class="py-line"><tt class="py-keyword">from</tt> <tt class="py-op">.</tt><tt id="link-2" class="py-name" targets="Module fpdf.py3k=fpdf.py3k-module.html"><a title="fpdf.py3k" class="py-name" href="#" onclick="return doclink('link-2', 'py3k', 'link-2');">py3k</a></tt> <tt class="py-keyword">import</tt> <tt id="link-3" class="py-name" targets="Variable fpdf.fpdf.PY3K=fpdf.fpdf-module.html#PY3K,Variable fpdf.html.PY3K=fpdf.html-module.html#PY3K,Variable fpdf.image_parsing.PY3K=fpdf.image_parsing-module.html#PY3K,Variable fpdf.php.PY3K=fpdf.php-module.html#PY3K,Variable fpdf.py3k.PY3K=fpdf.py3k-module.html#PY3K,Variable fpdf.template.PY3K=fpdf.template-module.html#PY3K"><a title="fpdf.fpdf.PY3K
 fpdf.html.PY3K
+fpdf.image_parsing.PY3K
 fpdf.php.PY3K
 fpdf.py3k.PY3K
 fpdf.template.PY3K" class="py-name" href="#" onclick="return doclink('link-3', 'PY3K', 'link-3');">PY3K</a></tt><tt class="py-op">,</tt> <tt class="py-name">basestring</tt><tt class="py-op">,</tt> <tt class="py-name">unicode</tt><tt class="py-op">,</tt> <tt class="py-name">HTMLParser</tt> </tt>
@@ -142,7 +143,7 @@ fpdf.html.HTML2FPDF.set_font" class="py-name" href="#" onclick="return doclink('
 <a name="L70"></a><tt class="py-lineno"> 70</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-string">'width'</tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">td</tt> <tt class="py-keyword">and</tt> <tt class="py-string">'colspan'</tt> <tt class="py-keyword">not</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">td</tt><tt class="py-op">:</tt> </tt>
 <a name="L71"></a><tt class="py-lineno"> 71</tt>  <tt class="py-line">                <tt class="py-keyword">try</tt><tt class="py-op">:</tt> </tt>
 <a name="L72"></a><tt class="py-lineno"> 72</tt>  <tt class="py-line">                    <tt class="py-name">l</tt> <tt class="py-op">=</tt> <tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">table_col_width</tt><tt class="py-op">[</tt><tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">table_col_index</tt><tt class="py-op">]</tt><tt class="py-op">]</tt> </tt>
-<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">                <tt class="py-keyword">except</tt> <tt class="py-name">IndexError</tt><tt class="py-op">:</tt> </tt>
+<a name="L73"></a><tt class="py-lineno"> 73</tt>  <tt class="py-line">                <tt class="py-keyword">except</tt> <tt class="py-name">IndexError</tt> <tt class="py-keyword">as</tt> <tt class="py-name">e</tt><tt class="py-op">:</tt> </tt>
 <a name="L74"></a><tt class="py-lineno"> 74</tt>  <tt class="py-line">                    <tt class="py-keyword">raise</tt> <tt class="py-name">RuntimeError</tt><tt class="py-op">(</tt><tt class="py-string">"Table column/cell width not specified, unable to continue"</tt><tt class="py-op">)</tt> </tt>
 <a name="L75"></a><tt class="py-lineno"> 75</tt>  <tt class="py-line">            <tt class="py-keyword">elif</tt> <tt class="py-string">'colspan'</tt> <tt class="py-keyword">in</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">td</tt><tt class="py-op">:</tt> </tt>
 <a name="L76"></a><tt class="py-lineno"> 76</tt>  <tt class="py-line">                <tt id="link-10" class="py-name" targets="Variable fpdf.fonts.i=fpdf.fonts-module.html#i"><a title="fpdf.fonts.i" class="py-name" href="#" onclick="return doclink('link-10', 'i', 'link-10');">i</a></tt> <tt class="py-op">=</tt> <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">table_col_index</tt> </tt>
@@ -308,7 +309,7 @@ fpdf.html.HTML2FPDF.set_text_color" class="py-name" href="#" onclick="return doc
 <a name="L225"></a><tt class="py-lineno">225</tt>  <tt class="py-line">                    <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">pdf</tt><tt class="py-op">.</tt><tt id="link-77" class="py-name"><a title="fpdf.fpdf.FPDF.set_font
 fpdf.html.HTML2FPDF.set_font" class="py-name" href="#" onclick="return doclink('link-77', 'set_font', 'link-9');">set_font</a></tt><tt class="py-op">(</tt><tt class="py-name">face</tt><tt class="py-op">)</tt> </tt>
 <a name="L226"></a><tt class="py-lineno">226</tt>  <tt class="py-line">                    <tt class="py-name">self</tt><tt class="py-op">.</tt><tt class="py-name">font_face</tt> <tt class="py-op">=</tt> <tt class="py-name">face</tt> </tt>
-<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line">                <tt class="py-keyword">except</tt> <tt class="py-name">RuntimeError</tt><tt class="py-op">:</tt> </tt>
+<a name="L227"></a><tt class="py-lineno">227</tt>  <tt class="py-line">                <tt class="py-keyword">except</tt> <tt class="py-name">RuntimeError</tt> <tt class="py-keyword">as</tt> <tt class="py-name">e</tt><tt class="py-op">:</tt> </tt>
 <a name="L228"></a><tt class="py-lineno">228</tt>  <tt class="py-line">                    <tt class="py-keyword">pass</tt> <tt class="py-comment"># font not found, ignore</tt> </tt>
 <a name="L229"></a><tt class="py-lineno">229</tt>  <tt class="py-line">            <tt class="py-keyword">if</tt> <tt class="py-string">'size'</tt> <tt class="py-keyword">in</tt> <tt class="py-name">attrs</tt><tt class="py-op">:</tt> </tt>
 <a name="L230"></a><tt class="py-lineno">230</tt>  <tt class="py-line">                <tt class="py-name">size</tt> <tt class="py-op">=</tt> <tt class="py-name">int</tt><tt class="py-op">(</tt><tt class="py-name">attrs</tt><tt class="py-op">.</tt><tt class="py-name">get</tt><tt class="py-op">(</tt><tt class="py-string">'size'</tt><tt class="py-op">)</tt><tt class="py-op">)</tt> </tt>
@@ -540,7 +541,7 @@ expandto(location.href);
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sun Mar 26 11:54:17 2017
+    Generated by Epydoc 3.0.1 on Thu May 18 07:14:41 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

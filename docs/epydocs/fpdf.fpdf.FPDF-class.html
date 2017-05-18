@@ -43,7 +43,7 @@
     <td width="100%">
       <span class="breadcrumbs">
         <a href="fpdf-module.html">Package&nbsp;fpdf</a> ::
-        <a href="fpdf.fpdf-module.html">Module&nbsp;fpdf</a> ::
+        <a href="fpdf.fpdf-module.html" onclick="show_private();">Module&nbsp;fpdf</a> ::
         Class&nbsp;FPDF
       </span>
     </td>
@@ -133,22 +133,6 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="_dochecks"></a><span class="summary-sig-name">_dochecks</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF._dochecks">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr class="private">
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a name="_dounderline"></a><span class="summary-sig-name">_dounderline</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">x</span>,
         <span class="summary-sig-arg">y</span>,
@@ -187,56 +171,6 @@ object --+
           <td><span class="summary-sig"><a name="_endpage"></a><span class="summary-sig-name">_endpage</span>(<span class="summary-sig-arg">self</span>)</span></td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF._endpage">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr class="private">
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="_escape"></a><span class="summary-sig-name">_escape</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">s</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF._escape">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr class="private">
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="_freadint"></a><span class="summary-sig-name">_freadint</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">f</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF._freadint">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr class="private">
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="_getfontpath"></a><span class="summary-sig-name">_getfontpath</span>(<span class="summary-sig-arg">self</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF._getfontpath">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -558,23 +492,6 @@ object --+
       
     </td>
   </tr>
-<tr class="private">
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="_textstring"></a><span class="summary-sig-name">_textstring</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">s</span>)</span></td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF._textstring">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
 <tr>
     <td width="15%" align="right" valign="top" class="summary">
       <span class="summary-type">&nbsp;</span>
@@ -584,7 +501,7 @@ object --+
           <td><span class="summary-sig"><a name="add_font"></a><span class="summary-sig-name">add_font</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">family</span>,
         <span class="summary-sig-arg">style</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
-        <span class="summary-sig-arg">fname</span>=<span class="summary-sig-default"><code class="variable-quote">'</code><code class="variable-string"></code><code class="variable-quote">'</code></span>,
+        <span class="summary-sig-arg">fname</span>=<span class="summary-sig-default">None</span>,
         <span class="summary-sig-arg">uni</span>=<span class="summary-sig-default">False</span>)</span><br />
       Add a TrueType or Type1 font</td>
           <td align="right" valign="top">
@@ -932,30 +849,11 @@ object --+
     </td><td class="summary">
       <table width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr>
-          <td><span class="summary-sig"><a name="load_resource"></a><span class="summary-sig-name">load_resource</span>(<span class="summary-sig-arg">self</span>,
-        <span class="summary-sig-arg">reason</span>,
-        <span class="summary-sig-arg">filename</span>)</span><br />
-      Load external file</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF.load_resource">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
           <td><span class="summary-sig"><a name="multi_cell"></a><span class="summary-sig-name">multi_cell</span>(<span class="summary-sig-arg">self</span>,
         <span class="summary-sig-arg">*args</span>,
         <span class="summary-sig-arg">**kwargs</span>)</span><br />
       Output text with automatic or explicit line breaks, returns boolean 
-      if page break triggered in output mode.</td>
+      if page break triggered in output mode</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF.multi_cell">source&nbsp;code</a></span>
             
@@ -1121,6 +1019,24 @@ object --+
       Set page compression</td>
           <td align="right" valign="top">
             <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF.set_compression">source&nbsp;code</a></span>
+            
+          </td>
+        </tr>
+      </table>
+      
+    </td>
+  </tr>
+<tr>
+    <td width="15%" align="right" valign="top" class="summary">
+      <span class="summary-type">&nbsp;</span>
+    </td><td class="summary">
+      <table width="100%" cellpadding="0" cellspacing="0" border="0">
+        <tr>
+          <td><span class="summary-sig"><a name="set_creation_date"></a><span class="summary-sig-name">set_creation_date</span>(<span class="summary-sig-arg">self</span>,
+        <span class="summary-sig-arg">date</span>=<span class="summary-sig-default">None</span>)</span><br />
+      Sets Creation of Date time, or current time if None given.</td>
+          <td align="right" valign="top">
+            <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF.set_creation_date">source&nbsp;code</a></span>
             
           </td>
         </tr>
@@ -1578,42 +1494,6 @@ object --+
     </td>
   </tr>
 </table>
-<!-- ==================== STATIC METHODS ==================== -->
-<a name="section-StaticMethods"></a>
-<table class="summary" border="1" cellpadding="3"
-       cellspacing="0" width="100%" bgcolor="white">
-<tr bgcolor="#70b0f0" class="table-header">
-  <td colspan="2" class="table-header">
-    <table border="0" cellpadding="0" cellspacing="0" width="100%">
-      <tr valign="top">
-        <td align="left"><span class="table-header">Static Methods</span></td>
-        <td align="right" valign="top"
-         ><span class="options">[<a href="#section-StaticMethods"
-         class="privatelink" onclick="toggle_private();"
-         >hide private</a>]</span></td>
-      </tr>
-    </table>
-  </td>
-</tr>
-<tr>
-    <td width="15%" align="right" valign="top" class="summary">
-      <span class="summary-type">&nbsp;</span>
-    </td><td class="summary">
-      <table width="100%" cellpadding="0" cellspacing="0" border="0">
-        <tr>
-          <td><span class="summary-sig"><a name="get_page_format"></a><span class="summary-sig-name">get_page_format</span>(<span class="summary-sig-arg">format</span>,
-        <span class="summary-sig-arg">k</span>)</span><br />
-      Return scale factor, page w and h size in points</td>
-          <td align="right" valign="top">
-            <span class="codelink"><a href="fpdf.fpdf-pysrc.html#FPDF.get_page_format">source&nbsp;code</a></span>
-            
-          </td>
-        </tr>
-      </table>
-      
-    </td>
-  </tr>
-</table>
 <!-- ==================== PROPERTIES ==================== -->
 <a name="section-Properties"></a>
 <table class="summary" border="1" cellpadding="3"
@@ -1834,7 +1714,7 @@ object --+
 <table border="0" cellpadding="0" cellspacing="0" width="100%%">
   <tr>
     <td align="left" class="footer">
-    Generated by Epydoc 3.0.1 on Sun Mar 26 11:54:17 2017
+    Generated by Epydoc 3.0.1 on Thu May 18 07:14:41 2017
     </td>
     <td align="right" class="footer">
       <a target="mainFrame" href="http://epydoc.sourceforge.net"

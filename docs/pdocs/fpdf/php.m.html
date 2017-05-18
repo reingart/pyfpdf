@@ -858,8 +858,10 @@ table {
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
 .codehilite .o { color: #666666 } /* Operator */
+.codehilite .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
 .codehilite .cm { color: #408080; font-style: italic } /* Comment.Multiline */
 .codehilite .cp { color: #BC7A00 } /* Comment.Preproc */
+.codehilite .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
 .codehilite .c1 { color: #408080; font-style: italic } /* Comment.Single */
 .codehilite .cs { color: #408080; font-style: italic } /* Comment.Special */
 .codehilite .gd { color: #A00000 } /* Generic.Deleted */
@@ -899,8 +901,10 @@ table {
 .codehilite .mh { color: #666666 } /* Literal.Number.Hex */
 .codehilite .mi { color: #666666 } /* Literal.Number.Integer */
 .codehilite .mo { color: #666666 } /* Literal.Number.Oct */
+.codehilite .sa { color: #BA2121 } /* Literal.String.Affix */
 .codehilite .sb { color: #BA2121 } /* Literal.String.Backtick */
 .codehilite .sc { color: #BA2121 } /* Literal.String.Char */
+.codehilite .dl { color: #BA2121 } /* Literal.String.Delimiter */
 .codehilite .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
 .codehilite .s2 { color: #BA2121 } /* Literal.String.Double */
 .codehilite .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
@@ -911,9 +915,11 @@ table {
 .codehilite .s1 { color: #BA2121 } /* Literal.String.Single */
 .codehilite .ss { color: #19177C } /* Literal.String.Symbol */
 .codehilite .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.codehilite .fm { color: #0000FF } /* Name.Function.Magic */
 .codehilite .vc { color: #19177C } /* Name.Variable.Class */
 .codehilite .vg { color: #19177C } /* Name.Variable.Global */
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
+.codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
   </style>
 
@@ -1076,12 +1082,12 @@ table {
   
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php" class="source">
-    <div class="codehilite"><pre><span class="c">#!/usr/bin/env python</span>
-<span class="c"># -*- coding: latin-1 -*-</span>
+    <div class="codehilite"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="c1"># -*- coding: latin-1 -*-</span>
 
 <span class="kn">from</span> <span class="nn">.py3k</span> <span class="kn">import</span> <span class="n">PY3K</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">,</span> <span class="nb">unicode</span>
 
-<span class="c"># fpdf php helpers:</span>
+<span class="c1"># fpdf php helpers:</span>
 
 <span class="k">def</span> <span class="nf">substr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
@@ -1093,28 +1099,28 @@ table {
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">array</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">array</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&quot;[</span><span class="si">%s</span><span class="s">] =&gt; </span><span class="si">%s</span><span class="s"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">] =&gt; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
         
 <span class="k">def</span> <span class="nf">UTF8ToUTF16BE</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">setbom</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
-    <span class="s">&quot;Converts UTF-8 strings to UTF16-BE.&quot;</span>
-    <span class="n">outstr</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <span class="s2">&quot;Converts UTF-8 strings to UTF16-BE.&quot;</span>
+    <span class="n">outstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">setbom</span><span class="p">):</span>
-        <span class="n">outstr</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\xFE\xFF</span><span class="s">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;latin1&quot;</span><span class="p">)</span>
+        <span class="n">outstr</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\xFE\xFF</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
-        <span class="n">instr</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;UTF-8&#39;</span><span class="p">)</span>
-    <span class="n">outstr</span> <span class="o">+=</span> <span class="n">instr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;UTF-16BE&#39;</span><span class="p">)</span>
+        <span class="n">instr</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+    <span class="n">outstr</span> <span class="o">+=</span> <span class="n">instr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;UTF-16BE&#39;</span><span class="p">)</span>
 
-    <span class="c"># convert bytes back to fake unicode string</span>
-    <span class="c"># until PEP461-like is implemented</span>
+    <span class="c1"># convert bytes back to fake unicode string</span>
+    <span class="c1"># until PEP461-like is implemented</span>
     <span class="k">if</span> <span class="n">PY3K</span><span class="p">:</span>
-        <span class="n">outstr</span> <span class="o">=</span> <span class="n">outstr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;latin1&quot;</span><span class="p">)</span>
+        <span class="n">outstr</span> <span class="o">=</span> <span class="n">outstr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">outstr</span>
 
 <span class="k">def</span> <span class="nf">UTF8StringToArray</span><span class="p">(</span><span class="n">instr</span><span class="p">):</span>
-    <span class="s">&quot;Converts UTF-8 strings to codepoints array&quot;</span>
+    <span class="s2">&quot;Converts UTF-8 strings to codepoints array&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">instr</span><span class="p">]</span>
 
-<span class="c"># ttfints php helpers:    </span>
+<span class="c1"># ttfints php helpers:    </span>
 
 <span class="k">def</span> <span class="nf">die</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
@@ -1122,12 +1128,12 @@ table {
 <span class="k">def</span> <span class="nf">str_repeat</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">count</span>
     
-<span class="k">def</span> <span class="nf">str_pad</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pad_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span> <span class="s">&quot; &quot;</span><span class="p">,</span> <span class="n">pad_type</span><span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="p">):</span>
-    <span class="c"># pad left</span>
+<span class="k">def</span> <span class="nf">str_pad</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pad_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">pad_type</span><span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="p">):</span>
+    <span class="c1"># pad left</span>
     <span class="k">if</span> <span class="n">pad_type</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>   <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span>  <span class="n">pad_char</span><span class="p">)</span>
-    <span class="c"># pad right</span>
+    <span class="c1"># pad right</span>
     <span class="k">elif</span> <span class="n">pad_type</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span>  <span class="n">pad_char</span><span class="p">)</span>
-    <span class="c"># pad both</span>
+    <span class="c1"># pad both</span>
     <span class="k">else</span><span class="p">:</span>              <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
 
 <span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
@@ -1162,8 +1168,8 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.UTF8StringToArray', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.UTF8StringToArray" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">UTF8StringToArray</span><span class="p">(</span><span class="n">instr</span><span class="p">):</span>
-    <span class="s">&quot;Converts UTF-8 strings to codepoints array&quot;</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">UTF8StringToArray</span><span class="p">(</span><span class="n">instr</span><span class="p">):</span>
+    <span class="s2">&quot;Converts UTF-8 strings to codepoints array&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">instr</span><span class="p">]</span>
 </pre></div>
 
@@ -1185,19 +1191,19 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.UTF8ToUTF16BE', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.UTF8ToUTF16BE" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">UTF8ToUTF16BE</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">setbom</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
-    <span class="s">&quot;Converts UTF-8 strings to UTF16-BE.&quot;</span>
-    <span class="n">outstr</span> <span class="o">=</span> <span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">UTF8ToUTF16BE</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">setbom</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+    <span class="s2">&quot;Converts UTF-8 strings to UTF16-BE.&quot;</span>
+    <span class="n">outstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">setbom</span><span class="p">):</span>
-        <span class="n">outstr</span> <span class="o">+=</span> <span class="s">&quot;</span><span class="se">\xFE\xFF</span><span class="s">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&quot;latin1&quot;</span><span class="p">)</span>
+        <span class="n">outstr</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\xFE\xFF</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
-        <span class="n">instr</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&#39;UTF-8&#39;</span><span class="p">)</span>
-    <span class="n">outstr</span> <span class="o">+=</span> <span class="n">instr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s">&#39;UTF-16BE&#39;</span><span class="p">)</span>
+        <span class="n">instr</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
+    <span class="n">outstr</span> <span class="o">+=</span> <span class="n">instr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;UTF-16BE&#39;</span><span class="p">)</span>
 
-    <span class="c"># convert bytes back to fake unicode string</span>
-    <span class="c"># until PEP461-like is implemented</span>
+    <span class="c1"># convert bytes back to fake unicode string</span>
+    <span class="c1"># until PEP461-like is implemented</span>
     <span class="k">if</span> <span class="n">PY3K</span><span class="p">:</span>
-        <span class="n">outstr</span> <span class="o">=</span> <span class="n">outstr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s">&quot;latin1&quot;</span><span class="p">)</span>
+        <span class="n">outstr</span> <span class="o">=</span> <span class="n">outstr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">outstr</span>
 </pre></div>
 
@@ -1218,7 +1224,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.count', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.count" class="source">
-    <div class="codehilite"><pre><span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1238,7 +1244,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.die', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.die" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">die</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">die</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 
@@ -1259,11 +1265,11 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.print_r', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.print_r" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">print_r</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">print_r</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">array</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">array</span><span class="p">])</span>
     <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">print</span><span class="p">(</span><span class="s">&quot;[</span><span class="si">%s</span><span class="s">] =&gt; </span><span class="si">%s</span><span class="s"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">] =&gt; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
 </pre></div>
 
   </div>
@@ -1283,7 +1289,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.sprintf', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.sprintf" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">sprintf</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span> <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="n">args</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sprintf</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span> <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="n">args</span>
 </pre></div>
 
   </div>
@@ -1303,12 +1309,12 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.str_pad', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.str_pad" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">str_pad</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pad_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span> <span class="s">&quot; &quot;</span><span class="p">,</span> <span class="n">pad_type</span><span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="p">):</span>
-    <span class="c"># pad left</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">str_pad</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pad_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">pad_type</span><span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="p">):</span>
+    <span class="c1"># pad left</span>
     <span class="k">if</span> <span class="n">pad_type</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>   <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span>  <span class="n">pad_char</span><span class="p">)</span>
-    <span class="c"># pad right</span>
+    <span class="c1"># pad right</span>
     <span class="k">elif</span> <span class="n">pad_type</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span>  <span class="n">pad_char</span><span class="p">)</span>
-    <span class="c"># pad both</span>
+    <span class="c1"># pad both</span>
     <span class="k">else</span><span class="p">:</span>              <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
 </pre></div>
 
@@ -1329,7 +1335,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.str_repeat', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.str_repeat" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">str_repeat</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">str_repeat</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">count</span>
 </pre></div>
 
@@ -1350,7 +1356,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.strlen', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.strlen" class="source">
-    <div class="codehilite"><pre><span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+    <div class="codehilite"><pre><span></span><span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 
   </div>
@@ -1370,7 +1376,7 @@ table {
   <div class="source_cont">
   <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.substr', this);">Show source &equiv;</a></p>
   <div id="source-fpdf.php.substr" class="source">
-    <div class="codehilite"><pre><span class="k">def</span> <span class="nf">substr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">substr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
     <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">start</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
 </pre></div>

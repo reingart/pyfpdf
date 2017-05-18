@@ -6,87 +6,71 @@
 
 This page has summary information about developing the PyPDF library.
 
-This project started as Python fork of the [FPDF](http://fpdf.org/) PHP library. 
-Later, code for native reading TTF fonts was added. FPDF has not been updated since
-2011. See also the [TCPDF](http://www.tcpdf.org/) library.
+This project, fpdf2 is a [FORK] of the PyFPDF project, which can be found
+[here](https://github.com/reingart/pyfpdf). It is made in order to keep the
+library updated and fulfill the goals of its
+[Roadmap](https://github.com/reingart/pyfpdf/wiki/Roadmap) and a general overhaul of
+the codebase because there was technical debt keeping features from being
+created and bugs from being eradicated.
 
-Until 2015 the code was developed at [Google Code](https://code.google.com/p/pyfpdf/).
-Now the main repository is at [Github](https://github.com/reingart/pyfpdf).
+More on pyfpdf:
 
-You can also view the
-[old repository](https://github.com/reingart/pyfpdf_googlecode),
-[old issues](https://github.com/reingart/pyfpdf_googlecode/issues), and 
-[old wiki](https://github.com/reingart/pyfpdf_googlecode/tree/wiki).
-
-After being committed to the master branch, code documentation is automatically uploaded to 
-the [Read the Docs](http://pyfpdf.rtfd.org/) site.
+> This project started as Python fork of the [FPDF](http://fpdf.org/) PHP library. 
+> Later, code for native reading TTF fonts was added. FPDF has not been updated since
+> 2011. See also the [TCPDF](http://www.tcpdf.org/) library.
+> 
+> Until 2015 the code was developed at [Google Code](https://code.google.com/p/pyfpdf/).
+> Now the main repository is at [Github](https://github.com/reingart/pyfpdf).
+> 
+> You can also view the
+> [old repository](https://github.com/reingart/pyfpdf_googlecode),
+> [old issues](https://github.com/reingart/pyfpdf_googlecode/issues), and 
+> [old wiki](https://github.com/reingart/pyfpdf_googlecode/tree/wiki).
+> 
+> After being committed to the master branch, code documentation is automatically uploaded to 
+> the [Read the Docs](http://pyfpdf.rtfd.org/) site.
 
 ## Repository structure ##
 
- * `[attic]` - folder with old code and useful, but unsupported things
- * `[docs]` - documenation folder
- * `[examples]` - some examples
- * `[fpdf]` - library source
- * `[test]` - test suite (see [Testing](Testing.md))
- * `[tools]` - some utilities
- * `[tutorial]` - tutorials (see also [Tutorial](Tutorial.md))
- * `LICENSE` - license information
- * `setup.cfg` - wheel configuration (see [wheel](https://wheel.rtfd.org))
- * `setup.py` - distutils installer (see [Python Packaging User Guide](https://python-packaging-user-guide.rtfd.org))
- * `mkdocs.yml` - config for [MkDocs](http://www.mkdocs.org/)
+  * `[attic]` - folder with old code and useful, but unsupported things
+  * `[docs]` - viewable documenation folder
+  * `[mkdocs_docs]` - viewable documenation source folder
+  * `[fpdf]` - library source
+  * `[scripts]` - manipulate this repository
+  * `[test]` - tests
+  * `[tutorial]` - tutorials (see also [Tutorial](Tutorial.md))
+  * `README.md`, `PyPIReadme.rst` - Github and PyPI Readme's.
+  * `LICENSE` - license information
+  * `setup.cfg`, `setup.py`, `MANIFEST.in` - setup configuration
+  * `mkdocs.yml` - config for [MkDocs](https://www.mkdocs.org/)
+  * `tox.ini` - config for [Tox](https://tox.readthedocs.io/en/latest/)
 
-## Tips ##
+## Testing ##
 
-### Code ###
+Testing is done with [Tox](https://tox.readthedocs.io/en/latest/), and is
+self-documented in the `tox.ini` file in the repository. To run tests, cd into
+the cloned repository and run `tox`.
 
-To get the master branch of the code:
-```shell
-git clone https://github.com/reingart/pyfpdf.git
-```
+If you do not want to run tests for all versions of python, run `tox -e py27`
+(or your version of python). To install all versions of python that are
+supported on Ubuntu, see the instructions on the Github Repository home page
+of this project.
 
-You can also use issues and pull requests at Github.
+Be sure to see the example tests in the `test` folder & `test\utilities.py`
+and explore that folder in general.
 
-### Testing ###
+## Documentation ##
 
-Testing described in the standalone page [Testing](Testing.md).
+To build docs, cd into repository and `tox -e docs`.
 
-### Documentation ###
+This Standalone documentation is in the `mkdocs_docs` subfolder in 
+[Markdown](https://daringfireball.net/projects/markdown/) format. Building
+instructions are contained in the configuration file `mkdocs.yml` and also in
+the docs script in the `tox.ini` file.
 
-Documentation is in the `docs` subfolder in 
-[Markdown](http://daringfireball.net/projects/markdown/) format. To build it,
-the `mkdocs` utility is used, which is directed by `mkdocs.yml`.
-
-To build documentation, run in the repository root:
-
-```
-mkdocs build
-```
-HTML files are generated in a `html` subfolder.
-
-To continiously rebuild docs on changing any `.md` files use:
-
-```
-mkdocs serve
-```
-
-Then open a browser at <http://localhost:8000>. (The port and address can be changed.)
-
-**Note**: `mkdocs` internally checks the consistency of internal links. But somehow
-code like this:
-
-```
-[Page Name][refe/PageName,md]
-```
-
-leads to nowhere and gives no error. To avoid this use:
-
-```
-grep -r * -e ',md'
-```
-
-And output should link to this page only.
+Additional documentation is generated from inline comments, and is available
+in the project [home page](https://alexanderankin.github.io/pyfpdf/).
 
 ## See also ##
 [Project Home](index.md), [Frequently asked questions](FAQ.md), 
-[Unicode](Unicode.md), [Python 3](Python3.md), [Testing](Testing.md).
-
+[Unicode](Unicode.md).

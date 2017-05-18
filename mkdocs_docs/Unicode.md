@@ -14,21 +14,26 @@ Before you can use UTF-8, you have to install at least one Unicode font in the
 font directory (or system font folder). Some free font packages are available 
 for download (extract them into the font folder):
 
-  * [DejaVu](http://dejavu-fonts.org/) family: Sans, Sans Condensed, Serif, 
-    Serif Condensed, Sans Mono (Supports more than 200 languages)
-  * [GNU FreeFont](http://www.gnu.org/software/freefont/) family: FreeSans, 
-    FreeSerif, FreeMono
-  * [Indic](http://en.wikipedia.org/wiki/Help:Multilingual_support_(Indic)) 
-    (ttf-indic-fonts Debian and Ubuntu package) for Bengali, Devanagari, Gujarati, 
-    Gurmukhi (including the variants for Punjabi), Kannada, Malayalam, Oriya, 
-    Tamil, Telugu, Tibetan
-  * [AR PL New Sung](http://www.study-area.org/apt/firefly-font/) (firefly): 
-    The Open Source Chinese Font (also supports other east Asian languages)
-  * [Alee](https://wiki.archlinux.org/index.php/Fonts) 
-    (ttf-alee Arch Linux package): General purpose Hangul Truetype fonts that 
-    contain Korean syllable and Latin9 (iso8859-15) characters.
-  * [Fonts-TLWG](http://linux.thai.net/projects/fonts-tlwg/) (formerly 
-    ThaiFonts-Scalable)
+  * [DejaVu](http://dejavu-fonts.org/) family: Sans, Sans Condensed, Serif,
+Serif Condensed, Sans Mono (Supports more than 200 languages)
+
+  * [GNU FreeFont](http://www.gnu.org/software/freefont/) family: FreeSans,
+FreeSerif, FreeMono
+
+  * [Indic](http://en.wikipedia.org/wiki/Help:Multilingual_support_(Indic))
+(ttf-indic-fonts Debian and Ubuntu package) for Bengali, Devanagari, Gujarati,
+Gurmukhi (including the variants for Punjabi), Kannada, Malayalam, Oriya,
+Tamil, Telugu, Tibetan
+
+  * [AR PL New Sung](http://www.study-area.org/apt/firefly-font/) (firefly):
+The Open Source Chinese Font (also supports other east Asian languages)
+
+  * [Alee](https://wiki.archlinux.org/index.php/Fonts) (ttf-alee Arch Linux
+package): General purpose Hangul Truetype fonts that contain Korean syllable
+and Latin9 (iso8859-15) characters.
+
+  * [Fonts-TLWG](http://linux.thai.net/projects/fonts-tlwg/) (formerly
+ThaiFonts-Scalable)
 
 These fonts are included with this library's installers; see 
 [Free Font Pack for FPDF](#free-font-pack-and-copyright-restrictions) below for
