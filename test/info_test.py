@@ -43,6 +43,24 @@ class CatalogDisplayModeTest(unittest.TestCase):
     self.assertEqual(calculate_hash_of_file(output), known_good_hash)
     os.unlink(output)
 
+  def test_put_info_some(self):
+    doc = fpdf.FPDF()
+    document_operations(doc)
+    doc.set_title('sample title')
+    #doc.set_subject('sample subject')
+    #doc.set_author('sample author')
+    doc.set_keywords('sample keywords')
+    doc.set_creator('sample creator')
+    # doc.set_creation_date()
+
+    output = relative_path_to("put_info_test.pdf")
+    doc.output(output)
+    # print(calculate_hash_of_file(output))
+    known_good_hash = "bcc272f353be1acb76c5caf3f662b9af"
+    self.assertEqual(calculate_hash_of_file(output), known_good_hash)
+    os.unlink(output)
+
+
 if __name__ == '__main__':
   unittest.main()
 

@@ -14,7 +14,10 @@ def freadint(f):
 
 def textstring(s):
     "Format a text string"
-    return '(' + escape(s) + ')'
+    if s:
+        return '(' + escape(s) + ')'
+    else:
+        return ''
 
 def escape(s):
     "Add \ before \, ( and )"
