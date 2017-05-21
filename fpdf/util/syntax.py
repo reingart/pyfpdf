@@ -73,13 +73,18 @@ As of this writing, I am not sure how length is actually calculated, so this
 remains something to be looked into.
 
 """
+from collections import OrderedDict as o_d
+
 def create_name(name):
     if name.startswith('/'):
         name = name[1:]
     return ''.join(['/', name[0].upper(), name[1:]])
 
+def clear_empty_fields(d):
+    return o_d((k, v) for k, v in d.items() if v)
+
 def create_dictionary_string(dict_, open_dict='<<', close_dict='>>',
-    field_join='\n', key_value_join=' '):
+    field_join='\n', key_value_join=' ', has_empty_fields=False):
     """format ordered dictionary as PDF dictionary
 
     @param dict_: dictionary of values to render
@@ -87,7 +92,11 @@ def create_dictionary_string(dict_, open_dict='<<', close_dict='>>',
     @param close: string to close PDF dictionary
     @param field_join: string to join fields with
     @param key_value_join: string to join key to value with
+    @param has_empty_fields: whether or not to clear_empty_fields first.
     """
+    if has_empty_fields:
+        dict_ = clear_empty_fields(dict_)
+
     return ''.join([
         open_dict,
         field_join.join([key_value_join.join(f) for f in dict_.items()]),

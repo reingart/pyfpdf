@@ -1825,15 +1825,23 @@ class FPDF(object):
 
     def _putinfo(self):
         ts = lambda a: enclose_in_parens(a)
-        so = self._out
+        # so = self._out
 
         # so('/Producer ' + ts('PyFPDF ' + FPDF_VERSION + \
         #    ' http://pyfpdf.googlecode.com/'))
-        if hasattr(self, 'title'):    so('/Title '    + ts(self.title))
-        if hasattr(self, 'subject'):  so('/Subject '  + ts(self.subject))
-        if hasattr(self, 'author'):   so('/Author '   + ts(self.author))
-        if hasattr(self, 'keywords'): so('/Keywords ' + ts(self.keywords))
-        if hasattr(self, 'creator'):  so('/Creator '  + ts(self.creator))
+
+        info_d = o_dict()
+        # if hasattr(self, 'title'):    so('/Title '    + ts(self.title))
+        info_d[pdf_name('title')] = ts(getattr(self, 'title', None))
+        # if hasattr(self, 'subject'):  so('/Subject '  + ts(self.subject))
+        info_d[pdf_name('subject')] = ts(getattr(self, 'subject', None))
+        # if hasattr(self, 'author'):   so('/Author '   + ts(self.author))
+        info_d[pdf_name('author')] = ts(getattr(self, 'author', None))
+        # if hasattr(self, 'keywords'): so('/Keywords ' + ts(self.keywords))
+        info_d[pdf_name('keywords')] = ts(getattr(self, 'keywords', None))
+        # if hasattr(self, 'creator'):  so('/Creator '  + ts(self.creator))
+        info_d[pdf_name('creator')] = ts(getattr(self, 'creator', None))
+
         if hasattr(self, 'creation_date'):
             try:
                 creation_date = self.creation_date
@@ -1842,7 +1850,13 @@ class FPDF(object):
                 fpdf_error('Could not format date: ' + str(creation_date))
         else:
             date_string = datetime.now().strftime('%Y%m%d%H%M%S')
-        so('/CreationDate ' + ts('D:' + date_string))
+
+
+        # so('/CreationDate ' + ts('D:' + date_string))
+        info_d[pdf_name('CreationDate')] = ts('D:' + date_string)
+
+        return pdf_d(info_d, open_dict='<<\n', close_dict='\n>>',
+            has_empty_fields=True)
 
     def _putcatalog(self):
         catalog_d = o_dict()
@@ -1880,8 +1894,8 @@ class FPDF(object):
 
     def _puttrailer(self):
         self._out('/Size ' + str(self.n + 1))
-        self._out('/Root ' + str(self.n)     + ' 0 R')
-        self._out('/Info ' + str(self.n - 1) + ' 0 R')
+        self._out('/Root ' + pdf_ref(self.n))
+        self._out('/Info ' + pdf_ref(self.n - 1))
 
     def _enddoc(self):
         self._putheader()
@@ -1889,15 +1903,13 @@ class FPDF(object):
         self._putresources()
         # Info
         self._newobj()
-        self._out('<<')
-        self._putinfo()
-        self._out('>>')
+        # self._out('<<')
+        # self._putinfo()
+        # self._out('>>')
+        self._out(self._putinfo())
         self._out('endobj')
         # Catalog
         self._newobj()
-        # self._out('<<')
-        # self._putcatalog()
-        # self._out('>>')
         self._out(self._putcatalog())
         self._out('endobj')
         # Cross-ref
