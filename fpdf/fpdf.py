@@ -1984,8 +1984,6 @@ class FPDF(object):
 
     def _parsegif(self, filename):
         # Extract info from a GIF file (via PNG conversion)
-        if Image is None:
-            fpdf_error('PIL is required for GIF support')
         try:
             im = Image.open(filename)
         except Exception as e:
