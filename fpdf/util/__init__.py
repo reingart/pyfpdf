@@ -3,7 +3,7 @@
 "Utility Functions (previously FPDF#methods)"
 
 import struct
-from .php import sprintf
+from fpdf.php import sprintf
 
 def freadint(f):
     "Read a 4-byte integer from file"

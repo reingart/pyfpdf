@@ -21,6 +21,7 @@ updated here (above and below in variable).
 from __future__ import division, with_statement
 
 from datetime import datetime
+from collections import OrderedDict as o_dict
 from functools import wraps
 import errno
 import math
@@ -31,19 +32,23 @@ import sys
 import tempfile
 import zlib
 
-from .ttfonts import TTFontFile
+from .errors import fpdf_error
 from .fonts import fpdf_charwidths
+from .image_parsing import (
+    get_png_info, get_jpg_info, load_resource as image_parsing_load_resource
+)
 from .php import substr, sprintf, UTF8ToUTF16BE, UTF8StringToArray  # print_r
 from .py3k import (
     PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, b, hashpath
 )
+from .ttfonts import TTFontFile
 from .util import (
     freadint as read_integer, textstring as enclose_in_parens,
     escape as escape_parens
 )
-from .errors import fpdf_error
-from .image_parsing import (
-    get_png_info, get_jpg_info, load_resource as image_parsing_load_resource
+from .util.syntax import (
+    create_name as pdf_name, create_dictionary_string as pdf_d,
+    create_list_string as pdf_l, iobj_ref as pdf_ref
 )
 
 # Global variables
@@ -1840,24 +1845,55 @@ class FPDF(object):
         so('/CreationDate ' + ts('D:' + date_string))
 
     def _putcatalog(self):
-        self._out('/Type /Catalog')
-        self._out('/Pages 1 0 R')
-        if (self.zoom_mode == 'fullpage'):
-            self._out('/OpenAction [3 0 R /Fit]')
-        elif (self.zoom_mode == 'fullwidth'):
-            self._out('/OpenAction [3 0 R /FitH null]')
-        elif (self.zoom_mode == 'real'):
-            self._out('/OpenAction [3 0 R /XYZ null null 1]')
-        elif (not isinstance(self.zoom_mode, basestring)):
-            self._out(sprintf('/OpenAction [3 0 R /XYZ null null %s]',
-                              self.zoom_mode / 100))
+        catalog_d = o_dict()
+        # self._out('/Type /Catalog')
+        catalog_d[pdf_name('type')] = pdf_name('catalog')
+        # self._out('/Pages 1 0 R')
+        catalog_d[pdf_name('pages')] = pdf_ref(1)
 
-        if (self.layout_mode == 'single'):
-            self._out('/PageLayout /SinglePage')
-        elif (self.layout_mode == 'continuous'):
-            self._out('/PageLayout /OneColumn')
-        elif (self.layout_mode == 'two'):
-            self._out('/PageLayout /TwoColumnLeft')
+        # if (self.zoom_mode == 'fullpage'):
+        #     self._out('/OpenAction [3 0 R /Fit]')
+        # elif (self.zoom_mode == 'fullwidth'):
+        #     self._out('/OpenAction [3 0 R /FitH null]')
+        # elif (self.zoom_mode == 'real'):
+        #     self._out('/OpenAction [3 0 R /XYZ null null 1]')
+        # elif (not isinstance(self.zoom_mode, basestring)):
+        #     self._out(sprintf('/OpenAction [3 0 R /XYZ null null %s]',
+        #                       self.zoom_mode / 100))
+
+        zoom_configs = {
+            'default': ['/Fit'],  # TODO FIXME
+            'fullpage': ['/Fit'],
+            'fullwidth': ['/FitH', 'null'],
+            'real': ['/XYZ', 'null', 'null', '1']
+        }
+        zoom_config = [pdf_ref(3)]
+        zoom_config.extend(zoom_configs.get(self.zoom_mode, []))
+
+        # zoom_config is a number, not one of the allowed strings
+        if not zoom_config:
+            zoom_config = ['/XYZ', 'null', 'null', str(self.zoom_mode / 100)]
+
+        catalog_d[pdf_name('OpenAction')] = pdf_l(zoom_config)
+
+
+        # if (self.layout_mode == 'single'):
+        #     self._out('/PageLayout /SinglePage')
+        # elif (self.layout_mode == 'continuous'):
+        #     self._out('/PageLayout /OneColumn')
+        # elif (self.layout_mode == 'two'):
+        #     self._out('/PageLayout /TwoColumnLeft')
+
+        layout_names = {
+            'single': pdf_name('SinglePage'),
+            'continuous': pdf_name('OneColumn'),
+            'two': pdf_name('TwoColumnLeft')
+        }
+
+        if self.layout_mode in layout_names:
+            catalog_d[pdf_name('PageLayout')] = layout_names[self.layout_mode]
+
+        return pdf_d(catalog_d, open_dict='<<\n', close_dict='\n>>')
 
     def _putheader(self):
         self._out('%PDF-' + self.pdf_version)
@@ -1879,9 +1915,10 @@ class FPDF(object):
         self._out('endobj')
         # Catalog
         self._newobj()
-        self._out('<<')
-        self._putcatalog()
-        self._out('>>')
+        # self._out('<<')
+        # self._putcatalog()
+        # self._out('>>')
+        self._out(self._putcatalog())
         self._out('endobj')
         # Cross-ref
         o = len(self.buffer)
