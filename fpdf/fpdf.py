@@ -1846,20 +1846,8 @@ class FPDF(object):
 
     def _putcatalog(self):
         catalog_d = o_dict()
-        # self._out('/Type /Catalog')
         catalog_d[pdf_name('type')] = pdf_name('catalog')
-        # self._out('/Pages 1 0 R')
         catalog_d[pdf_name('pages')] = pdf_ref(1)
-
-        # if (self.zoom_mode == 'fullpage'):
-        #     self._out('/OpenAction [3 0 R /Fit]')
-        # elif (self.zoom_mode == 'fullwidth'):
-        #     self._out('/OpenAction [3 0 R /FitH null]')
-        # elif (self.zoom_mode == 'real'):
-        #     self._out('/OpenAction [3 0 R /XYZ null null 1]')
-        # elif (not isinstance(self.zoom_mode, basestring)):
-        #     self._out(sprintf('/OpenAction [3 0 R /XYZ null null %s]',
-        #                       self.zoom_mode / 100))
 
         zoom_configs = {
             'default': ['/Fit'],  # TODO FIXME
@@ -1875,14 +1863,6 @@ class FPDF(object):
             zoom_config = ['/XYZ', 'null', 'null', str(self.zoom_mode / 100)]
 
         catalog_d[pdf_name('OpenAction')] = pdf_l(zoom_config)
-
-
-        # if (self.layout_mode == 'single'):
-        #     self._out('/PageLayout /SinglePage')
-        # elif (self.layout_mode == 'continuous'):
-        #     self._out('/PageLayout /OneColumn')
-        # elif (self.layout_mode == 'two'):
-        #     self._out('/PageLayout /TwoColumnLeft')
 
         layout_names = {
             'single': pdf_name('SinglePage'),

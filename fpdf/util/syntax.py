@@ -73,9 +73,6 @@ As of this writing, I am not sure how length is actually calculated, so this
 remains something to be looked into.
 
 """
-# def capitalize(string):
-    # return ''.join([string[0].upper(), string[1:]])
-
 def create_name(name):
     if name.startswith('/'):
         name = name[1:]
