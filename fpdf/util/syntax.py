@@ -111,6 +111,9 @@ def iobj_ref(n):
     """format an indirect PDF Object reference from its id number"""
     return str(n) + ' 0 R'
 
+def create_stream(stream):
+    return '\n'.join(['stream', stream, 'endstream'])
+
 if __name__ == '__main__':
     print(create_name("/ok"))
     print(create_name("ok"))

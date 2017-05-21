@@ -48,7 +48,8 @@ from .util import (
 )
 from .util.syntax import (
     create_name as pdf_name, create_dictionary_string as pdf_d,
-    create_list_string as pdf_l, iobj_ref as pdf_ref
+    create_list_string as pdf_l, iobj_ref as pdf_ref,
+    create_stream as pdf_stream
 )
 
 # Global variables
@@ -1379,7 +1380,7 @@ class FPDF(object):
                 p = content
             self._newobj()
             self._out('<<' + filter + '/Length ' + str(len(p)) + '>>')
-            self._putstream(p)
+            self._out(pdf_stream(p))
             self._out('endobj')
         # Pages root
         self.offsets[1] = len(self.buffer)
@@ -1426,7 +1427,7 @@ class FPDF(object):
                 if ('length2' in info):
                     self._out('/Length2 ' + str(info['length2']) + ' /Length3 0')  # noqa: E501
                 self._out('>>')
-                self._putstream(font)
+                self._out(pdf_stream(font))
                 self._out('endobj')
 
         # Font objects
@@ -1553,7 +1554,7 @@ class FPDF(object):
                         "end\n" \
                         "end"
                 self._out('<</Length ' + str(len(toUni)) + '>>')
-                self._putstream(toUni)
+                self._out(pdf_stream(toUni))
                 self._out('endobj')
 
                 # CIDSystemInfo dictionary
@@ -1597,7 +1598,7 @@ class FPDF(object):
                 self._out('<</Length ' + str(len(cidtogidmap)) + '')
                 self._out('/Filter /FlateDecode')
                 self._out('>>')
-                self._putstream(cidtogidmap)
+                self._out(pdf_stream(cidtogidmap))
                 self._out('endobj')
 
                 # Font file
@@ -1606,7 +1607,7 @@ class FPDF(object):
                 self._out('/Filter /FlateDecode')
                 self._out('/Length1 ' + str(ttfontsize))
                 self._out('>>')
-                self._putstream(fontstream)
+                self._out(pdf_stream(fontstream))
                 self._out('endobj')
                 del ttf
             else:
@@ -1766,7 +1767,7 @@ class FPDF(object):
                 self._out('/SMask ' + str(self.n + 1) + ' 0 R')
 
             self._out('/Length ' + str(len(info['data'])) + '>>')
-            self._putstream(info['data'])
+            self._out(pdf_stream(info['data']))
             self._out('endobj')
 
             # Soft mask
@@ -1790,7 +1791,7 @@ class FPDF(object):
                 else:
                     pal = info['pal']
                 self._out('<<' + filter + '/Length ' + str(len(pal)) + '>>')
-                self._putstream(pal)
+                self._out(pdf_stream(pal))
                 self._out('endobj')
 
     def _putxobjectdict(self):
@@ -2013,11 +2014,6 @@ class FPDF(object):
             self.pdf_version = '1.4'
 
         return info
-
-    def _putstream(self, s):
-        self._out('stream')
-        self._out(s)
-        self._out('endstream')
 
     def _out(self, s):
         # Add a line to the document
