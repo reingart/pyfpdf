@@ -1132,7 +1132,7 @@ class FPDF(object):
             new_image_page_height = new_image_height * self.k
             new_image_page_width = new_image_width * self.k
             new_image_page_x = new_image_x * self.k
-            new_image_page_y = (self.h - (new_image_y + h)) * self.k
+            new_image_page_y = (self.h - (new_image_y + new_image_height)) * self.k
 
 
             # size_by = 'w' if image_width > image_height else 'h'
