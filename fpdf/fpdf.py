@@ -1129,6 +1129,8 @@ class FPDF(object):
             new_image_x = box_x + (box_size - new_image_width) / 2.0
             new_image_y = box_y + (box_size - new_image_height) / 2.0
 
+            new_image_page_height = new_image_height * self.k
+            new_image_page_width = new_image_width * self.k
             new_image_page_x = new_image_x * self.k
             new_image_page_y = (self.h - (new_image_y + h)) * self.k
 
@@ -1204,8 +1206,8 @@ class FPDF(object):
 
             self._out(
                 sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',
-                        new_image_width,
-                        new_image_height,
+                        new_image_page_width,
+                        new_image_page_height,
                         new_image_page_x,
                         new_image_page_y,
                         info['i']))
