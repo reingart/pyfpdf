@@ -1114,20 +1114,37 @@ class FPDF(object):
         if x is None:
             x = self.x
         if not is_mask:
-            image_height = float(info['h'])
-            image_width = float(info['w'])
-            size_by = 'w' if image_width > image_height else 'h'
-            multiplier = (w / image_width if size_by == 'w'
-                          else h / image_height)
+            box_x = x
+            box_y = y
+            box_size = h
+            original_image_height = float(info['h'])
+            original_image_width = float(info['w'])
 
-            new_height = (image_height * multiplier) * self.k
-            new_width = (image_width * multiplier) * self.k
+            max_dimension = original_image_height if original_image_height > original_image_width else original_image_width
+            scaling_factor = box_size / max_dimension
 
-            new_x_addition = (self.w - new_width) * 2
-            new_y_addition = ((new_width - self.w) / 2.0)
+            new_image_height = original_image_height * scaling_factor
+            new_image_width = original_image_width * scaling_factor
 
-            image_x = x * self.k
-            image_y = (self.h - (y + h)) * self.k
+            new_image_x = box_x + (box_size - new_image_width) / 2.0
+            new_image_y = box_y + (box_size - new_image_height) / 2.0
+
+            new_image_page_x = new_image_x * self.k
+            new_image_page_y = (self.h - (new_image_y + h)) * self.k
+
+
+            # size_by = 'w' if image_width > image_height else 'h'
+            # multiplier = (w / image_width if size_by == 'w'
+            #               else h / image_height)
+            #
+            # new_height = (image_height * multiplier) * self.k
+            # new_width = (image_width * multiplier) * self.k
+            #
+            # new_x_addition = (self.w - new_width) * 2
+            # new_y_addition = ((new_width - self.w) / 2.0)
+            #
+            # image_x = x * self.k
+            # image_y = (self.h - (y + h)) * self.k
 
             # TESTING
             # print("\n\n+++++++++++++++++++++++")
@@ -1155,22 +1172,22 @@ class FPDF(object):
             # print("Image Y: {}".format(image_y))
             # print("++++++++++++++++++++++\n\n")
 
-            if fit_in_boarder:
-                self.rect(x, y, w, h, style=1)
-
-                if size_by == 'w':
-                    # Update Y value
-                    pass
-                else:
-                    # Update X value
-                    pass
+            # if fit_in_boarder:
+            #     self.rect(x, y, w, h, style=1)
+            #
+            #     if size_by == 'w':
+            #         # Update Y value
+            #         pass
+            #     else:
+            #         # Update X value
+            #         pass
 
             self._out(
                 sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',
-                        new_width,
-                        new_height,
-                        image_x,
-                        image_y,
+                        new_image_width,
+                        new_image_height,
+                        new_image_page_x,
+                        new_image_page_y,
                         info['i']))
 
         if link:
