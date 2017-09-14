@@ -1146,6 +1146,26 @@ class FPDF(object):
             # image_x = x * self.k
             # image_y = (self.h - (y + h)) * self.k
 
+            print("\n\n+++++++++++++++++++++++")
+            print("box_x: {}".format(box_x))
+            print("box_y: {}".format(box_y))
+            print("box_size: {}".format(box_size))
+            print("original_image_height: {}".format(original_image_height))
+            print("original_image_width: {}".format(original_image_width))
+            print("------------------------")
+            print("max_dimension: {}".format(max_dimension))
+            print("max_dimension: {}".format(max_dimension))
+            print("------------------------")
+            print("new_image_height: {}".format(new_image_height))
+            print("new_image_width: {}".format(new_image_width))
+            print("------------------------")
+            print("new_image_x: {}".format(new_image_x))
+            print("new_image_y: {}".format(new_image_y))
+            print("------------------------")
+            print("new_image_page_x: {}".format(new_image_page_x))
+            print("new_image_page_y: {}".format(new_image_page_y))
+            print("\n\n+++++++++++++++++++++++")
+
             # TESTING
             # print("\n\n+++++++++++++++++++++++")
             # print("X: {}".format(x))
