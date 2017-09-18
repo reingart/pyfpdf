@@ -19,7 +19,12 @@ from datetime import datetime
 from functools import wraps
 import math
 import errno
-import os, sys, zlib, struct, re, tempfile, struct
+import os
+import sys
+import zlib
+import struct
+import re
+import tempfile
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
@@ -1137,25 +1142,25 @@ class FPDF(object):
             new_image_page_y = (self.h - (
                 new_image_y + new_image_height)) * self.k
 
-            print("\n\n+++++++++++++++++++++++")
-            print("box_x: {}".format(box_x))
-            print("box_y: {}".format(box_y))
-            print("box_size: {}".format(box_size))
-            print("original_image_height: {}".format(original_image_height))
-            print("original_image_width: {}".format(original_image_width))
-            print("------------------------")
-            print("max_dimension: {}".format(max_dimension))
-            print("max_dimension: {}".format(max_dimension))
-            print("------------------------")
-            print("new_image_height: {}".format(new_image_height))
-            print("new_image_width: {}".format(new_image_width))
-            print("------------------------")
-            print("new_image_x: {}".format(new_image_x))
-            print("new_image_y: {}".format(new_image_y))
-            print("------------------------")
-            print("new_image_page_x: {}".format(new_image_page_x))
-            print("new_image_page_y: {}".format(new_image_page_y))
-            print("+++++++++++++++++++++++\n\n")
+            # print("\n\n+++++++++++++++++++++++")
+            # print("box_x: {}".format(box_x))
+            # print("box_y: {}".format(box_y))
+            # print("box_size: {}".format(box_size))
+            # print("original_image_height: {}".format(original_image_height))
+            # print("original_image_width: {}".format(original_image_width))
+            # print("------------------------")
+            # print("max_dimension: {}".format(max_dimension))
+            # print("max_dimension: {}".format(max_dimension))
+            # print("------------------------")
+            # print("new_image_height: {}".format(new_image_height))
+            # print("new_image_width: {}".format(new_image_width))
+            # print("------------------------")
+            # print("new_image_x: {}".format(new_image_x))
+            # print("new_image_y: {}".format(new_image_y))
+            # print("------------------------")
+            # print("new_image_page_x: {}".format(new_image_page_x))
+            # print("new_image_page_y: {}".format(new_image_page_y))
+            # print("+++++++++++++++++++++++\n\n")
 
             if fit_in_boarder:
                 self.rect(x, y, w, h, style=1)
