@@ -1044,7 +1044,7 @@ class FPDF(object):
 
     @check_page
     def image(self, name, x=None, y=None, w=0, h=0, type='', link='',
-              is_mask=False, mask_image=None, stretch_to_fill=False,
+              is_mask=False, mask_image=None, stretch_to_fill=True,
               fit_in_boarder=False):
         # Put an image on the page
         if not name in self.images:
@@ -1121,20 +1121,23 @@ class FPDF(object):
         if not is_mask:
             box_x = x
             box_y = y
-            box_size = h
             original_image_height = float(info['h'])
             original_image_width = float(info['w'])
 
-            max_dimension = (original_image_height
-                             if original_image_height > original_image_width
-                             else original_image_width)
+            if original_image_height > original_image_width:
+                max_dimension = original_image_height
+                box_size = h
+            else:
+                box_size = w
+                max_dimension = original_image_width
+
             scaling_factor = box_size / max_dimension
 
             new_image_height = original_image_height * scaling_factor
             new_image_width = original_image_width * scaling_factor
 
-            new_image_x = box_x + (box_size - new_image_width) / 2.0
-            new_image_y = box_y + (box_size - new_image_height) / 2.0
+            new_image_x = box_x + (w - new_image_width) / 2.0
+            new_image_y = box_y + (h - new_image_height) / 2.0
 
             new_image_page_height = new_image_height * self.k
             new_image_page_width = new_image_width * self.k
@@ -1143,6 +1146,8 @@ class FPDF(object):
                 new_image_y + new_image_height)) * self.k
 
             # print("\n\n+++++++++++++++++++++++")
+            # print("Name: {}".format(name))
+            # print("------------------------")
             # print("box_x: {}".format(box_x))
             # print("box_y: {}".format(box_y))
             # print("box_size: {}".format(box_size))
@@ -1165,10 +1170,11 @@ class FPDF(object):
             if fit_in_boarder:
                 self.rect(x, y, w, h, style=1)
             else:
-                new_image_page_width = w * self.k
-                new_image_page_height = h * self.k
-                new_image_page_x = x * self.k
-                new_image_page_y = (self.h - (y + h)) * self.k
+                if stretch_to_fill:
+                    new_image_page_width = w * self.k
+                    new_image_page_height = h * self.k
+                    new_image_page_x = x * self.k
+                    new_image_page_y = (self.h - (y + h)) * self.k
 
             self._out(
                 sprintf('q %.2f 0 0 %.2f %.2f %.2f cm /I%d Do Q',
