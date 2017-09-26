@@ -1953,14 +1953,14 @@ class FPDF(object):
                 else:
                     dataSize, = struct.unpack('>H', f.read(2))
                     data = f.read(dataSize - 2) if dataSize > 2 else ''
-                    if ((
-                                        markerLow >= 0xC0 and markerLow <= 0xC3) or  # SOF0 - SOF3
-                            (
-                                            markerLow >= 0xC5 and markerLow <= 0xC7) or  # SOF4 - SOF7
-                            (
-                                            markerLow >= 0xC9 and markerLow <= 0xCB) or  # SOF9 - SOF11
-                            (
-                                            markerLow >= 0xCD and markerLow <= 0xCF)):  # SOF13 - SOF15
+                    if ((markerLow >= 0xC0 and markerLow <= 0xC3) or  #
+                        # SOF0 - SOF3
+                            (markerLow >= 0xC5 and markerLow <= 0xC7) or  #
+                        #  SOF4 - SOF7
+                            (markerLow >= 0xC9 and markerLow <= 0xCB) or  #
+                        #  SOF9 - SOF11
+                            (markerLow >= 0xCD and markerLow <= 0xCF)):  #
+                        # SOF13 - SOF15
                         bpc, height, width, layers = struct.unpack_from(
                             '>BHHB', data)
                         colspace = 'DeviceRGB' if layers == 3 else (
