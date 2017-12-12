@@ -68,7 +68,7 @@ else:
 # shortcut to bytes conversion (b prefix)
 def b(s): 
     if isinstance(s, basestring):
-        return s.encode("latin1")
+        return s.encode("utf-8")
     elif isinstance(s, int):
         if PY3K:
             return bytes([s])       # http://bugs.python.org/issue4588

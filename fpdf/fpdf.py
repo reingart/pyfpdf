@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
 # * Version:  1.7.1                                                          *
@@ -108,7 +108,7 @@ class FPDF(object):
                            'timesI': 'Times-Italic',
                            'timesBI': 'Times-BoldItalic',
                            'symbol': 'Symbol', 'zapfdingbats': 'ZapfDingbats'}
-        self.core_fonts_encoding = "ISO-8859-1"
+        self.core_fonts_encoding = "utf-8"
         # Scale factor
         if unit == "pt":
             self.k = 1
@@ -415,6 +415,11 @@ class FPDF(object):
                 w += cw.get(s[i], 0)
         if self.font_stretching != 100:
             w = w * self.font_stretching / 100.0
+
+        string_width = w * self.font_size / 1000.0
+        if string_width / float(l) > 1.9:
+            return l * 1.9
+
         return w * self.font_size / 1000.0
 
     def set_line_width(self, width):
@@ -748,7 +753,8 @@ class FPDF(object):
         return self.auto_page_break
 
     @check_page
-    def cell(self, w, h=0, txt='', border=0, ln=0, align='', fill=0, link=''):
+    def cell(self, w, h=0, txt='', border=0, ln=0, align='', fill=0, link='',
+             testing=False):
         # Output a cell
         txt = self.normalize_text(txt)
         k = self.k
@@ -1252,7 +1258,7 @@ class FPDF(object):
                 dest = 'F'
         if PY3K:
             # manage binary data as latin1 until PEP461 or similar is implemented
-            buffer = self.buffer.encode("ISO-8859-1").strip()
+            buffer = self.buffer.encode("latin1")
         else:
             buffer = self.buffer
         if dest in ('I', 'D'):
@@ -1272,16 +1278,15 @@ class FPDF(object):
     def normalize_text(self, txt):
         # Check that text input is in the correct format/encoding
         # - for TTF unicode fonts: unicode object (utf8 encoding)
-        # - for built-in fonts: string instances (encoding: latin-1, cp1252)
+        # - for built-in fonts: string instances (encoding: utf-8, cp1252)
         if not PY3K:
             if self.unifontsubset and isinstance(txt, str):
-                return txt.decode("ISO-8859-1")
+                return txt.decode("utf-8")
             elif not self.unifontsubset and isinstance(txt, unicode):
-                return txt.encode(self.core_fonts_encoding).strip()
+                return txt.encode(self.core_fonts_encoding)
         else:
             if not self.unifontsubset and self.core_fonts_encoding:
-                return txt.encode(self.core_fonts_encoding).strip().decode(
-                    "ISO-8859-1")
+                return txt.encode(self.core_fonts_encoding).decode("utf-8")
         return txt
 
     def _dochecks(self):
@@ -1359,7 +1364,7 @@ class FPDF(object):
             content = self.pages[n]["content"]
             if self.compress:
                 # manage binary data as latin1 until PEP461 or similar is implemented
-                p = content.encode("ISO-8859-1").strip() if PY3K else content
+                p = content.encode("latin1") if PY3K else content
                 p = zlib.compress(p)
             else:
                 p = content
@@ -1573,7 +1578,7 @@ class FPDF(object):
                 cidtogidmap = ''.join(cidtogidmap)
                 if PY3K:
                     # manage binary data as latin1 until PEP461-like function is implemented
-                    cidtogidmap = cidtogidmap.encode("ISO-8859-1").strip()
+                    cidtogidmap = cidtogidmap.encode("latin1")
                 cidtogidmap = zlib.compress(cidtogidmap);
                 self._newobj()
                 self._out('<</Length ' + str(len(cidtogidmap)) + '')
@@ -2072,7 +2077,7 @@ class FPDF(object):
                     trns = [ord(substr(t, 1, 1)), ord(substr(t, 3, 1)),
                             ord(substr(t, 5, 1))]
                 else:
-                    pos = t.find('\x00'.encode("ISO-8859-1").strip())
+                    pos = t.find('\x00'.encode("latin1"))
                     if pos != -1:
                         trns = [pos, ]
                 f.read(4)
@@ -2154,10 +2159,9 @@ class FPDF(object):
         # Add a line to the document
         if PY3K and isinstance(s, bytes):
             # manage binary data as latin1 until PEP461-like function is implemented
-            s = s.decode("ISO-8859-1")
+            s = s.decode("latin1")
         elif not PY3K and isinstance(s, unicode):
-            s = s.encode(
-                "ISO-8859-1").strip()  # default encoding (font name and similar)
+            s = s.encode("latin1")  # default encoding (font name and similar)
         elif not isinstance(s, basestring):
             s = str(s)
         if self.state == 2:
