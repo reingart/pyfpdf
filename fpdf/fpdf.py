@@ -417,10 +417,10 @@ class FPDF(object):
             w = w * self.font_stretching / 100.0
 
         string_width = w * self.font_size / 1000.0
+
         if string_width / float(l) > 1.9:
             return l * 1.9
-
-        return w * self.font_size / 1000.0
+        return string_width
 
     def set_line_width(self, width):
         # Set line width
