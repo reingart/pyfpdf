@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
 # * Version:  1.7.1                                                          *
@@ -108,7 +108,7 @@ class FPDF(object):
                            'timesI': 'Times-Italic',
                            'timesBI': 'Times-BoldItalic',
                            'symbol': 'Symbol', 'zapfdingbats': 'ZapfDingbats'}
-        self.core_fonts_encoding = "latin-1"
+        self.core_fonts_encoding = "utf-8"
         # Scale factor
         if unit == "pt":
             self.k = 1
@@ -216,13 +216,13 @@ class FPDF(object):
         'default', or a number, interpreted as a percentage."""
 
         if (zoom == 'fullpage' or zoom == 'fullwidth'
-            or zoom == 'real' or zoom == 'default'
-            or not isinstance(zoom, basestring)):
+                or zoom == 'real' or zoom == 'default'
+                or not isinstance(zoom, basestring)):
             self.zoom_mode = zoom
         else:
             self.error('Incorrect zoom display mode: ' + zoom)
         if (layout == 'single' or layout == 'continuous'
-            or layout == 'two' or layout == 'default'):
+                or layout == 'two' or layout == 'default'):
             self.layout_mode = layout
         else:
             self.error('Incorrect layout display mode: ' + layout)
@@ -415,7 +415,12 @@ class FPDF(object):
                 w += cw.get(s[i], 0)
         if self.font_stretching != 100:
             w = w * self.font_stretching / 100.0
-        return w * self.font_size / 1000.0
+
+        string_width = w * self.font_size / 1000.0
+
+        if string_width / float(l) > 1.9:
+            return l * 1.9
+        return string_width
 
     def set_line_width(self, width):
         # Set line width
@@ -515,10 +520,10 @@ class FPDF(object):
             if os.path.exists(fname):
                 ttffilename = fname
             elif (FPDF_FONT_DIR and
-                      os.path.exists(os.path.join(FPDF_FONT_DIR, fname))):
+                  os.path.exists(os.path.join(FPDF_FONT_DIR, fname))):
                 ttffilename = os.path.join(FPDF_FONT_DIR, fname)
             elif (SYSTEM_TTFONTS and
-                      os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
+                  os.path.exists(os.path.join(SYSTEM_TTFONTS, fname))):
                 ttffilename = os.path.join(SYSTEM_TTFONTS, fname)
             else:
                 raise RuntimeError("TTF Font file not found: %s" % fname)
@@ -631,7 +636,7 @@ class FPDF(object):
             size = self.font_size_pt
         # Test if font is already selected
         if (
-                            self.font_family == family and self.font_style == style and self.font_size_pt == size):
+                self.font_family == family and self.font_style == style and self.font_size_pt == size):
             return
         # Test if used for the first time
         fontkey = family + style
@@ -748,12 +753,13 @@ class FPDF(object):
         return self.auto_page_break
 
     @check_page
-    def cell(self, w, h=0, txt='', border=0, ln=0, align='', fill=0, link=''):
+    def cell(self, w, h=0, txt='', border=0, ln=0, align='', fill=0, link='',
+             testing=False):
         # Output a cell
         txt = self.normalize_text(txt)
         k = self.k
         if (self.y + h > self.page_break_trigger
-            and not self.in_footer and self.accept_page_break()):
+                and not self.in_footer and self.accept_page_break()):
             # Automatic page break
             x = self.x
             ws = self.ws
@@ -811,7 +817,8 @@ class FPDF(object):
                     self.current_font['subset'].append(uni)
                 space = self._escape(UTF8ToUTF16BE(' ', False))
                 s += sprintf('BT 0 Tw %.2F %.2F Td [', (self.x + dx) * k, (
-                    self.h - (self.y + 0.5 * h + 0.3 * self.font_size)) * k)
+                        self.h - (
+                        self.y + 0.5 * h + 0.3 * self.font_size)) * k)
                 t = txt.split(' ')
                 numt = len(t)
                 for i in range(numt):
@@ -831,7 +838,7 @@ class FPDF(object):
                 else:
                     txt2 = self._escape(txt)
                 s += sprintf('BT %.2f %.2f Td (%s) Tj ET', (self.x + dx) * k, (
-                    self.h - (self.y + .5 * h + .3 * self.font_size)) * k,
+                        self.h - (self.y + .5 * h + .3 * self.font_size)) * k,
                              txt2)
 
             if self.underline:
@@ -891,6 +898,7 @@ class FPDF(object):
         l = 0
         ns = 0
         nl = 1
+        prev_c_width = 1
         while i < nb:
             # Get next character
             c = s[i]
@@ -917,10 +925,16 @@ class FPDF(object):
                 sep = i
                 ls = l
                 ns += 1
+
             if self.unifontsubset:
-                l += self.get_string_width(c, True) / self.font_size * 1000.0
+
+                char_width = self.get_string_width(c, True)
+                char_width = char_width if char_width < 5 else prev_c_width
+                prev_c_width = char_width
+                l += char_width / self.font_size * 1000.0
             else:
                 l += cw.get(c, 0)
+
             if l > wmax:
                 # Automatic line break
                 if sep == -1:
@@ -938,7 +952,7 @@ class FPDF(object):
                     if align == 'J':
                         if ns > 1:
                             self.ws = (wmax - ls) / 1000.0 * self.font_size / (
-                                ns - 1)
+                                    ns - 1)
                         else:
                             self.ws = 0
                         if not split_only:
@@ -1017,7 +1031,7 @@ class FPDF(object):
                         self.y += h
                         w = self.w - self.r_margin - self.x
                         wmax = (
-                                   w - 2 * self.c_margin) * 1000.0 / self.font_size
+                                       w - 2 * self.c_margin) * 1000.0 / self.font_size
                         i += 1
                         nl += 1
                         continue
@@ -1107,8 +1121,8 @@ class FPDF(object):
         # Flowing mode
         if y is None:
             if (self.y + h > self.page_break_trigger
-                and not self.in_footer
-                and self.accept_page_break()):
+                    and not self.in_footer
+                    and self.accept_page_break()):
                 # Automatic page break
                 x = self.x
                 self.add_page(same=True)
@@ -1143,7 +1157,7 @@ class FPDF(object):
             new_image_page_width = new_image_width * self.k
             new_image_page_x = new_image_x * self.k
             new_image_page_y = (self.h - (
-                new_image_y + new_image_height)) * self.k
+                    new_image_y + new_image_height)) * self.k
 
             # print("\n\n+++++++++++++++++++++++")
             # print("Name: {}".format(name))
@@ -1264,7 +1278,7 @@ class FPDF(object):
     def normalize_text(self, txt):
         # Check that text input is in the correct format/encoding
         # - for TTF unicode fonts: unicode object (utf8 encoding)
-        # - for built-in fonts: string instances (encoding: latin-1, cp1252)
+        # - for built-in fonts: string instances (encoding: utf-8, cp1252)
         if not PY3K:
             if self.unifontsubset and isinstance(txt, str):
                 return txt.decode("utf-8")
@@ -1272,7 +1286,7 @@ class FPDF(object):
                 return txt.encode(self.core_fonts_encoding)
         else:
             if not self.unifontsubset and self.core_fonts_encoding:
-                return txt.encode(self.core_fonts_encoding).decode("latin-1")
+                return txt.encode(self.core_fonts_encoding).decode("utf-8")
         return txt
 
     def _dochecks(self):
@@ -1669,7 +1683,7 @@ class FPDF(object):
         for k, ws in sorted(range_.items()):
             cws = len(ws)
             if (k == nextk and not prevint
-                and (not k in range_interval or cws < 3)):
+                    and (not k in range_interval or cws < 3)):
                 if k in range_interval:
                     del range_interval[k]
                 range_[prevk] = range_[prevk] + range_[k]
@@ -1947,18 +1961,18 @@ class FPDF(object):
                 elif markerLow == 0xDA:  # SOS
                     raise SyntaxError('No JPEG SOF marker found')
                 elif (markerLow == 0xC8 or  # JPG
-                          (markerLow >= 0xD0 and markerLow <= 0xD9) or  # RSTx
-                          (markerLow >= 0xF0 and markerLow <= 0xFD)):  # JPGx
+                      (markerLow >= 0xD0 and markerLow <= 0xD9) or  # RSTx
+                      (markerLow >= 0xF0 and markerLow <= 0xFD)):  # JPGx
                     pass
                 else:
                     dataSize, = struct.unpack('>H', f.read(2))
                     data = f.read(dataSize - 2) if dataSize > 2 else ''
                     if ((markerLow >= 0xC0 and markerLow <= 0xC3) or  #
-                        # SOF0 - SOF3
+                            # SOF0 - SOF3
                             (markerLow >= 0xC5 and markerLow <= 0xC7) or  #
-                        #  SOF4 - SOF7
+                            #  SOF4 - SOF7
                             (markerLow >= 0xC9 and markerLow <= 0xCB) or  #
-                        #  SOF9 - SOF11
+                            #  SOF9 - SOF11
                             (markerLow >= 0xCD and markerLow <= 0xCF)):  #
                         # SOF13 - SOF15
                         bpc, height, width, layers = struct.unpack_from(
