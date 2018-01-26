@@ -13,7 +13,7 @@ advanced capabilities, and is easy to learn, extend and maintain.
 Features:
 ---------
 
- * Python 2.5 to 3.4 support
+ * Python 2.5 to 3.6 support
  * Unicode (UTF-8) TrueType font subset embedding
  * Barcode I2of5 and code39, QR code coming soon ...
  * PNG, GIF and JPG support (including transparency and alpha channel)
