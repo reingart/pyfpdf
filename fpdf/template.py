@@ -40,7 +40,7 @@ class Template:
         "Parse template format csv file and create elements dict"
         keys = ('name','type','x1','y1','x2','y2','font','size',
             'bold','italic','underline','foreground','background',
-            'align','text','priority', 'multiline')
+            'align','text','priority', 'multiline', 'fill')
         self.elements = []
         self.pg_no = 0
         if not PY3K:
@@ -140,13 +140,11 @@ class Template:
         
     def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10, 
              bold=False, italic=False, underline=False, align="", 
-             foreground=0, backgroud=65535, multiline=None,
+             foreground=0, background=0xFFFFFF, multiline=None, fill=0,
              *args, **kwargs):
         if text:
-            if pdf.text_color!=rgb(foreground):
-                pdf.set_text_color(*rgb(foreground))
-            if pdf.fill_color!=rgb(backgroud):
-                pdf.set_fill_color(*rgb(backgroud))
+            pdf.set_text_color(*rgb(foreground))
+            pdf.set_fill_color(*rgb(background))
 
             font = font.strip().lower()
             if font == 'arial black':
@@ -166,34 +164,32 @@ class Template:
             pdf.set_xy(x1,y1)
             if multiline is None:
                 # multiline==None: write without wrapping/trimming (default)
-                pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align)
+                pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align,fill=fill)
             elif multiline:
                 # multiline==True: automatic word - warp
-                pdf.multi_cell(w=x2-x1,h=y2-y1,txt=text,border=0,align=align)
+                pdf.multi_cell(w=x2-x1,h=y2-y1,txt=text,border=0,align=align,fill=fill)
             else:
                 # multiline==False: trim to fit exactly the space defined
                 text = pdf.multi_cell(w=x2-x1, h=y2-y1,
                              txt=text, align=align, split_only=True)[0]
                 print("trimming: *%s*" % text)
-                pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align)
+                pdf.cell(w=x2-x1,h=y2-y1,txt=text,border=0,ln=0,align=align,fill=fill)
 
             #pdf.Text(x=x1,y=y1,txt=text)
 
     def line(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, *args, **kwargs):
-        if pdf.draw_color!=rgb(foreground):
-            #print "SetDrawColor", hex(foreground)
-            pdf.set_draw_color(*rgb(foreground))
-        #print "SetLineWidth", size
+        pdf.set_draw_color(*rgb(foreground))
         pdf.set_line_width(size)
         pdf.line(x1, y1, x2, y2)
 
-    def rect(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, backgroud=65535, *args, **kwargs):
-        if pdf.draw_color!=rgb(foreground):
-            pdf.set_draw_color(*rgb(foreground))
-        if pdf.fill_color!=rgb(backgroud):
-            pdf.set_fill_color(*rgb(backgroud))
+    def rect(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, background=0xFFFFFF, fill=0, *args, **kwargs):
+        pdf.set_draw_color(*rgb(foreground))
+        pdf.set_fill_color(*rgb(background))
         pdf.set_line_width(size)
-        pdf.rect(x1, y1, x2-x1, y2-y1)
+        style = 'D'
+        if fill == 1:
+            style += 'F'
+        pdf.rect(x1, y1, x2-x1, y2-y1,style=style)
 
     def image(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', *args,**kwargs):
         if text:
@@ -201,8 +197,7 @@ class Template:
 
     def barcode(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
              foreground=0, *args, **kwargs):
-        if pdf.draw_color!=rgb(foreground):
-            pdf.set_draw_color(*rgb(foreground))
+        pdf.set_draw_color(*rgb(foreground))
         font = font.lower().strip()
         if font == 'interleaved 2of5 nt':
             pdf.interleaved2of5(text,x1,y1,w=size,h=y2-y1)
@@ -211,8 +206,7 @@ class Template:
     def write(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
               bold=False, italic=False, underline=False, align="", link='http://example.com',
              foreground=0, *args, **kwargs):
-        if pdf.text_color!=rgb(foreground):
-            pdf.set_text_color(*rgb(foreground))
+        pdf.set_text_color(*rgb(foreground))
         font = font.strip().lower()
         if font == 'arial black':
             font = 'arial'
