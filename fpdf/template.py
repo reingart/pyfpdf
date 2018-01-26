@@ -83,6 +83,9 @@ class Template:
     def has_key(self, name):
         return name.lower() in self.keys
         
+    def __contains__(self, name):
+        return self.has_key(name)
+
     def __getitem__(self, name):
         if name in self.keys:
             key = name.lower()
