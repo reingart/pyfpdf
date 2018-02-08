@@ -1824,7 +1824,7 @@ class FPDF(object):
         if Image is None:
             self.error('PIL is required for GIF support')
         try:
-            im = Image.open(filename)
+            im = Image.open(self.load_resource("image", filename))
         except Exception:
             self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
         else:
