@@ -21,11 +21,13 @@ import math
 import errno
 import os, sys, zlib, struct, re, tempfile, struct
 
+import io
+import base64
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
-from .py3k import PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, exception, b, hashpath
-
+from .py3k import PY3K, pickle, urlopen, Image, basestring, unicode, exception, b, hashpath
+from io import BytesIO
 # Global variables
 FPDF_VERSION = '1.7.2'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__),'font')
@@ -1772,11 +1774,15 @@ class FPDF(object):
         return sprintf('%.2f %.2f %.2f %.2f re f',x*self.k,(self.h-(y-up/1000.0*self.font_size))*self.k,w*self.k,-ut/1000.0*self.font_size_pt)
 
     def load_resource(self, reason, filename):
-        "Load external file"
-        # by default loading from network is allowed for all images
         if reason == "image":
             if filename.startswith("http://") or filename.startswith("https://"):
                 f = BytesIO(urlopen(filename).read())
+            # BEGIN : RIFFYN
+            elif filename.startswith("data:"):
+                f = filename.split('base64,')[1]
+                f = base64.b64decode(f)
+                f = io.BytesIO(f)
+            # BEGIN: RIFFYN
             else:
                 f = open(filename, "rb")
             return f
