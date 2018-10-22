@@ -26,7 +26,7 @@ def hex2dec(color = "#000000"):
 class HTML2FPDF(HTMLParser):
     "Render basic HTML to FPDF"
 
-    def __init__(self, pdf, image_map=None):
+    def __init__(self, pdf, image_map=None, font_face="times"):
         HTMLParser.__init__(self)
         self.style = {}
         self.pre = False
@@ -40,8 +40,8 @@ class HTML2FPDF(HTMLParser):
         self.r = self.g = self.b = 0
         self.indent = 0
         self.bullet = []
-        self.set_font("times", 12)
-        self.font_face = "times"    # initialize font
+        self.set_font(font_face, 12)
+        self.font_face = font_face    # initialize font
         self.color = 0              #initialize font color
         self.table = None           # table attributes
         self.table_col_width = None # column (header) widths
@@ -394,9 +394,9 @@ class HTML2FPDF(HTMLParser):
         self.pdf.ln(3)
 
 class HTMLMixin(object):
-    def write_html(self, text, image_map=None):
+    def write_html(self, text, image_map=None, font_face="times"):
         "Parse HTML and convert it to PDF"
-        h2p = HTML2FPDF(self, image_map)
+        h2p = HTML2FPDF(self, image_map, font_face)
         text = h2p.unescape(text) # To deal with HTML entities
         h2p.feed(text)
 
