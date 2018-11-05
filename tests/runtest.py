@@ -352,7 +352,7 @@ def usage():
             cover.log("             - download %s" % packs[p][0])
     except Exception:
             traceback.print_exc()
-    #cover.log("  --downloadfonts  - download font set")
+    cover.log("  --download_all   - download all resources from all packs")
     cover.log("  --help           - this page")
 
 def hint_prepare():
@@ -428,95 +428,100 @@ def download_pack(packname):
     if packname[:1] == "-":
         packname = packname[1:]
     packs = cover.load_res_packs()
-    if packname not in packs:
-        cover.err("Unknown pack \"%s\"" % packname)
-        return
-    name, url, filename, dest, valid, strip = packs[packname]
-    cover.log("Downloading: " + name)
-    destdir = os.path.join(cover.basepath, *dest)
-    if not os.path.exists(destdir):
-        os.makedirs(destdir)
-    zippath = os.path.join(cover.basepath, filename)
-    if not os.path.exists(zippath):
-        u = urlopen(url)
-        meta = u.info()
-        try:
-            file_size = int(meta.get("Content-Length"))
-            cover.log("Downloading:", file_size, "bytes")
-        except Exception:
-            file_size = None
-            cover.log("Downloading:")
-        with open(zippath, "wb") as f:
-            file_size_dl = 0
-            while True:
-                buff = u.read(64 * 1024)
-                if not buff:
-                    break
-                file_size_dl += len(buff)
-                f.write(buff)
-                if file_size:
-                    cover.log("  ", file_size_dl * 100. / file_size, "%")
-                else:
-                    cover.log("  ", file_size_dl + " bytes")
-    # unpack
-    cover.log("Extracting")
-    import zipfile, re
-    newfiles = []
-    with open(zippath, "rb") as fh:
-        z = zipfile.ZipFile(fh)
-        for name in z.namelist():
-            if not re.match(valid, name):
-                cover.log("  skip " + name)
-                continue
-            # strip slashes
-            ename = name
-            ns = strip
-            while ns > 0:
-                ns -= 1
-                ps = ename.find("/")
-                if ps > 0:
-                    ename = ename[ps + 1:]
-                else:
-                    ename = ""
-                    break
-            if not ename:
-                cover.log("  strip " + name)
-                continue
-            if name != ename:
-                cover.log("  ok " + name + " -> " + ename)
-            else:
-                cover.log("  ok " + name)
-            # extract
-            fn = os.path.join(destdir, *ename.split("/"))
-            if ename[-1:] == "/":
-                if not os.path.exists(fn):
-                    os.makedirs(fn)
-            else:
-                base = os.path.dirname(fn)
-                if not os.path.exists(base):
-                    os.makedirs(base)
-                with open(fn, "wb") as outfile:
-                    outfile.write(z.read(name))
-                newfn = "/".join(dest + ename.split("/"))
-                newfiles.append(newfn)
-    # check extracted
-    for res, (hs, tags, pack) in cover.load_res_list().items():
-        if pack != packname: continue
-        fp = os.path.join(cover.basepath, *res.split("/"))
-        if not os.path.exists(fp):
-            cover.err("Resource \"%s\" not found" % res)
+    if packname == "_all":
+        dnpacks = packs.keys()
+    else:
+        dnpacks = [packname]
+        if packname not in packs:
+            cover.err("Unknown pack \"%s\"" % packname)
             return
-        if cover.file_hash(fp) != hs:
-            if cover.common.RESHASH == "{IGNORE}":
-                cover.log("  ignore hash " + res)
-            else:
-                cover.err("Resource \"%s\" damaged (hash mismatch)" % res)
+    for pidx, packname in enumerate(dnpacks):
+        name, url, filename, dest, valid, strip = packs[packname]
+        cover.log("Downloading: %d/%d %s" % (pidx + 1, len(dnpacks), name))
+        destdir = os.path.join(cover.basepath, *dest)
+        if not os.path.exists(destdir):
+            os.makedirs(destdir)
+        zippath = os.path.join(cover.basepath, filename)
+        if not os.path.exists(zippath):
+            u = urlopen(url)
+            meta = u.info()
+            try:
+                file_size = int(meta.get("Content-Length"))
+                cover.log("Downloading: %s bytes" % str(file_size))
+            except Exception:
+                file_size = None
+                cover.log("Downloading:")
+            with open(zippath, "wb") as f:
+                file_size_dl = 0
+                while True:
+                    buff = u.read(64 * 1024)
+                    if not buff:
+                        break
+                    file_size_dl += len(buff)
+                    f.write(buff)
+                    if file_size:
+                        cover.log("  ", file_size_dl * 100. / file_size, "%")
+                    else:
+                        cover.log("  ", file_size_dl, "bytes")
+        # unpack
+        cover.log("Extracting")
+        import zipfile, re
+        newfiles = []
+        with open(zippath, "rb") as fh:
+            z = zipfile.ZipFile(fh)
+            for name in z.namelist():
+                if not re.match(valid, name):
+                    cover.log("  skip " + name)
+                    continue
+                # strip slashes
+                ename = name
+                ns = strip
+                while ns > 0:
+                    ns -= 1
+                    ps = ename.find("/")
+                    if ps > 0:
+                        ename = ename[ps + 1:]
+                    else:
+                        ename = ""
+                        break
+                if not ename:
+                    cover.log("  strip " + name)
+                    continue
+                if name != ename:
+                    cover.log("  ok " + name + " -> " + ename)
+                else:
+                    cover.log("  ok " + name)
+                # extract
+                fn = os.path.join(destdir, *ename.split("/"))
+                if ename[-1:] == "/":
+                    if not os.path.exists(fn):
+                        os.makedirs(fn)
+                else:
+                    base = os.path.dirname(fn)
+                    if not os.path.exists(base):
+                        os.makedirs(base)
+                    with open(fn, "wb") as outfile:
+                        outfile.write(z.read(name))
+                    newfn = "/".join(dest + ename.split("/"))
+                    newfiles.append(newfn)
+        # check extracted
+        for res, (hs, tags, pack) in cover.load_res_list().items():
+            if pack != packname: continue
+            fp = os.path.join(cover.basepath, *res.split("/"))
+            if not os.path.exists(fp):
+                cover.err("Resource \"%s\" not found" % res)
                 return
-        if res in newfiles:
-            newfiles.remove(res)
-    # check unchecked
-    for fn in newfiles:
-        print("  no hash for " + fn)
+            if cover.file_hash(fp) != hs:
+                if cover.common.RESHASH == "{IGNORE}":
+                    cover.log("  ignore hash " + res)
+                else:
+                    cover.err("Resource \"%s\" damaged (hash mismatch)" % res)
+                    return
+            if res in newfiles:
+                newfiles.remove(res)
+        # check unchecked
+        for fn in newfiles:
+            print("  no hash for " + fn)
     cover.log("Done")
 
 def main():
