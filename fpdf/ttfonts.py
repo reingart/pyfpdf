@@ -943,13 +943,15 @@ class TTFontFile:
         if (indexToLocFormat == 0):
             data = self.get_chunk(start,(numGlyphs*2)+2)
             arr = unpack(">%dH" % (len(data)//2), data)
-            for n in range(numGlyphs): 
-                self.glyphPos.append((arr[n] * 2))  # n+1 !?
+            for n in range(len(arr)):
+                # NOTE: len(arr) == numGlyphs + 1, otherwise
+                # the length of the last glyph would be unknown.
+                self.glyphPos.append((arr[n] * 2))
         elif (indexToLocFormat == 1):
             data = self.get_chunk(start,(numGlyphs*4)+4)
             arr = unpack(">%dL" % (len(data)//4), data)
-            for n in range(numGlyphs):
-                self.glyphPos.append((arr[n]))  # n+1 !?
+            for n in range(len(arr)):
+                self.glyphPos.append((arr[n]))
         else:
             die('Unknown location table format ' + indexToLocFormat)
 
