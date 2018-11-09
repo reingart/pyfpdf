@@ -20,6 +20,7 @@ from functools import wraps
 import math
 import errno
 import os, sys, zlib, struct, re, tempfile, struct
+import io
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
@@ -1920,35 +1921,35 @@ class FPDF(object):
         if(ct>=4):
             # Extract alpha channel
             data = zlib.decompress(data)
-            color = b('')
-            alpha = b('')
+            color = io.BytesIO()
+            alpha = io.BytesIO()
             if(ct==4):
                 # Gray image
                 length = 2*w
                 for i in range(h):
                     pos = (1+length)*i
-                    color += b(data[pos])
-                    alpha += b(data[pos])
-                    line = substr(data, pos+1, length)
-                    re_c = re.compile('(.).'.encode("ascii"), flags=re.DOTALL)
-                    re_a = re.compile('.(.)'.encode("ascii"), flags=re.DOTALL)
-                    color += re_c.sub(lambda m: m.group(1), line)
-                    alpha += re_a.sub(lambda m: m.group(1), line)
+                    l = b(data[pos])
+                    color.write(l)
+                    alpha.write(l)
+                    line = data[pos+1:pos+1+length]
+                    color.write(line[::2])
+                    alpha.write(line[1::2])
             else:
                 # RGB image
+                import numpy
+                data = numpy.frombuffer(data, dtype=numpy.uint8)
                 length = 4*w
                 for i in range(h):
                     pos = (1+length)*i
-                    color += b(data[pos])
-                    alpha += b(data[pos])
-                    line = substr(data, pos+1, length)
-                    re_c = re.compile('(...).'.encode("ascii"), flags=re.DOTALL)
-                    re_a = re.compile('...(.)'.encode("ascii"), flags=re.DOTALL)
-                    color += re_c.sub(lambda m: m.group(1), line)
-                    alpha += re_a.sub(lambda m: m.group(1), line)
+                    l = data[pos]
+                    color.write(l)
+                    alpha.write(l)
+                    line = data[pos+1:pos+1+length]
+                    alpha.write(line[3::4].tobytes())
+                    color.write(numpy.delete(line, numpy.arange(3, line.size, 4)))
             del data
-            data = zlib.compress(color)
-            info['smask'] = zlib.compress(alpha)
+            data = zlib.compress(color.getvalue())
+            info['smask'] = zlib.compress(alpha.getvalue())
             if (self.pdf_version < '1.4'):
                 self.pdf_version = '1.4'
         info['data'] = data
