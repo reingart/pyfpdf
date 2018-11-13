@@ -1310,6 +1310,9 @@ class FPDF(object):
                 return txt.encode(self.core_fonts_encoding).decode("latin-1")
         return txt
 
+    def _putpage(self, page, page_links):
+        pass
+
     def _putpages(self):
         nb = self.page
         if hasattr(self, 'str_alias_nb_pages'):
@@ -1335,6 +1338,10 @@ class FPDF(object):
         else:
             filter = ''
         for n in range(1, nb + 1):
+            # page object from pages[n]
+            # page object from pages[n]#w_pt
+            # page object from pages[n]#h_pt
+            # page object from page_links[n] if page_links and page_links[n]
             # Page
             self._newobj()
             self._out('<</Type /Page')
@@ -1344,17 +1351,25 @@ class FPDF(object):
             if w_pt != dw_pt or h_pt != dh_pt:
                 self._out(sprintf('/MediaBox [0 0 %.2f %.2f]', w_pt, h_pt))
             self._out('/Resources 2 0 R')
+
             if self.page_links and n in self.page_links:
                 # Links
                 annots = '/Annots ['
                 for pl in self.page_links[n]:
+                    # first four things in 'link' list are coordinates?
                     rect = sprintf('%.2f %.2f %.2f %.2f', pl[0], pl[1],
                                    pl[0] + pl[2], pl[1] - pl[3])
+
+                    # start the annotation entry
                     annots += '<</Type /Annot /Subtype /Link /Rect [' + \
                               rect + '] /Border [0 0 0] '
+
+                    # HTML ending of annotation entry
                     if isinstance(pl[4], basestring):
                         annots += '/A <</S /URI /URI ' + \
                                   enclose_in_parens(pl[4]) + '>>>>'
+
+                    # Dest type ending of annotation entry
                     else:
                         l = self.links[pl[4]]
                         # if l[0] in self.orientation_changes: h = w_pt
@@ -1362,6 +1377,8 @@ class FPDF(object):
                         h = h_pt
                         annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',
                                           1 + 2 * l[0], h - l[1] * self.k)
+                
+                # End links list
                 self._out(annots + ']')
             if self.pdf_version > '1.3':
                 self._out("/Group <</Type /Group /S /Transparency"
@@ -1806,7 +1823,7 @@ class FPDF(object):
         f = [(x["i"], x["n"]) for x in self.fonts.values()]
         f.sort()
         for idx, n in f:
-            self._out('/F' + str(idx) + ' ' + str(n) + ' 0 R')
+            self._out('/F' + str(idx) + ' ' + pdf_ref(n))
         self._out('>>')
         self._out('/XObject <<')
         self._putxobjectdict()

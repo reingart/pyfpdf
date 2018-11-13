@@ -73,7 +73,10 @@ As of this writing, I am not sure how length is actually calculated, so this
 remains something to be looked into.
 
 """
+import sys
 from collections import OrderedDict as o_d
+
+py3k = sys.version_info >= (3, 0)
 
 def create_name(name):
     if name.startswith('/'):
@@ -112,6 +115,8 @@ def iobj_ref(n):
     return str(n) + ' 0 R'
 
 def create_stream(stream):
+    if py3k and bytes == type(stream):
+        stream = str(stream, 'latin-1')
     return '\n'.join(['stream', stream, 'endstream'])
 
 if __name__ == '__main__':
