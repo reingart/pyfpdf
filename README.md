@@ -84,3 +84,12 @@ sudo pip install tox
 Lets try to improve the Code Coverage statistic so that we can safely
 transition to external font and image libraries, and implement BytesIO usage
 over string buffering!
+
+Changes:
+--------
+
+`2.0.1`:
+
+ * Clean up links and text files
+ * Start to refactor syntax into own functions for readability
+ * Replace pixel regexes with numpy in image parsing (s/o @pennersr)
