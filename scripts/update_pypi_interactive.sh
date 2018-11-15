@@ -35,8 +35,6 @@ EOF
 fi
 
 
-# update PyPI with PyPIReadme.rst
-python setup.py register
-
-# update PyPI with fpdf2 package
+# update PyPI
+twine upload dist/*
 
