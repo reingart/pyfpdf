@@ -22,7 +22,9 @@ def load_resource(filename, reason = "image"):
            filename.startswith("https://"):
             f = BytesIO(urlopen(filename).read())
         else:
-            f = open(filename, "rb")
+            fl = open(filename, "rb")
+            f = BytesIO(fl.read())
+            fl.close()
         return f
     else:
         fpdf_error("Unknown resource loading reason \"%s\"" % reason)
