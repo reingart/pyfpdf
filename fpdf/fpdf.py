@@ -35,7 +35,7 @@ import zlib
 from .errors import fpdf_error
 from .fonts import fpdf_charwidths
 from .image_parsing import (
-    get_png_info, get_jpg_info, load_resource as image_parsing_load_resource
+    get_img_info, load_resource as image_parsing_load_resource
 )
 from .php import substr, sprintf, UTF8ToUTF16BE, UTF8StringToArray  # print_r
 from .py3k import (
@@ -1151,50 +1151,7 @@ class FPDF(object):
     def image(self, name, x = None, y = None, w = 0, h = 0, type = '', link = ''):  # noqa: E501
         "Put an image on the page"
         if name not in self.images:
-            # First use of image, get info
-            if (type == ''):
-                pos = name.rfind('.')
-                if (not pos):
-                    fpdf_error(('image file has no extension and no '
-                                'type was specified: ' + name))
-                type = substr(name, pos + 1)
-
-            type = type.lower()
-            image_is_jpeg = lambda : type == 'jpg' or type == 'jpeg'
-
-            if (image_is_jpeg()): info = self._parsejpg(name)
-            elif (type == 'png'): info = self._parsepng(name)
-            else:
-                # Allow for additional formats
-                # maybe the image is not showing the correct extension,
-                # but the header is OK,
-                succeed_parsing = False
-                # try all the parsing functions
-                parsing_functions = [
-                    self._parsejpg,
-                    self._parsepng,
-                    self._parsegif
-                ]
-                for pf in parsing_functions:
-                    try:
-                        info = pf(name)
-                        succeed_parsing = True
-                        break
-                    except:
-                        pass
-                # last resource
-                if not succeed_parsing:
-                    mtd = '_parse' + type
-                    if not hasattr(self, mtd):
-                        fpdf_error('Unsupported image type: ' + type)
-                    info = getattr(self, mtd)(name)
-                mtd = '_parse' + type
-
-                if not hasattr(self, mtd):
-                    fpdf_error('Unsupported image type: ' + type)
-                info = getattr(self, mtd)(name)
-
-            # print info['i']
+            info = get_img_info(image_parsing_load_resource(name))
             info['i'] = len(self.images) + 1
             self.images[name] = info
         else:
@@ -1992,43 +1949,6 @@ class FPDF(object):
                        (self.h - (y - up / 1000.0 * self.font_size)) * self.k,
                        w * self.k,
                        -ut / 1000.0 * self.font_size_pt)
-
-    def _parsejpg(self, filename):
-        # Extract info from a JPEG file
-        f = image_parsing_load_resource(filename)
-
-        return get_jpg_info(f)
-
-    def _parsegif(self, filename):
-        # Extract info from a GIF file (via PNG conversion)
-        try:
-            im = Image.open(filename)
-        except Exception as e:
-            fpdf_error('Missing or incorrect image file: %s. error: %s' %
-                       (filename, str(e)))
-        else:
-            # Use temporary file
-            with tempfile.NamedTemporaryFile(delete = False,
-                                             suffix = ".png") as f:
-                tmp = f.name
-            if "transparency" in im.info:
-                im.save(tmp, transparency = im.info['transparency'])
-            else:
-                im.save(tmp)
-            info = self._parsepng(tmp)
-            os.unlink(tmp)
-        return info
-
-    def _parsepng(self, filename):
-        # Extract info from a PNG file
-        f = image_parsing_load_resource(filename)
-        
-        info = get_png_info(f)
-
-        if ('smask' in info):
-            self.pdf_version = '1.4'
-
-        return info
 
     def _out(self, s):
         # Add a line to the document

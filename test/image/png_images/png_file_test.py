@@ -38,6 +38,7 @@ class InsertPNGSuiteFiles(unittest.TestCase):
 
     for image in images:
       if os.path.basename(image) in not_supported:
+        pass
         self.assertRaises(Exception, pdf.image, x = 0, y = 0, w = 0, h = 0,
                           type = '', link = None)
       else:
@@ -52,7 +53,7 @@ class InsertPNGSuiteFiles(unittest.TestCase):
 
     test_hash = calculate_hash_of_file(outfile)
     # ordered the images for reproduceability
-    self.assertEqual(test_hash, "5086e833d6bf03959d83cd30f3b65ae5")
+    self.assertEqual(test_hash, "0085260bea512b9394ce1502b196240a")
 
     # self.assertEqual(test_hash, "4f65582566414202a12ed86134de10a7")
     os.unlink(outfile)
