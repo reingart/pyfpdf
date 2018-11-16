@@ -74,10 +74,12 @@ To get development environment going, on Linux/Ubuntu:
 ```bash
 sudo add-apt-repository ppa:deadsnakes/ppa
 sudo apt-get update
-sudo apt-get install python2.7 python3.3 python3.4 python3.5 \
-  libpython2.7-dev libpython3.3-dev libpython3.4-dev libpython3.5-dev \
+sudo apt-get install python2.7 python3.4 python3.5 python3.6 \
+  libpython2.7-dev libpython3.4-dev libpython3.5-dev \
   libpython3.6-dev
-sudo apt-get install python-pip
+sudo apt-get install python3-distutils
+wget 'https://bootstrap.pypa.io/get-pip.py'
+python2.7 get-pip.py
 sudo pip install tox
 ```
 
