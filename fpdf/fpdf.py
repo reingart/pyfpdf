@@ -990,51 +990,36 @@ class FPDF(object):
     @check_page
     def image(self, name, x=None, y=None, w=0,h=0,type='',link='', is_mask=False, mask_image=None):
         "Put an image on the page"
-        if not name in self.images:
+        from PIL.Image import Image
+
+        is_pil = isinstance(name, Image)
+        if is_pil:
+            image_key = id(name)
+        else:
+            image_key = name
+        if image_key not in self.images:
             #First use of image, get info
-            if(type==''):
+            if (type=='') and not is_pil:
                 pos=name.rfind('.')
                 if(not pos):
                     self.error('image file has no extension and no type was specified: '+name)
                 type=substr(name,pos+1)
             type=type.lower()
-            if(type=='jpg' or type=='jpeg'):
+            if is_pil:
+                info=self._parsepil(name)
+            elif(type=='jpg' or type=='jpeg'):
                 info=self._parsejpg(name)
-            elif(type=='png'):
-                info=self._parsepng(name)
             else:
-                #Allow for additional formats
-                #maybe the image is not showing the correct extension,
-                #but the header is OK,
-                succeed_parsing = False
-                #try all the parsing functions
-                parsing_functions = [self._parsejpg,self._parsepng,self._parsegif]
-                for pf in parsing_functions:
-                    try:
-                        info = pf(name)
-                        succeed_parsing = True
-                        break;
-                    except:
-                        pass
-                #last resource
-                if not succeed_parsing:
-                    mtd='_parse'+type
-                    if not hasattr(self,mtd):
-                        self.error('Unsupported image type: '+type)
-                    info=getattr(self, mtd)(name)
-                mtd='_parse'+type
-                if not hasattr(self,mtd):
-                    self.error('Unsupported image type: '+type)
-                info=getattr(self, mtd)(name)
+                info=self._parseimg(name)
             info['i']=len(self.images)+1
             # is_mask and mask_image
             if is_mask and info['cs'] != 'DeviceGray':
                 self.error('Mask must be a gray scale image')
             if mask_image:
                 info['masked'] = mask_image
-            self.images[name]=info
+            self.images[image_key]=info
         else:
-            info=self.images[name]
+            info=self.images[image_key]
         #Automatic width and height calculation if needed
         if(w==0 and h==0):
             #Put image at 72 dpi
@@ -1819,139 +1804,80 @@ class FPDF(object):
             data = f.read()
         return {'w':width,'h':height,'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
 
-    def _parsegif(self, filename):
-        # Extract info from a GIF file (via PNG conversion)
-        if Image is None:
-            self.error('PIL is required for GIF support')
-        try:
-            im = Image.open(filename)
-        except Exception:
-            self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
-        else:
-            # Use temporary file
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".png") as \
-                    f:
-                tmp = f.name
-            if "transparency" in im.info:
-                im.save(tmp, transparency = im.info['transparency'])
-            else:
-                im.save(tmp)
-            info = self._parsepng(tmp)
-            os.unlink(tmp)
-        return info
+    def _parseimg(self, filename):
+        import numpy
+        from PIL import Image
 
-    def _parsepng(self, filename):
-        #Extract info from a PNG file
-        f = self.load_resource("image", filename)
-        #Check signature
-        magic = f.read(8).decode("latin1")
-        signature = '\x89'+'PNG'+'\r'+'\n'+'\x1a'+'\n'
-        if not PY3K: signature = signature.decode("latin1")
-        if(magic!=signature):
-            self.error('Not a PNG file: ' + filename)
-        #Read header chunk
-        f.read(4)
-        chunk = f.read(4).decode("latin1")
-        if(chunk!='IHDR'):
-            self.error('Incorrect PNG file: ' + filename)
-        w=self._freadint(f)
-        h=self._freadint(f)
-        bpc=ord(f.read(1))
-        if(bpc>8):
-            self.error('16-bit depth not supported: ' + filename)
-        ct=ord(f.read(1))
-        if(ct==0 or ct==4):
-            colspace='DeviceGray'
-        elif(ct==2 or ct==6):
-            colspace='DeviceRGB'
-        elif(ct==3):
-            colspace='Indexed'
-        else:
-            self.error('Unknown color type: ' + filename)
-        if(ord(f.read(1))!=0):
-            self.error('Unknown compression method: ' + filename)
-        if(ord(f.read(1))!=0):
-            self.error('Unknown filter method: ' + filename)
-        if(ord(f.read(1))!=0):
-            self.error('Interlacing not supported: ' + filename)
-        f.read(4)
-        dp='/Predictor 15 /Colors '
-        if colspace == 'DeviceRGB':
-            dp+='3'
-        else:
-            dp+='1'
-        dp+=' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+''
-        #Scan chunks looking for palette, transparency and image data
+        img = Image.open(filename)
+        return self._parsepil(img)
+
+    def _parsepil(self, img):
+        import numpy
+
+        if img.mode not in ['L', 'LA', 'RGBA']:
+            img = img.convert('RGBA')
+        w, h = img.size
+        info = {
+            'w': w,
+            'h': h,
+        }
         pal=''
         trns=''
-        data=bytes() if PY3K else str()
-        n=1
-        while n != None:
-            n=self._freadint(f)
-            type=f.read(4).decode("latin1")
-            if(type=='PLTE'):
-                #Read palette
-                pal=f.read(n)
-                f.read(4)
-            elif(type=='tRNS'):
-                #Read transparency info
-                t=f.read(n)
-                if(ct==0):
-                    trns=[ord(substr(t,1,1)),]
-                elif(ct==2):
-                    trns=[ord(substr(t,1,1)),ord(substr(t,3,1)),ord(substr(t,5,1))]
-                else:
-                    pos=t.find('\x00'.encode("latin1"))
-                    if(pos!=-1):
-                        trns=[pos,]
-                f.read(4)
-            elif(type=='IDAT'):
-                #Read image data block
-                data+=f.read(n)
-                f.read(4)
-            elif(type=='IEND'):
-                break
-            else:
-                f.read(n+4)
-        if(colspace=='Indexed' and not pal):
-            self.error('Missing palette in ' + filename)
-        f.close()
-        info = {'w':w,'h':h,'cs':colspace,'bpc':bpc,'f':'FlateDecode','dp':dp,'pal':pal,'trns':trns,}
-        if(ct>=4):
-            # Extract alpha channel
-            data = zlib.decompress(data)
-            color = b('')
-            alpha = b('')
-            if(ct==4):
-                # Gray image
-                length = 2*w
-                for i in range(h):
-                    pos = (1+length)*i
-                    color += b(data[pos])
-                    alpha += b(data[pos])
-                    line = substr(data, pos+1, length)
-                    re_c = re.compile('(.).'.encode("ascii"), flags=re.DOTALL)
-                    re_a = re.compile('.(.)'.encode("ascii"), flags=re.DOTALL)
-                    color += re_c.sub(lambda m: m.group(1), line)
-                    alpha += re_a.sub(lambda m: m.group(1), line)
-            else:
-                # RGB image
-                length = 4*w
-                for i in range(h):
-                    pos = (1+length)*i
-                    color += b(data[pos])
-                    alpha += b(data[pos])
-                    line = substr(data, pos+1, length)
-                    re_c = re.compile('(...).'.encode("ascii"), flags=re.DOTALL)
-                    re_a = re.compile('...(.)'.encode("ascii"), flags=re.DOTALL)
-                    color += re_c.sub(lambda m: m.group(1), line)
-                    alpha += re_a.sub(lambda m: m.group(1), line)
-            del data
-            data = zlib.compress(color)
-            info['smask'] = zlib.compress(alpha)
-            if (self.pdf_version < '1.4'):
-                self.pdf_version = '1.4'
-        info['data'] = data
+        if img.mode == 'L':
+            dpn = 1
+            bpc = 8
+            colspace = 'DeviceGray'
+            data = numpy.asarray(img)
+            z_data = numpy.insert(data, 0, 0, axis=1)
+            info['data']= zlib.compress(z_data)
+        elif img.mode == 'LA':
+            dpn = 1
+            bpc = 8
+            colspace = 'DeviceGray'
+
+            rgba_data = numpy.reshape(numpy.asarray(img), w * h * 2)
+            a_data = numpy.ascontiguousarray(rgba_data[1::2])
+            rgb_data = numpy.ascontiguousarray(rgba_data[0::2])
+
+            a_data = numpy.reshape(a_data, (h, w))
+            rgb_data = numpy.reshape(rgb_data, (h, w))
+
+            za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
+            zrgb_data = numpy.insert(rgb_data.reshape((h, w)), 0, 0, axis=1)
+            info['data']= zlib.compress(zrgb_data)
+            info['smask'] = zlib.compress(za_data)
+        elif img.mode == 'RGBA':
+            dpn = 3
+            bpc = 8
+            colspace = 'DeviceRGB'
+
+            rgba_data = numpy.reshape(numpy.asarray(img), w * h * 4)
+            a_data = numpy.ascontiguousarray(rgba_data[3::4])
+            rgb_data = numpy.delete(rgba_data, numpy.arange(3, len(rgba_data), 4))
+
+            a_data = numpy.reshape(a_data, (h, w))
+            rgb_data = numpy.reshape(rgb_data, (h, w * 3))
+
+
+            za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
+            zrgb_data = numpy.insert(rgb_data.reshape((h, w*3)), 0, 0, axis=1)
+            info['data']= zlib.compress(zrgb_data)
+            info['smask'] = zlib.compress(za_data)
+        else:
+            self.error('Unsupport image: {}'.format(img.mode))
+
+        dp='/Predictor 15 /Colors ' + str(dpn) + ' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+''
+
+        info.update({
+            'cs':colspace,
+            'bpc':bpc,
+            'f':'FlateDecode',
+            'dp': dp,
+            'pal':pal,
+            'trns':trns,
+        })
+        if (self.pdf_version < '1.4'):
+            self.pdf_version = '1.4'
         return info
 
     def _freadint(self, f):
