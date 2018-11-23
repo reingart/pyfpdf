@@ -990,15 +990,24 @@ class FPDF(object):
     @check_page
     def image(self, name, x=None, y=None, w=0,h=0,type='',link='', is_mask=False, mask_image=None):
         "Put an image on the page"
-        if not name in self.images:
+        from PIL.Image import Image
+
+        is_pil = isinstance(name, Image)
+        if is_pil:
+            image_key = id(name)
+        else:
+            image_key = name
+        if image_key not in self.images:
             #First use of image, get info
-            if(type==''):
+            if (type=='') and not is_pil:
                 pos=name.rfind('.')
                 if(not pos):
                     self.error('image file has no extension and no type was specified: '+name)
                 type=substr(name,pos+1)
             type=type.lower()
-            if(type=='jpg' or type=='jpeg'):
+            if is_pil:
+                info=self._parsepil(name)
+            elif(type=='jpg' or type=='jpeg'):
                 info=self._parsejpg(name)
             else:
                 info=self._parseimg(name)
@@ -1008,9 +1017,9 @@ class FPDF(object):
                 self.error('Mask must be a gray scale image')
             if mask_image:
                 info['masked'] = mask_image
-            self.images[name]=info
+            self.images[image_key]=info
         else:
-            info=self.images[name]
+            info=self.images[image_key]
         #Automatic width and height calculation if needed
         if(w==0 and h==0):
             #Put image at 72 dpi
@@ -1800,6 +1809,11 @@ class FPDF(object):
         from PIL import Image
 
         img = Image.open(filename)
+        return self._parsepil(img)
+
+    def _parsepil(self, img):
+        import numpy
+
         if img.mode not in ['L', 'LA', 'RGBA']:
             img = img.convert('RGBA')
         w, h = img.size
