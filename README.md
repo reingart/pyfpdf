@@ -95,3 +95,11 @@ Changes:
  * Clean up links and text files
  * Start to refactor syntax into own functions for readability
  * Replace pixel regexes with numpy in image parsing (s/o @pennersr)
+
+`2.0.2`:
+
+ * Attempt to fix missing `fpdf.util`, delete from [PyPI.org](https://pypi.org/project/fpdf2/2.0.2/)
+
+`2.0.3`:
+
+ * Change to `setup(packages = find_packages())`
