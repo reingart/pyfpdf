@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 
 try:
-  from setuptools import setup
+  from setuptools import setup, find_packages
 except ImportError as e:
-  from distutils.core import setup
+  from distutils.core import setup, find_packages
 
 import unittest
 def run_test_suite():
@@ -29,7 +29,7 @@ if __name__ == '__main__': setup(
   url          = 'https://alexanderankin.github.io/pyfpdf/',
   license      = 'LGPLv3+',
   download_url = "https://github.com/alexanderankin/pyfpdf/tarball/%s" % version,
-  packages     = ['fpdf', ],
+  packages     = find_packages(),
   package_dir  = {'fpdf': 'fpdf'},
   test_suite   = 'setup.run_test_suite',
   install_requires=[

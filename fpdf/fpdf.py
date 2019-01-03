@@ -2,7 +2,7 @@
 # -*- coding: latin-1 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
-# * Version:  2.0.1                                                          *
+# * Version:  2.0.3                                                          *
 # * Date:     2010-09-10                                                     *
 # * Last update: 2018-11-13                                                  *
 # * License:  LGPL v3.0                                                      *

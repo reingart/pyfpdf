@@ -34,7 +34,12 @@ EOF
   fi
 fi
 
+# build
+python setup.py bdist_wheel
 
 # update PyPI
-twine upload dist/*
+twine upload dist/*.whl
+
+# remove old stuff
+rm -rf build/ dist/
 
