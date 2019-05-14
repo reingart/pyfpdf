@@ -19,7 +19,7 @@ from datetime import datetime
 from functools import wraps
 import math
 import errno
-import os, sys, zlib, struct, re, tempfile, struct
+import os, sys, zlib, struct, re, tempfile, struct, StringIO
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
@@ -990,42 +990,41 @@ class FPDF(object):
     @check_page
     def image(self, name, x=None, y=None, w=0,h=0,type='',link='', is_mask=False, mask_image=None):
         "Put an image on the page"
-        if not name in self.images:
+
+        if isinstance(name, StringIO.StringIO) or name not in self.images:
             #First use of image, get info
-            if(type==''):
-                pos=name.rfind('.')
-                if(not pos):
-                    self.error('image file has no extension and no type was specified: '+name)
-                type=substr(name,pos+1)
-            type=type.lower()
-            if(type=='jpg' or type=='jpeg'):
-                info=self._parsejpg(name)
-            elif(type=='png'):
-                info=self._parsepng(name)
-            else:
+            info = None
+            if not isinstance(name, StringIO.StringIO):
+                if(type==''):
+                    pos=name.rfind('.')
+                    if(not pos):
+                        self.error('image file has no extension and no type was specified: '+name)
+                    type=substr(name,pos+1)
+                type=type.lower()
+
+                if(type=='jpg' or type=='jpeg'):
+                    info=self._parsejpg(name)
+                elif(type=='png'):
+                    info=self._parsepng(name)
+
+            if info is None:
                 #Allow for additional formats
                 #maybe the image is not showing the correct extension,
                 #but the header is OK,
-                succeed_parsing = False
+
                 #try all the parsing functions
                 parsing_functions = [self._parsejpg,self._parsepng,self._parsegif]
                 for pf in parsing_functions:
                     try:
                         info = pf(name)
-                        succeed_parsing = True
-                        break;
-                    except:
+                        break
+                    except Exception as e:
                         pass
+
                 #last resource
-                if not succeed_parsing:
-                    mtd='_parse'+type
-                    if not hasattr(self,mtd):
-                        self.error('Unsupported image type: '+type)
-                    info=getattr(self, mtd)(name)
-                mtd='_parse'+type
-                if not hasattr(self,mtd):
+                if info is None:
                     self.error('Unsupported image type: '+type)
-                info=getattr(self, mtd)(name)
+
             info['i']=len(self.images)+1
             # is_mask and mask_image
             if is_mask and info['cs'] != 'DeviceGray':
@@ -1775,7 +1774,10 @@ class FPDF(object):
         "Load external file"
         # by default loading from network is allowed for all images
         if reason == "image":
-            if filename.startswith("http://") or filename.startswith("https://"):
+            if isinstance(filename, StringIO.StringIO):
+                filename.seek(0)
+                f = BytesIO(filename.read())
+            elif filename.startswith("http://") or filename.startswith("https://"):
                 f = BytesIO(urlopen(filename).read())
             else:
                 f = open(filename, "rb")
