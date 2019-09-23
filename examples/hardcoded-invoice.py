@@ -127,10 +127,15 @@ pdf.rect(155.0, 252.0, 25.0, 7.0)
 pdf.set_font('courier', '', 10.0)
 pdf.set_xy(20.0, 253.0)
 pdf.cell(ln=0, h=7.0, align='L', w=120.0, txt='012345678905', border=0)
-pdf.output('./invoice.pdf', 'F')
+
+fname = './invoice.pdf'
+pdf.output(fname, 'F')
 
 import sys
 if sys.platform.startswith("linux"):
-    os.system("xdg-open ./invoice.pdf")
+    os.system("xdg-open %s" % fname)
+elif sys.platform.startswith("win"):
+    os.system('start "" /max %s' % fname)
 else:
-    os.system("./invoice.pdf")
+    os.system(fname)
+
