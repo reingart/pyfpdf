@@ -135,7 +135,7 @@ import sys
 if sys.platform.startswith("linux"):
     os.system("xdg-open %s" % fname)
 elif sys.platform.startswith("win"):
-    os.system("start "" /max %s" % fname)
+    os.system('start "" /max %s' % fname)
 else:
     os.system(fname)
 
