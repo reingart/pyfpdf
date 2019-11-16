@@ -15,8 +15,10 @@ from .util import freadint as read_integer
 
 def load_resource(filename, reason = "image"):
     "Load external file"
+    # if a bytesio instance is passed in, use it as is.
+    if isinstance(filename, BytesIO):
+       return filename
     # by default loading from network is allowed for all images
-
     if reason == "image":
         if filename.startswith("http://") or \
            filename.startswith("https://"):
