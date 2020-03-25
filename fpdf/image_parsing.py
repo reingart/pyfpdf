@@ -12,6 +12,7 @@ from .errors import fpdf_error
 from .php import substr
 from .py3k import PY3K, b
 from .util import freadint as read_integer
+from urllib.request import urlopen
 
 def load_resource(filename, reason = "image"):
     "Load external file"
