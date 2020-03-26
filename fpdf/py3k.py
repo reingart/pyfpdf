@@ -26,6 +26,15 @@ def hashpath(fn):
         h.update(fn)
     return h.hexdigest()
 
+def unescape2(*args, **kwargs):
+    return HTMLParser().unescape(*args, **kwargs)
+
+def unescape3(*args, **kwargs):
+    import html
+    return html.unescape(*args, **kwargs)
+
+unescape = unescape3 if PY3K else unescape2
+
 # why is this next part like this?
 try:
 	from HTMLParser import HTMLParser
