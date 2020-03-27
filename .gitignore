@@ -4,6 +4,8 @@
 # codecov.io
 coverage.xml
 
+htmlcov
+
 *.py[cod]
 *.pkl
 
@@ -16,6 +18,7 @@ local/
 
 # Packages
 *.egg
+.eggs
 *.egg-info
 dist
 build

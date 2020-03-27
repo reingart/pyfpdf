@@ -34,8 +34,9 @@ if __name__ == '__main__': setup(
   test_suite   = 'setup.run_test_suite',
   install_requires=[
     'numpy',
-    'Pillow>=4',
-    'six'
+    'Pillow>=4,<7.0',
+    'six',
+    'future'
   ],
   classifiers = [
     "Development Status :: 5 - Production/Stable",

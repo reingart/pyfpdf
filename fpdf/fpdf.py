@@ -23,6 +23,7 @@ from __future__ import division, with_statement
 from datetime import datetime
 from collections import OrderedDict as o_dict
 from functools import wraps
+from future.utils import raise_from
 import errno
 import math
 import os
@@ -32,7 +33,11 @@ import sys
 import tempfile
 import zlib
 
-from .errors import fpdf_error
+from .errors import (
+    fpdf_error,
+    FPDFException,
+    FPDFPageFormatException
+)
 from .fonts import fpdf_charwidths
 from .image_parsing import (
     get_img_info, load_resource as image_parsing_load_resource
@@ -68,8 +73,10 @@ PAGE_FORMATS = {
 }
 
 
-def get_page_format(format, k):
+def get_page_format(format, k=None):
     """Return page width and height size in points.
+
+    Throws FPDFPageFormatException
 
     `format` can be either a 2-tuple or one of 'a3', 'a4', 'a5', 'letter', or
     'legal'.
@@ -91,9 +98,17 @@ def get_page_format(format, k):
         if format in PAGE_FORMATS:
             return PAGE_FORMATS[format]
         else:
-            raise RuntimeError("Unknown page format: " + format)
-    else:
+            raise FPDFPageFormatException(format, unknown=True)
+
+    if k is None:
+        raise FPDFPageFormatException(format, one=True)
+
+    try:
         return (format[0] * k, format[1] * k)
+    except Exception as e:
+        args = str(format) + ', ' + str(k)
+        ours = FPDFPageFormatException('Arguments must be numbers: ' + args)
+        raise_from(ours, e)
 
 
 def load_cache(filename):
