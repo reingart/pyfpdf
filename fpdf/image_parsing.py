@@ -15,7 +15,7 @@ from .util import freadint as read_integer
 from six.moves.urllib.request import urlopen
 
 def load_resource(filename, reason = "image"):
-    "Load external file"
+    """Load external file"""
     # if a bytesio instance is passed in, use it as is.
     if isinstance(filename, BytesIO):
        return filename
@@ -66,7 +66,10 @@ def get_img_info(file_):
         zrgb_data = numpy.insert(rgb_data.reshape((h, w)), 0, 0, axis=1)
         info['data']= zlib.compress(zrgb_data)
         info['smask'] = zlib.compress(za_data)
-    elif img.mode == 'RGBA':
+
+    # This will never happen, others get converted to RGBA
+    # elif img.mode == 'RGBA':
+    else:
         dpn = 3
         bpc = 8
         colspace = 'DeviceRGB'
@@ -83,8 +86,10 @@ def get_img_info(file_):
         zrgb_data = numpy.insert(rgb_data.reshape((h, w*3)), 0, 0, axis=1)
         info['data']= zlib.compress(zrgb_data)
         info['smask'] = zlib.compress(za_data)
-    else:
-        self.error('Unsupport image: {}'.format(img.mode))
+
+    # This will never happen, others get converted to RGBA
+    # else:
+    #     self.error('Unsupport image: {}'.format(img.mode))
 
     dp='/Predictor 15 /Colors ' + str(dpn) + ' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+''
 
