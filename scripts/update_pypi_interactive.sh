@@ -5,6 +5,7 @@ cd ..
 # default usage: run script, hit enter
 
 pypircfile=$HOME/.pypirc
+touch "$pypircfile"
 
 # if exists, ask to use + continue, or overwrite + continue
 if [[ -e "$pypircfile" ]]; then
@@ -36,9 +37,11 @@ fi
 
 # build
 python setup.py bdist_wheel
+python setup.py sdist
 
 # update PyPI
 twine upload dist/*.whl
+twine upload dist/*.tar.gz
 
 # remove old stuff
 rm -rf build/ dist/

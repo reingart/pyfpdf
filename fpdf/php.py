@@ -14,7 +14,7 @@ def sprintf(fmt, *args): return fmt % args
 def print_r(array):
     if not isinstance(array, dict):
         array = dict([(k, k) for k in array])
-    for k, v in array.items():
+    for k, v in sorted(array.items(), key=lambda x: str(x[0])):
         print("[%s] => %s " % (k, v))
         
 def UTF8ToUTF16BE(instr, setbom = True):

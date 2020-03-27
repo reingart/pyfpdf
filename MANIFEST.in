@@ -1,14 +1,12 @@
 include           PyPIReadme.rst
 recursive-include fpdf     *
 recursive-exclude fpdf     *.pyc
-recursive-include scripts  *
-recursive-include test     *
-recursive-include test     *.pdf
-recursive-exclude test     *.pyc
-recursive-include tutorial *
+recursive-exclude scripts  *
+recursive-exclude test     *
+recursive-exclude tutorial *
 
 # added by check_manifest.py
-include *.md
-include *.yml
+exclude *.md
+exclude *.yml
 include LICENSE
-include tox.ini
+exclude tox.ini

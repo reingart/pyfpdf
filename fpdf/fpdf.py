@@ -313,10 +313,6 @@ class FPDF(object):
         self.str_alias_nb_pages = alias
         return alias
 
-    def error(self, msg):
-        "Fatal error"
-        raise RuntimeError('FPDF error: ' + msg)
-
     def open(self):
         "Begin document"
         self.state = 1

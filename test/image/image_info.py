@@ -44,8 +44,12 @@ class ImageParsingTest(unittest.TestCase):
     images = [image for image in images if isok(image)]
     # expln = [self.break_down_filename(name) for name in images]
 
+    def get_contents(path):
+        with open(path, 'rb') as f:
+            return f.read()
+
     paths = [os.path.join(relative_path_to(img_dir), i) for i in images]
-    blobs = [BytesIO(open(path, 'rb').read()) for path in paths]
+    blobs = [BytesIO(get_contents(path)) for path in paths]
     # modes = [Image.open(blob).mode for blob in blobs]
 
     infos = [fpdf.image_parsing.get_img_info(blob) for blob in blobs]

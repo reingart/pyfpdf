@@ -37,7 +37,7 @@ class PHPUtilsTest(unittest.TestCase):
     e(s(lambda: p({'a': 'maybe', 'ab': 'maybe'})), '[a] => maybe \n[ab] => maybe')
     e(s(lambda: p({'a': 'maybe', 'ab': 'None'})), '[a] => maybe \n[ab] => None')
     e(s(lambda: p({'a': 'maybe', 'ab': None})), '[a] => maybe \n[ab] => None')
-    e(s(lambda: p({'a': 'maybe', 2: None})), '[a] => maybe \n[2] => None')
+    e(s(lambda: p({'a': 'maybe', 2: None})), '[2] => None \n[a] => maybe')
     e(s(lambda: p({'a': 1})), '[a] => 1')
 
   def test_UTF8ToUTF16BE(self):
@@ -59,12 +59,6 @@ class PHPUtilsTest(unittest.TestCase):
     e(p('ok', 20, '-', -1), '------------------ok')
 
   def test_die(self):
-    with self.assertRaises(TypeError) as e:
-      fpdf.php.die()
-
-    type_error = 'die() takes exactly 1 argument (0 given)'
-    self.assertEqual(str(e.exception), type_error)
-
     with self.assertRaises(RuntimeError) as e:
       fpdf.php.die('message')
       
