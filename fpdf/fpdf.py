@@ -1813,10 +1813,11 @@ class FPDF(object):
                 f.close()
             self.error('Missing or incorrect image file: %s. error: %s' % (filename, str(exception())))
 
-        with f:
             # Read whole file from the start
             f.seek(0)
             data = f.read()
+            f.close()
+            
         return {'w':width,'h':height,'cs':colspace,'bpc':bpc,'f':'DCTDecode','data':data}
 
     def _parsegif(self, filename):
