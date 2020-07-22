@@ -17,9 +17,7 @@ from __future__ import division, with_statement
 
 from datetime import datetime
 from functools import wraps
-import math
-import errno
-import contextlib, os, sys, zlib, struct, re, tempfile, struct
+import contextlib, errno, math, os, re, struct, sys, tempfile, warnings, zlib
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
@@ -692,6 +690,8 @@ class FPDF(object):
 
     @check_page
     def rotate(self, angle, x=None, y=None):
+        warnings.warn('rotate() can produces malformed PDFs and is deprecated. Use the rotation() context manager instead.',
+                      PendingDeprecationWarning)
         if x is None:
             x = self.x
         if y is None:
@@ -706,6 +706,20 @@ class FPDF(object):
             cx = x*self.k;
             cy = (self.h-y)*self.k
             self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',c,s,-s,c,cx,cy,-cx,-cy))
+
+    @check_page
+    @contextlib.contextmanager
+    def rotation(self, angle, x=None, y=None):
+        if x is None:
+            x = self.x
+        if y is None:
+            y = self.y;
+        angle *= math.pi / 180
+        c, s = math.cos(angle), math.sin(angle)
+        cx, cy = x*self.k, (self.h-y)*self.k
+        self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm\n', c, s, -s, c, cx, cy, -cx, -cy))
+        yield
+        self._out('Q\n')
 
     def accept_page_break(self):
         "Accept automatic page break or not"
