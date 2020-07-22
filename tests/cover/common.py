@@ -57,7 +57,7 @@ def start_by_ext(fn):
             os.startfile(fn)
         except WindowsError:
             os.system("start " + fn)
-    except:
+    except NameError:  # WindowsError is not defined on unix systems
         subprocess.call(["xdg-open", fn])
 
 def writer(stream, items):
