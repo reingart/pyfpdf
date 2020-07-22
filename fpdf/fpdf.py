@@ -705,8 +705,7 @@ class FPDF(object):
             s = math.sin(angle);
             cx = x*self.k;
             cy = (self.h-y)*self.k
-            s = sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',c,s,-s,c,cx,cy,-cx,-cy)
-            self._out(s)
+            self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',c,s,-s,c,cx,cy,-cx,-cy))
 
     def accept_page_break(self):
         "Accept automatic page break or not"
@@ -1207,12 +1206,8 @@ class FPDF(object):
                             self._textstring(pl[4]) + '>>>>'
                     else:
                         l = self.links[pl[4]]
-                        if l[0] in self.orientation_changes:
-                            h = w_pt
-                        else:
-                            h = h_pt
                         annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',
-                            1 + 2 * l[0], h - l[1] * self.k)
+                            1 + 2 * l[0], h_pt - l[1] * self.k)
                 self._out(annots + ']')
             if self.pdf_version > '1.3':
                 self._out("/Group <</Type /Group /S /Transparency"\

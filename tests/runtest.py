@@ -248,6 +248,7 @@ def do_test(testfile, interps, dests, stats, hint = ""):
     # test if all hash
     if len(interps) == len(hasherr):
         cover.err("All hashes wrong")
+    return len(hasherr) == 0  # return False if there was any hasherror
 
 def print_interps(interps):
     cover.log(">> Interpreters:", len(interps))
@@ -266,8 +267,10 @@ def do_all_test(interps, tests):
         stats[interp[1]] = {"_": 0}
 
     cover.log(">> Tests:", len(tests))
+    errors = 0
     for idx, test in enumerate(tests):
-        do_test(test, interps, dests, stats, "%d / %d" % (idx + 1, len(tests)))
+        if not do_test(test, interps, dests, stats, "%d / %d" % (idx + 1, len(tests))):
+            errors += 1
     cover.log()
 
     cover.log(">> Statistics:")
@@ -321,6 +324,8 @@ def do_all_test(interps, tests):
             cover.log("*** You can download theese resources with:")
             for pack in packs:
                 cover.log("  runtest.py --download%s" % pack)
+    if errors:
+        sys.exit(1)
 
 def list_tests():
     tst = search_tests()
