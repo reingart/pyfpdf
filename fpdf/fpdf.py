@@ -19,7 +19,7 @@ from datetime import datetime
 from functools import wraps
 import math
 import errno
-import os, sys, zlib, struct, re, tempfile, struct
+import contextlib, os, sys, zlib, struct, re, tempfile, struct
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
@@ -2067,3 +2067,10 @@ class FPDF(object):
                     self.rect(x, y, dim[d], h, 'F')
                 x += dim[d]
             x += dim['n']
+
+    @check_page
+    @contextlib.contextmanager
+    def rect_clip(self, x, y, w, h):
+        self._out(sprintf('q %.2f %.2f %.2f %.2f re W n\n',x*self.k,(self.h-(y+h))*self.k,w*self.k,h*self.k))
+        yield
+        self._out('Q\n')
