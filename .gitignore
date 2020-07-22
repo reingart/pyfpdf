@@ -33,3 +33,7 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Temporary test files
+/tests/fpdf_local/
+/tests/out-*

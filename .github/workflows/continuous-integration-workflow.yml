@@ -1,0 +1,19 @@
+name: build
+
+on: [push]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.7
+        uses: actions/setup-python@v1.1.1
+        with:
+          python-version: 3.7
+      - name: Tests
+        run: |
+          cd tests
+          export PYFPDFTESTLOCAL=1
+          ./prepare_local.sh
+          python runtest.py

@@ -1,3 +1,8 @@
+[![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
+[![build status](https://github.com/reingart/pyfpdf/workflows/build/badge.svg)](https://github.com/reingart/pyfpdf/actions?query=workflow%3Abuild)
+[![Pypi latest version](https://img.shields.io/pypi/v/pyfpdf.svg)](https://pypi.python.org/pypi/pyfpdf)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+
 pyfpdf: FPDF for Python
 =======================
 
