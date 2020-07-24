@@ -129,11 +129,12 @@ class Template:
                 #print "dib",element['type'], element['name'], element['x1'], element['y1'], element['x2'], element['y2']
                 element = element.copy()
                 element['text'] = self.texts[pg].get(element['name'].lower(), element['text'])
+                handler_name = element['type'].upper()
                 if 'rotate' in element:
-                    pdf.rotate(element['rotate'], element['x1'], element['y1'])
-                self.handlers[element['type'].upper()](pdf, **element)
-                if 'rotate' in element:
-                    pdf.rotate(0)
+                    with pdf.rotation(element['rotate'], element['x1'], element['y1']):
+                        self.handlers[handler_name](pdf, **element)
+                else:
+                    self.handlers[handler_name](pdf, **element)
         
         if dest:
             return pdf.output(outfile, dest)
