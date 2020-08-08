@@ -667,11 +667,11 @@ class FPDF(object):
             page=self.page
         self.links[link]=[page,y]
 
-    def link(self, x,y,w,h,link):
+    def link(self, x,y,w,h,link, alt_text=''):
         "Put a link on the page"
         if not self.page in self.page_links:
             self.page_links[self.page] = []
-        self.page_links[self.page] += [(x*self.k,self.h_pt-y*self.k,w*self.k,h*self.k,link),]
+        self.page_links[self.page] += [(x*self.k,self.h_pt-y*self.k,w*self.k,h*self.k,link,alt_text),]
 
     @check_page
     def text(self, x, y, txt=''):
@@ -1204,15 +1204,18 @@ class FPDF(object):
                         rect + '] /Border [0 0 0] '
                     if isinstance(pl[4], basestring):
                         annots += '/A <</S /URI /URI ' + \
-                            self._textstring(pl[4]) + '>>>>'
+                            self._textstring(pl[4]) + '>>'
                     else:
                         l = self.links[pl[4]]
                         if l[0] in self.orientation_changes:
                             h = w_pt
                         else:
                             h = h_pt
-                        annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',
+                        annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]',
                             1 + 2 * l[0], h - l[1] * self.k)
+                    if pl[5]:
+                        annots += sprintf('/Contents (%s)', pl[5])
+                    annots += '>>'
                 self._out(annots + ']')
             if self.pdf_version > '1.3':
                 self._out("/Group <</Type /Group /S /Transparency"\
