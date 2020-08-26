@@ -62,7 +62,7 @@ class FPDF(object):
         self.offsets = {}               # array of object offsets
         self.page = 0                   # current page number
         self.n = 2                      # current object number
-        self.buffer = ''                # buffer holding in-memory PDF
+        self.buffer = bytearray()       # buffer holding in-memory PDF
         self.pages = {}                 # array containing pages and metadata
         self.state = 0                  # current document state
         self.fonts = {}                 # array of used fonts
@@ -1128,22 +1128,17 @@ class FPDF(object):
                 dest='I'
             else:
                 dest='F'
-        if PY3K:
-            # manage binary data as latin1 until PEP461 or similar is implemented
-            buffer = self.buffer.encode("latin1")
-        else:
-            buffer = self.buffer
         if dest in ('I', 'D'):
             # Python < 3 writes byte data transparently without "buffer"
             stdout = getattr(sys.stdout, 'buffer', sys.stdout)
-            stdout.write(buffer)
+            stdout.write(self.buffer)
         elif dest=='F':
             #Save to local file
             with open(name,'wb') as f:
-                f.write(buffer)
+                f.write(self.buffer)
         elif dest=='S':
             #Return as a byte string
-            return buffer
+            return self.buffer
         else:
             self.error('Incorrect output destination: '+dest)
 
@@ -1998,7 +1993,7 @@ class FPDF(object):
         if(self.state == 2):
             self.pages[self.page]["content"] += (s + "\n")
         else:
-            self.buffer += (s + "\n")
+            self.buffer += (s.encode("latin1") + b"\n")
 
     @check_page
     def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
