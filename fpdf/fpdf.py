@@ -15,14 +15,17 @@
 
 from __future__ import division, with_statement
 
+from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
-import contextlib, errno, math, os, re, struct, sys, tempfile, warnings, zlib
+import errno, logging, math, os, re, struct, sys, tempfile, zlib
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
 from .py3k import PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, exception, b, hashpath
+
+LOGGER = logging.getLogger(__name__)
 
 # Global variables
 FPDF_VERSION = '1.7.2'
@@ -496,7 +499,6 @@ class FPDF(object):
                 ttffilename = os.path.join(SYSTEM_TTFONTS, fname)
             else:
                 raise RuntimeError("TTF Font file not found: %s" % fname)
-            name = ''
             if FPDF_CACHE_MODE == 0:
                 unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
             elif FPDF_CACHE_MODE == 2:
@@ -521,7 +523,7 @@ class FPDF(object):
                     'ItalicAngle': int(ttf.italicAngle),
                     'StemV': int(round(ttf.stemV, 0)),
                     'MissingWidth': int(round(ttf.defaultWidth, 0)),
-                    }
+                }
                 # Generate metrics .pkl file
                 font_dict = {
                     'name': re.sub('[ ()]', '', ttf.fullName),
@@ -676,16 +678,16 @@ class FPDF(object):
         "Output a string"
         txt = self.normalize_text(txt)
         if (self.unifontsubset):
-            txt2 = self._escape(UTF8ToUTF16BE(txt, False))
+            txt2 = UTF8ToUTF16BE(self._escape(txt), False)
             for uni in UTF8StringToArray(txt):
                 self.current_font['subset'].append(uni)
         else:
             txt2 = self._escape(txt)
-        s=sprintf('BT %.2f %.2f Td (%s) Tj ET',x*self.k,(self.h-y)*self.k, txt2)
+        s=sprintf(b'BT %.2f %.2f Td (%s) Tj ET',x*self.k,(self.h-y)*self.k, txt2)
         if(self.underline and txt!=''):
-            s+=' '+self._dounderline(x,y,txt)
+            s+=b' '+self._dounderline(x,y,txt)
         if(self.color_flag):
-            s='q '+self.text_color+' '+s+' Q'
+            s=b'q '+self.text_color.encode()+b' '+s+b' Q'
         self._out(s)
 
     @check_page
@@ -708,7 +710,7 @@ class FPDF(object):
             self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',c,s,-s,c,cx,cy,-cx,-cy))
 
     @check_page
-    @contextlib.contextmanager
+    @contextmanager
     def rotation(self, angle, x=None, y=None):
         if x is None:
             x = self.x
@@ -1180,8 +1182,8 @@ class FPDF(object):
             # Now repeat for no pages in non-subset fonts
             for n in range(1,nb + 1):
                 self.pages[n]["content"] = \
-                    self.pages[n]["content"].replace(self.str_alias_nb_pages,
-                        str(nb))
+                    self.pages[n]["content"].replace(self.str_alias_nb_pages.encode(),
+                        str(nb).encode())
         if self.def_orientation == 'P':
             dw_pt = self.dw_pt
             dh_pt = self.dh_pt
@@ -1214,6 +1216,7 @@ class FPDF(object):
                         annots += '/A <</S /URI /URI ' + \
                             self._textstring(pl[4]) + '>>'
                     else:
+                        assert pl[4] in self.links, f'Page {n} has a link with an invalid index: {pl[4]} (doc #links={len(self.links)})'
                         l = self.links[pl[4]]
                         annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]',
                             1 + 2 * l[0], h_pt - l[1] * self.k)
@@ -1229,9 +1232,7 @@ class FPDF(object):
             # Page content
             content = self.pages[n]["content"]
             if self.compress:
-                # manage binary data as latin1 until PEP461 or similar is implemented
-                p = content.encode("latin1") if PY3K else content
-                p = zlib.compress(p)
+                p = zlib.compress(content)
             else:
                 p = content
             self._newobj()
@@ -1640,15 +1641,18 @@ class FPDF(object):
         self._out('>>')
 
     def _putresources(self):
-        self._putfonts()
-        self._putimages()
+        with self._trace_size('resources.fonts'):
+            self._putfonts()
+        with self._trace_size('resources.images'):
+            self._putimages()
         #Resource dictionary
-        self.offsets[2]=len(self.buffer)
-        self._out('2 0 obj')
-        self._out('<<')
-        self._putresourcedict()
-        self._out('>>')
-        self._out('endobj')
+        with self._trace_size('resources.dict'):
+            self.offsets[2]=len(self.buffer)
+            self._out('2 0 obj')
+            self._out('<<')
+            self._putresourcedict()
+            self._out('>>')
+            self._out('endobj')
 
     def _putinfo(self):
         self._out('/Producer '+self._textstring('PyFPDF '+FPDF_VERSION+' http://pyfpdf.googlecode.com/'))
@@ -1691,41 +1695,48 @@ class FPDF(object):
         self._out('/Info '+str(self.n-1)+' 0 R')
 
     def _enddoc(self):
-        self._putheader()
-        self._putpages()
-        self._putresources()
+        LOGGER.debug('Final doc sections size summary:')
+        with self._trace_size('header'):
+            self._putheader()
+        with self._trace_size('pages'):
+            self._putpages()
+        self._putresources()  # trace_size is performed inside
         #Info
-        self._newobj()
-        self._out('<<')
-        self._putinfo()
-        self._out('>>')
-        self._out('endobj')
+        with self._trace_size('info'):
+            self._newobj()
+            self._out('<<')
+            self._putinfo()
+            self._out('>>')
+            self._out('endobj')
         #Catalog
-        self._newobj()
-        self._out('<<')
-        self._putcatalog()
-        self._out('>>')
-        self._out('endobj')
+        with self._trace_size('catalog'):
+            self._newobj()
+            self._out('<<')
+            self._putcatalog()
+            self._out('>>')
+            self._out('endobj')
         #Cross-ref
-        o=len(self.buffer)
-        self._out('xref')
-        self._out('0 '+(str(self.n+1)))
-        self._out('0000000000 65535 f ')
-        for i in range(1,self.n+1):
-            self._out(sprintf('%010d 00000 n ',self.offsets[i]))
+        with self._trace_size('xref'):
+            o=len(self.buffer)
+            self._out('xref')
+            self._out('0 '+(str(self.n+1)))
+            self._out('0000000000 65535 f ')
+            for i in range(1,self.n+1):
+                self._out(sprintf('%010d 00000 n ',self.offsets[i]))
         #Trailer
-        self._out('trailer')
-        self._out('<<')
-        self._puttrailer()
-        self._out('>>')
-        self._out('startxref')
-        self._out(o)
+        with self._trace_size('trailer'):
+            self._out('trailer')
+            self._out('<<')
+            self._puttrailer()
+            self._out('>>')
+            self._out('startxref')
+            self._out(o)
         self._out('%%EOF')
         self.state=3
 
     def _beginpage(self, orientation, format, same):
         self.page += 1
-        self.pages[self.page] = {"content": ""}
+        self.pages[self.page] = {"content": bytearray()}
         self.state = 2
         self.x = self.l_margin
         self.y = self.t_margin
@@ -1991,7 +2002,7 @@ class FPDF(object):
         elif not isinstance(s, basestring):
             s = str(s)
         if(self.state == 2):
-            self.pages[self.page]["content"] += (s + "\n")
+            self.pages[self.page]["content"] += (s.encode("latin1") + b"\n")
         else:
             self.buffer += (s.encode("latin1") + b"\n")
 
@@ -2076,8 +2087,23 @@ class FPDF(object):
             x += dim['n']
 
     @check_page
-    @contextlib.contextmanager
+    @contextmanager
     def rect_clip(self, x, y, w, h):
         self._out(sprintf('q %.2f %.2f %.2f %.2f re W n\n',x*self.k,(self.h-(y+h))*self.k,w*self.k,h*self.k))
         yield
         self._out('Q\n')
+
+    @contextmanager
+    def _trace_size(self, label):
+        prev_size = len(self.buffer)
+        yield
+        LOGGER.debug('- %s.size: %s', label, _sizeof_fmt(len(self.buffer) - prev_size))
+
+
+def _sizeof_fmt(num, suffix='B'):
+    # Recipe from: https://stackoverflow.com/a/1094933/636849
+    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Yi', suffix)
