@@ -15,6 +15,14 @@ advanced capabilities, and is easy to learn, extend and maintain.
 
   [1]: http://www.fpdf.org/
 
+**About the master branch of this fork**: it includes the following PRs:
+
+  * [Deprecating .rotate() and introducing .rotation() context manager](https://github.com/reingart/pyfpdf/pull/161)
+  * [Introducing a rect_clip() function](https://github.com/reingart/pyfpdf/pull/158)
+  * [Fixing #159 issue with set_link + adding GitHub Actions pipeline & badges](https://github.com/reingart/pyfpdf/pull/160)
+  * [Adding support for Contents alt text on Links](https://github.com/reingart/pyfpdf/pull/163)
+  * [Making FPDF.output() x100 time faster by using a bytearray buffer](https://github.com/reingart/pyfpdf/pull/164)
+
 Features:
 ---------
 
