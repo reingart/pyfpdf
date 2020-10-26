@@ -2,9 +2,9 @@
 # -*- coding: latin-1 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
-# * Version:  2.0.5                                                          *
+# * Version:  2.0.6                                                          *
 # * Date:     2010-09-10                                                     *
-# * Last update: 2018-11-13                                                  *
+# * Last update: 2020-10-25                                                  *
 # * License:  LGPL v3.0                                                      *
 # *                                                                          *
 # * Original Author (PHP):  Olivier PLATHEY 2004-12-31                       *

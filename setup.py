@@ -34,7 +34,7 @@ if __name__ == '__main__': setup(
   test_suite   = 'setup.run_test_suite',
   install_requires=[
     'numpy',
-    'Pillow>=4,<7.0',
+    'Pillow>=4,<=8',
     'six',
     'future'
   ],
