@@ -553,7 +553,7 @@ class FPDF(object):
                 'name': font_dict['name'], 'desc': font_dict['desc'],
                 'up': font_dict['up'], 'ut': font_dict['ut'],
                 'cw': font_dict['cw'],
-                'ttffile': font_dict['ttffile'], 'fontkey': fontkey,
+                'ttffile': ttffilename, 'fontkey': fontkey,
                 'subset': sbarr, 'unifilename': unifilename,
                 }
             self.font_files[fontkey] = {'length1': font_dict['originalsize'],
