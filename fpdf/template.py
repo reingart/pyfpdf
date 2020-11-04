@@ -20,8 +20,9 @@ class Template:
                  title='', author='', subject='', creator='', keywords=''):
         if elements:
             self.load_elements(elements)
-        self.handlers = {'T': self.text, 'L': self.line, 'I': self.image, 
-                         'B': self.rect, 'BC': self.barcode, 'W': self.write, }
+        self.handlers = {'T': self.text, 'L': self.line, 'I': self.image,
+                         'B': self.rect, 'BC': self.barcode, 'W': self.write,
+                         'BCI25': self.barcodeI25, 'BCC39': self.barcodeC39}
         self.texts = {}
         pdf = self.pdf = FPDF(format=format,orientation=orientation, unit="mm")
         pdf.set_title(title)
@@ -35,7 +36,7 @@ class Template:
         self.pg_no = 0
         self.elements = elements
         self.keys = [v['name'].lower() for v in self.elements]
-    
+
     def parse_csv(self, infile, delimiter=",", decimal_sep="."):
         "Parse template format csv file and create elements dict"
         keys = ('name','type','x1','y1','x2','y2','font','size',
@@ -51,7 +52,7 @@ class Template:
             for row in csv.reader(f, delimiter=delimiter):
                 kargs = {}
                 for i,v in enumerate(row):
-                    if not v.startswith("'") and decimal_sep!=".": 
+                    if not v.startswith("'") and decimal_sep!=".":
                         v = v.replace(decimal_sep,".")
                     else:
                         v = v
@@ -66,7 +67,7 @@ class Template:
     def add_page(self):
         self.pg_no += 1
         self.texts[self.pg_no] = {}
-        
+
     def __setitem__(self, name, value):
         if name.lower() in self.keys:
             if not PY3K and isinstance(value, unicode):
@@ -82,7 +83,7 @@ class Template:
 
     def has_key(self, name):
         return name.lower() in self.keys
-        
+
     def __contains__(self, name):
         return self.has_key(name)
 
@@ -117,7 +118,7 @@ class Template:
         return pdf.multi_cell(w=element['x2']-element['x1'],
                              h=element['y2']-element['y1'],
                              txt=text,align=align,split_only=True)
-        
+
     def render(self, outfile, dest="F"):
         pdf = self.pdf
         for pg in range(1, self.pg_no+1):
@@ -134,12 +135,12 @@ class Template:
                 self.handlers[element['type'].upper()](pdf, **element)
                 if 'rotate' in element:
                     pdf.rotate(0)
-        
+
         if dest:
             return pdf.output(outfile, dest)
-        
-    def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10, 
-             bold=False, italic=False, underline=False, align="", 
+
+    def text(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=10,
+             bold=False, italic=False, underline=False, align="",
              foreground=0, backgroud=65535, multiline=None,
              *args, **kwargs):
         if text:
@@ -206,6 +207,16 @@ class Template:
         font = font.lower().strip()
         if font == 'interleaved 2of5 nt':
             pdf.interleaved2of5(text,x1,y1,w=size,h=y2-y1)
+
+    def barcodeI25(self, *args, **kwargs):
+        barcode(self, *args, **kwargs)
+
+    def barcodeC39(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
+             foreground=0, *args, **kwargs):
+        if pdf.draw_color!=rgb(foreground):
+            pdf.set_draw_color(*rgb(foreground))
+
+        pdf.code39(text,x1,y1,w=size,h=y2-y1)
 
     # Added by Derek Schwalenberg Schwalenberg1013@gmail.com to allow (url) links in templates (using write method) 2014-02-22
     def write(self, pdf, x1=0, y1=0, x2=0, y2=0, text='', font="arial", size=1,
