@@ -2059,7 +2059,9 @@ class FPDF(object):
             '+': 'nwnnnwnwn', '%': 'nnnwnwnwn',
         }
         self.set_fill_color(0)
-        for c in txt.upper():
+        code = '*' + txt.upper() + '*'
+
+        for c in code:
             if c not in chars:
                 raise RuntimeError('Invalid char "%s" for Code39' % c)
             for i, d in enumerate(chars[c]):
