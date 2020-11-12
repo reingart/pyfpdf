@@ -1,0 +1,22 @@
+# Where resources can be downloaded as for 2015-09-30
+
+pack=fonts
+name=Free Unicode TrueType font pack for FPDF
+#url=http://pyfpdf.googlecode.com/files/fpdf_unicode_font_pack.zip
+url=https://github.com/reingart/pyfpdf/releases/download/binary/fpdf_unicode_font_pack.zip
+valid=^font/[0-9a-zA-Z\-_]*\.(ttf|txt)$
+
+pack=adobe-afm
+name=Font Metrics for PDF Core 14 Fonts
+url=http://wwwimages.adobe.com/content/dam/Adobe/en/devnet/font/pdfs/Core14_AFMs.zip
+filename=adobe_core14_afms.zip
+dest=adobe-afm
+valid=^[a-zA-Z\-]*\.(afm|html)$
+
+pack=adobe-agl
+name=Adobe Glyph List
+url=https://github.com/adobe-type-tools/agl-aglfn/archive/master.zip
+filename=adobe_glyphlist.zip
+dest=adobe-agl
+valid=^agl-aglfn-master/[a-zA-Z-].*(.txt|.md)?$
+strip=1

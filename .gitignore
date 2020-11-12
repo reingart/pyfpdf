@@ -49,5 +49,11 @@ nosetests.xml
 .project
 .pydevproject
 
+#<<<<<<< HEAD
 # Idea
 .idea
+#=======
+# Temporary test files
+/tests/fpdf_local/
+/tests/out-*
+#>>>>>>> fork/master

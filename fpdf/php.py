@@ -24,6 +24,7 @@ def UTF8ToUTF16BE(instr, setbom = True):
         outstr += "\xFE\xFF".encode("latin1")
     if not isinstance(instr, unicode):
         instr = instr.decode('UTF-8')
+#<<<<<<< HEAD
     outstr += instr.encode('UTF-16BE')
 
     # convert bytes back to fake unicode string
@@ -31,6 +32,9 @@ def UTF8ToUTF16BE(instr, setbom = True):
     if PY3K:
         outstr = outstr.decode("latin1")
     return outstr
+#=======
+#    return outstr + instr.encode('UTF-16BE')
+#>>>>>>> fork/master
 
 def UTF8StringToArray(instr):
     "Converts UTF-8 strings to codepoints array"

@@ -20,11 +20,13 @@ updated here (above and below in variable).
 """
 from __future__ import division, with_statement
 
+from contextlib import contextmanager
 from datetime import datetime
 from collections import OrderedDict as o_dict
 from functools import wraps
 from future.utils import raise_from
 import errno
+import logging
 import math
 import os
 import re
@@ -56,6 +58,8 @@ from .util.syntax import (
     create_list_string as pdf_l, iobj_ref as pdf_ref,
     create_stream as pdf_stream
 )
+
+LOGGER = logging.getLogger(__name__)
 
 # Global variables
 FPDF_VERSION = '2.0.1'
@@ -131,7 +135,7 @@ class FPDF(object):
         self.offsets = {}               # array of object offsets
         self.page = 0                   # current page number
         self.n = 2                      # current object number
-        self.buffer = ''                # buffer holding in-memory PDF
+        self.buffer = bytearray()       # buffer holding in-memory PDF
         self.pages = {}                 # array containing pages and metadata
         self.state = 0                  # current document state
         self.fonts = {}                 # array of used fonts
@@ -751,13 +755,15 @@ class FPDF(object):
 
         self.links[link] = [page, y]
 
-    def link(self, x, y, w, h, link):
+    def link(self, x, y, w, h, link, alt_text=''):
         "Put a link on the page"
         if self.page not in self.page_links:
             self.page_links[self.page] = []
         self.page_links[self.page] += [(
             x * self.k, self.h_pt - y * self.k,
-            w * self.k, h             * self.k, link
+            w * self.k, h             * self.k,
+            link,
+            alt_text
         )]
 
     @check_page
@@ -765,6 +771,7 @@ class FPDF(object):
         "Output a string"
         txt = self.normalize_text(txt)
         if (self.unifontsubset):
+#<<<<<<< HEAD
             txt2 = escape_parens(UTF8ToUTF16BE(txt, False))
             for uni in UTF8StringToArray(txt):
                 self.current_font['subset'].append(uni)
@@ -798,6 +805,52 @@ class FPDF(object):
                         'cm 1 0 0 1 %.2F %.2F cm',
                         c, s, -s, c, cx, cy, -cx, -cy)
             self._out(s)
+#=======
+#            txt2 = UTF8ToUTF16BE(self._escape(txt), False)
+#            for uni in UTF8StringToArray(txt):
+#                self.current_font['subset'].append(uni)
+#        else:
+#            txt2 = self._escape(txt)
+#        s=sprintf(b'BT %.2f %.2f Td (%s) Tj ET',x*self.k,(self.h-y)*self.k, txt2)
+#        if(self.underline and txt!=''):
+#            s+=b' '+self._dounderline(x,y,txt)
+#        if(self.color_flag):
+#            s=b'q '+self.text_color.encode()+b' '+s+b' Q'
+#        self._out(s)
+#
+#    @check_page
+#    def rotate(self, angle, x=None, y=None):
+#        warnings.warn('rotate() can produces malformed PDFs and is deprecated. Use the rotation() context manager instead.',
+#                      PendingDeprecationWarning)
+#        if x is None:
+#            x = self.x
+#        if y is None:
+#            y = self.y;
+#        if self.angle!=0:
+#            self._out('Q')
+#        self.angle = angle
+#        if angle!=0:
+#            angle *= math.pi/180;
+#            c = math.cos(angle);
+#            s = math.sin(angle);
+#            cx = x*self.k;
+#            cy = (self.h-y)*self.k
+#            self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',c,s,-s,c,cx,cy,-cx,-cy))
+#
+#    @check_page
+#    @contextmanager
+#    def rotation(self, angle, x=None, y=None):
+#        if x is None:
+#            x = self.x
+#        if y is None:
+#            y = self.y;
+#        angle *= math.pi / 180
+#        c, s = math.cos(angle), math.sin(angle)
+#        cx, cy = x*self.k, (self.h-y)*self.k
+#        self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm\n', c, s, -s, c, cx, cy, -cx, -cy))
+#        yield
+#        self._out('Q\n')
+#>>>>>>> fork/master
 
     @property
     def accept_page_break(self):
@@ -1159,7 +1212,8 @@ class FPDF(object):
                       h, substr(s, j), 0, 0, '', 0, link)
 
     @check_page
-    def image(self, name, x = None, y = None, w = 0, h = 0, type = '', link = ''):  # noqa: E501
+    def image(self, name, x=None, y=None, w=0,h=0,type='',link='', is_mask=False, mask_image=None):
+    #def image(self, name, x = None, y = None, w = 0, h = 0, type = '', link = ''):  # noqa: E501
         "Put an image on the page"
         if name not in self.images:
             info = get_img_info(image_parsing_load_resource(name))
@@ -1197,6 +1251,8 @@ class FPDF(object):
                           info['i']))
         if (link):
             self.link(x, y, w, h, link)
+
+        return info
 
     @check_page
     def ln(self, h = None):
@@ -1259,7 +1315,8 @@ class FPDF(object):
             with open(name, 'wb') as f:
                 f.write(buffer)
         # Return as a byte string
-        elif dest == 'S': return buffer
+        elif dest == 'S':
+            return buffer
 
         else:
             fpdf_error('Incorrect output destination: ' + dest)
@@ -1293,8 +1350,13 @@ class FPDF(object):
             # Now repeat for no pages in non-subset fonts
             for n in range(1, nb + 1):
                 self.pages[n]["content"] = \
-                    self.pages[n]["content"] \
-                        .replace(self.str_alias_nb_pages, str(nb))
+#<<<<<<< HEAD
+#                    self.pages[n]["content"] \
+#                        .replace(self.str_alias_nb_pages, str(nb))
+#=======
+                    self.pages[n]["content"].replace(self.str_alias_nb_pages.encode(),
+                        str(nb).encode())
+#>>>>>>> fork/master
         if self.def_orientation == 'P':
             dw_pt = self.dw_pt
             dh_pt = self.dh_pt
@@ -1335,11 +1397,17 @@ class FPDF(object):
                     # HTML ending of annotation entry
                     if isinstance(pl[4], basestring):
                         annots += '/A <</S /URI /URI ' + \
+<<<<<<< HEAD
                                   enclose_in_parens(pl[4]) + '>>>>'
 
                     # Dest type ending of annotation entry
+=======
+                            self._textstring(pl[4]) + '>>'
+>>>>>>> fork/master
                     else:
+                        assert pl[4] in self.links, f'Page {n} has a link with an invalid index: {pl[4]} (doc #links={len(self.links)})'
                         l = self.links[pl[4]]
+<<<<<<< HEAD
                         # if l[0] in self.orientation_changes: h = w_pt
                         # else:                                h = h_pt
                         h = h_pt
@@ -1347,6 +1415,13 @@ class FPDF(object):
                                           1 + 2 * l[0], h - l[1] * self.k)
                 
                 # End links list
+=======
+                        annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]',
+                            1 + 2 * l[0], h_pt - l[1] * self.k)
+                    if pl[5]:
+                        annots += sprintf('/Contents (%s)', pl[5])
+                    annots += '>>'
+>>>>>>> fork/master
                 self._out(annots + ']')
             if self.pdf_version > '1.3':
                 self._out("/Group <</Type /Group /S /Transparency"
@@ -1357,10 +1432,14 @@ class FPDF(object):
             # Page content
             content = self.pages[n]["content"]
             if self.compress:
+<<<<<<< HEAD
                 # manage binary data as latin1 until PEP461 or similar is
                 # implemented
                 p = content.encode("latin1") if PY3K else content
                 p = zlib.compress(p)
+=======
+                p = zlib.compress(content)
+>>>>>>> fork/master
             else:
                 p = content
             self._newobj()
@@ -1724,6 +1803,7 @@ class FPDF(object):
             info['n'] = self.n
             self._out('<</Type /XObject')
             self._out('/Subtype /Image')
+#<<<<<<< HEAD
             self._out('/Width ' + str(info['w']))
             self._out('/Height ' + str(info['h']))
 
@@ -1731,6 +1811,16 @@ class FPDF(object):
                 self._out('/ColorSpace [/Indexed /DeviceRGB '  +
                           str(len(info['pal']) // 3 - 1) + ' ' +
                           str(self.n + 1) + ' 0 R]')
+#=======
+#            self._out('/Width '+str(info['w']))
+#            self._out('/Height '+str(info['h']))
+#            # set mask object for this image
+#            if 'masked' in info:
+#                self._out('/SMask ' + str(info['masked']['n']+1) + ' 0 R')
+#
+#            if(info['cs']=='Indexed'):
+#                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(len(info['pal'])//3-1)+' '+str(self.n+1)+' 0 R]')
+#>>>>>>> fork/master
             else:
                 self._out('/ColorSpace /' + info['cs'])
                 if (info['cs'] == 'DeviceCMYK'):
@@ -1798,16 +1888,19 @@ class FPDF(object):
         self._out('>>')
 
     def _putresources(self):
-        self._putfonts()
-        self._putimages()
+        with self._trace_size('resources.fonts'):
+            self._putfonts()
+        with self._trace_size('resources.images'):
+            self._putimages()
 
         # Resource dictionary
-        self.offsets[2] = len(self.buffer)
-        self._out('2 0 obj')
-        self._out('<<')
-        self._putresourcedict()
-        self._out('>>')
-        self._out('endobj')
+        with self._trace_size('resources.dict'):
+            self.offsets[2] = len(self.buffer)
+            self._out('2 0 obj')
+            self._out('<<')
+            self._putresourcedict()
+            self._out('>>')
+            self._out('endobj')
 
     def _putinfo(self):
         ts = lambda a: enclose_in_parens(a)
@@ -1874,37 +1967,48 @@ class FPDF(object):
         self._out('/Info ' + pdf_ref(self.n - 1))
 
     def _enddoc(self):
-        self._putheader()
-        self._putpages()
-        self._putresources()
-        # Info
-        self._newobj()
-        self._out(self._putinfo())
-        self._out('endobj')
-        # Catalog
-        self._newobj()
-        self._out(self._putcatalog())
-        self._out('endobj')
-        # Cross-ref
-        o = len(self.buffer)
-        self._out('xref')
-        self._out('0 ' + (str(self.n + 1)))
-        self._out('0000000000 65535 f ')
-        for i in range(1, self.n + 1):
-            self._out(sprintf('%010d 00000 n ', self.offsets[i]))
-        # Trailer
-        self._out('trailer')
-        self._out('<<')
-        self._puttrailer()
-        self._out('>>')
-        self._out('startxref')
-        self._out(o)
+        LOGGER.debug('Final doc sections size summary:')
+        with self._trace_size('header'):
+            self._putheader()
+        with self._trace_size('pages'):
+            self._putpages()
+        self._putresources()  # trace_size is performed inside
+        #Info
+        with self._trace_size('info'):
+            self._newobj()
+            self._out('<<')
+            self._putinfo()
+            self._out('>>')
+            self._out('endobj')
+        #Catalog
+        with self._trace_size('catalog'):
+            self._newobj()
+            self._out('<<')
+            self._putcatalog()
+            self._out('>>')
+            self._out('endobj')
+        #Cross-ref
+        with self._trace_size('xref'):
+            o=len(self.buffer)
+            self._out('xref')
+            self._out('0 '+(str(self.n+1)))
+            self._out('0000000000 65535 f ')
+            for i in range(1,self.n+1):
+                self._out(sprintf('%010d 00000 n ',self.offsets[i]))
+        #Trailer
+        with self._trace_size('trailer'):
+            self._out('trailer')
+            self._out('<<')
+            self._puttrailer()
+            self._out('>>')
+            self._out('startxref')
+            self._out(o)
         self._out('%%EOF')
         self.state = 3
 
     def _beginpage(self, orientation, format, same):
         self.page             += 1
-        self.pages[self.page]  = {"content": ""}
+        self.pages[self.page]  = {"content": bytearray()}
         self.state             = 2
         self.x                 = self.l_margin
         self.y                 = self.t_margin
@@ -1973,10 +2077,114 @@ class FPDF(object):
         elif not isinstance(s, basestring):
             s = str(s)
         if (self.state == 2):
-            self.pages[self.page]["content"] += (s + "\n")
+            #self.pages[self.page]["content"] += (s + "\n")
+            self.pages[self.page]["content"] += (s.encode("latin1") + b"\n")
         else:
-            self.buffer += (s + "\n")
+            self.buffer += (s.encode("latin1") + b"\n")
+
+    @check_page
+    def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
+        "Barcode I2of5 (numeric), adds a 0 if odd lenght"
+        narrow = w / 3.0
+        wide = w
+
+        # wide/narrow codes for the digits
+        bar_char={'0': 'nnwwn', '1': 'wnnnw', '2': 'nwnnw', '3': 'wwnnn',
+                  '4': 'nnwnw', '5': 'wnwnn', '6': 'nwwnn', '7': 'nnnww',
+                  '8': 'wnnwn', '9': 'nwnwn', 'A': 'nn', 'Z': 'wn'}
+
+        self.set_fill_color(0)
+        code = txt
+        # add leading zero if code-length is odd
+        if len(code) % 2 != 0:
+            code = '0' + code
+
+        # add start and stop codes
+        code = 'AA' + code.lower() + 'ZA'
+
+        for i in range(0, len(code), 2):
+            # choose next pair of digits
+            char_bar = code[i]
+            char_space = code[i+1]
+            # check whether it is a valid digit
+            if not char_bar in bar_char.keys():
+                raise RuntimeError ('Char "%s" invalid for I25: ' % char_bar)
+            if not char_space in bar_char.keys():
+                raise RuntimeError ('Char "%s" invalid for I25: ' % char_space)
+
+            # create a wide/narrow-seq (first digit=bars, second digit=spaces)
+            seq = ''
+            for s in range(0, len(bar_char[char_bar])):
+                seq += bar_char[char_bar][s] + bar_char[char_space][s]
+
+            for bar in range(0, len(seq)):
+                # set line_width depending on value
+                if seq[bar] == 'n':
+                    line_width = narrow
+                else:
+                    line_width = wide
+
+                # draw every second value, the other is represented by space
+                if bar % 2 == 0:
+                    self.rect(x, y, line_width, h, 'F')
+
+                x += line_width
+
+
+    @check_page
+    def code39(self, txt, x, y, w=1.5, h=5.0):
+        """Barcode 3of9"""
+        dim = {'w': w, 'n': w/3.}
+        chars = {
+            '0': 'nnnwwnwnn', '1': 'wnnwnnnnw', '2': 'nnwwnnnnw',
+            '3': 'wnwwnnnnn', '4': 'nnnwwnnnw', '5': 'wnnwwnnnn',
+            '6': 'nnwwwnnnn', '7': 'nnnwnnwnw', '8': 'wnnwnnwnn',
+            '9': 'nnwwnnwnn', 'A': 'wnnnnwnnw', 'B': 'nnwnnwnnw',
+            'C': 'wnwnnwnnn', 'D': 'nnnnwwnnw', 'E': 'wnnnwwnnn',
+            'F': 'nnwnwwnnn', 'G': 'nnnnnwwnw', 'H': 'wnnnnwwnn',
+            'I': 'nnwnnwwnn', 'J': 'nnnnwwwnn', 'K': 'wnnnnnnww',
+            'L': 'nnwnnnnww', 'M': 'wnwnnnnwn', 'N': 'nnnnwnnww',
+            'O': 'wnnnwnnwn', 'P': 'nnwnwnnwn', 'Q': 'nnnnnnwww',
+            'R': 'wnnnnnwwn', 'S': 'nnwnnnwwn', 'T': 'nnnnwnwwn',
+            'U': 'wwnnnnnnw', 'V': 'nwwnnnnnw', 'W': 'wwwnnnnnn',
+            'X': 'nwnnwnnnw', 'Y': 'wwnnwnnnn', 'Z': 'nwwnwnnnn',
+            '-': 'nwnnnnwnw', '.': 'wwnnnnwnn', ' ': 'nwwnnnwnn',
+            '*': 'nwnnwnwnn', '$': 'nwnwnwnnn', '/': 'nwnwnnnwn',
+            '+': 'nwnnnwnwn', '%': 'nnnwnwnwn',
+        }
+        self.set_fill_color(0)
+        for c in txt.upper():
+            if c not in chars:
+                raise RuntimeError('Invalid char "%s" for Code39' % c)
+            for i, d in enumerate(chars[c]):
+                if i % 2 == 0:
+                    self.rect(x, y, dim[d], h, 'F')
+                x += dim[d]
+            x += dim['n']
+
+    @check_page
+    @contextmanager
+    def rect_clip(self, x, y, w, h):
+        self._out(sprintf('q %.2f %.2f %.2f %.2f re W n\n',x*self.k,(self.h-(y+h))*self.k,w*self.k,h*self.k))
+        yield
+        self._out('Q\n')
+
+    @contextmanager
+    def _trace_size(self, label):
+        prev_size = len(self.buffer)
+        yield
+        LOGGER.debug('- %s.size: %s', label, _sizeof_fmt(len(self.buffer) - prev_size))
+
+
+def _sizeof_fmt(num, suffix='B'):
+    # Recipe from: https://stackoverflow.com/a/1094933/636849
+    for unit in ['','Ki','Mi','Gi','Ti','Pi','Ei','Zi']:
+        if abs(num) < 1024.0:
+            return "%3.1f%s%s" % (num, unit, suffix)
+        num /= 1024.0
+    return "%.1f%s%s" % (num, 'Yi', suffix)
 
 __all__ = [
     'FPDF', 'load_cache', 'get_page_format', 'PAGE_FORMATS'
 ]
+
