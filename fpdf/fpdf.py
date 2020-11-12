@@ -1397,13 +1397,9 @@ class FPDF(object):
                     # HTML ending of annotation entry
                     if isinstance(pl[4], basestring):
                         annots += '/A <</S /URI /URI ' + \
-<<<<<<< HEAD
                                   enclose_in_parens(pl[4]) + '>>>>'
 
                     # Dest type ending of annotation entry
-=======
-                            self._textstring(pl[4]) + '>>'
->>>>>>> fork/master
                     else:
                         assert pl[4] in self.links, f'Page {n} has a link with an invalid index: {pl[4]} (doc #links={len(self.links)})'
                         l = self.links[pl[4]]
