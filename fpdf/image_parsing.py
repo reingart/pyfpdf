@@ -5,14 +5,18 @@ import struct
 import zlib
 from six import BytesIO
 
-import numpy
 from PIL import Image
+try:
+    import numpy
+except ImportError:
+    numpy = False
 
 from .errors import fpdf_error
 from .php import substr
 from .py3k import PY3K, b
 from .util import freadint as read_integer
 from six.moves.urllib.request import urlopen
+
 
 def load_resource(filename, reason = "image"):
     """Load external file"""
@@ -37,69 +41,66 @@ def get_img_info(file_):
     if img.mode not in ['L', 'LA', 'RGBA']:
         img = img.convert('RGBA')
     w, h = img.size
-    info = {
-        'w': w,
-        'h': h,
-    }
-    pal=''
-    trns=''
-    if img.mode == 'L':
-        dpn = 1
-        bpc = 8
-        colspace = 'DeviceGray'
-        data = numpy.asarray(img)
-        z_data = numpy.insert(data, 0, 0, axis=1)
-        info['data']= zlib.compress(z_data)
-    elif img.mode == 'LA':
-        dpn = 1
-        bpc = 8
-        colspace = 'DeviceGray'
+    info = {}
+    if numpy:
+        if img.mode == 'L':
+            dpn, bpc, colspace = 1, 8, 'DeviceGray'
+            data = numpy.asarray(img)
+            z_data = numpy.insert(data, 0, 0, axis=1)
+            info['data']= zlib.compress(z_data)
+        elif img.mode == 'LA':
+            dpn, bpc, colspace = 1, 8, 'DeviceGray'
 
-        rgba_data = numpy.reshape(numpy.asarray(img), w * h * 2)
-        a_data = numpy.ascontiguousarray(rgba_data[1::2])
-        rgb_data = numpy.ascontiguousarray(rgba_data[0::2])
+            rgba_data = numpy.reshape(numpy.asarray(img), w * h * 2)
+            a_data = numpy.ascontiguousarray(rgba_data[1::2])
+            rgb_data = numpy.ascontiguousarray(rgba_data[0::2])
 
-        a_data = numpy.reshape(a_data, (h, w))
-        rgb_data = numpy.reshape(rgb_data, (h, w))
+            a_data = numpy.reshape(a_data, (h, w))
+            rgb_data = numpy.reshape(rgb_data, (h, w))
 
-        za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
-        zrgb_data = numpy.insert(rgb_data.reshape((h, w)), 0, 0, axis=1)
-        info['data']= zlib.compress(zrgb_data)
-        info['smask'] = zlib.compress(za_data)
+            za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
+            zrgb_data = numpy.insert(rgb_data.reshape((h, w)), 0, 0, axis=1)
+            info['data'] = zlib.compress(zrgb_data)
+            info['smask'] = zlib.compress(za_data)
+        else:  # RGBA image
+            dpn, bpc, colspace = 3, 8, 'DeviceRGB'
 
-    # This will never happen, others get converted to RGBA
-    # elif img.mode == 'RGBA':
-    else:
-        dpn = 3
-        bpc = 8
-        colspace = 'DeviceRGB'
+            rgba_data = numpy.reshape(numpy.asarray(img), w * h * 4)
+            a_data = numpy.ascontiguousarray(rgba_data[3::4])
+            rgb_data = numpy.delete(rgba_data, numpy.arange(3, len(rgba_data), 4))
 
-        rgba_data = numpy.reshape(numpy.asarray(img), w * h * 4)
-        a_data = numpy.ascontiguousarray(rgba_data[3::4])
-        rgb_data = numpy.delete(rgba_data, numpy.arange(3, len(rgba_data), 4))
+            a_data = numpy.reshape(a_data, (h, w))
+            rgb_data = numpy.reshape(rgb_data, (h, w * 3))
 
-        a_data = numpy.reshape(a_data, (h, w))
-        rgb_data = numpy.reshape(rgb_data, (h, w * 3))
+            za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
+            zrgb_data = numpy.insert(rgb_data.reshape((h, w*3)), 0, 0, axis=1)
+            info['data'] = zlib.compress(zrgb_data)
+            info['smask'] = zlib.compress(za_data)
 
-
-        za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
-        zrgb_data = numpy.insert(rgb_data.reshape((h, w*3)), 0, 0, axis=1)
-        info['data']= zlib.compress(zrgb_data)
-        info['smask'] = zlib.compress(za_data)
-
-    # This will never happen, others get converted to RGBA
-    # else:
-    #     self.error('Unsupport image: {}'.format(img.mode))
-
-    dp='/Predictor 15 /Colors ' + str(dpn) + ' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+''
+    else:  # numpy not available
+        if img.mode == 'L':
+            dpn, bpc, colspace = 1, 8, 'DeviceGray'
+            info['data']= None  # TODO
+        elif img.mode == 'LA':
+            dpn, bpc, colspace = 1, 8, 'DeviceGray'
+            info['data'] = None  # TODO
+            info['smask'] = None  # TODO
+        else:  # RGBA image
+            dpn, bpc, colspace = 3, 8, 'DeviceRGB'
+            info['data'] = None  # TODO
+            info['smask'] = None  # TODO
+        
+    dp = '/Predictor 15 /Colors ' + str(dpn) + ' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+''
 
     info.update({
-        'cs':colspace,
-        'bpc':bpc,
-        'f':'FlateDecode',
-        'dp':dp,
-        'pal':pal,
-        'trns':trns,
+        'w': w,
+        'h': h,
+        'cs': colspace,
+        'bpc': bpc,
+        'f': 'FlateDecode',
+        'dp': dp,
+        'pal': '',
+        'trns': '',
     })
 
     return info

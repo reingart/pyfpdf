@@ -16,7 +16,7 @@ def print_r(array):
         array = dict([(k, k) for k in array])
     for k, v in sorted(array.items(), key=lambda x: str(x[0])):
         print("[%s] => %s " % (k, v))
-        
+
 def UTF8ToUTF16BE(instr, setbom = True):
     "Converts UTF-8 strings to UTF16-BE."
     outstr = "".encode()
@@ -24,30 +24,20 @@ def UTF8ToUTF16BE(instr, setbom = True):
         outstr += "\xFE\xFF".encode("latin1")
     if not isinstance(instr, unicode):
         instr = instr.decode('UTF-8')
-#<<<<<<< HEAD
-    outstr += instr.encode('UTF-16BE')
-
-    # convert bytes back to fake unicode string
-    # until PEP461-like is implemented
-    if PY3K:
-        outstr = outstr.decode("latin1")
-    return outstr
-#=======
-#    return outstr + instr.encode('UTF-16BE')
-#>>>>>>> fork/master
+    return outstr + instr.encode('UTF-16BE')
 
 def UTF8StringToArray(instr):
     "Converts UTF-8 strings to codepoints array"
     return [ord(c) for c in instr]
 
-# ttfints php helpers:    
+# ttfints php helpers:
 
 def die(msg):
     raise RuntimeError(msg)
-    
+
 def str_repeat(s, count):
     return s * count
-    
+
 def str_pad(s, pad_length=0, pad_char= " ", pad_type= +1 ):
     # pad left
     if pad_type < 0:   return s.rjust(pad_length,  pad_char)

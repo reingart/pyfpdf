@@ -771,8 +771,7 @@ class FPDF(object):
         "Output a string"
         txt = self.normalize_text(txt)
         if (self.unifontsubset):
-#<<<<<<< HEAD
-            txt2 = escape_parens(UTF8ToUTF16BE(txt, False))
+            txt2 = UTF8ToUTF16BE(escape_parens(txt), False)
             for uni in UTF8StringToArray(txt):
                 self.current_font['subset'].append(uni)
         else:
@@ -789,6 +788,7 @@ class FPDF(object):
 
     @check_page
     def rotate(self, angle, x = None, y = None):
+        warnings.warn('rotate() can produces malformed PDFs and is deprecated. Use the rotation() context manager instead.', PendingDeprecationWarning)
         if x is None: x = self.x
         if y is None: y = self.y
 
@@ -805,52 +805,18 @@ class FPDF(object):
                         'cm 1 0 0 1 %.2F %.2F cm',
                         c, s, -s, c, cx, cy, -cx, -cy)
             self._out(s)
-#=======
-#            txt2 = UTF8ToUTF16BE(self._escape(txt), False)
-#            for uni in UTF8StringToArray(txt):
-#                self.current_font['subset'].append(uni)
-#        else:
-#            txt2 = self._escape(txt)
-#        s=sprintf(b'BT %.2f %.2f Td (%s) Tj ET',x*self.k,(self.h-y)*self.k, txt2)
-#        if(self.underline and txt!=''):
-#            s+=b' '+self._dounderline(x,y,txt)
-#        if(self.color_flag):
-#            s=b'q '+self.text_color.encode()+b' '+s+b' Q'
-#        self._out(s)
-#
-#    @check_page
-#    def rotate(self, angle, x=None, y=None):
-#        warnings.warn('rotate() can produces malformed PDFs and is deprecated. Use the rotation() context manager instead.',
-#                      PendingDeprecationWarning)
-#        if x is None:
-#            x = self.x
-#        if y is None:
-#            y = self.y;
-#        if self.angle!=0:
-#            self._out('Q')
-#        self.angle = angle
-#        if angle!=0:
-#            angle *= math.pi/180;
-#            c = math.cos(angle);
-#            s = math.sin(angle);
-#            cx = x*self.k;
-#            cy = (self.h-y)*self.k
-#            self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm',c,s,-s,c,cx,cy,-cx,-cy))
-#
-#    @check_page
-#    @contextmanager
-#    def rotation(self, angle, x=None, y=None):
-#        if x is None:
-#            x = self.x
-#        if y is None:
-#            y = self.y;
-#        angle *= math.pi / 180
-#        c, s = math.cos(angle), math.sin(angle)
-#        cx, cy = x*self.k, (self.h-y)*self.k
-#        self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm\n', c, s, -s, c, cx, cy, -cx, -cy))
-#        yield
-#        self._out('Q\n')
-#>>>>>>> fork/master
+
+    @check_page
+    @contextmanager
+    def rotation(self, angle, x=None, y=None):
+        if x is None: x = self.x
+        if y is None: y = self.y;
+        angle *= math.pi / 180
+        c, s = math.cos(angle), math.sin(angle)
+        cx, cy = x*self.k, (self.h-y)*self.k
+        self._out(sprintf('q %.5F %.5F %.5F %.5F %.2F %.2F cm 1 0 0 1 %.2F %.2F cm\n', c, s, -s, c, cx, cy, -cx, -cy))
+        yield
+        self._out('Q\n')
 
     @property
     def accept_page_break(self):
@@ -1299,25 +1265,17 @@ class FPDF(object):
         if (dest == ''):
             if (name == ''): dest = 'I'
             else:            dest = 'F'
-
-        if PY3K:
-            # manage binary data as latin1 until PEP461 or similar is
-            # implemented
-            buffer = self.buffer.encode("latin1")
-        else:
-            buffer = self.buffer
         if dest in ('I', 'D'):
             # Python < 3 writes byte data transparently without "buffer"
             stdout = getattr(sys.stdout, 'buffer', sys.stdout)
-            stdout.write(buffer)
+            stdout.write(self.buffer)
         elif dest == 'F':
             # Save to local file
             with open(name, 'wb') as f:
-                f.write(buffer)
+                f.write(self.buffer)
         # Return as a byte string
         elif dest == 'S':
-            return buffer
-
+            return self.buffer
         else:
             fpdf_error('Incorrect output destination: ' + dest)
 
@@ -1349,14 +1307,8 @@ class FPDF(object):
                     self.pages[n]["content"].replace(alias, r)
             # Now repeat for no pages in non-subset fonts
             for n in range(1, nb + 1):
-                self.pages[n]["content"] = \
-#<<<<<<< HEAD
-#                    self.pages[n]["content"] \
-#                        .replace(self.str_alias_nb_pages, str(nb))
-#=======
-                    self.pages[n]["content"].replace(self.str_alias_nb_pages.encode(),
+                self.pages[n]["content"].replace(self.str_alias_nb_pages.encode(),
                         str(nb).encode())
-#>>>>>>> fork/master
         if self.def_orientation == 'P':
             dw_pt = self.dw_pt
             dh_pt = self.dh_pt
@@ -1403,21 +1355,12 @@ class FPDF(object):
                     else:
                         assert pl[4] in self.links, f'Page {n} has a link with an invalid index: {pl[4]} (doc #links={len(self.links)})'
                         l = self.links[pl[4]]
-<<<<<<< HEAD
                         # if l[0] in self.orientation_changes: h = w_pt
                         # else:                                h = h_pt
-                        h = h_pt
                         annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]>>',
-                                          1 + 2 * l[0], h - l[1] * self.k)
+                                          1 + 2 * l[0], h_pt - l[1] * self.k)
                 
                 # End links list
-=======
-                        annots += sprintf('/Dest [%d 0 R /XYZ 0 %.2f null]',
-                            1 + 2 * l[0], h_pt - l[1] * self.k)
-                    if pl[5]:
-                        annots += sprintf('/Contents (%s)', pl[5])
-                    annots += '>>'
->>>>>>> fork/master
                 self._out(annots + ']')
             if self.pdf_version > '1.3':
                 self._out("/Group <</Type /Group /S /Transparency"
@@ -1428,14 +1371,7 @@ class FPDF(object):
             # Page content
             content = self.pages[n]["content"]
             if self.compress:
-<<<<<<< HEAD
-                # manage binary data as latin1 until PEP461 or similar is
-                # implemented
-                p = content.encode("latin1") if PY3K else content
-                p = zlib.compress(p)
-=======
                 p = zlib.compress(content)
->>>>>>> fork/master
             else:
                 p = content
             self._newobj()
@@ -1799,7 +1735,6 @@ class FPDF(object):
             info['n'] = self.n
             self._out('<</Type /XObject')
             self._out('/Subtype /Image')
-#<<<<<<< HEAD
             self._out('/Width ' + str(info['w']))
             self._out('/Height ' + str(info['h']))
 
@@ -1807,16 +1742,6 @@ class FPDF(object):
                 self._out('/ColorSpace [/Indexed /DeviceRGB '  +
                           str(len(info['pal']) // 3 - 1) + ' ' +
                           str(self.n + 1) + ' 0 R]')
-#=======
-#            self._out('/Width '+str(info['w']))
-#            self._out('/Height '+str(info['h']))
-#            # set mask object for this image
-#            if 'masked' in info:
-#                self._out('/SMask ' + str(info['masked']['n']+1) + ' 0 R')
-#
-#            if(info['cs']=='Indexed'):
-#                self._out('/ColorSpace [/Indexed /DeviceRGB '+str(len(info['pal'])//3-1)+' '+str(self.n+1)+' 0 R]')
-#>>>>>>> fork/master
             else:
                 self._out('/ColorSpace /' + info['cs'])
                 if (info['cs'] == 'DeviceCMYK'):
