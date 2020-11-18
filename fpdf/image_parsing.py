@@ -29,15 +29,14 @@ def load_resource(filename, reason = "image"):
            filename.startswith("https://"):
             f = BytesIO(urlopen(filename).read())
         else:
-            fl = open(filename, "rb")
-            f = BytesIO(fl.read())
-            fl.close()
+            with open(filename, "rb") as fl:
+                f = BytesIO(fl.read())
         return f
     else:
         fpdf_error("Unknown resource loading reason \"%s\"" % reason)
 
-def get_img_info(file_):
-    img = Image.open(file_)
+def get_img_info(bytesio):
+    img = Image.open(bytesio)
     if img.mode not in ['L', 'LA', 'RGBA']:
         img = img.convert('RGBA')
     w, h = img.size
@@ -47,16 +46,13 @@ def get_img_info(file_):
             dpn, bpc, colspace = 1, 8, 'DeviceGray'
             data = numpy.asarray(img)
             z_data = numpy.insert(data, 0, 0, axis=1)
-            info['data']= zlib.compress(z_data)
+            info['data'] = zlib.compress(z_data)
         elif img.mode == 'LA':
             dpn, bpc, colspace = 1, 8, 'DeviceGray'
 
             rgba_data = numpy.reshape(numpy.asarray(img), w * h * 2)
             a_data = numpy.ascontiguousarray(rgba_data[1::2])
             rgb_data = numpy.ascontiguousarray(rgba_data[0::2])
-
-            a_data = numpy.reshape(a_data, (h, w))
-            rgb_data = numpy.reshape(rgb_data, (h, w))
 
             za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
             zrgb_data = numpy.insert(rgb_data.reshape((h, w)), 0, 0, axis=1)
@@ -69,27 +65,22 @@ def get_img_info(file_):
             a_data = numpy.ascontiguousarray(rgba_data[3::4])
             rgb_data = numpy.delete(rgba_data, numpy.arange(3, len(rgba_data), 4))
 
-            a_data = numpy.reshape(a_data, (h, w))
-            rgb_data = numpy.reshape(rgb_data, (h, w * 3))
-
             za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
             zrgb_data = numpy.insert(rgb_data.reshape((h, w*3)), 0, 0, axis=1)
             info['data'] = zlib.compress(zrgb_data)
             info['smask'] = zlib.compress(za_data)
 
     else:  # numpy not available
-        if img.mode == 'L':
+        if img.mode in ('L', 'LA'):
             dpn, bpc, colspace = 1, 8, 'DeviceGray'
-            info['data']= None  # TODO
-        elif img.mode == 'LA':
-            dpn, bpc, colspace = 1, 8, 'DeviceGray'
-            info['data'] = None  # TODO
-            info['smask'] = None  # TODO
+            info['data'] = to_zdata(img, slice(0, 1))
+            if img.mode == 'LA':
+                info['smask'] = to_zdata(img, slice(1, 2))
         else:  # RGBA image
             dpn, bpc, colspace = 3, 8, 'DeviceRGB'
-            info['data'] = None  # TODO
-            info['smask'] = None  # TODO
-        
+            info['data'] = to_zdata(img, slice(0, 3))
+            info['smask'] = to_zdata(img, slice(3, 4))
+
     dp = '/Predictor 15 /Colors ' + str(dpn) + ' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+''
 
     info.update({
@@ -104,3 +95,14 @@ def get_img_info(file_):
     })
 
     return info
+
+
+def to_zdata(img, slice_=slice(0, None)):
+    is_single_channel = isinstance(img.getdata()[0], int)
+    assert not is_single_channel or slice_ in (slice(0, None), slice(0, 1)), 'Single-channel images cannot be sliced'
+    data = b''
+    for i, px in enumerate(img.getdata()):
+        if i % img.size[0] == 0:
+            data += b'\0'
+        data += bytes([px] if is_single_channel else px[slice_])
+    return zlib.compress(data)

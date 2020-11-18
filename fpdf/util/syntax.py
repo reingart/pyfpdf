@@ -117,7 +117,7 @@ def iobj_ref(n):
 def create_stream(stream):
     if py3k:
         if isinstance(stream, bytearray):
-            return bytearray(b'stream') + stream + b'endstream'
+            return bytearray(b'stream\n') + stream + b'\nendstream'
         if bytes == type(stream):
             stream = str(stream, 'latin-1')
     return '\n'.join(['stream', stream, 'endstream'])

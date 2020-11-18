@@ -1353,7 +1353,7 @@ class FPDF(object):
 
                     # Dest type ending of annotation entry
                     else:
-                        assert pl[4] in self.links, f'Page {n} has a link with an invalid index: {pl[4]} (doc #links={len(self.links)})'
+                        assert pl[4] in self.links, 'Page {} has a link with an invalid index: {} (doc #links={})'.format(n, pl[4], len(self.links))
                         l = self.links[pl[4]]
                         # if l[0] in self.orientation_changes: h = w_pt
                         # else:                                h = h_pt
@@ -1845,8 +1845,7 @@ class FPDF(object):
             date_string = datetime.now().strftime('%Y%m%d%H%M%S')
         info_d[pdf_name('CreationDate')] = ts('D:' + date_string)
 
-        return pdf_d(info_d, open_dict='<<\n', close_dict='\n>>',
-            has_empty_fields=True)
+        self._out(pdf_d(info_d, open_dict='', close_dict='', has_empty_fields=True))
 
     def _putcatalog(self):
         catalog_d = o_dict()
@@ -1877,7 +1876,7 @@ class FPDF(object):
         if self.layout_mode in layout_names:
             catalog_d[pdf_name('PageLayout')] = layout_names[self.layout_mode]
 
-        return pdf_d(catalog_d, open_dict='<<\n', close_dict='\n>>')
+        self._out(pdf_d(catalog_d, open_dict='', close_dict=''))
 
     def _putheader(self):
         self._out('%PDF-' + self.pdf_version)
