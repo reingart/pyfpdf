@@ -6,10 +6,6 @@ import zlib
 from six import BytesIO
 
 from PIL import Image
-try:
-    import numpy
-except ImportError:
-    numpy = False
 
 from .errors import fpdf_error
 from .php import substr
@@ -41,45 +37,15 @@ def get_img_info(bytesio):
         img = img.convert('RGBA')
     w, h = img.size
     info = {}
-    if numpy:
-        if img.mode == 'L':
-            dpn, bpc, colspace = 1, 8, 'DeviceGray'
-            data = numpy.asarray(img)
-            z_data = numpy.insert(data, 0, 0, axis=1)
-            info['data'] = zlib.compress(z_data)
-        elif img.mode == 'LA':
-            dpn, bpc, colspace = 1, 8, 'DeviceGray'
-
-            rgba_data = numpy.reshape(numpy.asarray(img), w * h * 2)
-            a_data = numpy.ascontiguousarray(rgba_data[1::2])
-            rgb_data = numpy.ascontiguousarray(rgba_data[0::2])
-
-            za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
-            zrgb_data = numpy.insert(rgb_data.reshape((h, w)), 0, 0, axis=1)
-            info['data'] = zlib.compress(zrgb_data)
-            info['smask'] = zlib.compress(za_data)
-        else:  # RGBA image
-            dpn, bpc, colspace = 3, 8, 'DeviceRGB'
-
-            rgba_data = numpy.reshape(numpy.asarray(img), w * h * 4)
-            a_data = numpy.ascontiguousarray(rgba_data[3::4])
-            rgb_data = numpy.delete(rgba_data, numpy.arange(3, len(rgba_data), 4))
-
-            za_data = numpy.insert(a_data.reshape((h, w)), 0, 0, axis=1)
-            zrgb_data = numpy.insert(rgb_data.reshape((h, w*3)), 0, 0, axis=1)
-            info['data'] = zlib.compress(zrgb_data)
-            info['smask'] = zlib.compress(za_data)
-
-    else:  # numpy not available
-        if img.mode in ('L', 'LA'):
-            dpn, bpc, colspace = 1, 8, 'DeviceGray'
-            info['data'] = to_zdata(img, slice(0, 1))
-            if img.mode == 'LA':
-                info['smask'] = to_zdata(img, slice(1, 2))
-        else:  # RGBA image
-            dpn, bpc, colspace = 3, 8, 'DeviceRGB'
-            info['data'] = to_zdata(img, slice(0, 3))
-            info['smask'] = to_zdata(img, slice(3, 4))
+    if img.mode in ('L', 'LA'):
+        dpn, bpc, colspace = 1, 8, 'DeviceGray'
+        info['data'] = to_zdata(img, slice(0, 1))
+        if img.mode == 'LA':
+            info['smask'] = to_zdata(img, slice(1, 2))
+    else:  # RGBA image
+        dpn, bpc, colspace = 3, 8, 'DeviceRGB'
+        info['data'] = to_zdata(img, slice(0, 3))
+        info['smask'] = to_zdata(img, slice(3, 4))
 
     dp = '/Predictor 15 /Colors ' + str(dpn) + ' /BitsPerComponent '+str(bpc)+' /Columns '+str(w)+''
 
