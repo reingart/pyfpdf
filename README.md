@@ -26,7 +26,7 @@ Installation Instructions:
 To get the latest development version you can download the source code running:
 
 ```
-   git clone https://github.com/reingart/pyfpdf.git
+   git clone https://github.com/worraps/pyfpdf.git
    cd pyfpdf
    python setup.py install
 ```

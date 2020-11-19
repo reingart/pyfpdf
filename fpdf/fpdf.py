@@ -87,6 +87,7 @@ class FPDF(object):
         self.color_flag = 0             # indicates whether fill and text colors are different
         self.ws = 0                     # word spacing
         self.angle = 0
+        self.auto_page_break=1          #assume we will want an auto page break
         # Standard fonts
         self.core_fonts={'courier': 'Courier', 'courierB': 'Courier-Bold',
             'courierI': 'Courier-Oblique', 'courierBI': 'Courier-BoldOblique',
@@ -167,13 +168,17 @@ class FPDF(object):
                 return fn(self, *args, **kwargs)
         return wrapper
 
-    def set_margins(self, left,top,right=-1):
+    def set_margins(self, left,top,right=-1,bottom=-1):
         "Set left, top and right margins"
         self.l_margin=left
         self.t_margin=top
         if(right==-1):
             right=left
         self.r_margin=right
+        if(bottom==-1):
+            bottom=top*2 #default bottom to double top
+        #reset bottom margin
+        self.set_auto_page_break(self.auto_page_break,bottom)
 
     def set_left_margin(self, margin):
         "Set left margin"
