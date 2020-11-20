@@ -17,7 +17,9 @@ The header contains the page format, title of the document and other metadata.
 Elements have the following properties (columns in a CSV, fields in a database):
 
   * name: placeholder identification
-  * type: 'T': texts, 'L': lines, 'I': images, 'B': boxes, 'BC': barcodes
+  * type: 'T': texts, 'L': lines, 'I': images, 'B': boxes, 'BC': barcodes (Interleaved
+    2 of 5) - alias for BCI25, 'BCI25': barcodes (Interleaved 2 of 5), 'BCC39': barcodes
+    (C39),
   * x1, y1, x2, y2: top-left, bottom-right coordinates (in mm)
   * font: e.g. "Arial"
   * size: text size in points, e.g. 10
@@ -45,7 +47,7 @@ Note the following, the definition of a template will contain the elements. The 
 
 from fpdf import Template
 
-#this will define the ELEMENTS that will compose the template. 
+#this will define the ELEMENTS that will compose the template.
 elements = [
     { 'name': 'company_logo', 'type': 'I', 'x1': 20.0, 'y1': 17.0, 'x2': 78.0, 'y2': 30.0, 'font': None, 'size': 0.0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': 'logo', 'priority': 2, },
     { 'name': 'company_name', 'type': 'T', 'x1': 17.0, 'y1': 32.5, 'x2': 115.0, 'y2': 37.5, 'font': 'Arial', 'size': 12.0, 'bold': 1, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, },
