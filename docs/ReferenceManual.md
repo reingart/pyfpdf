@@ -11,6 +11,8 @@
   * [add_link](reference/add_link.md) - create an internal link
   * [add_page](reference/add_page.md) - add a new page
   * [alias_nb_pages](reference/alias_nb_pages.md) - define an alias for number of pages
+  * [interleaved2of5](reference/interleaved2of5.md) - add a new barcode with Interleaved 2 of 5 schema
+  * [code39](reference/code39.md) - add a new barcode with C39 schema
   * [cell](reference/cell.md) - print a cell
   * [close](reference/close.md) - terminate the document
   * [error](reference/error.md) - fatal error
@@ -54,7 +56,7 @@
   * [write](reference/write.md) - print flowing text
 
 ## Additional API ##
-  
+
 These features are not available in the original FPDF and were implemented after forking.
 
   * [dashed_line](reference/dashed_line.md) - draw a dashed line
@@ -63,4 +65,3 @@ These features are not available in the original FPDF and were implemented after
   * [set_doc_option](reference/set_doc_option.md) - set document options
   * [set_stretching](reference/set_stretching.md) - set horizontal font stretching
   * [write_html](reference/write_html.md) - print text with HTML markup
-
