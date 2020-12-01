@@ -38,7 +38,6 @@ class InsertPNGSuiteFiles(unittest.TestCase):
 
     for image in images:
       if os.path.basename(image) in not_supported:
-        pass
         self.assertRaises(Exception, pdf.image, x = 0, y = 0, w = 0, h = 0,
                           type = '', link = None)
       else:

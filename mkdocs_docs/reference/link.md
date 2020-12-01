@@ -1,7 +1,7 @@
 ## link ##
 
 ```python
-fpdf.link(x: float, y: float, w: float, h: float, link)
+fpdf.link(x: float, y: float, w: float, h: float, link, alt_text = '')
 ```
 
 ### Description ###
@@ -24,6 +24,9 @@ h:
 
 link:
 > URL or identifier returned by [add_link](add_link.md).
+
+alt_text:
+> An optional string defining the link alternative text `Contents`
 
 ### See also ###
 

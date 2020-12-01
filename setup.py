@@ -15,7 +15,7 @@ def read(path):
     return f.read()
 
 import re
-version = re.findall(r"Version:  (\d+.\d+.\d+)", read('./fpdf/fpdf.py'))[0]
+version = re.findall(r"FPDF_VERSION = '(\d+.\d+.\d+)'", read('./fpdf/fpdf.py'))[0]
 
 if __name__ == '__main__': setup(
   name         = 'fpdf2',
@@ -33,7 +33,6 @@ if __name__ == '__main__': setup(
   package_dir  = {'fpdf': 'fpdf'},
   test_suite   = 'setup.run_test_suite',
   install_requires=[
-    'numpy',
     'Pillow>=4,<=8',
     'six',
     'future'
@@ -43,10 +42,10 @@ if __name__ == '__main__': setup(
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU Lesser General Public License v3 (LGPLv3)",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2.7",
-    "Programming Language :: Python :: 3.3",
-    "Programming Language :: Python :: 3.4",
-    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
     "Operating System :: OS Independent",
     "Topic :: Software Development :: Libraries :: PHP Classes",
     "Topic :: Software Development :: Libraries :: Python Modules",
