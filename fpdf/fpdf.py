@@ -61,7 +61,7 @@ from .util.syntax import (
 LOGGER = logging.getLogger(__name__)
 
 # Global variables
-FPDF_VERSION = '2.0.6'
+FPDF_VERSION = '2.1.0'
 FPDF_FONT_DIR = os.path.join(os.path.dirname(__file__), 'font')
 FPDF_CACHE_MODE = 0  # 0 - in same folder, 1 - none, 2 - hash
 FPDF_CACHE_DIR = None
