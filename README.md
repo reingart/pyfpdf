@@ -68,6 +68,8 @@ Features:
  * Exceptions support, other minor fixes, improvements and PEP8 code cleanups
  * Tox tests
 
+Release notes: [CHANGELOG.md](https://github.com/alexanderankin/pyfpdf/blob/master/CHANGELOG.md)
+
 Documentation:
 --------------
 
