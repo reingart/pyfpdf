@@ -21,8 +21,6 @@ document.cell(w=0, txt="hello world")
 document.output("hello_world.pdf")
 ```
 
-_version [`2.1.0rc1`][3] is out now_
-
 PyFPDF is a library for PDF document generation under Python, ported from PHP
 (see [FPDF](http://www.fpdf.org/): "Free"-PDF, a well-known PDFlib-extension
 replacement with many examples, scripts and derivatives).
