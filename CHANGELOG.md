@@ -6,13 +6,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.1] - not released yet
+## [2.1.0]
 ### Added
 * [Introducing a rect_clip() function](https://github.com/reingart/pyfpdf/pull/158)
 * [Adding support for Contents alt text on Links](https://github.com/reingart/pyfpdf/pull/163)
 ### Modified
 * [Making FPDF.output() x100 time faster by using a bytearray buffer](https://github.com/reingart/pyfpdf/pull/164)
 * [Deprecating .rotate() and introducing .rotation() context manager](https://github.com/reingart/pyfpdf/pull/161)
+* Fix user's font path ([issue](https://github.com/reingart/pyfpdf/issues/166) [pr](https://github.com/alexanderankin/pyfpdf/pull/14))
 ### Fixed
 * [Fixing #159 issue with set_link + adding GitHub Actions pipeline & badges](https://github.com/reingart/pyfpdf/pull/160)
 * `User defined path to font is ignored`
