@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import re
-import struct
 import zlib
 from io import BytesIO
 from urllib.request import urlopen
@@ -10,7 +9,7 @@ from PIL import Image
 
 from .errors import fpdf_error
 from .php import substr
-from .util import b, freadint as read_integer
+from .util import b
 
 
 def load_resource(filename, reason="image"):

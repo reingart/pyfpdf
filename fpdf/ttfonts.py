@@ -16,7 +16,7 @@
 #
 # ******************************************************************************
 
-from struct import pack, unpack, unpack_from
+from struct import pack, unpack
 import re
 import warnings
 from .php import die, substr, str_repeat, str_pad, strlen, count
@@ -84,7 +84,6 @@ class TTFontFile:
             self.otables = {}
             self.ascent = 0
             self.descent = 0
-            self.TTCFonts = {}
             self.version = version = self.read_ulong()
             if version == 0x4F54544F:
                 die("Postscript outlines are not supported")
@@ -142,12 +141,6 @@ class TTFontFile:
             a = a - (1 << 16)
         return a
 
-    def unpack_short(self, s):
-        a = (s[0]) << 8 + s[1]
-        if a & (1 << 15):
-            a = a - (1 << 16)
-        return a
-
     def read_ushort(self):
         self._pos += 2
         s = self.fh.read(2)
@@ -164,19 +157,6 @@ class TTFontFile:
         s = self.fh.read(2)
         return s[0] << 8 + s[1]
 
-    def get_ulong(self, pos):
-        self.fh.seek(pos)
-        s = self.fh.read(4)
-        # iF large uInt32 as an integer, PHP converts it to -ve
-        return s[0] * 16777216 + s[1] << 16 + s[2] << 8 + s[3]  #     16777216  = 1<<24
-
-    def pack_short(self, val):
-        if val < 0:
-            val = abs(val)
-            val = ~val
-            val += 1
-        return pack(">H", val)
-
     def splice(self, stream, offset, value):
         return (
             substr(stream, 0, offset) + value + substr(stream, offset + strlen(value))
@@ -184,14 +164,6 @@ class TTFontFile:
 
     def _set_ushort(self, stream, offset, value):
         up = pack(">H", value)
-        return self.splice(stream, offset, up)
-
-    def _set_short(self, stream, offset, val):
-        if val < 0:
-            val = abs(val)
-            val = ~val
-            val += 1
-        up = pack(">H", val)
         return self.splice(stream, offset, up)
 
     def get_chunk(self, pos, length):
@@ -579,7 +551,7 @@ class TTFontFile:
                         code
                     ]  # Unicode to old GlyphID
                 self.maxUni = max(self.maxUni, code)
-            (start, dummy) = self.get_table_pos("glyf")
+            (start, _) = self.get_table_pos("glyf")
 
             subsetglyphs.sort()
             glyphSet = {}

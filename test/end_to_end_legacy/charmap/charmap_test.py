@@ -44,10 +44,6 @@ class MyTTFontFile(TTFontFile):
         self.saveChar = charToGlyph
 
 
-if sys.version_info >= (3, 0):
-    unichr = chr
-
-
 class CharmapTest(unittest.TestCase):
     @unittest.skip('Need debug, raise a "Not a TrueType font" error')
     def test_first_999_chars(self):
@@ -55,7 +51,6 @@ class CharmapTest(unittest.TestCase):
         fontpath = relative_path_to("DejaVuSans.ttf")
 
         pdf = fpdf.FPDF()
-        pdf.compression = True
         pdf.add_page()
         pdf.add_font("font", "", fontpath, uni=True)
         pdf.set_font("font", "", 10)

@@ -6,14 +6,6 @@ import struct
 from fpdf.php import sprintf
 
 
-def freadint(f):
-    "Read a 4-byte integer from file"
-    try:
-        return struct.unpack(">I", f.read(4))[0]
-    except:
-        return None
-
-
 def textstring(s):
     "Format a text string"
     if s:

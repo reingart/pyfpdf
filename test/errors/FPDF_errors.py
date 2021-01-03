@@ -11,7 +11,7 @@ import fpdf
 # python -m unittest test.errors.FPDF_errors.DocOption
 
 
-class AddPage(unittest.TestCase):
+class AddPageTest(unittest.TestCase):
     def test_throws_without_page(self):
         pdf = fpdf.FPDF()
         with self.assertRaises(Exception) as e:
@@ -21,7 +21,7 @@ class AddPage(unittest.TestCase):
         self.assertEqual(str(e.exception), msg)
 
 
-class Orientation(unittest.TestCase):
+class OrientationTest(unittest.TestCase):
     def test_portrait_landscape(self):
         l = fpdf.FPDF(orientation="l")
         landscape = fpdf.FPDF(orientation="landscape")
@@ -63,7 +63,7 @@ class UnitTest(unittest.TestCase):
         self.assertAlmostEqual(fpdf.FPDF(unit="in").k, 72.0)
 
 
-class DocOption(unittest.TestCase):
+class DocOptionTest(unittest.TestCase):
     def test_only_core_fonts_encoding(self):
         pdf = fpdf.FPDF()
         pdf.set_doc_option("core_fonts_encoding", 4)

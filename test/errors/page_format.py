@@ -9,7 +9,7 @@ import fpdf
 # python -m unittest test.errors.page_format.PageFormatErrorClass
 
 
-class PageFormatErrorClass(unittest.TestCase):
+class PageFormatErrorClassTest(unittest.TestCase):
     def test_constructor(self):
         with self.assertRaises(TypeError) as e:
             fpdf.errors.FPDFPageFormatException(None, unknown=True, one=True)
@@ -19,7 +19,7 @@ class PageFormatErrorClass(unittest.TestCase):
         self.assertTrue(contains)
 
 
-class PageFormatErrors(unittest.TestCase):
+class PageFormatErrorsTest(unittest.TestCase):
     def test_error(self):
         with self.assertRaises(fpdf.errors.FPDFPageFormatException) as e:
             fpdf.fpdf.get_page_format("letter1")

@@ -16,7 +16,7 @@ import test
 from test.utilities import relative_path_to, set_doc_date_0, calculate_hash_of_file
 
 
-class InsertPNGSuiteFiles(unittest.TestCase):
+class InsertPNGSuiteFilesTest(unittest.TestCase):
     def test_insert_png_files(self):
         pdf = fpdf.FPDF(unit="pt")
         pdf.compress = False

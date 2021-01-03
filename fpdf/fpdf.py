@@ -28,9 +28,7 @@ import math
 import os
 import pickle
 import re
-import struct
 import sys
-import tempfile
 import zlib
 from hashlib import md5
 from io import BytesIO
@@ -45,7 +43,6 @@ from .php import substr, sprintf, UTF8ToUTF16BE, UTF8StringToArray  # print_r
 from .ttfonts import TTFontFile
 from .util import (
     b,
-    freadint as read_integer,
     textstring as enclose_in_parens,
     escape as escape_parens,
 )
@@ -142,7 +139,6 @@ class FPDF(object):
         self.page_links = {}  # array of links in pages
         self.links = {}  # array of internal links
         self.in_footer = 0  # flag set when processing footer
-        self.lastw = 0
         self.lasth = 0  # height of last cell printed
         self.font_family = ""  # current font family
         self.font_style = ""  # current font style
@@ -189,22 +185,18 @@ class FPDF(object):
             fpdf_error("Incorrect unit: " + unit)
 
         # Page format
-        self.fw_pt, self.fh_pt = get_page_format(format, self.k)
-        self.dw_pt = self.fw_pt
-        self.dh_pt = self.fh_pt
-        self.fw = self.fw_pt / self.k
-        self.fh = self.fh_pt / self.k
+        self.dw_pt, self.dh_pt = get_page_format(format, self.k)
 
         # Page orientation
         orientation = orientation.lower()
         if orientation in ("p", "portrait"):
             self.def_orientation = "P"
-            self.w_pt = self.fw_pt
-            self.h_pt = self.fh_pt
+            self.w_pt = self.dw_pt
+            self.h_pt = self.dh_pt
         elif orientation in ("l", "landscape"):
             self.def_orientation = "L"
-            self.w_pt = self.fh_pt
-            self.h_pt = self.fw_pt
+            self.w_pt = self.dh_pt
+            self.h_pt = self.dw_pt
         else:
             fpdf_error("Incorrect orientation: " + orientation)
         self.cur_orientation = self.def_orientation
@@ -219,7 +211,7 @@ class FPDF(object):
         self.line_width = 0.567 / self.k  # line width (0.2 mm)
         self.set_auto_page_break(1, 2 * margin)  # Automatic page break
         self.set_display_mode("fullwidth")  # Full width display mode
-        self.set_compression(1)  # Enable compression
+        self.set_compression(True)  # Enable compression
         self.pdf_version = "1.3"  # Set default PDF version No.
 
     def check_page(fn):
@@ -1327,8 +1319,6 @@ class FPDF(object):
         h=0,
         type="",
         link="",
-        is_mask=False,
-        mask_image=None,
     ):
         # def image(self, name, x = None, y = None, w = 0, h = 0, type = '', link = ''):  # noqa: E501
         "Put an image on the page"
@@ -1454,9 +1444,6 @@ class FPDF(object):
         if not self.unifontsubset and self.core_fonts_encoding:
             return txt.encode(self.core_fonts_encoding).decode("latin-1")
         return txt
-
-    def _putpage(self, page, page_links):
-        pass
 
     def _putpages(self):
         nb = self.page
@@ -2156,27 +2143,25 @@ class FPDF(object):
             # Page format
             if format:
                 # Change page format
-                self.fw_pt, self.fh_pt = get_page_format(format, self.k)
+                fw_pt, fh_pt = get_page_format(format, self.k)
             else:
                 # Set to default format
-                self.fw_pt = self.dw_pt
-                self.fh_pt = self.dh_pt
-            self.fw = self.fw_pt / self.k
-            self.fh = self.fh_pt / self.k
+                fw_pt = self.dw_pt
+                fh_pt = self.dh_pt
+            fh = fh_pt / self.k
             # Page orientation
             if not orientation:
                 orientation = self.def_orientation
             else:
                 orientation = orientation[0].upper()
             if orientation == "P":
-                self.w_pt = self.fw_pt
-                self.h_pt = self.fh_pt
+                self.w_pt = fw_pt
+                self.h_pt = fh_pt
             else:
-                self.w_pt = self.fh_pt
-                self.h_pt = self.fw_pt
+                self.w_pt = fh_pt
+                self.h_pt = fw_pt
             self.w = self.w_pt / self.k
             self.h = self.h_pt / self.k
-            self.cur_orientation = orientation
             self.page_break_trigger = self.h - self.b_margin
             self.cur_orientation = orientation
         self.pages[self.page]["w_pt"] = self.w_pt
