@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>fpdf.image_parsing API documentation</title>
-    <meta name="description" content="" />
+	  <title>fpdf.image_parsing API documentation</title>
+	  <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -554,7 +554,7 @@ table {
   html, body {
     margin: 0;
     padding: 0;
-    min-height: 100%;
+    height: 100%;
   }
   body {
     background: #fff;
@@ -851,9 +851,14 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
+	<style type="text/css">
+	pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
 .codehilite .c { color: #408080; font-style: italic } /* Comment */
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
@@ -921,7 +926,7 @@ table {
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
 .codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
+	</style>
 
   <style type="text/css">
   
@@ -1017,582 +1022,305 @@ table {
   </style>
 
   <script type="text/javascript">
-  function toggle(id, $link) {
-    $node = document.getElementById(id);
-    if (!$node)
-    return;
-    if (!$node.style.display || $node.style.display == 'none') {
-    $node.style.display = 'block';
-    $link.innerHTML = 'Hide source &nequiv;';
-    } else {
-    $node.style.display = 'none';
-    $link.innerHTML = 'Show source &equiv;';
-    }
-  }
+	function toggle(id, $link) {
+	  $node = document.getElementById(id);
+	  if (!$node)
+		return;
+	  if (!$node.style.display || $node.style.display == 'none') {
+		$node.style.display = 'block';
+		$link.innerHTML = 'Hide source &nequiv;';
+	  } else {
+		$node.style.display = 'none';
+		$link.innerHTML = 'Show source &equiv;';
+	  }
+	}
   </script>
 </head>
 <body>
 <a href="#" id="top">Top</a>
 
 <div id="container">
-    
+		
   
   <div id="sidebar">
-    <h1>Index</h1>
-    <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
+	  <h1>Index</h1>
+	  <ul id="index">
+
+		<li class="set"><h3><a href="#header-functions">Functions</a></h3>
+		  
   <ul>
-    <li class="mono"><a href="#fpdf.image_parsing.PY3K">PY3K</a></li>
+	  <li class="mono"><a href="#fpdf.image_parsing.get_img_info">get_img_info</a></li>
+	  <li class="mono"><a href="#fpdf.image_parsing.load_resource">load_resource</a></li>
+	  <li class="mono"><a href="#fpdf.image_parsing.to_zdata">to_zdata</a></li>
   </ul>
 
-    </li>
-
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#fpdf.image_parsing.get_jpg_info">get_jpg_info</a></li>
-    <li class="mono"><a href="#fpdf.image_parsing.get_png_info">get_png_info</a></li>
-    <li class="mono"><a href="#fpdf.image_parsing.load_resource">load_resource</a></li>
-    <li class="mono"><a href="#fpdf.image_parsing.marker_in_range">marker_in_range</a></li>
-  </ul>
-
-    </li>
+		</li>
 
 
-    </ul>
+	  </ul>
   </div>
 
-    <article id="content">
-      
+		<article id="content">
+			
   
 
   
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">fpdf.image_parsing</span> module</h1>
-  
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.image_parsing" class="source">
-    <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+	<h1 class="title"><span class="name">fpdf.image_parsing</span> module</h1>
+	
+	
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.image_parsing" class="source">
+	  <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: utf-8 -*-</span>
 
 <span class="kn">import</span> <span class="nn">re</span>
-<span class="kn">import</span> <span class="nn">struct</span>
 <span class="kn">import</span> <span class="nn">zlib</span>
+<span class="kn">from</span> <span class="nn">io</span> <span class="kn">import</span> <span class="n">BytesIO</span>
+<span class="kn">from</span> <span class="nn">urllib.request</span> <span class="kn">import</span> <span class="n">urlopen</span>
+
+<span class="kn">from</span> <span class="nn">PIL</span> <span class="kn">import</span> <span class="n">Image</span>
 
 <span class="kn">from</span> <span class="nn">.errors</span> <span class="kn">import</span> <span class="n">fpdf_error</span>
 <span class="kn">from</span> <span class="nn">.php</span> <span class="kn">import</span> <span class="n">substr</span>
-<span class="kn">from</span> <span class="nn">.py3k</span> <span class="kn">import</span> <span class="n">PY3K</span><span class="p">,</span> <span class="n">b</span>
-<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">freadint</span> <span class="k">as</span> <span class="n">read_integer</span>
+<span class="kn">from</span> <span class="nn">.util</span> <span class="kn">import</span> <span class="n">b</span>
 
-<span class="k">def</span> <span class="nf">load_resource</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">):</span>
-    <span class="s2">&quot;Load external file&quot;</span>
+
+<span class="k">def</span> <span class="nf">load_resource</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load external file&quot;&quot;&quot;</span>
+    <span class="c1"># if a bytesio instance is passed in, use it as is.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">BytesIO</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">filename</span>
     <span class="c1"># by default loading from network is allowed for all images</span>
-
     <span class="k">if</span> <span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span> <span class="ow">or</span> \
-           <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">):</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">urlopen</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fl</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">f</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s2">&quot;Unknown resource loading reason </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Unknown resource loading reason &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">reason</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">marker_in_range</span><span class="p">(</span><span class="n">ival</span><span class="p">,</span> <span class="n">marker</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;returns if the JPEG marker is in a given range&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">marker</span> <span class="o">&gt;=</span> <span class="n">ival</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">marker</span> <span class="o">&lt;=</span> <span class="n">ival</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">get_jpg_info</span><span class="p">(</span><span class="n">file_</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parse JPG File to Information Dict&quot;&quot;&quot;</span>
+<span class="k">def</span> <span class="nf">get_img_info</span><span class="p">(</span><span class="n">bytesio</span><span class="p">):</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">bytesio</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;LA&quot;</span><span class="p">,</span> <span class="s2">&quot;RGBA&quot;</span><span class="p">]:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGBA&quot;</span><span class="p">)</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;L&quot;</span><span class="p">:</span>
+        <span class="n">dpn</span><span class="p">,</span> <span class="n">bpc</span><span class="p">,</span> <span class="n">colspace</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;DeviceGray&quot;</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;LA&quot;</span><span class="p">:</span>
+        <span class="n">dpn</span><span class="p">,</span> <span class="n">bpc</span><span class="p">,</span> <span class="n">colspace</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;DeviceGray&quot;</span>
+        <span class="n">alpha_channel</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">remove_slice</span><span class="o">=</span><span class="n">alpha_channel</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;smask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">select_slice</span><span class="o">=</span><span class="n">alpha_channel</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># RGBA image</span>
+        <span class="n">dpn</span><span class="p">,</span> <span class="n">bpc</span><span class="p">,</span> <span class="n">colspace</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;DeviceRGB&quot;</span>
+        <span class="n">alpha_channel</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">remove_slice</span><span class="o">=</span><span class="n">alpha_channel</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;smask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">select_slice</span><span class="o">=</span><span class="n">alpha_channel</span><span class="p">)</span>
 
-    <span class="n">file_</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">dp</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;/Predictor 15 /Colors &quot;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dpn</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot; /BitsPerComponent &quot;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bpc</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot; /Columns &quot;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span>
 
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">markerHigh</span><span class="p">,</span> <span class="n">markerLow</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;BB&#39;</span><span class="p">,</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-        <span class="n">ml</span> <span class="o">=</span> <span class="n">markerLow</span>
+    <span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span>
+            <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="n">h</span><span class="p">,</span>
+            <span class="s2">&quot;cs&quot;</span><span class="p">:</span> <span class="n">colspace</span><span class="p">,</span>
+            <span class="s2">&quot;bpc&quot;</span><span class="p">:</span> <span class="n">bpc</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;FlateDecode&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dp&quot;</span><span class="p">:</span> <span class="n">dp</span><span class="p">,</span>
+            <span class="s2">&quot;pal&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;trns&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">markerHigh</span> <span class="o">!=</span> <span class="mh">0xFF</span> <span class="ow">or</span> <span class="n">markerLow</span> <span class="o">&lt;</span> <span class="mh">0xC0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s1">&#39;No JPEG marker found&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">markerLow</span> <span class="o">==</span> <span class="mh">0xDA</span><span class="p">:</span>  <span class="c1"># SOS</span>
-            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s1">&#39;No JPEG SOF marker found&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">markerLow</span> <span class="o">==</span> <span class="mh">0xC8</span> <span class="ow">or</span>              <span class="c1"># JPG</span>
-              <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0xD9</span><span class="p">),</span> <span class="n">ml</span><span class="p">)</span> <span class="ow">or</span>  <span class="c1"># RSTx</span>
-              <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0xFD</span><span class="p">),</span> <span class="n">ml</span><span class="p">)):</span>   <span class="c1"># JPGx</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dataSize</span><span class="p">,</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dataSize</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">dataSize</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
-
-            <span class="k">if</span> <span class="p">((</span><span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xC0</span><span class="p">,</span> <span class="mh">0xC3</span><span class="p">),</span> <span class="n">ml</span><span class="p">)</span> <span class="ow">or</span>  <span class="c1"># SOF0 - SOF3</span>
-                 <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xC5</span><span class="p">,</span> <span class="mh">0xC7</span><span class="p">),</span> <span class="n">ml</span><span class="p">)</span> <span class="ow">or</span>  <span class="c1"># SOF4 - SOF7</span>
-                 <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0xCB</span><span class="p">),</span> <span class="n">ml</span><span class="p">)</span> <span class="ow">or</span>  <span class="c1"># SOF9 - SOF11</span>
-                 <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xCD</span><span class="p">,</span> <span class="mh">0xCF</span><span class="p">),</span> <span class="n">ml</span><span class="p">))):</span>  <span class="c1"># SOF13 - SOF15</span>
-                <span class="n">bpc</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">layers</span> <span class="o">=</span> \
-                    <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&gt;BHHB&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-
-                <span class="n">colspace</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;DeviceRGB&#39;</span><span class="p">,</span>
-                    <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;DeviceCMYK&#39;</span><span class="p">,</span>
-                <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="s1">&#39;DeviceGray&#39;</span><span class="p">)</span>
-                <span class="k">break</span>
-
-    <span class="n">file_</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;w&#39;</span>  <span class="p">:</span> <span class="n">width</span><span class="p">,</span>       <span class="s1">&#39;h&#39;</span>    <span class="p">:</span> <span class="n">height</span><span class="p">,</span>
-        <span class="s1">&#39;cs&#39;</span> <span class="p">:</span> <span class="n">colspace</span><span class="p">,</span>    <span class="s1">&#39;bpc&#39;</span>  <span class="p">:</span> <span class="n">bpc</span><span class="p">,</span>
-        <span class="s1">&#39;f&#39;</span>  <span class="p">:</span> <span class="s1">&#39;DCTDecode&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span> <span class="p">:</span> <span class="n">data</span>
-    <span class="p">}</span>
     <span class="k">return</span> <span class="n">info</span>
 
-<span class="k">def</span> <span class="nf">get_png_info</span><span class="p">(</span><span class="n">file_</span><span class="p">):</span>    
-    <span class="sd">&quot;&quot;&quot;Parse PNG File to Information Dict&quot;&quot;&quot;</span>
 
-    <span class="c1"># Check signature</span>
-    <span class="n">magic</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="n">signature</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;PNG&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\x1a</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">PY3K</span><span class="p">:</span>
-        <span class="n">signature</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">magic</span> <span class="o">!=</span> <span class="n">signature</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Not a PNG file: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="c1"># Read header chunk</span>
-    <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-    <span class="n">chunk</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">chunk</span> <span class="o">!=</span> <span class="s1">&#39;IHDR&#39;</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Incorrect PNG file: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">w</span> <span class="o">=</span> <span class="n">read_integer</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">read_integer</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
-    <span class="n">bpc</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">bpc</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;16-bit depth not supported: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">ct</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">ct</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>
-        <span class="n">colspace</span> <span class="o">=</span> <span class="s1">&#39;DeviceGray&#39;</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">ct</span> <span class="o">==</span> <span class="mi">6</span><span class="p">):</span>
-        <span class="n">colspace</span> <span class="o">=</span> <span class="s1">&#39;DeviceRGB&#39;</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>
-        <span class="n">colspace</span> <span class="o">=</span> <span class="s1">&#39;Indexed&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Unknown color type: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Unknown compression method: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Unknown filter method: &#39;</span>     <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Interlacing not supported: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-    <span class="n">dp</span> <span class="o">=</span> <span class="s1">&#39;/Predictor 15 /Colors &#39;</span>
-    <span class="n">dp</span> <span class="o">+=</span> <span class="s1">&#39;3&#39;</span> <span class="k">if</span> <span class="n">colspace</span> <span class="o">==</span> <span class="s1">&#39;DeviceRGB&#39;</span> <span class="k">else</span> <span class="s1">&#39;1&#39;</span>
-    <span class="n">dp</span> <span class="o">+=</span> <span class="s1">&#39; /BitsPerComponent &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bpc</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; /Columns &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span>
-
-    <span class="c1"># Scan chunks looking for palette, transparency and image data</span>
-    <span class="n">pal</span>  <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="n">trns</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">()</span> <span class="k">if</span> <span class="n">PY3K</span> <span class="k">else</span> <span class="nb">str</span><span class="p">()</span>
-    <span class="n">n</span>    <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">while</span> <span class="n">n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">n</span>       <span class="o">=</span> <span class="n">read_integer</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
-
-        <span class="n">my_type</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">my_type</span> <span class="o">==</span> <span class="s1">&#39;PLTE&#39;</span><span class="p">):</span>
-            <span class="c1"># Read palette</span>
-            <span class="n">pal</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="n">my_type</span> <span class="o">==</span> <span class="s1">&#39;tRNS&#39;</span><span class="p">):</span>
-            <span class="c1"># Read transparency info</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="n">trns</span> <span class="o">=</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">substr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))]</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
-                <span class="n">trns</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="nb">ord</span><span class="p">(</span><span class="n">substr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
-                    <span class="nb">ord</span><span class="p">(</span><span class="n">substr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
-                    <span class="nb">ord</span><span class="p">(</span><span class="n">substr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-                <span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">pos</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">))</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">pos</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-                    <span class="n">trns</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">,</span> <span class="p">]</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="n">my_type</span> <span class="o">==</span> <span class="s1">&#39;IDAT&#39;</span><span class="p">):</span>
-            <span class="c1"># Read image data block</span>
-            <span class="n">data</span> <span class="o">+=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="n">my_type</span> <span class="o">==</span> <span class="s1">&#39;IEND&#39;</span><span class="p">):</span>
-            <span class="k">break</span>
-
-        <span class="c1"># bug fix @4306eaf24e81596af29117cf3d606242a5edfb89</span>
-        <span class="c1"># shoutout to https://github.com/klaplong</span>
-        <span class="c1"># read_integer returns None if struct#unpack errors out</span>
-        <span class="k">elif</span> <span class="n">n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">colspace</span> <span class="o">==</span> <span class="s1">&#39;Indexed&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pal</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Missing palette in &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="n">file_</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;w&#39;</span>  <span class="p">:</span> <span class="n">w</span><span class="p">,</span>             <span class="s1">&#39;h&#39;</span>   <span class="p">:</span> <span class="n">h</span><span class="p">,</span>
-        <span class="s1">&#39;cs&#39;</span> <span class="p">:</span> <span class="n">colspace</span><span class="p">,</span>      <span class="s1">&#39;bpc&#39;</span> <span class="p">:</span> <span class="n">bpc</span><span class="p">,</span>
-        <span class="s1">&#39;f&#39;</span>  <span class="p">:</span> <span class="s1">&#39;FlateDecode&#39;</span><span class="p">,</span> <span class="s1">&#39;dp&#39;</span>  <span class="p">:</span> <span class="n">dp</span><span class="p">,</span>
-        <span class="s1">&#39;pal&#39;</span><span class="p">:</span> <span class="n">pal</span><span class="p">,</span>           <span class="s1">&#39;trns&#39;</span><span class="p">:</span> <span class="n">trns</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">ct</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">):</span>  <span class="c1"># if ct == 4, or == 6</span>
-        <span class="c1"># Extract alpha channel</span>
-        <span class="n">make_re</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">regex</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">flags</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
-
-        <span class="n">data</span>  <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>
-            <span class="c1"># Gray image</span>
-            <span class="n">length</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">w</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
-                <span class="n">pos</span>    <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
-                <span class="n">color</span> <span class="o">+=</span> <span class="n">b</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
-                <span class="n">alpha</span> <span class="o">+=</span> <span class="n">b</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
-                <span class="n">line</span>   <span class="o">=</span> <span class="n">substr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
-                <span class="n">re_c</span>   <span class="o">=</span> <span class="n">make_re</span><span class="p">(</span><span class="s1">&#39;(.).&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
-                <span class="n">re_a</span>   <span class="o">=</span> <span class="n">make_re</span><span class="p">(</span><span class="s1">&#39;.(.)&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
-                <span class="n">color</span> <span class="o">+=</span> <span class="n">re_c</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">line</span><span class="p">)</span>
-                <span class="n">alpha</span> <span class="o">+=</span> <span class="n">re_a</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">line</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># RGB image</span>
-            <span class="n">length</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">w</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
-                <span class="n">pos</span>    <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
-                <span class="n">color</span> <span class="o">+=</span> <span class="n">b</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
-                <span class="n">alpha</span> <span class="o">+=</span> <span class="n">b</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
-                <span class="n">line</span>   <span class="o">=</span> <span class="n">substr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
-                <span class="n">re_c</span>   <span class="o">=</span> <span class="n">make_re</span><span class="p">(</span><span class="s1">&#39;(...).&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
-                <span class="n">re_a</span>   <span class="o">=</span> <span class="n">make_re</span><span class="p">(</span><span class="s1">&#39;...(.)&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
-                <span class="n">color</span> <span class="o">+=</span> <span class="n">re_c</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">line</span><span class="p">)</span>
-                <span class="n">alpha</span> <span class="o">+=</span> <span class="n">re_a</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">line</span><span class="p">)</span>
-        <span class="k">del</span> <span class="n">data</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
-        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;smask&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
-
-    <span class="n">info</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
-    <span class="k">return</span> <span class="n">info</span>
+<span class="k">def</span> <span class="nf">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">remove_slice</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">select_slice</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">remove_slice</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="n">remove_slice</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">select_slice</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">select_slice</span><span class="p">]</span>
+    <span class="c1"># Left-padding every row with a single zero:</span>
+    <span class="n">channels_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">loop_incr</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">channels_count</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\0</span><span class="s2">&quot;</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="n">loop_incr</span>
+    <span class="k">return</span> <span class="n">zlib</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="fpdf.image_parsing.PY3K" class="name">var <span class="ident">PY3K</span></p>
-      
+
+	  <h2 class="section-title" id="header-functions">Functions</h2>
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.image_parsing.get_img_info">
+		<p>def <span class="ident">get_img_info</span>(</p><p>bytesio)</p>
+	  </div>
+	  
+
+	  
   
-  <div class="source_cont">
-</div>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing.get_img_info', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.image_parsing.get_img_info" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_img_info</span><span class="p">(</span><span class="n">bytesio</span><span class="p">):</span>
+    <span class="n">img</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">bytesio</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;L&quot;</span><span class="p">,</span> <span class="s2">&quot;LA&quot;</span><span class="p">,</span> <span class="s2">&quot;RGBA&quot;</span><span class="p">]:</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">convert</span><span class="p">(</span><span class="s2">&quot;RGBA&quot;</span><span class="p">)</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span>
+    <span class="n">info</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;L&quot;</span><span class="p">:</span>
+        <span class="n">dpn</span><span class="p">,</span> <span class="n">bpc</span><span class="p">,</span> <span class="n">colspace</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;DeviceGray&quot;</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">img</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;LA&quot;</span><span class="p">:</span>
+        <span class="n">dpn</span><span class="p">,</span> <span class="n">bpc</span><span class="p">,</span> <span class="n">colspace</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;DeviceGray&quot;</span>
+        <span class="n">alpha_channel</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">remove_slice</span><span class="o">=</span><span class="n">alpha_channel</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;smask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">select_slice</span><span class="o">=</span><span class="n">alpha_channel</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># RGBA image</span>
+        <span class="n">dpn</span><span class="p">,</span> <span class="n">bpc</span><span class="p">,</span> <span class="n">colspace</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="s2">&quot;DeviceRGB&quot;</span>
+        <span class="n">alpha_channel</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;data&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">remove_slice</span><span class="o">=</span><span class="n">alpha_channel</span><span class="p">)</span>
+        <span class="n">info</span><span class="p">[</span><span class="s2">&quot;smask&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">select_slice</span><span class="o">=</span><span class="n">alpha_channel</span><span class="p">)</span>
 
-      </div>
+    <span class="n">dp</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;/Predictor 15 /Colors &quot;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">dpn</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot; /BitsPerComponent &quot;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bpc</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot; /Columns &quot;</span>
+        <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+        <span class="o">+</span> <span class="s2">&quot;&quot;</span>
+    <span class="p">)</span>
 
-    <h2 class="section-title" id="header-functions">Functions</h2>
-      
-  <div class="item">
-    <div class="name def" id="fpdf.image_parsing.get_jpg_info">
-    <p>def <span class="ident">get_jpg_info</span>(</p><p>file_)</p>
-    </div>
-    
+    <span class="n">info</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;w&quot;</span><span class="p">:</span> <span class="n">w</span><span class="p">,</span>
+            <span class="s2">&quot;h&quot;</span><span class="p">:</span> <span class="n">h</span><span class="p">,</span>
+            <span class="s2">&quot;cs&quot;</span><span class="p">:</span> <span class="n">colspace</span><span class="p">,</span>
+            <span class="s2">&quot;bpc&quot;</span><span class="p">:</span> <span class="n">bpc</span><span class="p">,</span>
+            <span class="s2">&quot;f&quot;</span><span class="p">:</span> <span class="s2">&quot;FlateDecode&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dp&quot;</span><span class="p">:</span> <span class="n">dp</span><span class="p">,</span>
+            <span class="s2">&quot;pal&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;trns&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
 
-    
-  
-    <div class="desc"><p>Parse JPG File to Information Dict</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing.get_jpg_info', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.image_parsing.get_jpg_info" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_jpg_info</span><span class="p">(</span><span class="n">file_</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;Parse JPG File to Information Dict&quot;&quot;&quot;</span>
-
-    <span class="n">file_</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-
-    <span class="k">while</span> <span class="bp">True</span><span class="p">:</span>
-        <span class="n">markerHigh</span><span class="p">,</span> <span class="n">markerLow</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;BB&#39;</span><span class="p">,</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-        <span class="n">ml</span> <span class="o">=</span> <span class="n">markerLow</span>
-
-        <span class="k">if</span> <span class="n">markerHigh</span> <span class="o">!=</span> <span class="mh">0xFF</span> <span class="ow">or</span> <span class="n">markerLow</span> <span class="o">&lt;</span> <span class="mh">0xC0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s1">&#39;No JPEG marker found&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">markerLow</span> <span class="o">==</span> <span class="mh">0xDA</span><span class="p">:</span>  <span class="c1"># SOS</span>
-            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span><span class="s1">&#39;No JPEG SOF marker found&#39;</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="p">(</span><span class="n">markerLow</span> <span class="o">==</span> <span class="mh">0xC8</span> <span class="ow">or</span>              <span class="c1"># JPG</span>
-              <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xD0</span><span class="p">,</span> <span class="mh">0xD9</span><span class="p">),</span> <span class="n">ml</span><span class="p">)</span> <span class="ow">or</span>  <span class="c1"># RSTx</span>
-              <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xF0</span><span class="p">,</span> <span class="mh">0xFD</span><span class="p">),</span> <span class="n">ml</span><span class="p">)):</span>   <span class="c1"># JPGx</span>
-            <span class="k">pass</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="n">dataSize</span><span class="p">,</span> <span class="o">=</span> <span class="n">struct</span><span class="o">.</span><span class="n">unpack</span><span class="p">(</span><span class="s1">&#39;&gt;H&#39;</span><span class="p">,</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
-            <span class="n">data</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">dataSize</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">dataSize</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
-
-            <span class="k">if</span> <span class="p">((</span><span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xC0</span><span class="p">,</span> <span class="mh">0xC3</span><span class="p">),</span> <span class="n">ml</span><span class="p">)</span> <span class="ow">or</span>  <span class="c1"># SOF0 - SOF3</span>
-                 <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xC5</span><span class="p">,</span> <span class="mh">0xC7</span><span class="p">),</span> <span class="n">ml</span><span class="p">)</span> <span class="ow">or</span>  <span class="c1"># SOF4 - SOF7</span>
-                 <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xC9</span><span class="p">,</span> <span class="mh">0xCB</span><span class="p">),</span> <span class="n">ml</span><span class="p">)</span> <span class="ow">or</span>  <span class="c1"># SOF9 - SOF11</span>
-                 <span class="n">marker_in_range</span><span class="p">((</span><span class="mh">0xCD</span><span class="p">,</span> <span class="mh">0xCF</span><span class="p">),</span> <span class="n">ml</span><span class="p">))):</span>  <span class="c1"># SOF13 - SOF15</span>
-                <span class="n">bpc</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">layers</span> <span class="o">=</span> \
-                    <span class="n">struct</span><span class="o">.</span><span class="n">unpack_from</span><span class="p">(</span><span class="s1">&#39;&gt;BHHB&#39;</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span>
-
-                <span class="n">colspace</span> <span class="o">=</span> <span class="p">{</span>
-                    <span class="mi">3</span><span class="p">:</span> <span class="s1">&#39;DeviceRGB&#39;</span><span class="p">,</span>
-                    <span class="mi">4</span><span class="p">:</span> <span class="s1">&#39;DeviceCMYK&#39;</span><span class="p">,</span>
-                <span class="p">}</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">layers</span><span class="p">,</span> <span class="s1">&#39;DeviceGray&#39;</span><span class="p">)</span>
-                <span class="k">break</span>
-
-    <span class="n">file_</span><span class="o">.</span><span class="n">seek</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">()</span>
-    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;w&#39;</span>  <span class="p">:</span> <span class="n">width</span><span class="p">,</span>       <span class="s1">&#39;h&#39;</span>    <span class="p">:</span> <span class="n">height</span><span class="p">,</span>
-        <span class="s1">&#39;cs&#39;</span> <span class="p">:</span> <span class="n">colspace</span><span class="p">,</span>    <span class="s1">&#39;bpc&#39;</span>  <span class="p">:</span> <span class="n">bpc</span><span class="p">,</span>
-        <span class="s1">&#39;f&#39;</span>  <span class="p">:</span> <span class="s1">&#39;DCTDecode&#39;</span><span class="p">,</span> <span class="s1">&#39;data&#39;</span> <span class="p">:</span> <span class="n">data</span>
-    <span class="p">}</span>
     <span class="k">return</span> <span class="n">info</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.image_parsing.get_png_info">
-    <p>def <span class="ident">get_png_info</span>(</p><p>file_)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.image_parsing.load_resource">
+		<p>def <span class="ident">load_resource</span>(</p><p>filename, reason=&#39;image&#39;)</p>
+	  </div>
+	  
 
-    
+	  
   
-    <div class="desc"><p>Parse PNG File to Information Dict</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing.get_png_info', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.image_parsing.get_png_info" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">get_png_info</span><span class="p">(</span><span class="n">file_</span><span class="p">):</span>    
-    <span class="sd">&quot;&quot;&quot;Parse PNG File to Information Dict&quot;&quot;&quot;</span>
-
-    <span class="c1"># Check signature</span>
-    <span class="n">magic</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="n">signature</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\x89</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;PNG&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\r</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\x1a</span><span class="s1">&#39;</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="n">PY3K</span><span class="p">:</span>
-        <span class="n">signature</span> <span class="o">=</span> <span class="n">signature</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">magic</span> <span class="o">!=</span> <span class="n">signature</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Not a PNG file: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="c1"># Read header chunk</span>
-    <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-    <span class="n">chunk</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">chunk</span> <span class="o">!=</span> <span class="s1">&#39;IHDR&#39;</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Incorrect PNG file: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">w</span> <span class="o">=</span> <span class="n">read_integer</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
-    <span class="n">h</span> <span class="o">=</span> <span class="n">read_integer</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
-    <span class="n">bpc</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">bpc</span> <span class="o">&gt;</span> <span class="mi">8</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;16-bit depth not supported: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">ct</span> <span class="o">=</span> <span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">ct</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>
-        <span class="n">colspace</span> <span class="o">=</span> <span class="s1">&#39;DeviceGray&#39;</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">2</span> <span class="ow">or</span> <span class="n">ct</span> <span class="o">==</span> <span class="mi">6</span><span class="p">):</span>
-        <span class="n">colspace</span> <span class="o">=</span> <span class="s1">&#39;DeviceRGB&#39;</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">3</span><span class="p">):</span>
-        <span class="n">colspace</span> <span class="o">=</span> <span class="s1">&#39;Indexed&#39;</span>
-    <span class="k">else</span><span class="p">:</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Unknown color type: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Unknown compression method: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Unknown filter method: &#39;</span>     <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="k">if</span> <span class="p">(</span><span class="nb">ord</span><span class="p">(</span><span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Interlacing not supported: &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-    <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-    <span class="n">dp</span> <span class="o">=</span> <span class="s1">&#39;/Predictor 15 /Colors &#39;</span>
-    <span class="n">dp</span> <span class="o">+=</span> <span class="s1">&#39;3&#39;</span> <span class="k">if</span> <span class="n">colspace</span> <span class="o">==</span> <span class="s1">&#39;DeviceRGB&#39;</span> <span class="k">else</span> <span class="s1">&#39;1&#39;</span>
-    <span class="n">dp</span> <span class="o">+=</span> <span class="s1">&#39; /BitsPerComponent &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">bpc</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; /Columns &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;&#39;</span>
-
-    <span class="c1"># Scan chunks looking for palette, transparency and image data</span>
-    <span class="n">pal</span>  <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="n">trns</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytes</span><span class="p">()</span> <span class="k">if</span> <span class="n">PY3K</span> <span class="k">else</span> <span class="nb">str</span><span class="p">()</span>
-    <span class="n">n</span>    <span class="o">=</span> <span class="mi">1</span>
-    <span class="k">while</span> <span class="n">n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-        <span class="n">n</span>       <span class="o">=</span> <span class="n">read_integer</span><span class="p">(</span><span class="n">file_</span><span class="p">)</span>
-
-        <span class="n">my_type</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">my_type</span> <span class="o">==</span> <span class="s1">&#39;PLTE&#39;</span><span class="p">):</span>
-            <span class="c1"># Read palette</span>
-            <span class="n">pal</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="n">my_type</span> <span class="o">==</span> <span class="s1">&#39;tRNS&#39;</span><span class="p">):</span>
-            <span class="c1"># Read transparency info</span>
-            <span class="n">t</span> <span class="o">=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
-                <span class="n">trns</span> <span class="o">=</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">substr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))]</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
-                <span class="n">trns</span> <span class="o">=</span> <span class="p">[</span>
-                    <span class="nb">ord</span><span class="p">(</span><span class="n">substr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
-                    <span class="nb">ord</span><span class="p">(</span><span class="n">substr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span>
-                    <span class="nb">ord</span><span class="p">(</span><span class="n">substr</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
-                <span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">pos</span> <span class="o">=</span> <span class="n">t</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\x00</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">))</span>
-                <span class="k">if</span> <span class="p">(</span><span class="n">pos</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-                    <span class="n">trns</span> <span class="o">=</span> <span class="p">[</span><span class="n">pos</span><span class="p">,</span> <span class="p">]</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="n">my_type</span> <span class="o">==</span> <span class="s1">&#39;IDAT&#39;</span><span class="p">):</span>
-            <span class="c1"># Read image data block</span>
-            <span class="n">data</span> <span class="o">+=</span> <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
-
-        <span class="k">elif</span> <span class="p">(</span><span class="n">my_type</span> <span class="o">==</span> <span class="s1">&#39;IEND&#39;</span><span class="p">):</span>
-            <span class="k">break</span>
-
-        <span class="c1"># bug fix @4306eaf24e81596af29117cf3d606242a5edfb89</span>
-        <span class="c1"># shoutout to https://github.com/klaplong</span>
-        <span class="c1"># read_integer returns None if struct#unpack errors out</span>
-        <span class="k">elif</span> <span class="n">n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
-            <span class="n">file_</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">4</span><span class="p">)</span>
-
-    <span class="k">if</span> <span class="p">(</span><span class="n">colspace</span> <span class="o">==</span> <span class="s1">&#39;Indexed&#39;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pal</span><span class="p">):</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Missing palette in &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">)</span>
-
-    <span class="n">file_</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-
-    <span class="n">info</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="s1">&#39;w&#39;</span>  <span class="p">:</span> <span class="n">w</span><span class="p">,</span>             <span class="s1">&#39;h&#39;</span>   <span class="p">:</span> <span class="n">h</span><span class="p">,</span>
-        <span class="s1">&#39;cs&#39;</span> <span class="p">:</span> <span class="n">colspace</span><span class="p">,</span>      <span class="s1">&#39;bpc&#39;</span> <span class="p">:</span> <span class="n">bpc</span><span class="p">,</span>
-        <span class="s1">&#39;f&#39;</span>  <span class="p">:</span> <span class="s1">&#39;FlateDecode&#39;</span><span class="p">,</span> <span class="s1">&#39;dp&#39;</span>  <span class="p">:</span> <span class="n">dp</span><span class="p">,</span>
-        <span class="s1">&#39;pal&#39;</span><span class="p">:</span> <span class="n">pal</span><span class="p">,</span>           <span class="s1">&#39;trns&#39;</span><span class="p">:</span> <span class="n">trns</span>
-    <span class="p">}</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">ct</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">):</span>  <span class="c1"># if ct == 4, or == 6</span>
-        <span class="c1"># Extract alpha channel</span>
-        <span class="n">make_re</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">regex</span><span class="p">:</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="n">regex</span><span class="p">,</span> <span class="n">flags</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">DOTALL</span><span class="p">)</span>
-
-        <span class="n">data</span>  <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">decompress</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-        <span class="n">color</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="n">alpha</span> <span class="o">=</span> <span class="n">b</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">ct</span> <span class="o">==</span> <span class="mi">4</span><span class="p">):</span>
-            <span class="c1"># Gray image</span>
-            <span class="n">length</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">w</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
-                <span class="n">pos</span>    <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
-                <span class="n">color</span> <span class="o">+=</span> <span class="n">b</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
-                <span class="n">alpha</span> <span class="o">+=</span> <span class="n">b</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
-                <span class="n">line</span>   <span class="o">=</span> <span class="n">substr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
-                <span class="n">re_c</span>   <span class="o">=</span> <span class="n">make_re</span><span class="p">(</span><span class="s1">&#39;(.).&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
-                <span class="n">re_a</span>   <span class="o">=</span> <span class="n">make_re</span><span class="p">(</span><span class="s1">&#39;.(.)&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
-                <span class="n">color</span> <span class="o">+=</span> <span class="n">re_c</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">line</span><span class="p">)</span>
-                <span class="n">alpha</span> <span class="o">+=</span> <span class="n">re_a</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">line</span><span class="p">)</span>
-        <span class="k">else</span><span class="p">:</span>
-            <span class="c1"># RGB image</span>
-            <span class="n">length</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">w</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">h</span><span class="p">):</span>
-                <span class="n">pos</span>    <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">length</span><span class="p">)</span> <span class="o">*</span> <span class="n">i</span>
-                <span class="n">color</span> <span class="o">+=</span> <span class="n">b</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
-                <span class="n">alpha</span> <span class="o">+=</span> <span class="n">b</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">pos</span><span class="p">])</span>
-                <span class="n">line</span>   <span class="o">=</span> <span class="n">substr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">pos</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
-                <span class="n">re_c</span>   <span class="o">=</span> <span class="n">make_re</span><span class="p">(</span><span class="s1">&#39;(...).&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
-                <span class="n">re_a</span>   <span class="o">=</span> <span class="n">make_re</span><span class="p">(</span><span class="s1">&#39;...(.)&#39;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;ascii&quot;</span><span class="p">))</span>
-                <span class="n">color</span> <span class="o">+=</span> <span class="n">re_c</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">line</span><span class="p">)</span>
-                <span class="n">alpha</span> <span class="o">+=</span> <span class="n">re_a</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">line</span><span class="p">)</span>
-        <span class="k">del</span> <span class="n">data</span>
-        <span class="n">data</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
-        <span class="n">info</span><span class="p">[</span><span class="s1">&#39;smask&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">zlib</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
-
-    <span class="n">info</span><span class="p">[</span><span class="s1">&#39;data&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
-    <span class="k">return</span> <span class="n">info</span>
-</pre></div>
-
-  </div>
-</div>
-
-  </div>
-  
-      
-  <div class="item">
-    <div class="name def" id="fpdf.image_parsing.load_resource">
-    <p>def <span class="ident">load_resource</span>(</p><p>filename, reason=&#39;image&#39;)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Load external file</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing.load_resource', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.image_parsing.load_resource" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_resource</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">reason</span> <span class="o">=</span> <span class="s2">&quot;image&quot;</span><span class="p">):</span>
-    <span class="s2">&quot;Load external file&quot;</span>
+	  <div class="desc"><p>Load external file</p></div>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing.load_resource', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.image_parsing.load_resource" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">load_resource</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s2">&quot;image&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Load external file&quot;&quot;&quot;</span>
+    <span class="c1"># if a bytesio instance is passed in, use it as is.</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">BytesIO</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">filename</span>
     <span class="c1"># by default loading from network is allowed for all images</span>
-
     <span class="k">if</span> <span class="n">reason</span> <span class="o">==</span> <span class="s2">&quot;image&quot;</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span> <span class="ow">or</span> \
-           <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;http://&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="n">filename</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;https://&quot;</span><span class="p">):</span>
             <span class="n">f</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">urlopen</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fl</span><span class="p">:</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">BytesIO</span><span class="p">(</span><span class="n">fl</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
         <span class="k">return</span> <span class="n">f</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">fpdf_error</span><span class="p">(</span><span class="s2">&quot;Unknown resource loading reason </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">reason</span><span class="p">)</span>
+        <span class="n">fpdf_error</span><span class="p">(</span><span class="s1">&#39;Unknown resource loading reason &quot;</span><span class="si">%s</span><span class="s1">&quot;&#39;</span> <span class="o">%</span> <span class="n">reason</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.image_parsing.marker_in_range">
-    <p>def <span class="ident">marker_in_range</span>(</p><p>ival, marker)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.image_parsing.to_zdata">
+		<p>def <span class="ident">to_zdata</span>(</p><p>img, remove_slice=None, select_slice=None)</p>
+	  </div>
+	  
 
-    
+	  
   
-    <div class="desc"><p>returns if the JPEG marker is in a given range</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing.marker_in_range', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.image_parsing.marker_in_range" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">marker_in_range</span><span class="p">(</span><span class="n">ival</span><span class="p">,</span> <span class="n">marker</span><span class="p">):</span>
-    <span class="sd">&quot;&quot;&quot;returns if the JPEG marker is in a given range&quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="n">marker</span> <span class="o">&gt;=</span> <span class="n">ival</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">marker</span> <span class="o">&lt;=</span> <span class="n">ival</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.image_parsing.to_zdata', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.image_parsing.to_zdata" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">to_zdata</span><span class="p">(</span><span class="n">img</span><span class="p">,</span> <span class="n">remove_slice</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">select_slice</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="nb">bytearray</span><span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">tobytes</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">remove_slice</span><span class="p">:</span>
+        <span class="k">del</span> <span class="n">data</span><span class="p">[</span><span class="n">remove_slice</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">select_slice</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">select_slice</span><span class="p">]</span>
+    <span class="c1"># Left-padding every row with a single zero:</span>
+    <span class="n">channels_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">//</span> <span class="p">(</span><span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">loop_incr</span> <span class="o">=</span> <span class="n">img</span><span class="o">.</span><span class="n">size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="n">channels_count</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="sa">b</span><span class="s2">&quot;</span><span class="se">\0</span><span class="s2">&quot;</span>
+        <span class="n">i</span> <span class="o">+=</span> <span class="n">loop_incr</span>
+    <span class="k">return</span> <span class="n">zlib</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
 
 
-  </section>
+	</section>
 
-    </article>
-  <div class="clear"> </div>
-  <footer id="footer">
-    <p>
-      Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
-    </p>
+		</article>
+	<div class="clear"> </div>
+	<footer id="footer">
+		<p>
+			Documentation generated by
+			<a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.0</a>
+		</p>
 
-    <p>pdoc is in the public domain with the
-      <a href="http://unlicense.org">UNLICENSE</a></p>
+		<p>pdoc is in the public domain with the
+			<a href="http://unlicense.org">UNLICENSE</a></p>
 
-    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
-  </footer>
+		<p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+	</footer>
 </div>
 </body>
 </html>

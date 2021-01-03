@@ -1,390 +1,308 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-
-    
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/index.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//Tutorial/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/Tutorial.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//Tutorial-es/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/Tutorial-es.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
-    
-
-    
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//FAQ/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/FAQ.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//Development/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/Development.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//Templates/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/Templates.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//Unicode/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/Unicode.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-    
-
-    
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//ReferenceManual/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/ReferenceManual.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/accept_page_break/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/accept_page_break.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/add_font/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/add_font.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/add_link/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/add_link.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/add_page/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/add_page.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/alias_nb_pages/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/alias_nb_pages.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/cell/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/cell.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/close/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/close.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/dashed_line/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/dashed_line.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/ellipse/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/ellipse.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/error/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/error.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/FPDF/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/FPDF.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/footer/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/footer.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/get_string_width/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/get_string_width.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/get_x/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/get_x.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/get_y/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/get_y.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/header/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/header.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/image/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/image.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/load_resource/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/load_resource.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/line/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/line.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/link/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/link.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/ln/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/ln.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/multi_cell/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/multi_cell.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/open/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/open.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/output/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/output.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/page_no/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/page_no.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/rect/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/rect.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_author/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_author.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_auto_page_break/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_auto_page_break.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_compression/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_compression.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_creator/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_creator.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_doc_option/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_doc_option.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_display_mode/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_display_mode.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_draw_color/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_draw_color.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_fill_color/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_fill_color.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_font/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_font.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_font_size/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_font_size.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_keywords/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_keywords.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_left_margin/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_left_margin.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_line_width/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_line_width.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_link/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_link.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_margins/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_margins.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_right_margin/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_right_margin.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_stretching/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_stretching.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_subject/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_subject.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_text_color/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_text_color.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_title/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_title.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_top_margin/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_top_margin.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_x/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_x.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_xy/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_xy.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/set_y/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/set_y.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/text/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/text.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/write/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/write.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
     <url>
-     <loc>https://alexanderankin.github.io/pyfpdf//reference/write_html/index.html</loc>
-     <lastmod>2017-05-18</lastmod>
+     <loc>https://alexanderankin.github.io/pyfpdf/reference/write_html.html</loc>
+     <lastmod>2021-01-03</lastmod>
      <changefreq>daily</changefreq>
     </url>
-        
-    
-
 </urlset>
