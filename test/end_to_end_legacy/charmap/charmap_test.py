@@ -12,6 +12,7 @@ and this seems to be okay.
 import unittest
 import sys
 import os
+import warnings
 
 sys.path.insert(
     0,
@@ -47,44 +48,43 @@ class MyTTFontFile(TTFontFile):
 class CharmapTest(unittest.TestCase):
     @unittest.skip('Need debug, raise a "Not a TrueType font" error')
     def test_first_999_chars(self):
-        # fontpath = 'Roboto-Regular.ttf'
-        fontpath = relative_path_to("DejaVuSans.ttf")
+        for fontpath, known_output_hash in (
+            ("DejaVuSans.ttf", "f2f5784207ad1f26d230bdf40af9d3e0"),
+            ("Roboto-Regular.ttf", "TODO"),
+        ):
+            with self.subTest():
+                pdf = fpdf.FPDF()
+                pdf.add_page()
+                pdf.add_font("font", "", fontpath, uni=True)
+                pdf.set_font("font", "", 10)
 
-        pdf = fpdf.FPDF()
-        pdf.add_page()
-        pdf.add_font("font", "", fontpath, uni=True)
-        pdf.set_font("font", "", 10)
+                ttf = MyTTFontFile()
+                ttf.getMetrics(fontpath)
 
-        ttf = MyTTFontFile()
-        ttf.getMetrics(fontpath)
+                # the next bit throws four insignificant warnings
+                warnings.filterwarnings("ignore")
 
-        # the next bit throws four insignificant warnings
-        import warnings
+                for counter, character in enumerate(ttf.saveChar, 0):
+                    # print (counter, character)
+                    pdf.write(8, u"%03d) %06x - %c" % (counter, character, character))
+                    pdf.ln()
 
-        warnings.filterwarnings("ignore")
+                    if counter >= 999:
+                        break
 
-        for counter, character in enumerate(ttf.saveChar, 0):
-            # print (counter, character)
-            pdf.write(8, u"%03d) %06x - %c" % (counter, character, character))
-            pdf.ln()
+                testing_output = relative_path_to("charmap_test_output.pdf")
 
-            if counter >= 999:
-                break
+                set_doc_date_0(pdf)
+                pdf.output(testing_output)
 
-        testing_output = relative_path_to("charmap_test_output.pdf")
+                output_hash = calculate_hash_of_file(testing_output)
+                self.assertEqual(known_output_hash, output_hash)
+                os.unlink(testing_output)
 
-        set_doc_date_0(pdf)
-        pdf.output(testing_output)
-
-        output_hash = calculate_hash_of_file(testing_output)
-        known_output_hash = "f2f5784207ad1f26d230bdf40af9d3e0"
-        self.assertEqual(known_output_hash, output_hash)
-        os.unlink(testing_output)
-
-        # clear out all the pkl files
-        pklList = [f for f in relative_path_to(".") if f.endswith(".pkl")]
-        for f in pklList:
-            os.remove(relative_path_to(f))
+                # clear out all the pkl files
+                pklList = [f for f in relative_path_to(".") if f.endswith(".pkl")]
+                for f in pklList:
+                    os.remove(relative_path_to(f))
 
 
 if __name__ == "__main__":

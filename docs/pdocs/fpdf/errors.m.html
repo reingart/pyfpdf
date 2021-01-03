@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>fpdf.errors API documentation</title>
-    <meta name="description" content="FPDF Error classes" />
+	  <title>fpdf.errors API documentation</title>
+	  <meta name="description" content="FPDF Error classes" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -554,7 +554,7 @@ table {
   html, body {
     margin: 0;
     padding: 0;
-    min-height: 100%;
+    height: 100%;
   }
   body {
     background: #fff;
@@ -851,9 +851,14 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
+	<style type="text/css">
+	pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
 .codehilite .c { color: #408080; font-style: italic } /* Comment */
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
@@ -921,7 +926,7 @@ table {
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
 .codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
+	</style>
 
   <style type="text/css">
   
@@ -1017,110 +1022,388 @@ table {
   </style>
 
   <script type="text/javascript">
-  function toggle(id, $link) {
-    $node = document.getElementById(id);
-    if (!$node)
-    return;
-    if (!$node.style.display || $node.style.display == 'none') {
-    $node.style.display = 'block';
-    $link.innerHTML = 'Hide source &nequiv;';
-    } else {
-    $node.style.display = 'none';
-    $link.innerHTML = 'Show source &equiv;';
-    }
-  }
+	function toggle(id, $link) {
+	  $node = document.getElementById(id);
+	  if (!$node)
+		return;
+	  if (!$node.style.display || $node.style.display == 'none') {
+		$node.style.display = 'block';
+		$link.innerHTML = 'Hide source &nequiv;';
+	  } else {
+		$node.style.display = 'none';
+		$link.innerHTML = 'Show source &equiv;';
+	  }
+	}
   </script>
 </head>
 <body>
 <a href="#" id="top">Top</a>
 
 <div id="container">
-    
+		
   
   <div id="sidebar">
-    <h1>Index</h1>
-    <ul id="index">
+	  <h1>Index</h1>
+	  <ul id="index">
 
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
+		<li class="set"><h3><a href="#header-functions">Functions</a></h3>
+		  
   <ul>
-    <li class="mono"><a href="#fpdf.errors.fpdf_error">fpdf_error</a></li>
+	  <li class="mono"><a href="#fpdf.errors.fpdf_error">fpdf_error</a></li>
   </ul>
 
-    </li>
+		</li>
 
+		<li class="set"><h3><a href="#header-classes">Classes</a></h3>
+		  <ul>
+			  <li class="mono">
+				<span class="class_name"><a href="#fpdf.errors.FPDFException">FPDFException</a></span>
+				
+			  </li>
+			  <li class="mono">
+				<span class="class_name"><a href="#fpdf.errors.FPDFPageFormatException">FPDFPageFormatException</a></span>
+				
+				  
+  <ul>
+	  <li class="mono"><a href="#fpdf.errors.FPDFPageFormatException.__init__">__init__</a></li>
+	  <li class="mono"><a href="#fpdf.errors.FPDFPageFormatException.format_one">format_one</a></li>
+	  <li class="mono"><a href="#fpdf.errors.FPDFPageFormatException.format_unknown">format_unknown</a></li>
+  </ul>
 
-    </ul>
+			  </li>
+		  </ul>
+		</li>
+
+	  </ul>
   </div>
 
-    <article id="content">
-      
+		<article id="content">
+			
   
 
   
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">fpdf.errors</span> module</h1>
-  <p>FPDF Error classes</p>
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.errors" class="source">
-    <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: latin-1 -*-</span>
+	<h1 class="title"><span class="name">fpdf.errors</span> module</h1>
+	<p>FPDF Error classes</p>
+	
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.errors" class="source">
+	  <div class="codehilite"><pre><span></span><span class="c1"># -*- coding: latin-1 -*-</span>
 
 <span class="sd">&quot;&quot;&quot;FPDF Error classes&quot;&quot;&quot;</span>
 
 <span class="c1"># this module is unwriteable without tests</span>
 
+
 <span class="k">def</span> <span class="nf">fpdf_error</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;FPDF error: &#39;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;FPDF error: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">FPDFException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+
+<span class="k">class</span> <span class="nc">FPDFPageFormatException</span><span class="p">(</span><span class="n">FPDFException</span><span class="p">):</span>
+    <span class="c1"># &quot;&quot;&quot;Error is thrown when a bad page format is given&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">unknown</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">one</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FPDFPageFormatException</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">unknown</span> <span class="ow">and</span> <span class="n">one</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;FPDF Page Format Exception cannot be both for &quot;</span>
+                <span class="s2">&quot;unknown type and for wrong number of arguments&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">argument</span> <span class="o">=</span> <span class="n">argument</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown</span> <span class="o">=</span> <span class="n">unknown</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">one</span> <span class="o">=</span> <span class="n">one</span>
+
+    <span class="k">def</span> <span class="nf">_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;FPDFPageFormatException: &quot;</span> <span class="o">+</span> <span class="n">message</span>
+
+    <span class="k">def</span> <span class="nf">format_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="s2">&quot;Unknown page format: &quot;</span> <span class="o">+</span> <span class="n">argument</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">format_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="s2">&quot;Only one argument given: </span><span class="si">%s</span><span class="s2">. Need (height,width)&quot;</span> <span class="o">%</span> <span class="n">a</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">argument</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">one</span><span class="p">]</span>
+        <span class="n">arguments</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">inputs</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;FPDFPageFormatException(&quot;</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="s2">&quot;)&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_unknown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argument</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">one</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_one</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argument</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argument</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 
   </header>
 
   <section id="section-items">
 
-    <h2 class="section-title" id="header-functions">Functions</h2>
-      
-  <div class="item">
-    <div class="name def" id="fpdf.errors.fpdf_error">
-    <p>def <span class="ident">fpdf_error</span>(</p><p>message)</p>
-    </div>
-    
+	  <h2 class="section-title" id="header-functions">Functions</h2>
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.errors.fpdf_error">
+		<p>def <span class="ident">fpdf_error</span>(</p><p>message)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors.fpdf_error', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.errors.fpdf_error" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fpdf_error</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
-    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;FPDF error: &#39;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors.fpdf_error', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.errors.fpdf_error" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">fpdf_error</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;FPDF error: &quot;</span> <span class="o">+</span> <span class="n">message</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
 
+	  <h2 class="section-title" id="header-classes">Classes</h2>
+		  
+		  <div class="item">
+			<p id="fpdf.errors.FPDFException" class="name">class <span class="ident">FPDFException</span></p>
+			
+  
+	  <div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors.FPDFException', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.errors.FPDFException" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FPDFException</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+</pre></div>
 
-  </section>
+	</div>
+</div>
 
-    </article>
-  <div class="clear"> </div>
-  <footer id="footer">
-    <p>
-      Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
-    </p>
 
-    <p>pdoc is in the public domain with the
-      <a href="http://unlicense.org">UNLICENSE</a></p>
+			<div class="class">
+				  <h3>Ancestors (in MRO)</h3>
+				  <ul class="class_list">
+					<li><a href="#fpdf.errors.FPDFException">FPDFException</a></li>
+					<li>builtins.Exception</li>
+					<li>builtins.BaseException</li>
+					<li>builtins.object</li>
+				  </ul>
+				  <h3>Class variables</h3>
+					  <div class="item">
+						<p id="fpdf.errors.FPDFException.args" class="name">var <span class="ident">args</span></p>
+						
 
-    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
-  </footer>
+						
+  
+	<div class="source_cont">
+</div>
+
+					  </div>
+			</div>
+		  </div>
+		  
+		  <div class="item">
+			<p id="fpdf.errors.FPDFPageFormatException" class="name">class <span class="ident">FPDFPageFormatException</span></p>
+			
+  
+	  <div class="desc"><p>Common base class for all non-exit exceptions.</p></div>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors.FPDFPageFormatException', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.errors.FPDFPageFormatException" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">class</span> <span class="nc">FPDFPageFormatException</span><span class="p">(</span><span class="n">FPDFException</span><span class="p">):</span>
+    <span class="c1"># &quot;&quot;&quot;Error is thrown when a bad page format is given&quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">unknown</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">one</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">FPDFPageFormatException</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">unknown</span> <span class="ow">and</span> <span class="n">one</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;FPDF Page Format Exception cannot be both for &quot;</span>
+                <span class="s2">&quot;unknown type and for wrong number of arguments&quot;</span>
+            <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">argument</span> <span class="o">=</span> <span class="n">argument</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">unknown</span> <span class="o">=</span> <span class="n">unknown</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">one</span> <span class="o">=</span> <span class="n">one</span>
+
+    <span class="k">def</span> <span class="nf">_f</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;FPDFPageFormatException: &quot;</span> <span class="o">+</span> <span class="n">message</span>
+
+    <span class="k">def</span> <span class="nf">format_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="s2">&quot;Unknown page format: &quot;</span> <span class="o">+</span> <span class="n">argument</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">format_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="s2">&quot;Only one argument given: </span><span class="si">%s</span><span class="s2">. Need (height,width)&quot;</span> <span class="o">%</span> <span class="n">a</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">inputs</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">argument</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">one</span><span class="p">]</span>
+        <span class="n">arguments</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">repr</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">inputs</span><span class="p">)))</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s2">&quot;FPDFPageFormatException(&quot;</span><span class="p">,</span> <span class="n">arguments</span><span class="p">,</span> <span class="s2">&quot;)&quot;</span><span class="p">])</span>
+
+    <span class="k">def</span> <span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">unknown</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_unknown</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argument</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">one</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">format_one</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argument</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">argument</span><span class="p">)</span>
+</pre></div>
+
+	</div>
+</div>
+
+
+			<div class="class">
+				  <h3>Ancestors (in MRO)</h3>
+				  <ul class="class_list">
+					<li><a href="#fpdf.errors.FPDFPageFormatException">FPDFPageFormatException</a></li>
+					<li><a href="#fpdf.errors.FPDFException">FPDFException</a></li>
+					<li>builtins.Exception</li>
+					<li>builtins.BaseException</li>
+					<li>builtins.object</li>
+				  </ul>
+				  <h3>Class variables</h3>
+					  <div class="item">
+						<p id="fpdf.errors.FPDFPageFormatException.args" class="name">var <span class="ident">args</span></p>
+						
+
+						
+  
+	<div class="source_cont">
+</div>
+
+					  </div>
+				  <h3>Static methods</h3>
+					  
+	<div class="item">
+	  <div class="name def" id="fpdf.errors.FPDFPageFormatException.__init__">
+		<p>def <span class="ident">__init__</span>(</p><p>self, argument, unknown=False, one=False)</p>
+	  </div>
+	  
+
+	  
+  
+	  <div class="desc"><p>Initialize self.  See help(type(self)) for accurate signature.</p></div>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors.FPDFPageFormatException.__init__', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.errors.FPDFPageFormatException.__init__" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">,</span> <span class="n">unknown</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">one</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="nb">super</span><span class="p">(</span><span class="n">FPDFPageFormatException</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">unknown</span> <span class="ow">and</span> <span class="n">one</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+            <span class="s2">&quot;FPDF Page Format Exception cannot be both for &quot;</span>
+            <span class="s2">&quot;unknown type and for wrong number of arguments&quot;</span>
+        <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">argument</span> <span class="o">=</span> <span class="n">argument</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">unknown</span> <span class="o">=</span> <span class="n">unknown</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">one</span> <span class="o">=</span> <span class="n">one</span>
+</pre></div>
+
+	</div>
+</div>
+
+	</div>
+  
+					  
+	<div class="item">
+	  <div class="name def" id="fpdf.errors.FPDFPageFormatException.format_one">
+		<p>def <span class="ident">format_one</span>(</p><p>self, a)</p>
+	  </div>
+	  
+
+	  
+  
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors.FPDFPageFormatException.format_one', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.errors.FPDFPageFormatException.format_one" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">format_one</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="s2">&quot;Only one argument given: </span><span class="si">%s</span><span class="s2">. Need (height,width)&quot;</span> <span class="o">%</span> <span class="n">a</span><span class="p">)</span>
+</pre></div>
+
+	</div>
+</div>
+
+	</div>
+  
+					  
+	<div class="item">
+	  <div class="name def" id="fpdf.errors.FPDFPageFormatException.format_unknown">
+		<p>def <span class="ident">format_unknown</span>(</p><p>self, argument)</p>
+	  </div>
+	  
+
+	  
+  
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.errors.FPDFPageFormatException.format_unknown', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.errors.FPDFPageFormatException.format_unknown" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">format_unknown</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">argument</span><span class="p">):</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="s2">&quot;Unknown page format: &quot;</span> <span class="o">+</span> <span class="n">argument</span><span class="p">)</span>
+</pre></div>
+
+	</div>
+</div>
+
+	</div>
+  
+				  <h3>Instance variables</h3>
+					  <div class="item">
+						<p id="fpdf.errors.FPDFPageFormatException.argument" class="name">var <span class="ident">argument</span></p>
+						
+
+						
+  
+	<div class="source_cont">
+</div>
+
+					  </div>
+					  <div class="item">
+						<p id="fpdf.errors.FPDFPageFormatException.one" class="name">var <span class="ident">one</span></p>
+						
+
+						
+  
+	<div class="source_cont">
+</div>
+
+					  </div>
+					  <div class="item">
+						<p id="fpdf.errors.FPDFPageFormatException.unknown" class="name">var <span class="ident">unknown</span></p>
+						
+
+						
+  
+	<div class="source_cont">
+</div>
+
+					  </div>
+			</div>
+		  </div>
+
+	</section>
+
+		</article>
+	<div class="clear"> </div>
+	<footer id="footer">
+		<p>
+			Documentation generated by
+			<a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.0</a>
+		</p>
+
+		<p>pdoc is in the public domain with the
+			<a href="http://unlicense.org">UNLICENSE</a></p>
+
+		<p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+	</footer>
 </div>
 </body>
 </html>

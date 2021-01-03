@@ -15,7 +15,7 @@ def textstring(s):
 
 
 def escape(s):
-    "Add \ before \, ( and )"
+    "Add a backslash character before , ( and )"
     return (
         s.replace("\\", "\\\\")
         .replace(")", "\\)")

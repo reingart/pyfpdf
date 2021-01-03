@@ -3,8 +3,8 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
 
-    <title>fpdf.php API documentation</title>
-    <meta name="description" content="" />
+	  <title>fpdf.php API documentation</title>
+	  <meta name="description" content="" />
 
   <link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,300' rel='stylesheet' type='text/css'>
   
@@ -554,7 +554,7 @@ table {
   html, body {
     margin: 0;
     padding: 0;
-    min-height: 100%;
+    height: 100%;
   }
   body {
     background: #fff;
@@ -851,9 +851,14 @@ table {
 
   </style>
 
-  <style type="text/css">
-  .codehilite .hll { background-color: #ffffcc }
-.codehilite  { background: #f8f8f8; }
+	<style type="text/css">
+	pre { line-height: 125%; }
+td.linenos pre { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+span.linenos { color: #000000; background-color: #f0f0f0; padding-left: 5px; padding-right: 5px; }
+td.linenos pre.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+span.linenos.special { color: #000000; background-color: #ffffc0; padding-left: 5px; padding-right: 5px; }
+.codehilite .hll { background-color: #ffffcc }
+.codehilite { background: #f8f8f8; }
 .codehilite .c { color: #408080; font-style: italic } /* Comment */
 .codehilite .err { border: 1px solid #FF0000 } /* Error */
 .codehilite .k { color: #008000; font-weight: bold } /* Keyword */
@@ -921,7 +926,7 @@ table {
 .codehilite .vi { color: #19177C } /* Name.Variable.Instance */
 .codehilite .vm { color: #19177C } /* Name.Variable.Magic */
 .codehilite .il { color: #666666 } /* Literal.Number.Integer.Long */
-  </style>
+	</style>
 
   <style type="text/css">
   
@@ -1017,392 +1022,382 @@ table {
   </style>
 
   <script type="text/javascript">
-  function toggle(id, $link) {
-    $node = document.getElementById(id);
-    if (!$node)
-    return;
-    if (!$node.style.display || $node.style.display == 'none') {
-    $node.style.display = 'block';
-    $link.innerHTML = 'Hide source &nequiv;';
-    } else {
-    $node.style.display = 'none';
-    $link.innerHTML = 'Show source &equiv;';
-    }
-  }
+	function toggle(id, $link) {
+	  $node = document.getElementById(id);
+	  if (!$node)
+		return;
+	  if (!$node.style.display || $node.style.display == 'none') {
+		$node.style.display = 'block';
+		$link.innerHTML = 'Hide source &nequiv;';
+	  } else {
+		$node.style.display = 'none';
+		$link.innerHTML = 'Show source &equiv;';
+	  }
+	}
   </script>
 </head>
 <body>
 <a href="#" id="top">Top</a>
 
 <div id="container">
-    
+		
   
   <div id="sidebar">
-    <h1>Index</h1>
-    <ul id="index">
-    <li class="set"><h3><a href="#header-variables">Module variables</a></h3>
-      
+	  <h1>Index</h1>
+	  <ul id="index">
+
+		<li class="set"><h3><a href="#header-functions">Functions</a></h3>
+		  
   <ul>
-    <li class="mono"><a href="#fpdf.php.PY3K">PY3K</a></li>
+	  <li class="mono"><a href="#fpdf.php.UTF8StringToArray">UTF8StringToArray</a></li>
+	  <li class="mono"><a href="#fpdf.php.UTF8ToUTF16BE">UTF8ToUTF16BE</a></li>
+	  <li class="mono"><a href="#fpdf.php.count">count</a></li>
+	  <li class="mono"><a href="#fpdf.php.die">die</a></li>
+	  <li class="mono"><a href="#fpdf.php.print_r">print_r</a></li>
+	  <li class="mono"><a href="#fpdf.php.sprintf">sprintf</a></li>
+	  <li class="mono"><a href="#fpdf.php.str_pad">str_pad</a></li>
+	  <li class="mono"><a href="#fpdf.php.str_repeat">str_repeat</a></li>
+	  <li class="mono"><a href="#fpdf.php.strlen">strlen</a></li>
+	  <li class="mono"><a href="#fpdf.php.substr">substr</a></li>
   </ul>
 
-    </li>
-
-    <li class="set"><h3><a href="#header-functions">Functions</a></h3>
-      
-  <ul>
-    <li class="mono"><a href="#fpdf.php.UTF8StringToArray">UTF8StringToArray</a></li>
-    <li class="mono"><a href="#fpdf.php.UTF8ToUTF16BE">UTF8ToUTF16BE</a></li>
-    <li class="mono"><a href="#fpdf.php.count">count</a></li>
-    <li class="mono"><a href="#fpdf.php.die">die</a></li>
-    <li class="mono"><a href="#fpdf.php.print_r">print_r</a></li>
-    <li class="mono"><a href="#fpdf.php.sprintf">sprintf</a></li>
-    <li class="mono"><a href="#fpdf.php.str_pad">str_pad</a></li>
-    <li class="mono"><a href="#fpdf.php.str_repeat">str_repeat</a></li>
-    <li class="mono"><a href="#fpdf.php.strlen">strlen</a></li>
-    <li class="mono"><a href="#fpdf.php.substr">substr</a></li>
-  </ul>
-
-    </li>
+		</li>
 
 
-    </ul>
+	  </ul>
   </div>
 
-    <article id="content">
-      
+		<article id="content">
+			
   
 
   
 
 
   <header id="section-intro">
-  <h1 class="title"><span class="name">fpdf.php</span> module</h1>
-  
-  
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php" class="source">
-    <div class="codehilite"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
+	<h1 class="title"><span class="name">fpdf.php</span> module</h1>
+	
+	
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php" class="source">
+	  <div class="codehilite"><pre><span></span><span class="ch">#!/usr/bin/env python</span>
 <span class="c1"># -*- coding: latin-1 -*-</span>
-
-<span class="kn">from</span> <span class="nn">.py3k</span> <span class="kn">import</span> <span class="n">PY3K</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">,</span> <span class="nb">unicode</span>
 
 <span class="c1"># fpdf php helpers:</span>
 
-<span class="k">def</span> <span class="nf">substr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
-    <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">start</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
 
-<span class="k">def</span> <span class="nf">sprintf</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span> <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="n">args</span>
+<span class="k">def</span> <span class="nf">substr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+
+
+<span class="k">def</span> <span class="nf">sprintf</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="n">args</span>
+
 
 <span class="k">def</span> <span class="nf">print_r</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">array</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">array</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">] =&gt; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
-        
-<span class="k">def</span> <span class="nf">UTF8ToUTF16BE</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">setbom</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">] =&gt; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+
+
+<span class="k">def</span> <span class="nf">UTF8ToUTF16BE</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">setbom</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="s2">&quot;Converts UTF-8 strings to UTF16-BE.&quot;</span>
     <span class="n">outstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">setbom</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">setbom</span><span class="p">:</span>
         <span class="n">outstr</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\xFE\xFF</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
-        <span class="n">instr</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
-    <span class="n">outstr</span> <span class="o">+=</span> <span class="n">instr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;UTF-16BE&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">instr</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">outstr</span> <span class="o">+</span> <span class="n">instr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;UTF-16BE&quot;</span><span class="p">)</span>
 
-    <span class="c1"># convert bytes back to fake unicode string</span>
-    <span class="c1"># until PEP461-like is implemented</span>
-    <span class="k">if</span> <span class="n">PY3K</span><span class="p">:</span>
-        <span class="n">outstr</span> <span class="o">=</span> <span class="n">outstr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">outstr</span>
 
 <span class="k">def</span> <span class="nf">UTF8StringToArray</span><span class="p">(</span><span class="n">instr</span><span class="p">):</span>
     <span class="s2">&quot;Converts UTF-8 strings to codepoints array&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">instr</span><span class="p">]</span>
 
-<span class="c1"># ttfints php helpers:    </span>
+
+<span class="c1"># ttfints php helpers:</span>
+
 
 <span class="k">def</span> <span class="nf">die</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
-    
+
+
 <span class="k">def</span> <span class="nf">str_repeat</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">count</span>
-    
-<span class="k">def</span> <span class="nf">str_pad</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pad_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">pad_type</span><span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="p">):</span>
+
+
+<span class="k">def</span> <span class="nf">str_pad</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pad_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">pad_type</span><span class="o">=+</span><span class="mi">1</span><span class="p">):</span>
     <span class="c1"># pad left</span>
-    <span class="k">if</span> <span class="n">pad_type</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>   <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span>  <span class="n">pad_char</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pad_type</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
     <span class="c1"># pad right</span>
-    <span class="k">elif</span> <span class="n">pad_type</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span>  <span class="n">pad_char</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">pad_type</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
     <span class="c1"># pad both</span>
-    <span class="k">else</span><span class="p">:</span>              <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
+
 
 <span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 
   </header>
 
   <section id="section-items">
-    <h2 class="section-title" id="header-variables">Module variables</h2>
-      <div class="item">
-      <p id="fpdf.php.PY3K" class="name">var <span class="ident">PY3K</span></p>
-      
+
+	  <h2 class="section-title" id="header-functions">Functions</h2>
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.UTF8StringToArray">
+		<p>def <span class="ident">UTF8StringToArray</span>(</p><p>instr)</p>
+	  </div>
+	  
+
+	  
   
-  <div class="source_cont">
-</div>
-
-      </div>
-
-    <h2 class="section-title" id="header-functions">Functions</h2>
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.UTF8StringToArray">
-    <p>def <span class="ident">UTF8StringToArray</span>(</p><p>instr)</p>
-    </div>
-    
-
-    
-  
-    <div class="desc"><p>Converts UTF-8 strings to codepoints array</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.UTF8StringToArray', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.UTF8StringToArray" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">UTF8StringToArray</span><span class="p">(</span><span class="n">instr</span><span class="p">):</span>
+	  <div class="desc"><p>Converts UTF-8 strings to codepoints array</p></div>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.UTF8StringToArray', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.UTF8StringToArray" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">UTF8StringToArray</span><span class="p">(</span><span class="n">instr</span><span class="p">):</span>
     <span class="s2">&quot;Converts UTF-8 strings to codepoints array&quot;</span>
     <span class="k">return</span> <span class="p">[</span><span class="nb">ord</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">instr</span><span class="p">]</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.UTF8ToUTF16BE">
-    <p>def <span class="ident">UTF8ToUTF16BE</span>(</p><p>instr, setbom=True)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.UTF8ToUTF16BE">
+		<p>def <span class="ident">UTF8ToUTF16BE</span>(</p><p>instr, setbom=True)</p>
+	  </div>
+	  
 
-    
+	  
   
-    <div class="desc"><p>Converts UTF-8 strings to UTF16-BE.</p></div>
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.UTF8ToUTF16BE', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.UTF8ToUTF16BE" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">UTF8ToUTF16BE</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">setbom</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+	  <div class="desc"><p>Converts UTF-8 strings to UTF16-BE.</p></div>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.UTF8ToUTF16BE', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.UTF8ToUTF16BE" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">UTF8ToUTF16BE</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="n">setbom</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
     <span class="s2">&quot;Converts UTF-8 strings to UTF16-BE.&quot;</span>
     <span class="n">outstr</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">()</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">setbom</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">setbom</span><span class="p">:</span>
         <span class="n">outstr</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\xFE\xFF</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="nb">unicode</span><span class="p">):</span>
-        <span class="n">instr</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s1">&#39;UTF-8&#39;</span><span class="p">)</span>
-    <span class="n">outstr</span> <span class="o">+=</span> <span class="n">instr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s1">&#39;UTF-16BE&#39;</span><span class="p">)</span>
-
-    <span class="c1"># convert bytes back to fake unicode string</span>
-    <span class="c1"># until PEP461-like is implemented</span>
-    <span class="k">if</span> <span class="n">PY3K</span><span class="p">:</span>
-        <span class="n">outstr</span> <span class="o">=</span> <span class="n">outstr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;latin1&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">outstr</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">instr</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">instr</span> <span class="o">=</span> <span class="n">instr</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;UTF-8&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">outstr</span> <span class="o">+</span> <span class="n">instr</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;UTF-16BE&quot;</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.count">
-    <p>def <span class="ident">count</span>(</p><p>s)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.count">
+		<p>def <span class="ident">count</span>(</p><p>s)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.count', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.count" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.count', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.count" class="source">
+	  <div class="codehilite"><pre><span></span><span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.die">
-    <p>def <span class="ident">die</span>(</p><p>msg)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.die">
+		<p>def <span class="ident">die</span>(</p><p>msg)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.die', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.die" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">die</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.die', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.die" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">die</span><span class="p">(</span><span class="n">msg</span><span class="p">):</span>
     <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.print_r">
-    <p>def <span class="ident">print_r</span>(</p><p>array)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.print_r">
+		<p>def <span class="ident">print_r</span>(</p><p>array)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.print_r', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.print_r" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">print_r</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.print_r', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.print_r" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">print_r</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
         <span class="n">array</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">array</span><span class="p">])</span>
-    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">array</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-        <span class="k">print</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">] =&gt; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">array</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;[</span><span class="si">%s</span><span class="s2">] =&gt; </span><span class="si">%s</span><span class="s2"> &quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.sprintf">
-    <p>def <span class="ident">sprintf</span>(</p><p>fmt, *args)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.sprintf">
+		<p>def <span class="ident">sprintf</span>(</p><p>fmt, *args)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.sprintf', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.sprintf" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sprintf</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span> <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="n">args</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.sprintf', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.sprintf" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">sprintf</span><span class="p">(</span><span class="n">fmt</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">fmt</span> <span class="o">%</span> <span class="n">args</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.str_pad">
-    <p>def <span class="ident">str_pad</span>(</p><p>s, pad_length=0, pad_char=&#39; &#39;, pad_type=1)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.str_pad">
+		<p>def <span class="ident">str_pad</span>(</p><p>s, pad_length=0, pad_char=&#39; &#39;, pad_type=1)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.str_pad', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.str_pad" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">str_pad</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pad_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span> <span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">pad_type</span><span class="o">=</span> <span class="o">+</span><span class="mi">1</span> <span class="p">):</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.str_pad', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.str_pad" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">str_pad</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">pad_length</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">pad_char</span><span class="o">=</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="n">pad_type</span><span class="o">=+</span><span class="mi">1</span><span class="p">):</span>
     <span class="c1"># pad left</span>
-    <span class="k">if</span> <span class="n">pad_type</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>   <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span>  <span class="n">pad_char</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pad_type</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
     <span class="c1"># pad right</span>
-    <span class="k">elif</span> <span class="n">pad_type</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span>  <span class="n">pad_char</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">pad_type</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">ljust</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
     <span class="c1"># pad both</span>
-    <span class="k">else</span><span class="p">:</span>              <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">center</span><span class="p">(</span><span class="n">pad_length</span><span class="p">,</span> <span class="n">pad_char</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.str_repeat">
-    <p>def <span class="ident">str_repeat</span>(</p><p>s, count)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.str_repeat">
+		<p>def <span class="ident">str_repeat</span>(</p><p>s, count)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.str_repeat', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.str_repeat" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">str_repeat</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.str_repeat', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.str_repeat" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">str_repeat</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">count</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">s</span> <span class="o">*</span> <span class="n">count</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.strlen">
-    <p>def <span class="ident">strlen</span>(</p><p>s)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.strlen">
+		<p>def <span class="ident">strlen</span>(</p><p>s)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.strlen', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.strlen" class="source">
-    <div class="codehilite"><pre><span></span><span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.strlen', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.strlen" class="source">
+	  <div class="codehilite"><pre><span></span><span class="n">strlen</span> <span class="o">=</span> <span class="n">count</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
-      
-  <div class="item">
-    <div class="name def" id="fpdf.php.substr">
-    <p>def <span class="ident">substr</span>(</p><p>s, start, length=-1)</p>
-    </div>
-    
+		  
+	<div class="item">
+	  <div class="name def" id="fpdf.php.substr">
+		<p>def <span class="ident">substr</span>(</p><p>s, start, length=-1)</p>
+	  </div>
+	  
 
-    
+	  
   
-  <div class="source_cont">
-  <p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.substr', this);">Show source &equiv;</a></p>
-  <div id="source-fpdf.php.substr" class="source">
-    <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">substr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
-    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
-    <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">start</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
+	<div class="source_cont">
+	<p class="source_link"><a href="javascript:void(0);" onclick="toggle('source-fpdf.php.substr', this);">Show source &equiv;</a></p>
+	<div id="source-fpdf.php.substr" class="source">
+	  <div class="codehilite"><pre><span></span><span class="k">def</span> <span class="nf">substr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">length</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">length</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">s</span><span class="p">)</span> <span class="o">-</span> <span class="n">start</span>
+    <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="n">start</span> <span class="p">:</span> <span class="n">start</span> <span class="o">+</span> <span class="n">length</span><span class="p">]</span>
 </pre></div>
 
-  </div>
+	</div>
 </div>
 
-  </div>
+	</div>
   
 
 
-  </section>
+	</section>
 
-    </article>
-  <div class="clear"> </div>
-  <footer id="footer">
-    <p>
-      Documentation generated by
-      <a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.2</a>
-    </p>
+		</article>
+	<div class="clear"> </div>
+	<footer id="footer">
+		<p>
+			Documentation generated by
+			<a href="https://github.com/BurntSushi/pdoc">pdoc 0.3.0</a>
+		</p>
 
-    <p>pdoc is in the public domain with the
-      <a href="http://unlicense.org">UNLICENSE</a></p>
+		<p>pdoc is in the public domain with the
+			<a href="http://unlicense.org">UNLICENSE</a></p>
 
-    <p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
-  </footer>
+		<p>Design by <a href="http://nadh.in">Kailash Nadh</a></p>
+	</footer>
 </div>
 </body>
 </html>
