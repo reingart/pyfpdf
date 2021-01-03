@@ -4,7 +4,7 @@ import unittest
 import sys
 import os
 import fpdf
-import six
+from io import BytesIO
 
 
 # python -m unittest test.image.load_resource.LoadResourceTest
@@ -13,7 +13,7 @@ from test.utilities import relative_path_to
 
 class LoadResourceTest(unittest.TestCase):
   def test_recognize_bytesIO(self):
-    s = six.BytesIO()
+    s = BytesIO()
     a = fpdf.image_parsing.load_resource(s)
     self.assertEqual(a, s)
 

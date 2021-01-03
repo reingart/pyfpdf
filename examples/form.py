@@ -1,6 +1,4 @@
 # -*- coding: iso-8859-1 -*-
-from __future__ import with_statement
-
 import sys,os
 from fpdf import FPDF
 

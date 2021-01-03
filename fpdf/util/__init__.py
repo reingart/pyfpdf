@@ -26,6 +26,13 @@ def escape(s):
             .replace('(', '\\(') \
             .replace('\r', '\\r')
 
+# shortcut to bytes conversion (b prefix)
+def b(s): 
+    if isinstance(s, str):
+        return s.encode('latin1')
+    elif isinstance(s, int):
+        return bytes([s])  # http://bugs.python.org/issue4588
+
 def dochecks():
     # Check for locale-related bug
     # if (1.1==1):

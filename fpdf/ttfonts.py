@@ -16,13 +16,11 @@
 #                                                                              
 #******************************************************************************
 
-from __future__ import with_statement
-
 from struct import pack, unpack, unpack_from
 import re
 import warnings
 from .php import die, substr, str_repeat, str_pad, strlen, count
-from .py3k import b, ord
+from .util import b
 
 
 # Define the value used in the "head" table of a created TTF file
@@ -62,8 +60,8 @@ def calcChecksum(data):
     hi=0x0000
     lo=0x0000
     for i in range(0, len(data), 4): 
-        hi += (ord(data[i])<<8) + ord(data[i+1])
-        lo += (ord(data[i+2])<<8) + ord(data[i+3])
+        hi += data[i]<<8 + data[i+1]
+        lo += data[i+2]<<8 + data[i+3]
         hi += lo >> 16
         lo = lo & 0xFFFF
         hi = hi & 0xFFFF
@@ -137,13 +135,13 @@ class TTFontFile:
     def read_short(self): 
         self._pos += 2
         s = self.fh.read(2)
-        a = (ord(s[0])<<8) + ord(s[1])
+        a = s[0]<<8 + s[1]
         if (a & (1 << 15) ):
             a = (a - (1 << 16)) 
         return a
     
     def unpack_short(self, s):
-        a = (ord(s[0])<<8) + ord(s[1])
+        a = (s[0])<<8 + s[1]
         if (a & (1 << 15) ):
             a = (a - (1 << 16))     
         return a
@@ -151,27 +149,27 @@ class TTFontFile:
     def read_ushort(self):
         self._pos += 2
         s = self.fh.read(2)
-        return (ord(s[0])<<8) + ord(s[1])
+        return s[0]<<8 + s[1]
 
     def read_ulong(self): 
         self._pos += 4
         s = self.fh.read(4)
         # if large uInt32 as an integer, PHP converts it to -ve
-        return (ord(s[0])*16777216) + (ord(s[1])<<16) + (ord(s[2])<<8) + ord(s[3]) #     16777216  = 1<<24
+        return s[0]*16777216 + s[1]<<16 + s[2]<<8 + s[3] #     16777216  = 1<<24
 
     def get_ushort(self, pos): 
         self.fh.seek(pos)
         s = self.fh.read(2)
-        return (ord(s[0])<<8) + ord(s[1])
+        return s[0]<<8 + s[1]
 
     def get_ulong(self, pos):
         self.fh.seek(pos)
         s = self.fh.read(4)
         # iF large uInt32 as an integer, PHP converts it to -ve
-        return (ord(s[0])*16777216) + (ord(s[1])<<16) + (ord(s[2])<<8) + ord(s[3]) #     16777216  = 1<<24    
+        return s[0]*16777216 + s[1]<<16 + s[2]<<8 + s[3] #     16777216  = 1<<24    
 
     def pack_short(self, val):
-        if (val<0):
+        if val < 0:
             val = abs(val)
             val = ~val
             val += 1
@@ -893,7 +891,7 @@ class TTFontFile:
                 
                 for char in glyphToChar[glyph]:
                     if (char != 0 and char != 65535): 
-                        w = int(round(scale*aw+0.001))   # ROUND_HALF_UP in PY3K (like php)
+                        w = int(round(scale*aw+0.001))   # ROUND_HALF_UP (like php)
                         if (w == 0):  w = 65535 
                         if (char < 196608):
                             if char >= len(self.charWidths):
@@ -910,7 +908,7 @@ class TTFontFile:
             if (glyph in glyphToChar): 
                 for char in glyphToChar[glyph]: 
                     if (char != 0 and char != 65535): 
-                        w = int(round(scale*aw+0.001))  # ROUND_HALF_UP in PY3K (like php)
+                        w = int(round(scale*aw+0.001))  # ROUND_HALF_UP (like php)
                         if (w == 0):  w = 65535 
                         if (char < 196608):
                             if char >= len(self.charWidths):

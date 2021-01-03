@@ -4,8 +4,7 @@ import unittest
 import sys
 import os
 import fpdf
-
-from six.moves import StringIO
+from io import StringIO
 
 # python -m unittest test.utils.php.PHPUtilsTest
 

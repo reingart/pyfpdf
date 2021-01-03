@@ -17,22 +17,26 @@
 This module contains FPDF class inspiring this library. The version number is
 updated here (above and below in variable).
 """
-from __future__ import division, with_statement
 
 from contextlib import contextmanager
 from datetime import datetime
 from collections import OrderedDict as o_dict
 from functools import wraps
-from future.utils import raise_from
 import errno
 import logging
 import math
 import os
+import pickle
 import re
 import struct
 import sys
 import tempfile
 import zlib
+from hashlib import md5
+from io import BytesIO
+from urllib.request import urlopen
+
+from PIL import Image
 
 from .errors import (
     fpdf_error,
@@ -44,13 +48,10 @@ from .image_parsing import (
     get_img_info, load_resource as image_parsing_load_resource
 )
 from .php import substr, sprintf, UTF8ToUTF16BE, UTF8StringToArray  # print_r
-from .py3k import (
-    PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, b, hashpath
-)
 from .ttfonts import TTFontFile
 from .util import (
-    freadint as read_integer, textstring as enclose_in_parens,
-    escape as escape_parens
+    b, freadint as read_integer,
+    textstring as enclose_in_parens, escape as escape_parens
 )
 from .util.syntax import (
     create_name as pdf_name, create_dictionary_string as pdf_d,
@@ -96,7 +97,7 @@ def get_page_format(format, k=None):
     case insensitive key (the name of the new format) and 2-tuple value of
     (width, height) in dots per inch with a 72 dpi resolution.
     """
-    if isinstance(format, basestring):
+    if isinstance(format, str):
         format = format.lower()
         if format in PAGE_FORMATS:
             return PAGE_FORMATS[format]
@@ -110,8 +111,7 @@ def get_page_format(format, k=None):
         return (format[0] * k, format[1] * k)
     except Exception as e:
         args = str(format) + ', ' + str(k)
-        ours = FPDFPageFormatException('Arguments must be numbers: ' + args)
-        raise_from(ours, e)
+        raise FPDFPageFormatException('Arguments must be numbers: ' + args) from e
 
 
 def load_cache(filename):
@@ -266,7 +266,7 @@ class FPDF(object):
         """
         if zoom in ['fullpage', 'fullwidth', 'real', 'default']:
             self.zoom_mode = zoom
-        elif not isinstance(zoom, basestring):
+        elif not isinstance(zoom, str):
             self.zoom_mode = zoom
         else:
             fpdf_error('Incorrect zoom display mode: ' + zoom)
@@ -568,7 +568,7 @@ class FPDF(object):
                 unifilename = os.path.splitext(ttffilename)[0] + '.pkl'
             elif FPDF_CACHE_MODE == 2:
                 unifilename = os.path.join(FPDF_CACHE_DIR,
-                    hashpath(ttffilename) + ".pkl")
+                    _hashpath(ttffilename) + ".pkl")
             else:
                 unifilename = None
 
@@ -863,7 +863,7 @@ class FPDF(object):
                         (self.h - self.y) * k,
                         w * k, -h * k, op)
 
-        if (isinstance(border, basestring)):
+        if (isinstance(border, str)):
             x = self.x
             y = self.y
             if ('L' in border):
@@ -1282,14 +1282,8 @@ class FPDF(object):
         "Check that text input is in the correct format/encoding"
         # - for TTF unicode fonts: unicode object (utf8 encoding)
         # - for built-in fonts: string instances (encoding: latin-1, cp1252)
-        if not PY3K:
-            if self.unifontsubset and isinstance(txt, str):
-                return txt.decode("utf-8")
-            elif not self.unifontsubset and isinstance(txt, unicode):
-                return txt.encode(self.core_fonts_encoding)
-        else:
-            if not self.unifontsubset and self.core_fonts_encoding:
-                return txt.encode(self.core_fonts_encoding).decode("latin-1")
+        if not self.unifontsubset and self.core_fonts_encoding:
+            return txt.encode(self.core_fonts_encoding).decode("latin-1")
         return txt
 
     def _putpage(self, page, page_links):
@@ -1346,7 +1340,7 @@ class FPDF(object):
                               rect + '] /Border [0 0 0] '
 
                     # HTML ending of annotation entry
-                    if isinstance(pl[4], basestring):
+                    if isinstance(pl[4], str):
                         annots += '/A <</S /URI /URI ' + \
                                   enclose_in_parens(pl[4]) + '>>>>'
 
@@ -1584,11 +1578,8 @@ class FPDF(object):
                     cidtogidmap[cc * 2] = chr(glyph >> 8)
                     cidtogidmap[cc * 2 + 1] = chr(glyph & 0xFF)
                 cidtogidmap = ''.join(cidtogidmap)
-                if PY3K:
-                    # manage binary data as latin1 until PEP461-like function
-                    # is implemented
-                    cidtogidmap = cidtogidmap.encode("latin1")
-                cidtogidmap = zlib.compress(cidtogidmap)
+                # manage binary data as latin1 until PEP461-like function is implemented
+                cidtogidmap = zlib.compress(cidtogidmap.encode("latin1"))
                 self._newobj()
                 self._out('<</Length ' + str(len(cidtogidmap)) + '')
                 self._out('/Filter /FlateDecode')
@@ -1986,14 +1977,11 @@ class FPDF(object):
 
     def _out(self, s):
         # Add a line to the document
-        if PY3K and isinstance(s, bytes):
+        if isinstance(s, bytes):
             # manage binary data as latin1 until PEP461-like function is
             # implemented
             s = s.decode("latin1")
-        elif not PY3K and isinstance(s, unicode):
-            # default encoding (font name and similar)
-            s = s.encode("latin1")
-        elif not isinstance(s, basestring):
+        elif not isinstance(s, str):
             s = str(s)
         if (self.state == 2):
             #self.pages[self.page]["content"] += (s + "\n")
@@ -2093,6 +2081,12 @@ class FPDF(object):
         prev_size = len(self.buffer)
         yield
         LOGGER.debug('- %s.size: %s', label, _sizeof_fmt(len(self.buffer) - prev_size))
+
+
+def _hashpath(fn):
+    h = md5()
+    h.update(fn.encode("UTF-8"))
+    return h.hexdigest()
 
 
 def _sizeof_fmt(num, suffix='B'):

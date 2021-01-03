@@ -3,15 +3,14 @@
 import re
 import struct
 import zlib
-from six import BytesIO
+from io import BytesIO
+from urllib.request import urlopen
 
 from PIL import Image
 
 from .errors import fpdf_error
 from .php import substr
-from .py3k import PY3K, b
-from .util import freadint as read_integer
-from six.moves.urllib.request import urlopen
+from .util import b, freadint as read_integer
 
 
 def load_resource(filename, reason = "image"):

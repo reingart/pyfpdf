@@ -2,15 +2,12 @@
 
 "PDF Template Helper for FPDF.py"
 
-from __future__ import with_statement
-
 __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2010 Mariano Reingart"
 __license__ = "LGPL 3.0"
 
-import sys,os,csv
+import sys, os, csv
 from .fpdf import FPDF
-from .py3k import PY3K, basestring, unicode
 
 def rgb(col):
     return (col // 65536), (col // 256 % 256), (col% 256)
@@ -43,11 +40,7 @@ class Template:
             'align','text','priority', 'multiline')
         self.elements = []
         self.pg_no = 0
-        if not PY3K:
-            f = open(infile, 'rb')
-        else:
-            f = open(infile)
-        with f:
+        with open(infile) as f:
             for row in csv.reader(f, delimiter=delimiter):
                 kargs = {}
                 for i,v in enumerate(row):
@@ -69,9 +62,7 @@ class Template:
         
     def __setitem__(self, name, value):
         if name.lower() in self.keys:
-            if not PY3K and isinstance(value, unicode):
-                value = value.encode("latin1","ignore")
-            elif value is None:
+            if value is None:
                 value = ""
             else:
                 value = str(value)
@@ -110,10 +101,7 @@ class Template:
         if element['underline']: style += "U"
         pdf.set_font(element['font'],style,element['size'])
         align = {'L':'L','R':'R','I':'L','D':'R','C':'C','':''}.get(element['align']) # D/I in spanish
-        if isinstance(text, unicode) and not PY3K:
-            text = text.encode("latin1","ignore")
-        else:
-            text = str(text)
+        text = str(text)
         return pdf.multi_cell(w=element['x2']-element['x1'],
                              h=element['y2']-element['y1'],
                              txt=text,align=align,split_only=True)

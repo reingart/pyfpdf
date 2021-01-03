@@ -5,8 +5,8 @@ import sys
 import os
 import pickle
 import fpdf
+from io import BytesIO
 
-from six import BytesIO
 from PIL import Image 
 
 # python -m unittest test.image.image_info.ImageParsingTest

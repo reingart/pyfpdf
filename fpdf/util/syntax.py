@@ -76,8 +76,6 @@ remains something to be looked into.
 import sys
 from collections import OrderedDict as o_d
 
-py3k = sys.version_info >= (3, 0)
-
 def create_name(name):
     if name.startswith('/'):
         name = name[1:]
@@ -115,7 +113,7 @@ def iobj_ref(n):
     return str(n) + ' 0 R'
 
 def create_stream(stream):
-    if py3k and type(stream) in (bytearray, bytes):
+    if type(stream) in (bytearray, bytes):
         stream = str(stream, 'latin-1')
     return '\n'.join(['stream', stream, 'endstream'])
 

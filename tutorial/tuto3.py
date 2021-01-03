@@ -1,5 +1,3 @@
-from __future__ import with_statement
-
 from fpdf import FPDF
 
 title = '20000 Leagues Under the Seas'
