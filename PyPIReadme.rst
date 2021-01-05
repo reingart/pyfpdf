@@ -55,8 +55,7 @@ Documentation:
 For further information, see:
 
 -  `documentation home <https://alexanderankin.github.io/pyfpdf/>`__
--  `epydocs documentation home <https://alexanderankin.github.io/pyfpdf/epydocs>`__
--  `pdoc documentation home <https://alexanderankin.github.io/pyfpdf/pdocs/fpdf>`__
+-  `pdoc documentation home <https://alexanderankin.github.io/pyfpdf/fpdf>`__
 -  `documentation home <https://alexanderankin.github.io/pyfpdf/>`__
 -  `fpdf library <https://github.com/reingart/pyfpdf>`__ (fpdf v1.x.x).
 -  `fpdf library docs <https://pyfpdf.readthedocs.org/en/latest/>`__ (fpdf v1.x.x).

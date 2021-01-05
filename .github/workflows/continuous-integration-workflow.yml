@@ -30,7 +30,13 @@ jobs:
         run: |
           mkdir -p public/
           tox -e docs
+          for dir in pdocs/ mkdocs_doc/ mkdocs_doc/FAQ/ mkdocs_doc/Tutorial/ mkdocs_doc/ReferenceManual/; do
+            mkdir public/$dir
+            cp docs/redirect.html public/$dir/index.html
+          done
       - name: Deploy 🚀
+        # GitHub Pages deployment should not be done for all Python versions,
+        # otherwise commits will conflict on the gh-pages branch:
         if: github.ref == 'refs/heads/master' && matrix.python-version == '3.9'
         uses: peaceiris/actions-gh-pages@v3
         with:
