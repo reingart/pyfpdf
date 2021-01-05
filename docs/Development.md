@@ -33,8 +33,7 @@ More on pyfpdf:
 ## Repository structure ##
 
   * `[attic]` - folder with old code and useful, but unsupported things
-  * `[docs]` - viewable documenation folder
-  * `[mkdocs_docs]` - viewable documenation source folder
+  * `[docs]` - documentation folder
   * `[fpdf]` - library source
   * `[scripts]` - manipulate this repository
   * `[test]` - tests
@@ -63,7 +62,7 @@ and explore that folder in general.
 
 To build docs, cd into repository and `tox -e docs`.
 
-This Standalone documentation is in the `mkdocs_docs` subfolder in 
+This Standalone documentation is in the `docs` subfolder in 
 [Markdown](https://daringfireball.net/projects/markdown/) format. Building
 instructions are contained in the configuration file `mkdocs.yml` and also in
 the docs script in the `tox.ini` file.
