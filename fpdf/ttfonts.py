@@ -16,7 +16,7 @@
 #
 # ******************************************************************************
 
-from struct import pack, unpack
+from struct import error as StructError, pack, unpack
 import re
 import warnings
 from .util import b, substr
@@ -690,10 +690,8 @@ class TTFontFile:
                 else:
                     try:
                         cmapstr += pack(">h", cm)
-                    except:  # pylint: disable=bare-except
-                        # FIXME: An exception class should be specified in the except clause,
-                        # but at this point in my refactoring I do not know how to easily figure which one.
-                        warnings.warn("cmap value too big/small: %s" % cm)
+                    except StructError:
+                        # cmap value too big to fit in a short (h), putting it in an unsigned short (H):
                         cmapstr += pack(">H", -cm)
             self.add("cmap", cmapstr)
 
@@ -720,7 +718,7 @@ class TTFontFile:
                     glyphPos = self.glyphPos[originalGlyphIdx]
                     glyphLen = self.glyphPos[originalGlyphIdx + 1] - glyphPos
                 except IndexError:
-                    warnings.warn("missing glyph %s" % (originalGlyphIdx))
+                    warnings.warn("Missing glyph %s in %s" % (originalGlyphIdx, file))
                     glyphLen = 0
 
                 if glyfLength < self.maxStrLenRead:
@@ -756,7 +754,9 @@ class TTFontFile:
                             )
                         except KeyError:
                             data = 0
-                            warnings.warn("missing glyph data %s" % glyphIdx)
+                            warnings.warn(
+                                "Missing glyph data %s in %s" % (glyphIdx, file)
+                            )
                         pos_in_glyph += 4
                         if flags & GF_WORDS:
                             pos_in_glyph += 4
@@ -829,7 +829,6 @@ class TTFontFile:
             glyphPos = self.glyphPos[originalGlyphIdx]
             glyphLen = self.glyphPos[originalGlyphIdx + 1] - glyphPos
         except IndexError:
-            warnings.warn("missing glyph %s" % (originalGlyphIdx))
             return
 
         if not glyphLen:

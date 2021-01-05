@@ -16,7 +16,7 @@ def sprintf(fmt, *args):
 
 def UTF8ToUTF16BE(instr, setbom=True):
     "Converts UTF-8 strings to UTF16-BE."
-    outstr = "".encode()
+    outstr = b""
     if setbom:
         outstr += "\xFE\xFF".encode("latin1")
     if not isinstance(instr, str):
@@ -32,6 +32,7 @@ def UTF8StringToArray(instr):
 def enclose_in_parens(s):
     "Format a text string"
     if s:
+        assert isinstance(s, str)
         return "(" + escape_parens(s) + ")"
     return ""
 

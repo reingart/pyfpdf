@@ -805,7 +805,7 @@ class FPDF:
         "Output a string"
         txt = self.normalize_text(txt)
         if self.unifontsubset:
-            txt2 = UTF8ToUTF16BE(escape_parens(txt), False)
+            txt2 = UTF8ToUTF16BE(escape_parens(txt), False).decode("latin-1")
             for uni in UTF8StringToArray(txt):
                 self.current_font["subset"].append(uni)
         else:
@@ -980,7 +980,7 @@ class FPDF:
             if self.ws and self.unifontsubset:
                 for uni in UTF8StringToArray(txt):
                     self.current_font["subset"].append(uni)
-                space = escape_parens(UTF8ToUTF16BE(" ", False))
+                space = escape_parens(UTF8ToUTF16BE(" ", False).decode("latin-1"))
 
                 s += sprintf(
                     "BT 0 Tw %.2F %.2F Td [",
@@ -992,7 +992,9 @@ class FPDF:
                 numt = len(t)
                 for i in range(numt):
                     tx = t[i]
-                    tx = enclose_in_parens(escape_parens(UTF8ToUTF16BE(tx, False)))
+                    tx = enclose_in_parens(
+                        escape_parens(UTF8ToUTF16BE(tx, False).decode("latin-1"))
+                    )
                     s += sprintf("%s ", tx)
                     if (i + 1) < numt:
                         adj = -(self.ws * self.k) * 1000 / self.font_size_pt
@@ -1001,7 +1003,7 @@ class FPDF:
                 s += " ET"
             else:
                 if self.unifontsubset:
-                    txt2 = escape_parens(UTF8ToUTF16BE(txt, False))
+                    txt2 = escape_parens(UTF8ToUTF16BE(txt, False).decode("latin-1"))
                     for uni in UTF8StringToArray(txt):
                         self.current_font["subset"].append(uni)
                 else:
@@ -1028,7 +1030,6 @@ class FPDF:
                     self.font_size,
                     link,
                 )
-
         if s:
             self._out(s)
         self.lasth = h
@@ -1444,7 +1445,7 @@ class FPDF:
             # Now repeat for no pages in non-subset fonts
             for n in range(1, nb + 1):
                 self.pages[n]["content"].replace(
-                    self.str_alias_nb_pages.encode(), str(nb).encode()
+                    self.str_alias_nb_pages.encode("latin-1"), str(nb).encode("latin-1")
                 )
         if self.def_orientation == "P":
             dw_pt = self.dw_pt
@@ -1838,7 +1839,7 @@ class FPDF:
                     if e.errno != errno.EACCES:
                         raise  # Not a permission error.
 
-            if cid > 255 and (cid not in subset):
+            if cid > 255 and (cid not in subset or cid >= len(font["cw"])):
                 continue
             width = font["cw"][cid]
             if width == 0:
@@ -2180,17 +2181,14 @@ class FPDF:
 
     def _out(self, s):
         # Add a line to the document
-        if isinstance(s, bytes):
-            # manage binary data as latin1 until PEP461-like function is
-            # implemented
-            s = s.decode("latin1")
-        elif not isinstance(s, str):
-            s = str(s)
+        if not isinstance(s, bytes):
+            if not isinstance(s, str):
+                s = str(s)
+            s = s.encode("latin1")
         if self.state == 2:
-            # self.pages[self.page]["content"] += (s + "\n")
-            self.pages[self.page]["content"] += s.encode("latin1") + b"\n"
+            self.pages[self.page]["content"] += s + b"\n"
         else:
-            self.buffer += s.encode("latin1") + b"\n"
+            self.buffer += s + b"\n"
 
     @check_page
     def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):

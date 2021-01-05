@@ -47,11 +47,12 @@ class MyTTFontFile(TTFontFile):
 
 
 class CharmapTest(unittest.TestCase):
-    @unittest.skip("Need debug: produces PDF with no visible text")
     def test_first_999_chars(self):
         for fontpath, known_output_hash in (
-            ("DejaVuSans.ttf", "f2f5784207ad1f26d230bdf40af9d3e0"),
-            # ("Roboto-Regular.ttf", "?"),
+            ("DejaVuSans.ttf", "22069d93f0f6cef7f5da8f828c9f067c"),
+            ("DroidSansFallback.ttf", "ef03734fa0c3ed09d9260ec1ed3c5dce"),
+            ("Roboto-Regular.ttf", "5c5f18aaf8afac13261b277b1c9bd9cf"),
+            ("cmss12.ttf", "7cc4db652e8ad297be9413926b832707"),
         ):
             with self.subTest(fontpath=fontpath):
                 fontname = os.path.splitext(fontpath)[0]
