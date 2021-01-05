@@ -39,12 +39,10 @@ class InsertPNGSuiteFilesTest(unittest.TestCase):
 
         for image in images:
             if os.path.basename(image) in not_supported:
-                self.assertRaises(
-                    Exception, pdf.image, x=0, y=0, w=0, h=0, type="", link=None
-                )
+                self.assertRaises(Exception, pdf.image, x=0, y=0, w=0, h=0, link=None)
             else:
                 pdf.add_page()
-                pdf.image(image, x=0, y=0, w=0, h=0, type="", link=None)
+                pdf.image(image, x=0, y=0, w=0, h=0, link=None)
 
         set_doc_date_0(pdf)
         outfile = relative_path_to("insert_images_png_test_files.pdf")

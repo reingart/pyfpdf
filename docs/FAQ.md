@@ -38,7 +38,7 @@ columns, chapters, etc.; see the [Tutorial](Tutorial.md))
 [Templates](Templates.md) for fill-in-the-blank documents)
 
   * PDF text extractor, converter, splitter or similar. Look at
-[pyPdf](https://pypi.python.org/pypi/pyPdf).
+[fpdf2](https://pypi.python.org/pypi/fpdf2).
 
 ## How does this library compare to ...? ##
 

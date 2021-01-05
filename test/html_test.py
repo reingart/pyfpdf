@@ -4,13 +4,16 @@ import unittest
 from fpdf.html import px2mm
 from test.utilities import calculate_hash_of_file, set_doc_date_0
 
+# python -m unittest test.html_test.HTMLTest
+# python -m unittest test.html_test.HTMLAllFeaturesTest
+
 
 class MyFPDF(fpdf.FPDF, fpdf.HTMLMixin):
     pass
 
 
 class HTMLTest(unittest.TestCase):
-    """This test executes some possible inputs to FPDF#HTMLMixin."""
+    "This test executes some possible inputs to FPDF#HTMLMixin."
 
     def test_html_images(self):
         pdf = MyFPDF()
@@ -40,17 +43,13 @@ class HTMLTest(unittest.TestCase):
         )
         pdf.output("test/test.pdf", "F")
 
-        # comment to see view output after test
         known_good_hash = "663ecbb2c23d55d4589629039d394911"
         self.assertEqual(calculate_hash_of_file("test/test.pdf"), known_good_hash)
-        os.unlink("test/test.pdf")
+        os.unlink("test/test.pdf")  # comment to see view output after test
 
 
 class HTMLAllFeaturesTest(unittest.TestCase):
-    """Try to reach all branches in single document
-
-    python -m unittest test.html_test.HTMLAllFeaturesTest
-    """
+    "Try to reach all branches in single document"
 
     def test_html_features(self):
         pdf = MyFPDF()
@@ -66,7 +65,6 @@ class HTMLAllFeaturesTest(unittest.TestCase):
         pdf.write_html("<p>i am a paragraph <br />in two parts.</p>")
         pdf.write_html('<font color="#00ff00"><p>hello in green</p></font>')
         pdf.write_html('<font size="7"><p>hello small</p></font>')
-        pdf.write_html('<font face="missing"><p>hello missing</p></font>')
         pdf.write_html('<font face="helvetica"><p>hello helvetica</p></font>')
         pdf.write_html('<font face="times"><p>hello times</p></font>')
         pdf.write_html("<h1>h1</h1>")

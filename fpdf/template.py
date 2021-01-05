@@ -6,7 +6,7 @@ __author__ = "Mariano Reingart <reingart@gmail.com>"
 __copyright__ = "Copyright (C) 2010 Mariano Reingart"
 __license__ = "LGPL 3.0"
 
-import sys, os, csv
+import csv, warnings
 from .fpdf import FPDF
 
 
@@ -15,6 +15,8 @@ def rgb(col):
 
 
 class Template:
+    # Disabling this check due to the "format" parameter below:
+    # pylint: disable=redefined-builtin
     def __init__(
         self,
         infile=None,
@@ -27,6 +29,11 @@ class Template:
         creator="",
         keywords="",
     ):
+        if infile:
+            warnings.warn(
+                '"infile" is unused and will soon be deprecated',
+                PendingDeprecationWarning,
+            )
         if elements:
             self.load_elements(elements)
         self.handlers = {
@@ -80,13 +87,7 @@ class Template:
                 for i, v in enumerate(row):
                     if not v.startswith("'") and decimal_sep != ".":
                         v = v.replace(decimal_sep, ".")
-                    else:
-                        v = v
-                    if v == "":
-                        v = None
-                    else:
-                        v = eval(v.strip())
-                    kargs[keys[i]] = v
+                    kargs[keys[i]] = v.strip()
                 self.elements.append(kargs)
         self.keys = [v["name"].lower() for v in self.elements]
 
@@ -117,15 +118,13 @@ class Template:
             if key in self.texts:
                 # text for this page:
                 return self.texts[self.pg_no][key]
-            else:
-                # find first element for default text:
-                elements = [
-                    element
-                    for element in self.elements
-                    if element["name"].lower() == key
-                ]
-                if elements:
-                    return elements[0]["text"]
+            # find first element for default text:
+            elements = [
+                element for element in self.elements if element["name"].lower() == key
+            ]
+            if elements:
+                return elements[0]["text"]
+        return None
 
     def split_multicell(self, text, element_name):
         "Divide (\n) a string using a given element width"
@@ -174,13 +173,14 @@ class Template:
                         self.handlers[handler_name](pdf, **element)
                 else:
                     self.handlers[handler_name](pdf, **element)
-
         if dest:
             return pdf.output(outfile, dest)
+        return None
 
+    @staticmethod
     def text(
-        self,
         pdf,
+        *_,
         x1=0,
         y1=0,
         x2=0,
@@ -195,8 +195,7 @@ class Template:
         foreground=0,
         backgroud=65535,
         multiline=None,
-        *args,
-        **kwargs
+        **__
     ):
         if text:
             if pdf.text_color != rgb(foreground):
@@ -241,7 +240,8 @@ class Template:
 
             # pdf.Text(x=x1,y=y1,txt=text)
 
-    def line(self, pdf, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, *args, **kwargs):
+    @staticmethod
+    def line(pdf, *_, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, **__):
         if pdf.draw_color != rgb(foreground):
             # print "SetDrawColor", hex(foreground)
             pdf.set_draw_color(*rgb(foreground))
@@ -249,18 +249,9 @@ class Template:
         pdf.set_line_width(size)
         pdf.line(x1, y1, x2, y2)
 
+    @staticmethod
     def rect(
-        self,
-        pdf,
-        x1=0,
-        y1=0,
-        x2=0,
-        y2=0,
-        size=0,
-        foreground=0,
-        backgroud=65535,
-        *args,
-        **kwargs
+        pdf, *_, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, backgroud=65535, **__
     ):
         if pdf.draw_color != rgb(foreground):
             pdf.set_draw_color(*rgb(foreground))
@@ -269,13 +260,15 @@ class Template:
         pdf.set_line_width(size)
         pdf.rect(x1, y1, x2 - x1, y2 - y1)
 
-    def image(self, pdf, x1=0, y1=0, x2=0, y2=0, text="", *args, **kwargs):
+    @staticmethod
+    def image(pdf, *_, x1=0, y1=0, x2=0, y2=0, text="", **__):
         if text:
-            pdf.image(text, x1, y1, w=x2 - x1, h=y2 - y1, type="", link="")
+            pdf.image(text, x1, y1, w=x2 - x1, h=y2 - y1, link="")
 
+    @staticmethod
     def barcode(
-        self,
         pdf,
+        *_,
         x1=0,
         y1=0,
         x2=0,
@@ -284,9 +277,9 @@ class Template:
         font="arial",
         size=1,
         foreground=0,
-        *args,
-        **kwargs
+        **__
     ):
+        # pylint: disable=unused-argument
         if pdf.draw_color != rgb(foreground):
             pdf.set_draw_color(*rgb(foreground))
         font = font.lower().strip()
@@ -294,9 +287,10 @@ class Template:
             pdf.interleaved2of5(text, x1, y1, w=size, h=y2 - y1)
 
     # Added by Derek Schwalenberg Schwalenberg1013@gmail.com to allow (url) links in templates (using write method) 2014-02-22
+    @staticmethod
     def write(
-        self,
         pdf,
+        *_,
         x1=0,
         y1=0,
         x2=0,
@@ -310,9 +304,9 @@ class Template:
         align="",
         link="http://example.com",
         foreground=0,
-        *args,
-        **kwargs
+        **__
     ):
+        # pylint: disable=unused-argument
         if pdf.text_color != rgb(foreground):
             pdf.set_text_color(*rgb(foreground))
         font = font.strip().lower()

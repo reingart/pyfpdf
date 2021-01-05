@@ -1,5 +1,3 @@
-"""insert_images.py"""
-
 import unittest
 import sys
 import os
@@ -15,6 +13,8 @@ import fpdf
 import test
 from test.utilities import relative_path_to, set_doc_date_0, calculate_hash_of_file
 
+# python -m unittest test.image.image_types.insert_images.InsertImagesTest
+
 
 class InsertImagesTest(unittest.TestCase):
     def test_insert_jpg(self):
@@ -25,12 +25,12 @@ class InsertImagesTest(unittest.TestCase):
         pdf.image(imagename, x=15, y=15, h=140)
 
         set_doc_date_0(pdf)
-        test = relative_path_to("insert_images_jpg_test.pdf")
-        pdf.output(test, "F")
+        output_file = relative_path_to("insert_images_jpg_test.pdf")
+        pdf.output(output_file, "F")
 
-        test_hash = calculate_hash_of_file(test)
+        test_hash = calculate_hash_of_file(output_file)
         self.assertEqual(test_hash, "98e21803d01d686504238cb17a636c32")
-        os.unlink(test)
+        os.unlink(output_file)
 
     def test_insert_png(self):
         pdf = fpdf.FPDF()

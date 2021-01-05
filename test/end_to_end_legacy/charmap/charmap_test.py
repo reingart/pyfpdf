@@ -6,13 +6,12 @@ verifies the result against a known good result.
 
 This test will complain that some of the values in this font file are out of
 the range of the C 'short' data type (2 bytes, 0 - 65535):
-  fpdf/ttfonts.py:671: UserWarning: cmap value too big/small: 
+  fpdf/ttfonts.py:671: UserWarning: cmap value too big/small:
 and this seems to be okay.
 """
-import unittest
-import sys
 import os
-import warnings
+import sys
+import unittest
 
 sys.path.insert(
     0,
@@ -24,6 +23,8 @@ sys.path.insert(
 import fpdf
 from fpdf.ttfonts import TTFontFile
 from test.utilities import relative_path_to, calculate_hash_of_file, set_doc_date_0
+
+# python -m unittest test.end_to_end_legacy.charmap.charmap_test.CharmapTest
 
 
 class MyTTFontFile(TTFontFile):
@@ -46,34 +47,33 @@ class MyTTFontFile(TTFontFile):
 
 
 class CharmapTest(unittest.TestCase):
-    @unittest.skip('Need debug, raise a "Not a TrueType font" error')
     def test_first_999_chars(self):
         for fontpath, known_output_hash in (
-            ("DejaVuSans.ttf", "f2f5784207ad1f26d230bdf40af9d3e0"),
-            ("Roboto-Regular.ttf", "TODO"),
+            ("DejaVuSans.ttf", "22069d93f0f6cef7f5da8f828c9f067c"),
+            ("DroidSansFallback.ttf", "ef03734fa0c3ed09d9260ec1ed3c5dce"),
+            ("Roboto-Regular.ttf", "5c5f18aaf8afac13261b277b1c9bd9cf"),
+            ("cmss12.ttf", "7cc4db652e8ad297be9413926b832707"),
         ):
-            with self.subTest():
+            with self.subTest(fontpath=fontpath):
+                fontname = os.path.splitext(fontpath)[0]
+                fontpath = relative_path_to(fontpath)
+
                 pdf = fpdf.FPDF()
                 pdf.add_page()
-                pdf.add_font("font", "", fontpath, uni=True)
-                pdf.set_font("font", "", 10)
+                pdf.add_font(fontname, "", fontpath, uni=True)
+                pdf.set_font(fontname, "", 10)
 
                 ttf = MyTTFontFile()
                 ttf.getMetrics(fontpath)
 
-                # the next bit throws four insignificant warnings
-                warnings.filterwarnings("ignore")
-
+                # Create a PDF with the first 999 charters defined in the font:
                 for counter, character in enumerate(ttf.saveChar, 0):
-                    # print (counter, character)
-                    pdf.write(8, u"%03d) %06x - %c" % (counter, character, character))
+                    pdf.write(8, u"%03d) %03x - %c" % (counter, character, character))
                     pdf.ln()
-
                     if counter >= 999:
                         break
 
                 testing_output = relative_path_to("charmap_test_output.pdf")
-
                 set_doc_date_0(pdf)
                 pdf.output(testing_output)
 

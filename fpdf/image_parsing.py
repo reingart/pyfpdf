@@ -1,15 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import re
 import zlib
 from io import BytesIO
 from urllib.request import urlopen
 
 from PIL import Image
 
-from .errors import fpdf_error
-from .php import substr
-from .util import b
+from .errors import FPDFException
 
 
 def load_resource(filename, reason="image"):
@@ -25,8 +22,7 @@ def load_resource(filename, reason="image"):
             with open(filename, "rb") as fl:
                 f = BytesIO(fl.read())
         return f
-    else:
-        fpdf_error('Unknown resource loading reason "%s"' % reason)
+    raise FPDFException('Unknown resource loading reason "%s"' % reason)
 
 
 def get_img_info(bytesio):

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 # ****************************************************************************
 # * Software: FPDF for python                                                *
 # * Date:     2010-09-10                                                     *
-# * Last update: 2020-10-25                                                  *
+# * Last update: 2020-01-05                                                  *
 # * License:  LGPL v3.0                                                      *
 # *                                                                          *
 # * Original Author (PHP):  Olivier PLATHEY 2004-12-31                       *
@@ -14,8 +14,8 @@
 # ****************************************************************************
 """fpdf module (in fpdf package housing FPDF class)
 
-This module contains FPDF class inspiring this library. The version number is
-updated here (above and below in variable).
+This module contains FPDF class inspiring this library.
+The version number is updated here (above and below in variable).
 """
 
 from contextlib import contextmanager
@@ -29,22 +29,21 @@ import os
 import pickle
 import re
 import sys
+import warnings
 import zlib
 from hashlib import md5
-from io import BytesIO
-from urllib.request import urlopen
 
-from PIL import Image
-
-from .errors import fpdf_error, FPDFException, FPDFPageFormatException
+from .errors import FPDFException, FPDFPageFormatException
 from .fonts import fpdf_charwidths
 from .image_parsing import get_img_info, load_resource as image_parsing_load_resource
-from .php import substr, sprintf, UTF8ToUTF16BE, UTF8StringToArray  # print_r
 from .ttfonts import TTFontFile
 from .util import (
-    b,
-    textstring as enclose_in_parens,
-    escape as escape_parens,
+    substr,
+    sprintf,
+    UTF8ToUTF16BE,
+    UTF8StringToArray,
+    enclose_in_parens,
+    escape_parens,
 )
 from .util.syntax import (
     create_name as pdf_name,
@@ -72,6 +71,8 @@ PAGE_FORMATS = {
 }
 
 
+# Disabling this check due to the "format" parameter below:
+# pylint: disable=redefined-builtin
 def get_page_format(format, k=None):
     """Return page width and height size in points.
 
@@ -96,8 +97,7 @@ def get_page_format(format, k=None):
         format = format.lower()
         if format in PAGE_FORMATS:
             return PAGE_FORMATS[format]
-        else:
-            raise FPDFPageFormatException(format, unknown=True)
+        raise FPDFPageFormatException(format, unknown=True)
 
     if k is None:
         raise FPDFPageFormatException(format, one=True)
@@ -121,7 +121,19 @@ def load_cache(filename):
         return None
 
 
-class FPDF(object):
+def check_page(fn):
+    "Decorator to protect drawing methods"
+
+    @wraps(fn)
+    def wrapper(self, *args, **kwargs):
+        if not self.page and not kwargs.get("split_only"):
+            raise FPDFException("No page open, you need to call add_page() first")
+        return fn(self, *args, **kwargs)
+
+    return wrapper
+
+
+class FPDF:
     "PDF Generation class"
 
     def __init__(self, orientation="P", unit="mm", format="A4"):
@@ -182,7 +194,7 @@ class FPDF(object):
         elif unit == "in":
             self.k = 72.0
         else:
-            fpdf_error("Incorrect unit: " + unit)
+            raise FPDFException("Incorrect unit: " + unit)
 
         # Page format
         self.dw_pt, self.dh_pt = get_page_format(format, self.k)
@@ -198,7 +210,7 @@ class FPDF(object):
             self.w_pt = self.dh_pt
             self.h_pt = self.dw_pt
         else:
-            fpdf_error("Incorrect orientation: " + orientation)
+            raise FPDFException("Incorrect orientation: " + orientation)
         self.cur_orientation = self.def_orientation
         self.w = self.w_pt / self.k
         self.h = self.h_pt / self.k
@@ -211,20 +223,8 @@ class FPDF(object):
         self.line_width = 0.567 / self.k  # line width (0.2 mm)
         self.set_auto_page_break(1, 2 * margin)  # Automatic page break
         self.set_display_mode("fullwidth")  # Full width display mode
-        self.set_compression(True)  # Enable compression
+        self.compress = True  # Enable compression by default
         self.pdf_version = "1.3"  # Set default PDF version No.
-
-    def check_page(fn):
-        "Decorator to protect drawing methods"
-
-        @wraps(fn)
-        def wrapper(self, *args, **kwargs):
-            if not self.page and not kwargs.get("split_only"):
-                fpdf_error("No page open, you need to call add_page() first")
-            else:
-                return fn(self, *args, **kwargs)
-
-        return wrapper
 
     def set_margins(self, left, top, right=-1):
         "Set left, top and right margins"
@@ -265,12 +265,12 @@ class FPDF(object):
         elif not isinstance(zoom, str):
             self.zoom_mode = zoom
         else:
-            fpdf_error("Incorrect zoom display mode: " + zoom)
+            raise FPDFException("Incorrect zoom display mode: " + zoom)
 
         if layout in ["single", "continuous", "two", "default"]:
             self.layout_mode = layout
         else:
-            fpdf_error("Incorrect layout display mode: " + layout)
+            raise FPDFException("Incorrect layout display mode: " + layout)
 
     def set_compression(self, compress):
         "Set page compression"
@@ -305,7 +305,7 @@ class FPDF(object):
         if opt == "core_fonts_encoding":
             self.core_fonts_encoding = value
         else:
-            fpdf_error('Unknown document option "%s"' % str(opt))
+            raise FPDFException('Unknown document option "%s"' % str(opt))
 
     def alias_nb_pages(self, alias="{nb}"):
         "Define an alias for total number of pages"
@@ -372,7 +372,7 @@ class FPDF(object):
         self.text_color = tc
         self.color_flag = cf
 
-        """ BEGIN Page header """
+        # BEGIN Page header
         self.header()
 
         if self.line_width != lw:  # Restore line width
@@ -393,15 +393,13 @@ class FPDF(object):
 
         if stretching != 100:  # Restore stretching
             self.set_stretching(stretching)
-        """ END Page header """
+        # END Page header
 
     def header(self):
         "Header to be implemented in your own inherited class"
-        pass
 
     def footer(self):
         "Footer to be implemented in your own inherited class"
-        pass
 
     def page_no(self):
         "Get current page number"
@@ -593,7 +591,6 @@ class FPDF(object):
         if fontkey in self.fonts:
             return
         if uni:
-            global SYSTEM_TTFONTS, FPDF_CACHE_MODE, FPDF_CACHE_DIR
             if os.path.exists(fname):
                 ttffilename = fname
             elif FPDF_FONT_DIR and os.path.exists(os.path.join(FPDF_FONT_DIR, fname)):
@@ -602,7 +599,6 @@ class FPDF(object):
                 ttffilename = os.path.join(SYSTEM_TTFONTS, fname)
             else:
                 raise RuntimeError("TTF Font file not found: %s" % fname)
-            name = ""  # noqa: F841
             if FPDF_CACHE_MODE == 0:
                 unifilename = os.path.splitext(ttffilename)[0] + ".pkl"
             elif FPDF_CACHE_MODE == 2:
@@ -651,7 +647,7 @@ class FPDF(object):
                         with open(unifilename, "wb") as fh:
                             pickle.dump(font_dict, fh)
                     except IOError as e:
-                        if not e.errno == errno.EACCES:
+                        if e.errno != errno.EACCES:
                             raise  # Not a permission error.
                 del ttf
 
@@ -714,7 +710,7 @@ class FPDF(object):
             family = self.font_family
         if family == "arial":
             family = "helvetica"
-        elif family == "symbol" or family == "zapfdingbats":
+        elif family in ("symbol", "zapfdingbats"):
             style = ""
         style = style.upper()
         if "U" in style:
@@ -738,28 +734,17 @@ class FPDF(object):
         # Test if used for the first time
         fontkey = family + style
         if fontkey not in self.fonts:
-            # Check if one of standard fonts
-            if fontkey in self.core_fonts:
-                if fontkey not in fpdf_charwidths:
-                    # Load metric file
-                    name = os.path.join(FPDF_FONT_DIR, family)
-                    if family == "times" or family == "helvetica":
-                        name += style.lower()
-                    with open(name + ".font") as file:
-                        exec(compile(file.read(), name + ".font", "exec"))
-                    if fontkey not in fpdf_charwidths:
-                        fpdf_error("Could not include font metric file for" + fontkey)
-                i = len(self.fonts) + 1
-                self.fonts[fontkey] = {
-                    "i": i,
-                    "type": "core",
-                    "name": self.core_fonts[fontkey],
-                    "up": -100,
-                    "ut": 50,
-                    "cw": fpdf_charwidths[fontkey],
-                }
-            else:
-                fpdf_error("Undefined font: " + family + " " + style)
+            if fontkey not in self.core_fonts or fontkey not in fpdf_charwidths:
+                raise FPDFException("Undefined font: " + fontkey)
+            i = len(self.fonts) + 1
+            self.fonts[fontkey] = {
+                "i": i,
+                "type": "core",
+                "name": self.core_fonts[fontkey],
+                "up": -100,
+                "ut": 50,
+                "cw": fpdf_charwidths[fontkey],
+            }
 
         # Select it
         self.font_family = family
@@ -820,7 +805,7 @@ class FPDF(object):
         "Output a string"
         txt = self.normalize_text(txt)
         if self.unifontsubset:
-            txt2 = UTF8ToUTF16BE(escape_parens(txt), False)
+            txt2 = UTF8ToUTF16BE(escape_parens(txt), False).decode("latin-1")
             for uni in UTF8StringToArray(txt):
                 self.current_font["subset"].append(uni)
         else:
@@ -995,7 +980,7 @@ class FPDF(object):
             if self.ws and self.unifontsubset:
                 for uni in UTF8StringToArray(txt):
                     self.current_font["subset"].append(uni)
-                space = escape_parens(UTF8ToUTF16BE(" ", False))
+                space = escape_parens(UTF8ToUTF16BE(" ", False).decode("latin-1"))
 
                 s += sprintf(
                     "BT 0 Tw %.2F %.2F Td [",
@@ -1007,7 +992,9 @@ class FPDF(object):
                 numt = len(t)
                 for i in range(numt):
                     tx = t[i]
-                    tx = enclose_in_parens(escape_parens(UTF8ToUTF16BE(tx, False)))
+                    tx = enclose_in_parens(
+                        escape_parens(UTF8ToUTF16BE(tx, False).decode("latin-1"))
+                    )
                     s += sprintf("%s ", tx)
                     if (i + 1) < numt:
                         adj = -(self.ws * self.k) * 1000 / self.font_size_pt
@@ -1016,7 +1003,7 @@ class FPDF(object):
                 s += " ET"
             else:
                 if self.unifontsubset:
-                    txt2 = escape_parens(UTF8ToUTF16BE(txt, False))
+                    txt2 = escape_parens(UTF8ToUTF16BE(txt, False).decode("latin-1"))
                     for uni in UTF8StringToArray(txt):
                         self.current_font["subset"].append(uni)
                 else:
@@ -1043,7 +1030,6 @@ class FPDF(object):
                     self.font_size,
                     link,
                 )
-
         if s:
             self._out(s)
         self.lasth = h
@@ -1061,8 +1047,8 @@ class FPDF(object):
     def multi_cell(
         self, w, h, txt="", border=0, align="J", fill=0, split_only=False, link="", ln=0
     ):
-        """Output text with automatic or explicit line breaks, returns
-        boolean if page break triggered in output mode
+        """Output text with automatic or explicit line breaks,
+        returns boolean if page break triggered in output mode
         """
         page_break_triggered = False
         if split_only:
@@ -1322,6 +1308,11 @@ class FPDF(object):
     ):
         # def image(self, name, x = None, y = None, w = 0, h = 0, type = '', link = ''):  # noqa: E501
         "Put an image on the page"
+        if type:
+            warnings.warn(
+                '"type" is unused and will soon be deprecated',
+                PendingDeprecationWarning,
+            )
         if name not in self.images:
             info = get_img_info(image_parsing_load_resource(name))
             info["i"] = len(self.images) + 1
@@ -1413,29 +1404,27 @@ class FPDF(object):
         By default the PDF is written to sys.stdout. If a name is given, the
         PDF is written to a new file. If dest='S' is given, the PDF data is
         returned as a byte string."""
-
+        # pylint: disable=inconsistent-return-statements
         # Finish document if necessary
         if self.state < 3:
             self.close()
         dest = dest.upper()
         if dest == "":
-            if name == "":
-                dest = "I"
-            else:
-                dest = "F"
+            dest = "I" if name == "" else "F"
         if dest in ("I", "D"):
             # Python < 3 writes byte data transparently without "buffer"
             stdout = getattr(sys.stdout, "buffer", sys.stdout)
             stdout.write(self.buffer)
-        elif dest == "F":
+            return None
+        if dest == "F":
             # Save to local file
             with open(name, "wb") as f:
                 f.write(self.buffer)
+            return None
         # Return as a byte string
-        elif dest == "S":
+        if dest == "S":
             return self.buffer
-        else:
-            fpdf_error("Incorrect output destination: " + dest)
+        raise FPDFException("Incorrect output destination: " + dest)
 
     def normalize_text(self, txt):
         "Check that text input is in the correct format/encoding"
@@ -1456,7 +1445,7 @@ class FPDF(object):
             # Now repeat for no pages in non-subset fonts
             for n in range(1, nb + 1):
                 self.pages[n]["content"].replace(
-                    self.str_alias_nb_pages.encode(), str(nb).encode()
+                    self.str_alias_nb_pages.encode("latin-1"), str(nb).encode("latin-1")
                 )
         if self.def_orientation == "P":
             dw_pt = self.dw_pt
@@ -1604,8 +1593,8 @@ class FPDF(object):
         # Font objects
         flist = [(x[1]["i"], x[0], x[1]) for x in self.fonts.items()]
         flist.sort()
-        for idx, k, font in flist:
-            self.fonts[k]["n"] = self.n + 1
+        for _, font_name, font in flist:
+            self.fonts[font_name]["n"] = self.n + 1
             my_type = font["type"]
             name = font["name"]
             # Standard font
@@ -1614,13 +1603,13 @@ class FPDF(object):
                 self._out("<</Type /Font")
                 self._out("/BaseFont /" + name)
                 self._out("/Subtype /Type1")
-                if name != "Symbol" and name != "ZapfDingbats":
+                if name not in ("Symbol", "ZapfDingbats"):
                     self._out("/Encoding /WinAnsiEncoding")
                 self._out(">>")
                 self._out("endobj")
 
             # Additional Type1 or TrueType font
-            elif my_type == "Type1" or my_type == "TrueType":
+            elif my_type in ("Type1", "TrueType"):
                 self._newobj()
                 self._out("<</Type /Font")
                 self._out("/BaseFont /" + name)
@@ -1673,7 +1662,7 @@ class FPDF(object):
                 self._out(s + ">>")
                 self._out("endobj")
             elif my_type == "TTF":
-                self.fonts[k]["n"] = self.n + 1
+                self.fonts[font_name]["n"] = self.n + 1
                 ttf = TTFontFile()
                 fontname = "MPDFAA" + "+" + font["name"]
                 subset = font["subset"]
@@ -1803,7 +1792,8 @@ class FPDF(object):
                 mtd = "_put" + my_type.lower()
                 # check if self has a attr mtd which is callable (method)
                 if not callable(getattr(self, mtd, None)):
-                    fpdf_error("Unsupported font type: " + my_type)
+                    raise FPDFException("Unsupported font type: " + my_type)
+                # pylint: disable=no-member
                 self.mtd(font)
 
     def _putTTfontwidths(self, font, maxUni):
@@ -1846,10 +1836,10 @@ class FPDF(object):
                         font_dict["range"] = range_
                         pickle.dump(font_dict, fh)
                 except IOError as e:
-                    if not e.errno == errno.EACCES:
+                    if e.errno != errno.EACCES:
                         raise  # Not a permission error.
 
-            if cid > 255 and (cid not in subset):
+            if cid > 255 and (cid not in subset or cid >= len(font["cw"])):
                 continue
             width = font["cw"][cid]
             if width == 0:
@@ -1913,11 +1903,9 @@ class FPDF(object):
         self._out("/W [%s]" % "".join(w))
 
     def _putimages(self):
-        filter = "" if not self.compress else "/Filter /FlateDecode "  # noqa: F841
-
         i = [(x[1]["i"], x[1]) for x in self.images.items()]
         i.sort()
-        for idx, info in i:
+        for _, info in i:
             self._putimage(info)
             del info["data"]
             if "smask" in info:
@@ -1986,11 +1974,11 @@ class FPDF(object):
             # Palette
             if info["cs"] == "Indexed":
                 self._newobj()
-                filter = self.compress and "/Filter /FlateDecode " or ""
-                if self.compress:
-                    pal = zlib.compress(info["pal"])
-                else:
-                    pal = info["pal"]
+                filter, pal = (
+                    ("/Filter /FlateDecode ", zlib.compress(info["pal"]))
+                    if self.compress
+                    else ("", info["pal"])
+                )
                 self._out("<<" + filter + "/Length " + str(len(pal)) + ">>")
                 self._out(pdf_stream(pal))
                 self._out("endobj")
@@ -2029,26 +2017,28 @@ class FPDF(object):
             self._out("endobj")
 
     def _putinfo(self):
-        ts = lambda a: enclose_in_parens(a)
-
         info_d = o_dict()
         # info_d[pdf_name('producer')] = ts('PyFPDF ' + FPDF_VERSION + \
         #     ' https://github.com/alexanderankin/pyfpdf')
-        info_d[pdf_name("title")] = ts(getattr(self, "title", None))
-        info_d[pdf_name("subject")] = ts(getattr(self, "subject", None))
-        info_d[pdf_name("author")] = ts(getattr(self, "author", None))
-        info_d[pdf_name("keywords")] = ts(getattr(self, "keywords", None))
-        info_d[pdf_name("creator")] = ts(getattr(self, "creator", None))
+        info_d[pdf_name("title")] = enclose_in_parens(getattr(self, "title", None))
+        info_d[pdf_name("subject")] = enclose_in_parens(getattr(self, "subject", None))
+        info_d[pdf_name("author")] = enclose_in_parens(getattr(self, "author", None))
+        info_d[pdf_name("keywords")] = enclose_in_parens(
+            getattr(self, "keywords", None)
+        )
+        info_d[pdf_name("creator")] = enclose_in_parens(getattr(self, "creator", None))
 
         if hasattr(self, "creation_date"):
             try:
                 creation_date = self.creation_date
                 date_string = creation_date.strftime("%Y%m%d%H%M%S")
-            except Exception as e:
-                fpdf_error("Could not format date: " + str(creation_date))
+            except Exception as error:
+                raise FPDFException(
+                    "Could not format date: " + str(creation_date)
+                ) from error
         else:
             date_string = datetime.now().strftime("%Y%m%d%H%M%S")
-        info_d[pdf_name("CreationDate")] = ts("D:" + date_string)
+        info_d[pdf_name("CreationDate")] = enclose_in_parens("D:" + date_string)
 
         self._out(pdf_d(info_d, open_dict="", close_dict="", has_empty_fields=True))
 
@@ -2148,7 +2138,6 @@ class FPDF(object):
                 # Set to default format
                 fw_pt = self.dw_pt
                 fh_pt = self.dh_pt
-            fh = fh_pt / self.k
             # Page orientation
             if not orientation:
                 orientation = self.def_orientation
@@ -2192,17 +2181,14 @@ class FPDF(object):
 
     def _out(self, s):
         # Add a line to the document
-        if isinstance(s, bytes):
-            # manage binary data as latin1 until PEP461-like function is
-            # implemented
-            s = s.decode("latin1")
-        elif not isinstance(s, str):
-            s = str(s)
+        if not isinstance(s, bytes):
+            if not isinstance(s, str):
+                s = str(s)
+            s = s.encode("latin1")
         if self.state == 2:
-            # self.pages[self.page]["content"] += (s + "\n")
-            self.pages[self.page]["content"] += s.encode("latin1") + b"\n"
+            self.pages[self.page]["content"] += s + b"\n"
         else:
-            self.buffer += s.encode("latin1") + b"\n"
+            self.buffer += s + b"\n"
 
     @check_page
     def interleaved2of5(self, txt, x, y, w=1.0, h=10.0):
@@ -2240,7 +2226,7 @@ class FPDF(object):
             char_bar = code[i]
             char_space = code[i + 1]
             # check whether it is a valid digit
-            if not char_bar in bar_char.keys():
+            if char_bar not in bar_char.keys():
                 raise RuntimeError('Char "%s" invalid for I25: ' % char_bar)
             if not char_space in bar_char.keys():
                 raise RuntimeError('Char "%s" invalid for I25: ' % char_space)
@@ -2250,12 +2236,9 @@ class FPDF(object):
             for s in range(0, len(bar_char[char_bar])):
                 seq += bar_char[char_bar][s] + bar_char[char_space][s]
 
-            for bar in range(0, len(seq)):
+            for bar, char in enumerate(seq):
                 # set line_width depending on value
-                if seq[bar] == "n":
-                    line_width = narrow
-                else:
-                    line_width = wide
+                line_width = narrow if char == "n" else wide
 
                 # draw every second value, the other is represented by space
                 if bar % 2 == 0:

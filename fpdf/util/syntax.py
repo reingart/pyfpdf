@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 """PDF Syntax Helpers
 
@@ -73,8 +73,7 @@ As of this writing, I am not sure how length is actually calculated, so this
 remains something to be looked into.
 
 """
-import sys
-from collections import OrderedDict as o_d
+from collections import OrderedDict
 
 
 def create_name(name):
@@ -84,7 +83,7 @@ def create_name(name):
 
 
 def clear_empty_fields(d):
-    return o_d((k, v) for k, v in d.items() if v)
+    return OrderedDict((k, v) for k, v in d.items() if v)
 
 
 def create_dictionary_string(

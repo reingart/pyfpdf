@@ -1,13 +1,11 @@
 [![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
 [![build status](https://github.com/alexanderankin/pyfpdf/workflows/build/badge.svg)](https://github.com/alexanderankin/pyfpdf/actions?query=workflow%3Abuild)
-[![Pypi latest version](https://img.shields.io/pypi/v/pyfpdf.svg)](https://pypi.python.org/pypi/pyfpdf)
+[![Pypi latest version](https://img.shields.io/pypi/v/fpdf2.svg)](https://pypi.python.org/pypi/fpdf2)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![codecov](https://codecov.io/gh/alexanderankin/pyfpdf/branch/master/graph/badge.svg)](https://codecov.io/gh/alexanderankin/pyfpdf)
 
 pyfpdf: FPDF for Python
 =======================
-
-[![codecov](https://codecov.io/gh/alexanderankin/pyfpdf/branch/master/graph/badge.svg)](https://codecov.io/gh/alexanderankin/pyfpdf)
-[![PyPI version](https://badge.fury.io/py/fpdf2.svg)](https://badge.fury.io/py/fpdf2)
 
 Minimalist PDF creation library for Python
 

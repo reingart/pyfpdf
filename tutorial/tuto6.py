@@ -9,7 +9,6 @@ class PDF(FPDF):
         # Initialization
         self.b = 0
         self.i = 0
-        self.u = 0
         self.href = ""
         self.page_links = {}
 

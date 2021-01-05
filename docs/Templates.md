@@ -67,7 +67,6 @@ f["company_logo"] = "pyfpdf/tutorial/logo.png"
 
 #and now we render the page
 f.render("./template.pdf")
-
 ```
 
 See template.py or [Web2Py] (Web2Py.md) for a complete example.
@@ -91,57 +90,9 @@ Then you can use the file like this:
 def test_template():
     f = Template(format="A4",
                  title="Sample Invoice")
-    f.parse_csv("mycsvfile.csv")
+    f.parse_csv("mycsvfile.csv", delimiter=";")
     f.add_page()
     f["company_name"] = "Sample Company"
-    response.headers['Content-Type'] = 'application/pdf'
     return f.render("./template.pdf", dest='S')
 
 ```
-
-# Designer - GUI tool to design templates #
-
-This library includes a program `designer.py` to visually modify the designs of a template (e.g., an invoice, report, etc.).
-
-Input files are CSV spreadsheets describing the design (see above).
-Once opened, the designer displays the template with the elements as how they will be located.
-
-The toolbar has buttons for:
-
-  * Open, save and print (preview) template
-  * Add, delete and duplicate
-  * Find items by name or by text
-  * Find and replace (modify selected elements, mainly move x/y)
-
-Over an element, double left click opens a dialog to edit its text and right click opens a dialog with the properties window.
-You can select multiple items by holding down shift and left clicking them.
-To move the elements you can use the arrow keys or drag the elements.
-
-To run it, just go to the directory and run:
-```
-python designer.py
-```
-(you need to have wx installed).
-
-If you are having problems making it work, change the imports on designer.py file to the following (it should be fixed in the next version):
-
-```python
-import os, sys
-import wx
-import wx.lib
-import wx.lib.ogl as ogl
-try:
-    from wx.lib.wordwrap import wordwrap
-except ImportError:
-    wordwrap = lambda text, width, dc: text
-
-try:
-    from template import Template
-except ImportError:
-    # we are frozen?
-    from fpdf.template import Template
-```
-
-As an example, the following screenshot shows the Visual Designer, with the sample invoice.csv file open and 'logo' element selected, editing its properties:
-
-![http://pyfpdf.googlecode.com/files/designer.png](http://pyfpdf.googlecode.com/files/designer.png)

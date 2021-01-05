@@ -22,7 +22,7 @@ class LoadResourceTest(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             fpdf.image_parsing.load_resource(None, reason="not image")
 
-        msg = 'FPDF error: Unknown resource loading reason "not image"'
+        msg = 'Unknown resource loading reason "not image"'
         self.assertEqual(msg, str(e.exception))
 
     def test_load_text_file(self):

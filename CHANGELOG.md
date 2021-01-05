@@ -6,7 +6,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## [2.1.0]
+## [2.2.0] - not released yet
+### Added
+- new unit tests, a code formatter (`black`) and a linter (`pylint`) to improve code quality
+### Changed
+- the documentation URL is now simply https://alexanderankin.github.io/pyfpdf/
+### Removed
+- dropped support for external font definitions in `.font` Python files, that relied on a call to `exec`
+### Deprecated
+- the `type` parameter of `FPDF.image` method
+- the `infile` parameter of `Template` constructor
+
+## [2.1.0] - 2020-12-07
 ### Added
 * [Introducing a rect_clip() function](https://github.com/reingart/pyfpdf/pull/158)
 * [Adding support for Contents alt text on Links](https://github.com/reingart/pyfpdf/pull/163)

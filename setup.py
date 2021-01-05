@@ -45,7 +45,6 @@ if __name__ == "__main__":
             "Programming Language :: Python :: 3.8",
             "Programming Language :: Python :: 3.9",
             "Operating System :: OS Independent",
-            "Topic :: Software Development :: Libraries :: PHP Classes",
             "Topic :: Software Development :: Libraries :: Python Modules",
             "Topic :: Multimedia :: Graphics",
         ],
