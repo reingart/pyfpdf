@@ -1,4 +1,4 @@
-# -*- coding: latin-1 -*-
+# -*- coding: utf-8 -*-
 
 "HTML Renderer for FPDF.py"
 
@@ -11,8 +11,6 @@ __license__ = "LGPL 3.0"
 import html
 from html.parser import HTMLParser
 
-from .fpdf import FPDF
-
 DEBUG = False
 
 
@@ -21,11 +19,12 @@ def px2mm(px):
 
 
 def hex2dec(color="#000000"):
-    if color:
-        r = int(color[1:3], 16)
-        g = int(color[3:5], 16)
-        b = int(color[5:7], 16)
-        return r, g, b
+    if not color:
+        return None
+    r = int(color[1:3], 16)
+    g = int(color[3:5], 16)
+    b = int(color[5:7], 16)
+    return r, g, b
 
 
 class HTML2FPDF(HTMLParser):
@@ -65,16 +64,16 @@ class HTML2FPDF(HTMLParser):
             if self.table["width"][-1] == "%":
                 total *= int(self.table["width"][:-1]) / 100.0
             return int(length[:-1]) * total / 101.0
-        else:
-            return int(length) / 6.0
+        return int(length) / 6.0
 
-    def handle_data(self, txt):
+    def handle_data(self, data):
         if self.td is not None:  # drawing a table?
             if "width" not in self.td and "colspan" not in self.td:
+                # pylint: disable=raise-missing-from
                 try:
                     l = [self.table_col_width[self.table_col_index]]
-                except IndexError as e:
-                    raise RuntimeError(
+                except IndexError:
+                    raise ValueError(
                         "Table column/cell width not specified, unable to continue"
                     )
             elif "colspan" in self.td:
@@ -97,9 +96,9 @@ class HTML2FPDF(HTMLParser):
             bgcolor = hex2dec(self.td.get("bgcolor", self.tr.get("bgcolor", "")))
             # parsing table header/footer (drawn later):
             if self.thead is not None:
-                self.theader.append(((w, h, txt, border, 0, align), bgcolor))
+                self.theader.append(((w, h, data, border, 0, align), bgcolor))
             if self.tfoot is not None:
-                self.tfooter.append(((w, h, txt, border, 0, align), bgcolor))
+                self.tfooter.append(((w, h, data, border, 0, align), bgcolor))
             # check if reached end of page, add table footer and header:
             height = h + (self.tfooter and self.tfooter[0][0][1] or 0)
             if self.pdf.y + height > self.pdf.page_break_trigger and not self.th:
@@ -111,23 +110,23 @@ class HTML2FPDF(HTMLParser):
                     self.output_table_header()
                 self.box_shadow(w, h, bgcolor)
                 if DEBUG:
-                    print("td cell", self.pdf.x, w, txt, "*")
-                self.pdf.cell(w, h, txt, border, 0, align)
+                    print("td cell", self.pdf.x, w, data, "*")
+                self.pdf.cell(w, h, data, border, 0, align)
         elif self.table is not None:
             # ignore anything else than td inside a table
             pass
         elif self.align:
             if DEBUG:
-                print("cell", txt, "*")
-            self.pdf.cell(0, self.h, txt, 0, 1, self.align[0].upper(), self.href)
+                print("cell", data, "*")
+            self.pdf.cell(0, self.h, data, 0, 1, self.align[0].upper(), self.href)
         else:
-            txt = txt.replace("\n", " ")
+            data = data.replace("\n", " ")
             if self.href:
-                self.put_link(self.href, txt)
+                self.put_link(self.href, data)
             else:
                 if DEBUG:
-                    print("write", txt, "*")
-                self.pdf.write(self.h, txt)
+                    print("write", data, "*")
+                self.pdf.write(self.h, data)
 
     def box_shadow(self, w, h, bgcolor):
         if DEBUG:
@@ -141,7 +140,6 @@ class HTML2FPDF(HTMLParser):
     def output_table_header(self):
         if self.theader:
             b = self.style.get("b")
-            x = self.pdf.x
             self.pdf.set_x(self.table_offset)
             self.set_style("b", True)
             for cell, bgcolor in self.theader:
@@ -150,7 +148,7 @@ class HTML2FPDF(HTMLParser):
             self.set_style("b", b)
             self.pdf.ln(self.theader[0][0][1])
             self.pdf.set_x(self.table_offset)
-            # self.pdf.set_x(x)
+            # self.pdf.set_x(prev_x)
         self.theader_out = True
 
     def output_table_footer(self):
@@ -178,7 +176,7 @@ class HTML2FPDF(HTMLParser):
         attrs = dict(attrs)
         if DEBUG:
             print("STARTTAG", tag, attrs)
-        if tag == "b" or tag == "i" or tag == "u":
+        if tag in ("b", "i", "u"):
             self.set_style(tag, True)
         if tag == "a":
             self.href = attrs["href"]
@@ -232,7 +230,7 @@ class HTML2FPDF(HTMLParser):
                 try:
                     self.pdf.set_font(face)
                     self.font_face = face
-                except RuntimeError as e:
+                except RuntimeError:
                     pass  # font not found, ignore
             if "size" in attrs:
                 size = int(attrs.get("size"))
@@ -240,8 +238,8 @@ class HTML2FPDF(HTMLParser):
             self.set_font()
             self.set_text_color()
         if tag == "table":
-            self.table = dict([(k.lower(), v) for k, v in attrs.items()])
-            if not "width" in self.table:
+            self.table = {k.lower(): v for k, v in attrs.items()}
+            if "width" not in self.table:
                 self.table["width"] = "100%"
             if self.table["width"][-1] == "%":
                 w = self.pdf.w - self.pdf.r_margin - self.pdf.l_margin
@@ -256,13 +254,13 @@ class HTML2FPDF(HTMLParser):
             self.table_h = 0
             self.pdf.ln()
         if tag == "tr":
-            self.tr = dict([(k.lower(), v) for k, v in attrs.items()])
+            self.tr = {k.lower(): v for k, v in attrs.items()}
             self.table_col_index = 0
             self.pdf.set_x(self.table_offset)
         if tag == "td":
-            self.td = dict([(k.lower(), v) for k, v in attrs.items()])
+            self.td = {k.lower(): v for k, v in attrs.items()}
         if tag == "th":
-            self.td = dict([(k.lower(), v) for k, v in attrs.items()])
+            self.td = {k.lower(): v for k, v in attrs.items()}
             self.th = True
             if "width" in self.td:
                 self.table_col_width.append(self.td["width"])
@@ -283,7 +281,7 @@ class HTML2FPDF(HTMLParser):
                 self.pdf.image(self.image_map(attrs["src"]), x, y, w, h, link=self.href)
                 self.pdf.set_x(x + w)
                 self.pdf.set_y(y + h)
-        if tag == "b" or tag == "i" or tag == "u":
+        if tag in ("b", "i", "u"):
             self.set_style(tag, True)
         if tag == "center":
             self.align = "Center"
@@ -292,7 +290,7 @@ class HTML2FPDF(HTMLParser):
         # Closing tag
         if DEBUG:
             print("ENDTAG", tag)
-        if tag == "h1" or tag == "h2" or tag == "h3" or tag == "h4":
+        if tag in ("h1", "h2", "h3", "h4"):
             self.pdf.ln(self.h)
             self.set_font()
             self.set_text_color()
@@ -309,7 +307,7 @@ class HTML2FPDF(HTMLParser):
             tag = "b"
         if tag == "em":
             tag = "i"
-        if tag == "b" or tag == "i" or tag == "u":
+        if tag in ("b", "i", "u"):
             self.set_style(tag, False)
         if tag == "a":
             self.href = ""
@@ -340,7 +338,7 @@ class HTML2FPDF(HTMLParser):
             if self.tfoot is None:
                 self.pdf.ln(h)
             self.tr = None
-        if tag == "td" or tag == "th":
+        if tag in ("td", "th"):
             if self.th:
                 if DEBUG:
                     print("revert style")
@@ -375,7 +373,6 @@ class HTML2FPDF(HTMLParser):
     def set_style(self, tag=None, enable=False):
         # Modify style and select corresponding font
         if tag:
-            t = self.style.get(tag.lower())
             self.style[tag.lower()] = enable
         style = ""
         for s in ("b", "i", "u"):
@@ -399,8 +396,12 @@ class HTML2FPDF(HTMLParser):
         self.set_style("u", False)
         self.set_text_color()
 
+    # Subclasses of _markupbase.ParserBase must implement this:
+    def error(self, message):
+        raise RuntimeError(message)
 
-class HTMLMixin(object):
+
+class HTMLMixin:
     def write_html(self, text, image_map=None):
         "Parse HTML and convert it to PDF"
         h2p = HTML2FPDF(self, image_map)

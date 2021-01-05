@@ -17,7 +17,7 @@ class AddPageTest(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             pdf.text(1, 2, "ok")
 
-        msg = "FPDF error: No page open, you need to call add_page() first"
+        msg = "No page open, you need to call add_page() first"
         self.assertEqual(str(e.exception), msg)
 
 
@@ -43,7 +43,7 @@ class OrientationTest(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             fpdf.FPDF(orientation="hello")
 
-        msg = "FPDF error: Incorrect orientation: hello"
+        msg = "Incorrect orientation: hello"
         self.assertEqual(str(e.exception), msg)
 
 
@@ -52,10 +52,7 @@ class UnitTest(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             fpdf.FPDF(unit="smiles")
 
-        expected = "FPDF error"
-        contains = expected in str(e.exception)
-        self.assertTrue(contains)
-        self.assertEqual(str(e.exception), "FPDF error: Incorrect unit: smiles")
+        self.assertEqual(str(e.exception), "Incorrect unit: smiles")
 
         self.assertAlmostEqual(fpdf.FPDF(unit="pt").k, 1)
         self.assertAlmostEqual(fpdf.FPDF(unit="mm").k, 2.83464566929)
@@ -72,5 +69,5 @@ class DocOptionTest(unittest.TestCase):
         with self.assertRaises(Exception) as e:
             pdf.set_doc_option("not core_fonts_encoding", None)
 
-        msg = 'FPDF error: Unknown document option "not core_fonts_encoding"'
+        msg = 'Unknown document option "not core_fonts_encoding"'
         self.assertEqual(str(e.exception), msg)

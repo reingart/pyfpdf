@@ -33,7 +33,7 @@ class CreationDateTest(unittest.TestCase):
         doc = fpdf.FPDF()
         doc.set_creation_date("i am not a date")
         output = relative_path_to("output.pdf")
-        with self.assertRaises(RuntimeError):
+        with self.assertRaises(BaseException):
             doc.output(output)
 
     def test_setting_old_date(self):
