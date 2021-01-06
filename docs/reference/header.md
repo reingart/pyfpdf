@@ -1,7 +1,7 @@
 ## header ##
 
 ```python
-fdpf.header()
+fpdf.header()
 ```
 
 ### Description ###
