@@ -1,5 +1,3 @@
-"""metadata_test.py"""
-
 import unittest
 import sys
 import os
@@ -10,15 +8,14 @@ sys.path.insert(
 )
 
 import fpdf
-from test.utilities import relative_path_to, set_doc_date_0, calculate_hash_of_file
+from test.utilities import assert_pdf_equal
 
-# python -m unittest test.cell_multi_cell_refactor.multi_cell.MCRefactorTest
+# python -m unittest test.cell_multi_cell_refactor.multi_cell
 
 
 class MCRefactorTest(unittest.TestCase):
     def test_ln_positioning_and_page_breaking_for_multicell(self):
         doc = fpdf.FPDF(format="letter", unit="pt")
-        set_doc_date_0(doc)
         doc.add_page()
 
         my_text_size = 36
@@ -67,12 +64,13 @@ class MCRefactorTest(unittest.TestCase):
         doc.cell(w=72 * 2, h=line_height, border=1, ln=2, txt="Lorem ipsum")
         doc.cell(w=72 * 2, h=line_height, border=1, ln=2, txt="Lorem ipsum")
 
-        outfile = relative_path_to("output.pdf")
-        doc.output(outfile)
-        known_good_hash = "a3510b31ecf981b759e5ef9e7f8a47d4"
-        self.assertEqual(calculate_hash_of_file(outfile), known_good_hash)
-        os.unlink(outfile)
+        assert_pdf_equal(
+            self, doc, "test_ln_positioning_and_page_breaking_for_multicell.pdf"
+        )
 
+
+if __name__ == "__main__":
+    unittest.main()
 
 ## Code used to create test
 # doc = fpdf.FPDF(format = 'letter', unit = 'pt')
@@ -128,10 +126,6 @@ class MCRefactorTest(unittest.TestCase):
 # doc.multi_cell(w = 144, h = line_height, border = 1, txt = text[30:90],
 #                fill = 0, link = '', ln = 2)
 
-# doc.cell(w = 72 * 2, h = line_height, border = 1, ln = 2, txt = 'Lorem ipsum')
-# doc.cell(w = 72 * 2, h = line_height, border = 1, ln = 2, txt = 'Lorem ipsum')
 
-# outfile = relative_path_to('output.pdf')
-# doc.output(outfile)
-# print(calculate_hash_of_file(outfile))
-# os.unlink(outfile)
+if __name__ == "__main__":
+    unittest.main()

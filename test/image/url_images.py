@@ -1,5 +1,3 @@
-"""issue65_test.py"""
-
 import unittest
 import sys
 import os
@@ -12,28 +10,22 @@ sys.path.insert(
 )
 
 import fpdf
-import test
-from test.utilities import relative_path_to, set_doc_date_0, calculate_hash_of_file
+from test.utilities import assert_pdf_equal
+
+# python -m unittest test.image.url_images
 
 
 @unittest.skip("skip network tests by default")
-class Issue65Test(unittest.TestCase):
-    def test_issue65(self):
+class UrlImagesTest(unittest.TestCase):
+    def test_png_url(self):
         pdf = fpdf.FPDF()
         pdf.compress = False
         pdf.add_page()
-        png = "https://g.twimg.com/Twitter_logo_blue.png"
+        png = "https://upload.wikimedia.org/wikipedia/commons/7/70/Example.png"
         pdf.image(png, x=15, y=15, w=30, h=25)
+        assert_pdf_equal(self, pdf, "test_png_url.pdf")
 
-        set_doc_date_0(pdf)
-        test = relative_path_to("issue65_test.pdf")
-        pdf.output(test, "F")
-
-        known_good_hash = "ed3d7f6430a8868d3e9587170aa2f678"
-        self.assertEqual(known_good_hash, calculate_hash_of_file(test))
-        os.unlink(test)
-
-    def test_jpg(self):
+    def test_jpg_url(self):
         pdf = fpdf.FPDF()
         pdf.compress = False
         pdf.add_page()
@@ -42,25 +34,17 @@ class Issue65Test(unittest.TestCase):
             "JPEG_example_JPG_RIP_025.jpg"
         )
         pdf.image(jpg, x=15, y=15)
-
-        set_doc_date_0(pdf)
-        test = relative_path_to("issue65_test.pdf")
-        pdf.output(test, "F")
-
-        known_good_hash = "0486acfcd75597cc52ca2eb69e74c59c"
-        self.assertEqual(known_good_hash, calculate_hash_of_file(test))
-        os.unlink(test)
+        assert_pdf_equal(self, pdf, "test_jpg_url.pdf")
 
 
 if __name__ == "__main__":
     unittest.main()
-    # pass
 
 ## Code used to create test:
 # pdf = fpdf.FPDF()
 # pdf.compress = False
 # pdf.add_page()
-# png = "https://g.twimg.com/Twitter_logo_blue.png"
+# png = "https://upload.wikimedia.org/wikipedia/commons/7/70/Example.png"
 # pdf.image(png, x = 15, y = 15, w = 30, h = 25)
 
 # test = relative_path_to('output.pdf')
