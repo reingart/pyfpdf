@@ -124,10 +124,10 @@ Building instructions are contained in the configuration file `mkdocs.yml`
 and also in `.github/workflows/continuous-integration-workflow.yml`.
 
 Additional documentation is generated from inline comments, and is available
-in the project [home page](https://alexanderankin.github.io/pyfpdf/fpdf/).
+in the project [home page](https://pyfpdf.github.io/fpdf2/fpdf/).
 
 After being committed to the master branch, code documentation is automatically uploaded to
-[GitHub Pages](https://alexanderankin.github.io/pyfpdf/).
+[GitHub Pages](https://pyfpdf.github.io/fpdf2/).
 
 There is a useful one-page example Python module with docstrings illustrating how to document code:
 [pdoc3 example_pkg](https://github.com/pdoc3/pdoc/blob/master/pdoc/test/example_pkg/__init__.py).

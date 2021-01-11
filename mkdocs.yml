@@ -7,8 +7,8 @@
 # Alternatively, there is a script in the `scripts` folder for convenience.
 ### 
 site_name: PyFPDF
-site_url: https://alexanderankin.github.io/pyfpdf/
-repo_url: https://github.com/alexanderankin/pyfpdf
+site_url: https://pyfpdf.github.io/fpdf2/
+repo_url: https://github.com/PyFPDF/fpdf2
 site_description: Simple PDF generation for Python (FPDF PHP port) [FORK]
 docs_dir: docs
 site_dir: public/
@@ -21,7 +21,7 @@ nav:
 - 'Tutorial':     'Tutorial.md'
 - 'Tutorial Translations':
   - 'Tutorial (Spanish translation)': 'Tutorial-es.md'
-- 'API':          'https://alexanderankin.github.io/pyfpdf/fpdf/'
+- 'API':          'https://pyfpdf.github.io/fpdf2/fpdf/'
 - 'FAQ':          'FAQ.md'
 - 'Logging':      'Logging.md'
 - 'Development':  'Development.md'

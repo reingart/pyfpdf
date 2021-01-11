@@ -1,8 +1,8 @@
 [![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
-[![build status](https://github.com/alexanderankin/pyfpdf/workflows/build/badge.svg)](https://github.com/alexanderankin/pyfpdf/actions?query=branch%3Amaster)
+[![build status](https://github.com/PyFPDF/fpdf2/workflows/build/badge.svg)](https://github.com/PyFPDF/fpdf2/actions?query=branch%3Amaster)
 [![Pypi latest version](https://img.shields.io/pypi/v/fpdf2.svg)](https://pypi.python.org/pypi/fpdf2)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![codecov](https://codecov.io/gh/alexanderankin/pyfpdf/branch/master/graph/badge.svg)](https://codecov.io/gh/alexanderankin/pyfpdf)
+[![codecov](https://codecov.io/gh/PyFPDF/fpdf2/branch/master/graph/badge.svg)](https://codecov.io/gh/PyFPDF/fpdf2)
 
 fpdf2: FPDF for Python
 =======================
@@ -42,7 +42,7 @@ running, you will need Pillow (`pip install pillow`)
 sudo apt-get install libjpeg-dev libpython-dev zlib1g-dev # libpython3.3-dev #(if necessary)
 
 # Linux and Windows:
-git clone https://github.com/alexanderankin/pyfpdf.git
+git clone https://github.com/PyFPDF/fpdf2.git
 cd pyfpdf
 python setup.py install
 ```
@@ -60,19 +60,19 @@ Features:
  * Exceptions support, other minor fixes, improvements and PEP8 code cleanups
  * Unit tests with `qpdf`-based PDF diffing
 
-Release notes: [CHANGELOG.md](https://github.com/alexanderankin/pyfpdf/blob/master/CHANGELOG.md)
+Release notes: [CHANGELOG.md](https://github.com/PyFPDF/fpdf2/blob/master/CHANGELOG.md)
 
 Documentation:
 --------------
 
-[Documentation Home](https://alexanderankin.github.io/pyfpdf/).
+[Documentation Home](https://pyfpdf.github.io/fpdf2/).
 
 Also read the design-spec/tests, they're great.
 
 Developers:
 -----------
 
-Please check [the docs page dedicated to developpement](https://alexanderankin.github.io/pyfpdf/Development.html).
+Please check [the docs page dedicated to developpement](https://pyfpdf.github.io/fpdf2/Development.html).
 
 Lets try to improve the Code Coverage statistic so that we can safely
 transition to external font and image libraries, and more...

@@ -1,6 +1,6 @@
 # FPDF for Python #
 
-<a href='https://github.com/alexanderankin/pyfpdf'><img src='https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png' alt='Fork me on GitHub' border='0' align='right' /></a>
+<a href='https://github.com/PyFPDF/fpdf2'><img src='https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png' alt='Fork me on GitHub' border='0' align='right' /></a>
 
 `fpdf2` is a library for PDF document generation in Python, forked from the unmaintained [pyfpdf](https://github.com/reingart/pyfpdf), itself ported from the PHP [FPDF](http://www.fpdf.org/) library.
 
@@ -39,11 +39,11 @@ FPDF original features:
     * Become super user if necessary: `sudo su`
     * `pip install fpdf2`
   * From source:
-    * Clone the repository: `git clone --depth 1 --branch master https://github.com/alexanderankin/pyfpdf.git`
+    * Clone the repository: `git clone --depth 1 --branch master https://github.com/PyFPDF/fpdf2.git`
     * Optional: Check out the version you want, `git tag -n`
     * This will require Pillow and other dependencies to be satisfied, or it will download the sources of those and compile those. On ubuntu this requires the following header packages: `sudo apt-get install libjpeg-dev libpython-dev zlib1g-dev # libpython3.3-dev #(if necessary)`
     * Run `python setup.py install`
 
 ## Support ##
 
-For community support, please feel free to file an [issue](https://github.com/alexanderankin/pyfpdf/issues).
+For community support, please feel free to file an [issue](https://github.com/PyFPDF/fpdf2/issues).
