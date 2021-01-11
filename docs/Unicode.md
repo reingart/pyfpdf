@@ -149,7 +149,7 @@ it should work in restricted environments.
 ## Free Font Pack and Copyright Restrictions ##
 
 For your convenience, this library collected 96 TTF files in an optional 
-["Free Unicode TrueType Font Pack for FPDF"](http://pyfpdf.googlecode.com/files/fpdf_unicode_font_pack.zip), 
+["Free Unicode TrueType Font Pack for FPDF"](https://github.com/reingart/pyfpdf/releases/download/binary/fpdf_unicode_font_pack.zip),
 with useful fonts commonly distributed with GNU/Linux operating systems (see 
 above for a complete description). This pack is included in the Windows 
 installers, or can be downloaded separately (for any operating system).

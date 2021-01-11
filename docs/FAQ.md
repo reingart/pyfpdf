@@ -6,13 +6,12 @@ See [Project Home](index.md) for an overall introduction.
 
 ## What is FPDF? ##
 
-[FPDF](http://www.fpdf.org) (and PyFPDF) is a library with low-level
-primitives to easily generate PDF documents. This is similar to ReportLab's
-graphics canvas, but with some methods to output "fluid" cells ("flowables"
-that can span multiple rows, pages, tables, columns, etc).
+`fpdf2` is a library with low-level primitives to easily generate PDF documents.
+This is similar to ReportLab's graphics canvas, but with some methods to output "fluid" cells
+("flowables" that can span multiple rows, pages, tables, columns, etc).
 
-It has two methods ("hooks") that can be implemented in a subclass, headers
-and footers.
+It has two methods ("hooks") that can be implemented in a subclass, `headers`
+and `footers`.
 
 Originally developed in PHP several years ago (as a free alternative to
 proprietary C libraries), it has been ported to many programming languages,
@@ -61,11 +60,10 @@ Following is an example similar to the Reportlab one in the book of web2py. Note
 the simplified import and usage:
 (<http://www.web2py.com/book/default/chapter/09?search=pdf#ReportLab-and-PDF>)
 
-PyFPDF:
 ```python
 from fpdf import FPDF
 
-def get_me_a_pyfpdf():
+def get_me_a_pdf():
     title = "This The Doc Title"
     heading = "First Paragraph"
     text = 'bla ' * 10000
@@ -82,7 +80,7 @@ def get_me_a_pyfpdf():
     return pdf.output(dest='S')
 ```
 
-Reportlab:
+With Reportlab:
 ```python
 from reportlab.platypus import *
 from reportlab.lib.styles import getSampleStyleSheet
@@ -148,7 +146,7 @@ In contrast, _write_html_ support is not complete, so it must be considered in
 alpha state. Further enhancements using web2py helpers and an XML parser will 
 enable parsing more complex HTML files.
 
-## What is the license of this library (pyfpdf)? ##
+## What is the license of this library (fpdf2)? ##
 
 LGPL v3.0.
 

@@ -45,7 +45,7 @@ sudo apt-get install libjpeg-dev libpython-dev zlib1g-dev # libpython3.3-dev #(i
 
 # Linux and Windows:
 git clone https://github.com/PyFPDF/fpdf2.git
-cd pyfpdf
+cd fpdf2
 python setup.py install
 ```
 

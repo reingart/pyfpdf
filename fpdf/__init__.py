@@ -1,23 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""pyfpdf: FPDF for Python
-
-Simple PDF generation for Python. PyFPDF is a library for PDF document
-generation under Python, ported from PHP (see [FPDF][1]: "Free"-PDF, a
-well-known PDFlib-extension replacement with many examples, scripts
-and derivatives).
-
-Compared with other PDF libraries, PyFPDF is simple, small and versatile, with
-advanced capabilities, and is easy to learn, extend and maintain.
-
-  [1]: http://www.fpdf.org/
-
-For introductory material see
-[Read the Docs](http://pyfpdf.readthedocs.org/en/latest/), and for additional
-documentation see the `fpdf.fpdf` submodule.
-
-"""
-
 from .fpdf import (
     FPDF,
     FPDF_VERSION as _FPDF_VERSION,
@@ -30,13 +11,12 @@ from .html import HTMLMixin
 from .template import Template
 
 FPDF_VERSION = _FPDF_VERSION
-"""Current FPDF Version, also available via `__version__` (which is read by
-`setup.py`):
+"""Current FPDF Version, also available via `__version__` (which is read by `setup.py`):
 
 <pre>
 >>> import fpdf
 >>> fpdf.__version__
-'1.7.3'
+'2.2.0'
 </pre>
 """
 
@@ -51,14 +31,13 @@ FPDF_FONT_DIR = _FPDF_FONT_DIR
 """This is the location of where to look for fonts."""
 
 SYSTEM_TTFONTS = _SYSTEM_TTFONTS
-"""This is the directory searched for fonts when a font file path is not
-given.
+"""This is the directory searched for fonts when a font file path is not given.
 """
 
 __license__ = "LGPL 3.0"
-"""LGPL 3.0 license"""
+
 __version__ = FPDF_VERSION
-"""Version as reflected in `setup.py` and PyPI."""
+
 
 __all__ = [
     # metadata

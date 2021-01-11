@@ -6,7 +6,7 @@
 # 
 # Alternatively, there is a script in the `scripts` folder for convenience.
 ### 
-site_name: PyFPDF
+site_name: fpdf2
 site_url: https://pyfpdf.github.io/fpdf2/
 repo_url: https://github.com/PyFPDF/fpdf2
 site_description: Simple PDF generation for Python (FPDF PHP port) [FORK]

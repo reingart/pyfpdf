@@ -1,4 +1,4 @@
-# PyFPDF Reference Manual #
+# fpdf2 Reference Manual #
 
 [TOC]
 

@@ -6,13 +6,11 @@ HTMLMixin.write_html(text: str, image_map = None)
 
 ### Description ###
 
-PyFPDF supports basic HTML, mainly intended to write reports from web frameworks.
+`fpdf2` supports basic HTML, mainly intended to write reports from web frameworks.
 
 It understands a limited subset of the HTML language, and it doesn't support advanced features nor CSS (look below).
 
 HTMLMixin could be used along with FPDF class to implement this functionality (see the example).
-
-Sample: [html.pdf](http://pyfpdf.googlecode.com/files/html.pdf)
 
 ### Parameters ###
 
@@ -72,7 +70,7 @@ or on an image: click on the logo.<br>
 </table>
 """
 
-from pyfpdf import FPDF, HTMLMixin
+from fpdf import FPDF, HTMLMixin
 
 class MyFPDF(FPDF, HTMLMixin):
     pass

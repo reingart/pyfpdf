@@ -1,6 +1,6 @@
 Many thanks to the following people for their contributions to this project!
 
-On [fpdf2](https://github.com/alexanderankin/pyfpdf/graphs/contributors):
+On [fpdf2](https://github.com/pyfpdf/fpdf2/graphs/contributors):
 
 - David Ankin
 - Lucas Cimon

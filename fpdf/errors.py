@@ -1,25 +1,17 @@
-# -*- coding: utf-8 -*-
-
-"""FPDF Error classes"""
-
-# this module is unwriteable without tests
-
-
 class FPDFException(Exception):
     pass
 
 
 class FPDFPageFormatException(FPDFException):
-    # """Error is thrown when a bad page format is given"""
+    """Error is thrown when a bad page format is given"""
+
     def __init__(self, argument, unknown=False, one=False):
         super().__init__()
-
         if unknown and one:
             raise TypeError(
                 "FPDF Page Format Exception cannot be both for "
                 "unknown type and for wrong number of arguments"
             )
-
         self.argument = argument
         self.unknown = unknown
         self.one = one
