@@ -72,6 +72,7 @@ jobs:
           # No? Then performing a release on Pypi now:
           pip install --upgrade twine wheel
           python setup.py sdist bdist_wheel
+          twine check dist/*
           twine upload dist/*
         env:
           TWINE_USERNAME: __token__
