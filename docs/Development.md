@@ -6,14 +6,15 @@ This page has summary information about developing the PyPDF library.
 
 ## History ##
 
-This project, `fpdf2` is a [FORK] of the PyFPDF project, which can be found
+This project, `fpdf2` is a _fork_ of the `PyFPDF` project, which can be found
 [on GitHub at reingart/pyfpdf](https://github.com/reingart/pyfpdf).
-It is made in order to keep the library updated and fulfill the goals of its
-[Roadmap](https://github.com/reingart/pyfpdf/wiki/Roadmap) and a general overhaul of
-the codebase because there was technical debt keeping features from being
-created and bugs from being eradicated.
 
-More on PyFPDF:
+Its aim is to keep the library up to date, to fulfill the goals of its
+[original roadmap](https://github.com/reingart/pyfpdf/wiki/Roadmap) and provide
+a general overhaul of the codebase to address technical debt keeping features from being
+added and bugs to be eradicated.
+
+More on `PyFPDF`:
 
 > This project started as Python fork of the [FPDF](http://fpdf.org/) PHP library. 
 > Later, code for native reading TTF fonts was added. FPDF has not been updated since
@@ -26,6 +27,8 @@ More on PyFPDF:
 > [old repository](https://github.com/reingart/pyfpdf_googlecode),
 > [old issues](https://github.com/reingart/pyfpdf_googlecode/issues), and 
 > [old wiki](https://github.com/reingart/pyfpdf_googlecode/tree/wiki).
+
+[PyPI download stats](https://pypistats.org/packages/fpdf2)
 
 
 ## Repository structure ##

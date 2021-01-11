@@ -25,6 +25,7 @@ document.cell(w=0, txt="hello world")
 document.output("hello_world.pdf")
 ```
 
+It is a fork and the successor of `PyFPDF`.
 Compared with other PDF libraries, `fpdf2` is simple, small and versatile, with
 advanced capabilities, and is easy to learn, extend and maintain.
 
@@ -51,7 +52,7 @@ python setup.py install
 Features:
 ---------
 
- * Python 3.6+ support (2.7 not supported since version 2.1)
+ * Python 3.6+ support
  * Unicode (UTF-8) TrueType font subset embedding
  * Internal/External Links
  * PNG, GIF and JPG support (including transparency and alpha channel)
@@ -79,6 +80,8 @@ Developers:
 -----------
 
 Please check [the docs page dedicated to developpement](https://pyfpdf.github.io/fpdf2/Development.html).
+
+This library was only possible thanks to the dedication of the following people: [CONTRIBUTORS.md](CONTRIBUTORS.md).
 
 Lets try to improve the Code Coverage statistic so that we can safely
 transition to external font and image libraries, and more...
