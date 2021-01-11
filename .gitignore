@@ -6,7 +6,7 @@ coverage.xml
 
 htmlcov
 public
-examples/invoice.pdf
+tutorial/invoice.pdf
 
 *.py[cod]
 *.pkl

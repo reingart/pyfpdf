@@ -4,8 +4,8 @@
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![codecov](https://codecov.io/gh/PyFPDF/fpdf2/branch/master/graph/badge.svg)](https://codecov.io/gh/PyFPDF/fpdf2)
 
-fpdf2: FPDF for Python
-=======================
+fpdf2
+=====
 
 `fpdf2` is a minimalist PDF creation library for Python:
 
@@ -37,7 +37,7 @@ pip install fpdf2
 To get the latest development version you can download the source code
 running, you will need Pillow (`pip install pillow`)
 
-```
+```bash
 # Linux only:
 sudo apt-get install libjpeg-dev libpython-dev zlib1g-dev # libpython3.3-dev #(if necessary)
 
@@ -65,7 +65,10 @@ Release notes: [CHANGELOG.md](https://github.com/PyFPDF/fpdf2/blob/master/CHANGE
 Documentation:
 --------------
 
-[Documentation Home](https://pyfpdf.github.io/fpdf2/).
+- [Documentation Home](https://pyfpdf.github.io/fpdf2/)
+- [FAQ](https://pyfpdf.github.io/fpdf2/FAQ/index.html)
+- [Tutorial](https://pyfpdf.github.io/fpdf2/Tutorial.html) (Spanish translation available)
+- [Reference Manual](https://pyfpdf.github.io/fpdf2/ReferenceManual.html)
 
 Also read the design-spec/tests, they're great.
 

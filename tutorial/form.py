@@ -1,4 +1,7 @@
-# -*- coding: iso-8859-1 -*-
+"""
+An example of script that generates a one page invoice with barcode,
+with data coming from a CSV file.
+"""
 import os
 from fpdf import FPDF
 
