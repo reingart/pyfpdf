@@ -54,5 +54,5 @@ if __name__ == "__main__":
             "Topic :: Multimedia :: Graphics",
             "Topic :: Multimedia :: Graphics :: Presentation",
         ],
-        keywords=["pdf", "unicode", "png", "jpg", "ttf"],
+        keywords=["pdf", "unicode", "png", "jpg", "ttf", "barcode"],
     )

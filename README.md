@@ -85,3 +85,8 @@ This library was only possible thanks to the dedication of the following people:
 
 Lets try to improve the Code Coverage statistic so that we can safely
 transition to external font and image libraries, and more...
+
+Other libraries
+---------------
+
+For alternatives, check out [this detailed list of PDF-related Python libs by Patrick Maupin](https://github.com/pmaupin/pdfrw#other-libraries).
