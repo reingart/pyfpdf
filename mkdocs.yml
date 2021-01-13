@@ -9,12 +9,14 @@
 site_name: fpdf2
 site_url: https://pyfpdf.github.io/fpdf2/
 repo_url: https://github.com/PyFPDF/fpdf2
-site_description: Simple PDF generation for Python (FPDF PHP port) [FORK]
-docs_dir: docs
+site_description: fpdf2 - minimalist PDF creation library for Python
+docs_dir: docs/
 site_dir: public/
 use_directory_urls: false
 edit_uri: edit/master/docs
-theme: material
+theme:
+  name: material
+  custom_dir: docs/overrides/
 markdown_extensions: [toc, pymdownx.highlight, pymdownx.superfences]
 nav:
 - 'Project Home': 'index.md'
