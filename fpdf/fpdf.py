@@ -18,7 +18,7 @@ The version number is updated here (above and below in variable).
 
 from contextlib import contextmanager
 from datetime import datetime
-from collections import OrderedDict as o_dict
+from collections import OrderedDict
 from functools import wraps
 import errno
 import logging
@@ -36,12 +36,10 @@ from .fonts import fpdf_charwidths
 from .image_parsing import get_img_info, load_resource
 from .ttfonts import TTFontFile
 from .util import (
-    substr,
-    sprintf,
-    UTF8ToUTF16BE,
-    UTF8StringToArray,
     enclose_in_parens,
     escape_parens,
+    sprintf,
+    substr,
 )
 from .util.syntax import (
     create_name as pdf_name,
@@ -806,9 +804,9 @@ class FPDF:
             raise FPDFException("No font set, you need to call set_font() beforehand")
         txt = self.normalize_text(txt)
         if self.unifontsubset:
-            txt2 = UTF8ToUTF16BE(escape_parens(txt), False).decode("latin-1")
-            for uni in UTF8StringToArray(txt):
-                self.current_font["subset"].append(uni)
+            txt2 = escape_parens(txt).encode("UTF-16BE").decode("latin-1")
+            for char in txt:
+                self.current_font["subset"].append(ord(char))
         else:
             txt2 = escape_parens(txt)
         s = sprintf(
@@ -1002,9 +1000,9 @@ class FPDF:
             # If multibyte, Tw has no effect - do word spacing using an
             # adjustment before each space
             if self.ws and self.unifontsubset:
-                for uni in UTF8StringToArray(txt):
-                    self.current_font["subset"].append(uni)
-                space = escape_parens(UTF8ToUTF16BE(" ", False).decode("latin-1"))
+                for char in txt:
+                    self.current_font["subset"].append(ord(char))
+                space = escape_parens(" ".encode("UTF-16BE").decode("latin-1"))
 
                 s += sprintf(
                     "BT 0 Tw %.2F %.2F Td [",
@@ -1017,7 +1015,7 @@ class FPDF:
                 for i in range(numt):
                     tx = t[i]
                     tx = enclose_in_parens(
-                        escape_parens(UTF8ToUTF16BE(tx, False).decode("latin-1"))
+                        escape_parens(tx.encode("UTF-16BE").decode("latin-1"))
                     )
                     s += sprintf("%s ", tx)
                     if (i + 1) < numt:
@@ -1027,9 +1025,9 @@ class FPDF:
                 s += " ET"
             else:
                 if self.unifontsubset:
-                    txt2 = escape_parens(UTF8ToUTF16BE(txt, False).decode("latin-1"))
-                    for uni in UTF8StringToArray(txt):
-                        self.current_font["subset"].append(uni)
+                    txt2 = escape_parens(txt.encode("UTF-16BE").decode("latin-1"))
+                    for char in txt:
+                        self.current_font["subset"].append(ord(char))
                 else:
                     txt2 = escape_parens(txt)
 
@@ -1477,8 +1475,8 @@ class FPDF:
         nb = self.page
         if hasattr(self, "str_alias_nb_pages"):
             # Replace number of pages in fonts using subsets (unicode)
-            alias = UTF8ToUTF16BE(self.str_alias_nb_pages, False)
-            r = UTF8ToUTF16BE(str(nb), False)
+            alias = self.str_alias_nb_pages.encode("UTF-16BE")
+            r = str(nb).encode("UTF-16BE")
             for n in range(1, nb + 1):
                 self.pages[n]["content"] = self.pages[n]["content"].replace(alias, r)
             # Now repeat for no pages in non-subset fonts
@@ -2056,7 +2054,7 @@ class FPDF:
             self._out("endobj")
 
     def _putinfo(self):
-        info_d = o_dict()
+        info_d = OrderedDict()
         # info_d[pdf_name("producer")] = enclose_in_parens("fpdf{} https://github.com/PyFPDF/fpdf2".format(FPDF_VERSION))
         info_d[pdf_name("title")] = enclose_in_parens(getattr(self, "title", None))
         info_d[pdf_name("subject")] = enclose_in_parens(getattr(self, "subject", None))
@@ -2081,7 +2079,7 @@ class FPDF:
         self._out(pdf_d(info_d, open_dict="", close_dict="", has_empty_fields=True))
 
     def _putcatalog(self):
-        catalog_d = o_dict()
+        catalog_d = OrderedDict()
         catalog_d[pdf_name("type")] = pdf_name("catalog")
         catalog_d[pdf_name("pages")] = pdf_ref(1)
 
