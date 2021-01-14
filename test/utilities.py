@@ -46,12 +46,12 @@ def assert_pdf_equal(
     set_doc_date_0(pdf)
     expected_pdf_filepath = relative_path_to(rel_expected_pdf_filepath, depth=2)
     if generate:
-        pdf.output(expected_pdf_filepath, "F")
+        pdf.output(expected_pdf_filepath)
         return
     with tmp_file(
         prefix="pyfpdf-test-", delete=delete, suffix="-actual.pdf"
     ) as actual_pdf_file:
-        pdf.output(actual_pdf_file.name, "F")
+        pdf.output(actual_pdf_file.name)
         if not delete:
             print("Temporary file will not be deleted:", actual_pdf_file.name)
         if QPDF_AVAILABLE:  # Favor qpdf-based comparison, as it helps a lot debugging:
@@ -70,13 +70,15 @@ def assert_pdf_equal(
                     )
                 expected_lines = expected_qpdf_file.read().splitlines()
                 actual_lines = actual_qpdf_file.read().splitlines()
-                if actual_lines != expected_lines:
-                    # It is very important to reduce the size of both list of bytes here,
-                    # or the call to .assertEqual will take forever to finish.
-                    # Under the hood it calls .assertSequenceEqual, that itself calls difflib.ndiff,
-                    # that has cubic complexity from this comment by Tim Peters: https://bugs.python.org/issue6931#msg223459
-                    expected_lines = subst_streams_with_hashes(expected_lines)
-                    actual_lines = subst_streams_with_hashes(actual_lines)
+                if actual_lines == expected_lines:
+                    test.assertTrue(actual_lines == expected_lines)
+                    return
+                # It is very important to reduce the size of both list of bytes here,
+                # or the call to .assertEqual will take forever to finish.
+                # Under the hood it calls .assertSequenceEqual, that itself calls difflib.ndiff,
+                # that has cubic complexity from this comment by Tim Peters: https://bugs.python.org/issue6931#msg223459
+                expected_lines = subst_streams_with_hashes(expected_lines)
+                actual_lines = subst_streams_with_hashes(actual_lines)
                 test.assertEqual(actual_lines, expected_lines)
         else:  # Fallback to hash comparison
             actual_hash = calculate_hash_of_file(actual_pdf_file.name)
@@ -105,8 +107,9 @@ def subst_streams_with_hashes(in_lines):
             # First line of stream, we check if it is binary or not:
             try:
                 line.decode("latin-1")
-                # It's text! No need to compact stream
-                stream = None
+                if b"\0" not in line:
+                    # It's text! No need to compact stream
+                    stream = None
             except UnicodeDecodeError:
                 pass
         if stream is None:

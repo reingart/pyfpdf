@@ -15,9 +15,9 @@ class TemplateTest(unittest.TestCase):
                 "name": "company_logo",
                 "type": "I",
                 "x1": 20.0,
-                "y1": 17.0,
-                "x2": 78.0,
-                "y2": 30.0,
+                "y1": 20.0,
+                "x2": 70.0,
+                "y2": 70.0,
                 "font": None,
                 "size": 0.0,
                 "bold": 0,
@@ -32,11 +32,11 @@ class TemplateTest(unittest.TestCase):
             {
                 "name": "company_name",
                 "type": "T",
-                "x1": 17.0,
-                "y1": 32.5,
-                "x2": 115.0,
-                "y2": 37.5,
-                "font": "Arial",
+                "x1": 20.0,
+                "y1": 75.0,
+                "x2": 118.0,
+                "y2": 90.0,
+                "font": "helvetica",
                 "size": 12.0,
                 "bold": 1,
                 "italic": 0,
@@ -54,7 +54,7 @@ class TemplateTest(unittest.TestCase):
                 "y1": 15.0,
                 "x2": 185.0,
                 "y2": 260.0,
-                "font": "Arial",
+                "font": "helvetica",
                 "size": 0.0,
                 "bold": 0,
                 "italic": 0,
@@ -72,7 +72,7 @@ class TemplateTest(unittest.TestCase):
                 "y1": 15.0,
                 "x2": 105.0,
                 "y2": 25.0,
-                "font": "Arial",
+                "font": "helvetica",
                 "size": 0.0,
                 "bold": 1,
                 "italic": 0,
@@ -90,7 +90,7 @@ class TemplateTest(unittest.TestCase):
                 "y1": 25.0,
                 "x2": 100.0,
                 "y2": 57.0,
-                "font": "Arial",
+                "font": "helvetica",
                 "size": 0,
                 "bold": 0,
                 "italic": 0,
@@ -123,7 +123,7 @@ class TemplateTest(unittest.TestCase):
         tmpl = Template(format="A4", elements=elements, title="Sample Invoice")
         tmpl.add_page()
         tmpl["company_name"] = "Sample Company"
-        tmpl["company_logo"] = relative_path_to("../../tutorial/logo.png")
+        tmpl["company_logo"] = relative_path_to("../../docs/fpdf2-logo.png")
         assert_pdf_equal(self, tmpl, "test_nominal_hardcoded.pdf")
 
     def test_nominal_csv(self):
