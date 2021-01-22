@@ -1,9 +1,5 @@
-import unittest
-
 import fpdf
 from test.utilities import assert_pdf_equal
-
-# python -m unittest test.info_test
 
 
 def document_operations(doc):
@@ -12,10 +8,10 @@ def document_operations(doc):
     doc.cell(w=72, h=0, border=1, ln=2, txt="hello world", fill=False, link="")
 
 
-class CatalogDisplayModeTest(unittest.TestCase):
+class TestCatalogDisplayMode:
     """This test tests some possible inputs to FPDF#_put_info."""
 
-    def test_put_info_all(self):
+    def test_put_info_all(self, tmp_path):
         doc = fpdf.FPDF()
         document_operations(doc)
         doc.set_title("sample title")
@@ -23,9 +19,9 @@ class CatalogDisplayModeTest(unittest.TestCase):
         doc.set_author("sample author")
         doc.set_keywords("sample keywords")
         doc.set_creator("sample creator")
-        assert_pdf_equal(self, doc, "put_info_all.pdf")
+        assert_pdf_equal(doc, "put_info_all.pdf", tmp_path)
 
-    def test_put_info_some(self):
+    def test_put_info_some(self, tmp_path):
         doc = fpdf.FPDF()
         document_operations(doc)
         doc.set_title("sample title")
@@ -33,8 +29,4 @@ class CatalogDisplayModeTest(unittest.TestCase):
         # doc.set_author('sample author')
         doc.set_keywords("sample keywords")
         doc.set_creator("sample creator")
-        assert_pdf_equal(self, doc, "put_info_some.pdf")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert_pdf_equal(doc, "put_info_some.pdf", tmp_path)

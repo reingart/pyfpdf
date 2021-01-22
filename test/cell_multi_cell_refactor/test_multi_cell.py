@@ -1,13 +1,9 @@
-import unittest
-
 import fpdf
 from test.utilities import assert_pdf_equal
 
-# python -m unittest test.cell_multi_cell_refactor.multi_cell
 
-
-class MultiCellTest(unittest.TestCase):
-    def test_ln_positioning_and_page_breaking_for_multicell(self):
+class TestMultiCell:
+    def test_ln_positioning_and_page_breaking_for_multicell(self, tmp_path):
         doc = fpdf.FPDF(format="letter", unit="pt")
         doc.add_page()
 
@@ -50,12 +46,9 @@ class MultiCellTest(unittest.TestCase):
         doc.cell(w=72 * 2, h=line_height, border=1, ln=2, txt="Lorem ipsum")
 
         assert_pdf_equal(
-            self, doc, "cell_ln_positioning_and_page_breaking_for_multicell.pdf"
+            doc, "cell_ln_positioning_and_page_breaking_for_multicell.pdf", tmp_path
         )
 
-
-if __name__ == "__main__":
-    unittest.main()
 
 ## Code used to create test
 # doc = fpdf.FPDF(format = 'letter', unit = 'pt')
@@ -110,7 +103,3 @@ if __name__ == "__main__":
 
 # doc.multi_cell(w = 144, h = line_height, border = 1, txt = text[30:90],
 #                fill = 0, link = '', ln = 2)
-
-
-if __name__ == "__main__":
-    unittest.main()

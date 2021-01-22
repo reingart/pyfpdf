@@ -1,14 +1,14 @@
-import unittest
 import os
 
+import pytest
+
 import fpdf
+from fpdf.errors import FPDFException
 from test.utilities import assert_pdf_equal, relative_path_to
 
-# python -m unittest test.image.png_images.png_file_test
 
-
-class InsertPNGSuiteFilesTest(unittest.TestCase):
-    def test_insert_png_files(self):
+class TestInsertPNGSuiteFiles:
+    def test_insert_png_files(self, tmp_path):
         pdf = fpdf.FPDF(unit="pt")
         pdf.compress = False
 
@@ -30,30 +30,10 @@ class InsertPNGSuiteFilesTest(unittest.TestCase):
 
         for image in images:
             if os.path.basename(image) in not_supported:
-                self.assertRaises(Exception, pdf.image, x=0, y=0, w=0, h=0, link=None)
+                with pytest.raises(FPDFException):
+                    pdf.image(x=0, y=0, w=0, h=0, link=None)
             else:
                 pdf.add_page()
                 pdf.image(image, x=0, y=0, w=0, h=0, link=None)
 
-        assert_pdf_equal(self, pdf, "image_png_insert_png_files.pdf")
-
-
-if __name__ == "__main__":
-    # http://stackoverflow.com/questions/9502516/how-to-know-time-spent-on-each-
-    # test-when-using-unittest
-    import time
-
-    @classmethod
-    def setUpClass(cls):
-        cls.start_ = time.time()
-
-    @classmethod
-    def tearDownClass(cls):
-        t = time.time()
-        # pylint: disable=no-member
-        print(f"\n{cls.__module__}.{cls.__name__}: {t - cls.start_:.3f}")
-
-    unittest.TestCase.setUpClass = setUpClass
-    unittest.TestCase.tearDownClass = tearDownClass
-
-    unittest.main()
+        assert_pdf_equal(pdf, "image_png_insert_png_files.pdf", tmp_path)

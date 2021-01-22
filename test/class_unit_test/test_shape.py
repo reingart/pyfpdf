@@ -1,6 +1,5 @@
 """issue65_test.py"""
 
-import unittest
 import sys
 import os
 
@@ -12,8 +11,6 @@ sys.path.insert(
 import fpdf
 from test.utilities import assert_pdf_equal
 
-# python -m unittest test.class_unit_test.shape_tests
-
 
 def next_row(pdf):
     pdf.ln()
@@ -24,8 +21,8 @@ size = 50
 margin = 10
 
 
-class EllipseTest(unittest.TestCase):
-    def test_ellipse_not_circle(self):
+class TestEllipse:
+    def test_ellipse_not_circle(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -35,9 +32,9 @@ class EllipseTest(unittest.TestCase):
             if counter % 3 == 0:
                 next_row(pdf)
 
-        assert_pdf_equal(self, pdf, "class_ellipse_not_circle.pdf")
+        assert_pdf_equal(pdf, "class_ellipse_not_circle.pdf", tmp_path)
 
-    def test_ellipse_style(self):
+    def test_ellipse_style(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -47,9 +44,9 @@ class EllipseTest(unittest.TestCase):
             if counter % 3 == 0:
                 next_row(pdf)
 
-        assert_pdf_equal(self, pdf, "class_ellipse_style.pdf")
+        assert_pdf_equal(pdf, "class_ellipse_style.pdf", tmp_path)
 
-    def test_ellipse_line_width(self):
+    def test_ellipse_line_width(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -64,9 +61,9 @@ class EllipseTest(unittest.TestCase):
             pdf.set_x(pdf.get_x() + size + margin)
         pdf.set_line_width(0.2)  # reset
 
-        assert_pdf_equal(self, pdf, "class_ellipse_line_width.pdf")
+        assert_pdf_equal(pdf, "class_ellipse_line_width.pdf", tmp_path)
 
-    def test_ellipse_draw_color(self):
+    def test_ellipse_draw_color(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -76,9 +73,9 @@ class EllipseTest(unittest.TestCase):
             pdf.ellipse(x=pdf.get_x(), y=pdf.get_y(), w=size, h=size, style=None)
             pdf.set_x(pdf.get_x() + size + margin)
 
-        assert_pdf_equal(self, pdf, "class_ellipse_draw_color.pdf")
+        assert_pdf_equal(pdf, "class_ellipse_draw_color.pdf", tmp_path)
 
-    def test_ellipse_fill_color(self):
+    def test_ellipse_fill_color(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -89,11 +86,11 @@ class EllipseTest(unittest.TestCase):
             pdf.set_x(pdf.get_x() + size + margin)
         next_row(pdf)
 
-        assert_pdf_equal(self, pdf, "class_ellipse_fill_color.pdf")
+        assert_pdf_equal(pdf, "class_ellipse_fill_color.pdf", tmp_path)
 
 
-class RectangleTest(unittest.TestCase):
-    def test_rect_not_square(self):
+class TestRectangle:
+    def test_rect_not_square(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -103,9 +100,9 @@ class RectangleTest(unittest.TestCase):
             if counter % 3 == 0:
                 next_row(pdf)
 
-        assert_pdf_equal(self, pdf, "class_rect_not_square.pdf")
+        assert_pdf_equal(pdf, "class_rect_not_square.pdf", tmp_path)
 
-    def test_rect_style(self):
+    def test_rect_style(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -115,9 +112,9 @@ class RectangleTest(unittest.TestCase):
             if counter % 3 == 0:
                 next_row(pdf)
 
-        assert_pdf_equal(self, pdf, "class_rect_style.pdf")
+        assert_pdf_equal(pdf, "class_rect_style.pdf", tmp_path)
 
-    def test_rect_line_width(self):
+    def test_rect_line_width(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -132,9 +129,9 @@ class RectangleTest(unittest.TestCase):
             pdf.set_x(pdf.get_x() + size + margin)
         pdf.set_line_width(0.2)  # reset
 
-        assert_pdf_equal(self, pdf, "class_rect_line_width.pdf")
+        assert_pdf_equal(pdf, "class_rect_line_width.pdf", tmp_path)
 
-    def test_rect_draw_color(self):
+    def test_rect_draw_color(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -145,9 +142,9 @@ class RectangleTest(unittest.TestCase):
             pdf.rect(x=pdf.get_x(), y=pdf.get_y(), w=size, h=size, style=None)
             pdf.set_x(pdf.get_x() + size + margin)
 
-        assert_pdf_equal(self, pdf, "class_rect_draw_color.pdf")
+        assert_pdf_equal(pdf, "class_rect_draw_color.pdf", tmp_path)
 
-    def test_rect_fill_color(self):
+    def test_rect_fill_color(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -159,11 +156,11 @@ class RectangleTest(unittest.TestCase):
 
         next_row(pdf)
 
-        assert_pdf_equal(self, pdf, "class_rect_fill_color.pdf")
+        assert_pdf_equal(pdf, "class_rect_fill_color.pdf", tmp_path)
 
 
-class LineTest(unittest.TestCase):
-    def test_line(self):
+class TestLine:
+    def test_line(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -182,9 +179,9 @@ class LineTest(unittest.TestCase):
             pdf.set_x(pdf.get_x() + size + margin)
         next_row(pdf)
 
-        assert_pdf_equal(self, pdf, "class_line.pdf")
+        assert_pdf_equal(pdf, "class_line.pdf", tmp_path)
 
-    def test_dash(self):
+    def test_dash(self, tmp_path):
         pdf = fpdf.FPDF(unit="mm")
         pdf.add_page()
 
@@ -221,8 +218,4 @@ class LineTest(unittest.TestCase):
         x, y = pdf.get_x(), pdf.get_y()
         pdf.dashed_line(x, y, x + 100, y + 80, 6, 17)
 
-        assert_pdf_equal(self, pdf, "class_dash.pdf")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert_pdf_equal(pdf, "class_dash.pdf", tmp_path)

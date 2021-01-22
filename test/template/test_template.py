@@ -1,14 +1,10 @@
-import unittest
-
 from fpdf.template import Template
 
 from test.utilities import assert_pdf_equal, relative_path_to
 
-# python -m unittest test.template.test_template
 
-
-class TemplateTest(unittest.TestCase):
-    def test_nominal_hardcoded(self):
+class TestTemplate:
+    def test_nominal_hardcoded(self, tmp_path):
         "Taken from docs/Templates.md"
         elements = [
             {
@@ -124,12 +120,12 @@ class TemplateTest(unittest.TestCase):
         tmpl.add_page()
         tmpl["company_name"] = "Sample Company"
         tmpl["company_logo"] = relative_path_to("../../docs/fpdf2-logo.png")
-        assert_pdf_equal(self, tmpl, "template_nominal_hardcoded.pdf")
+        assert_pdf_equal(tmpl, "template_nominal_hardcoded.pdf", tmp_path)
 
-    def test_nominal_csv(self):
+    def test_nominal_csv(self, tmp_path):
         "Taken from docs/Templates.md"
         tmpl = Template(format="A4", title="Sample Invoice")
         tmpl.parse_csv(relative_path_to("mycsvfile.csv"), delimiter=";")
         tmpl.add_page()
         tmpl["company_name"] = "Sample Company"
-        assert_pdf_equal(self, tmpl, "template_nominal_csv.pdf")
+        assert_pdf_equal(tmpl, "template_nominal_csv.pdf", tmp_path)

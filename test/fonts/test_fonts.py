@@ -1,31 +1,30 @@
+import pytest
+
 from fpdf import FPDF
 from fpdf.errors import FPDFException
-import unittest
 from test.utilities import assert_pdf_equal
 
-# python -m unittest test.fonts.test_fonts
 
-
-class FontsTest(unittest.TestCase):
+class TestFonts:
     def test_no_set_font(self):
         pdf = FPDF()
         pdf.add_page()
-        with self.assertRaises(FPDFException) as e:
+        with pytest.raises(FPDFException) as e:
             pdf.text(10, 10, "Hello World!")
         expected_msg = "No font set, you need to call set_font() beforehand"
-        self.assertEqual(str(e.exception), expected_msg)
+        assert str(e.value) == expected_msg
 
     def test_set_unknown_font(self):
         pdf = FPDF()
         pdf.add_page()
-        with self.assertRaises(FPDFException) as e:
+        with pytest.raises(FPDFException) as e:
             pdf.set_font("Dummy")
-        self.assertEqual(
-            str(e.exception),
-            "Undefined font: dummy - Use built-in fonts or FPDF.add_font() beforehand",
+        assert (
+            str(e.value)
+            == "Undefined font: dummy - Use built-in fonts or FPDF.add_font() beforehand"
         )
 
-    def test_set_builtin_font(self):
+    def test_set_builtin_font(self, tmp_path):
         pdf = FPDF()
         pdf.add_page()
         builtin_fonts = sorted(
@@ -43,9 +42,9 @@ class FontsTest(unittest.TestCase):
                 pdf.set_font(font_name.capitalize(), style, 36)
                 pdf.set_font(font_name.lower(), style, 36)
                 pdf.text(0, 10 + 40 * i + 10 * j, "Hello World!")
-        assert_pdf_equal(self, pdf, "fonts_set_builtin_font.pdf")
+        assert_pdf_equal(pdf, "fonts_set_builtin_font.pdf", tmp_path)
 
-    def test_issue_66(self):
+    def test_issue_66(self, tmp_path):
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font("Times", "B", 14)
@@ -54,8 +53,4 @@ class FontsTest(unittest.TestCase):
         pdf.cell(50, 0, "DEF")
         # Setting the font to an already used one used to remove the text!
         pdf.set_font("Times", "B", 14)
-        assert_pdf_equal(self, pdf, "fonts_issue_66.pdf")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert_pdf_equal(pdf, "fonts_issue_66.pdf", tmp_path)

@@ -1,27 +1,26 @@
+import pytest
+
 import fpdf
-import unittest
 from fpdf.html import px2mm
 from test.utilities import assert_pdf_equal, relative_path_to
-
-# python -m unittest test.html.test_html
 
 
 class MyFPDF(fpdf.FPDF, fpdf.HTMLMixin):
     pass
 
 
-class HTMLTest(unittest.TestCase):
+class TestHTML:
     "Test possible inputs to fpdf.HTMLMixin"
 
-    def test_html_images(self):
+    def test_html_images(self, tmp_path):
         pdf = MyFPDF()
         pdf.add_page()
 
         initial = 10
         mm_after_image = initial + px2mm(300)
-        self.assertEqual(round(pdf.get_x()), 10, "Initial x margin is not expected")
-        self.assertEqual(round(pdf.get_y()), 10, "Initial y margin is not expected")
-        self.assertEqual(round(pdf.w), 210, "Page width is not expected")
+        assert round(pdf.get_x()) == 10
+        assert round(pdf.get_y()) == 10
+        assert round(pdf.w) == 210
 
         img_path = relative_path_to(
             "../image/png_images/c636287a4d7cb1a36362f7f236564cef.png"
@@ -31,19 +30,12 @@ class HTMLTest(unittest.TestCase):
         )
         # Unable to text position of the image as write html moves to a new line after
         # adding the image but it can be seen in the produce test.pdf file.
-        self.assertEqual(
-            round(pdf.get_x()), 10, "Have not moved to beginning of new line"
-        )
-        self.assertAlmostEqual(
-            pdf.get_y(),
-            mm_after_image,
-            places=2,
-            msg="Image height has moved down the page",
-        )
+        assert round(pdf.get_x()) == 10
+        assert pdf.get_y() == pytest.approx(mm_after_image, abs=0.01)
 
-        assert_pdf_equal(self, pdf, "html_images.pdf")
+        assert_pdf_equal(pdf, "html_images.pdf", tmp_path)
 
-    def test_html_features(self):
+    def test_html_features(self, tmp_path):
         pdf = MyFPDF()
         pdf.add_page()
         pdf.write_html("<p><b>hello</b> world. i am <i>tired</i>.</p>")
@@ -175,7 +167,8 @@ class HTMLTest(unittest.TestCase):
                 "    </tr>"
             )
             + "".join([getrow(i) for i in range(26)])
-            + ("  </tbody>" "</table>")
+            + "  </tbody>"
+            + "</table>"
         )
 
         pdf.add_page()
@@ -184,9 +177,9 @@ class HTMLTest(unittest.TestCase):
         )
         pdf.write_html(f"<img src=\"{img_path}\" height='300' width='300'>")
 
-        assert_pdf_equal(self, pdf, "html_features.pdf")
+        assert_pdf_equal(pdf, "html_features.pdf", tmp_path)
 
-    def test_html_simple_table(self):
+    def test_html_simple_table(self, tmp_path):
         pdf = MyFPDF()
         pdf.set_font_size(30)
         pdf.add_page()
@@ -199,9 +192,9 @@ class HTMLTest(unittest.TestCase):
             <td>4</td><td>5</td><td>6</td>
         </tr></tbody></table>"""
         )
-        assert_pdf_equal(self, pdf, "html_simple_table.pdf")
+        assert_pdf_equal(pdf, "html_simple_table.pdf", tmp_path)
 
-    def test_html_table_line_separators(self):
+    def test_html_table_line_separators(self, tmp_path):
         pdf = MyFPDF()
         pdf.set_font_size(30)
         pdf.add_page()
@@ -215,9 +208,9 @@ class HTMLTest(unittest.TestCase):
         </tr></tbody></table>""",
             table_line_separators=True,
         )
-        assert_pdf_equal(self, pdf, "html_table_line_separators.pdf")
+        assert_pdf_equal(pdf, "html_table_line_separators.pdf", tmp_path)
 
-    def test_html_table_with_border(self):
+    def test_html_table_with_border(self, tmp_path):
         pdf = MyFPDF()
         pdf.set_font_size(30)
         pdf.add_page()
@@ -230,9 +223,9 @@ class HTMLTest(unittest.TestCase):
             <td>4</td><td>5</td><td>6</td>
         </tr></tbody></table>"""
         )
-        assert_pdf_equal(self, pdf, "html_table_with_border.pdf")
+        assert_pdf_equal(pdf, "html_table_with_border.pdf", tmp_path)
 
-    def test_html_bold_italic_underline(self):
+    def test_html_bold_italic_underline(self, tmp_path):
         pdf = MyFPDF()
         pdf.set_font_size(30)
         pdf.add_page()
@@ -242,8 +235,4 @@ class HTMLTest(unittest.TestCase):
                <U>underlined</U>
                <B><I><U>all at once!</U></I></B>"""
         )
-        assert_pdf_equal(self, pdf, "html_bold_italic_underline.pdf")
-
-
-if __name__ == "__main__":
-    unittest.main()
+        assert_pdf_equal(pdf, "html_bold_italic_underline.pdf", tmp_path)
