@@ -14,6 +14,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
   * its `ln` parameter now accepts a value of `3` that sets the new position to the right without altering vertical offset
   * a new optional `max_line_height` parameter sets a maximum height of each sub-cell generated
 - documentation on how to add content to existing PDFs
+- all PDF samples are now validated using 3 different PDF checkers
 ### Fixed
 - `FPDF.alias_nb_pages`: fixed this feature that was broken since v2.0.6
 - `FPDF.set_font`: fixed a bug where calling it several times, with & without the same parameters,

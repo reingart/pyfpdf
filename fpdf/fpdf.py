@@ -1520,8 +1520,11 @@ class FPDF:
 
                     # start the annotation entry
                     annots += (
-                        f"<</Type /Annot /Subtype /Link /Rect "
-                        f"[{rect}] /Border [0 0 0] "
+                        f"<</Type /Annot /Subtype /Link "
+                        f"/Rect [{rect}] /Border [0 0 0] "
+                        # Flag "Print" (bit position 3) specifies to print the annotation when the page is printed.
+                        # cf. https://docs.verapdf.org/validation/pdfa-part1/#rule-653-2
+                        f"/F 4"
                     )
 
                     # HTML ending of annotation entry

@@ -64,6 +64,12 @@ Features:
  * Only **one** dependency so far: [Pillow](https://pillow.readthedocs.io/en/stable/)
  * Unit tests with `qpdf`-based PDF diffing
 
+We validate all our PDF samples using 3 different checkers:
+
+[![QPDF logo](docs/qpdf-logo.svg)](https://github.com/qpdf/qpdf)
+[![PDF Checker logo](docs/pdfchecker-logo.png)](https://www.datalogics.com/products/pdf-tools/pdf-checker/)
+[![VeraPDF logo](docs/vera-logo.jpg)](https://verapdf.org)
+
 Release notes: [CHANGELOG.md](https://github.com/PyFPDF/fpdf2/blob/master/CHANGELOG.md)
 
 Documentation:
