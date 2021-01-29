@@ -113,12 +113,10 @@ def get_page_format(format, k=None):
         raise FPDFPageFormatException(f"Arguments must be numbers: {args}") from e
 
 
-def load_cache(filename):
+def load_cache(filename: Path):
     """Return unpickled object, or None if cache unavailable"""
     if not filename:
         return None
-    if isinstance(filename, str):
-        filename = Path(filename)
     try:
         return pickle.loads(filename.read_bytes())
     # File missing, unsupported pickle, etc
@@ -588,6 +586,9 @@ class FPDF:
             else:
                 unifilename = None
 
+            # include numbers in the subset! (if alias present)
+            sbarr = list(range(57 if self.str_alias_nb_pages else 32))
+
             font_dict = load_cache(unifilename)
             if font_dict is None:
                 ttf = TTFontFile()
@@ -608,13 +609,15 @@ class FPDF:
 
                 # Generate metrics .pkl file
                 font_dict = {
-                    "name": re.sub("[ ()]", "", ttf.fullName),
                     "type": "TTF",
+                    "name": re.sub("[ ()]", "", ttf.fullName),
                     "desc": desc,
                     "up": round(ttf.underlinePosition),
                     "ut": round(ttf.underlineThickness),
                     "ttffile": ttffilename,
                     "fontkey": fontkey,
+                    "subset": sbarr,
+                    "unifilename": unifilename,
                     "originalsize": os.stat(ttffilename).st_size,
                     "cw": ttf.charWidths,
                 }
@@ -626,9 +629,6 @@ class FPDF:
                         if e.errno != errno.EACCES:
                             raise  # Not a permission error.
                 del ttf
-
-            # include numbers in the subset! (if alias present)
-            sbarr = list(range(57 if self.str_alias_nb_pages else 32))
 
             self.fonts[fontkey] = {
                 "i": len(self.fonts) + 1,
@@ -1862,20 +1862,9 @@ class FPDF:
                 self.mtd(font)
 
     def _putTTfontwidths(self, font, maxUni):
-        if font["unifilename"]:
-            cw127fname = Path(font["unifilename"]).with_suffix(".cw127.pkl")
-        else:
-            cw127fname = None
+        cw127fname = Path(font["unifilename"]).with_suffix(".cw127.pkl")
         font_dict = load_cache(cw127fname)
-        if font_dict is None:
-            rangeid = 0
-            range_ = {}
-            range_interval = {}
-            prevcid = -2
-            prevwidth = -1
-            interval = False
-            startcid = 1
-        else:
+        if font_dict:
             rangeid = font_dict["rangeid"]
             range_ = font_dict["range"]
             prevcid = font_dict["prevcid"]
@@ -1883,21 +1872,21 @@ class FPDF:
             interval = font_dict["interval"]
             range_interval = font_dict["range_interval"]
             startcid = 128
+        else:
+            rangeid = 0
+            range_ = {}
+            range_interval = {}
+            prevcid = -2
+            prevwidth = -1
+            interval = False
+            startcid = 1
         cwlen = maxUni + 1
 
         # for each character
         subset = set(font["subset"])
         for cid in range(startcid, cwlen):
-            if cid == 128 and cw127fname and not cw127fname.exists():
+            if cid == 128 and font_dict:
                 try:
-                    font_dict = {
-                        "rangeid": rangeid,
-                        "prevcid": prevcid,
-                        "prevwidth": prevwidth,
-                        "interval": interval,
-                        "range_interval": range_interval,
-                        "range": range_,
-                    }
                     with cw127fname.open("wb") as fh:
                         pickle.dump(font_dict, fh)
                 except OSError as e:
