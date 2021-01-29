@@ -574,11 +574,13 @@ class FPDF:
             return
         if uni:
             for parent in (".", FPDF_FONT_DIR, SYSTEM_TTFONTS):
+                if not parent:
+                    continue
                 if (Path(parent) / fname).exists():
                     ttffilename = Path(parent) / fname
                     break
             else:
-                raise RuntimeError(f"TTF Font file not found: {fname}")
+                raise FileNotFoundError(f"TTF Font file not found: {fname}")
             if FPDF_CACHE_MODE == 0:
                 unifilename = Path() / f"{ttffilename.stem}.pkl"
             elif FPDF_CACHE_MODE == 2:
@@ -648,7 +650,7 @@ class FPDF:
             }
             self.font_files[fname] = {"type": "TTF"}
         else:
-            font_dict = pickle.loads(fname.read_bytes())
+            font_dict = pickle.loads(Path(fname).read_bytes())
             self.fonts[fontkey] = {"i": len(self.fonts) + 1}
             self.fonts[fontkey].update(font_dict)
             diff = font_dict.get("diff")
