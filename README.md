@@ -84,12 +84,9 @@ You can also have a look at the `tests/`, they're great usage examples!
 Developers:
 -----------
 
-Please check [the docs page dedicated to development](https://pyfpdf.github.io/fpdf2/Development.html).
+Please check [the documentation page dedicated to development](https://pyfpdf.github.io/fpdf2/Development.html).
 
 This library was only possible thanks to the dedication of the following people: [CONTRIBUTORS.md](CONTRIBUTORS.md).
-
-Lets try to improve the Code Coverage statistic so that we can safely
-transition to external font and image libraries, and more...
 
 Other libraries
 ---------------

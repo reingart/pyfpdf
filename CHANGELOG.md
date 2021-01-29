@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
-## [2.2.1] - Not released yet
+## [2.3.0] - 2021-01-29
 ### Added
 - `FPDF.unbreakable` : a new method providing a context-manager in which automatic page breaks are disabled.
   _cf._ https://pyfpdf.github.io/fpdf2/PageBreaks.html
