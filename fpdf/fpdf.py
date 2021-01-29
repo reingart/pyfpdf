@@ -1395,11 +1395,11 @@ class FPDF:
                 PendingDeprecationWarning,
             )
         if isinstance(name, str):
-            img = load_resource(name)
+            img = None
         else:
             name, img = uuid4(), name
         if name not in self.images:
-            info = get_img_info(img)
+            info = get_img_info(img or load_resource(name))
             info["i"] = len(self.images) + 1
             self.images[name] = info
         else:
