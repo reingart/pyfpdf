@@ -70,14 +70,12 @@ We validate all our PDF samples using 3 different checkers:
 [![PDF Checker logo](docs/pdfchecker-logo.png)](https://www.datalogics.com/products/pdf-tools/pdf-checker/)
 [![VeraPDF logo](docs/vera-logo.jpg)](https://verapdf.org)
 
-Release notes: [CHANGELOG.md](https://github.com/PyFPDF/fpdf2/blob/master/CHANGELOG.md)
-
 Documentation:
 --------------
 
 - [Documentation Home](https://pyfpdf.github.io/fpdf2/)
 - [Tutorial](https://pyfpdf.github.io/fpdf2/Tutorial.html) (Spanish translation available)
-- [Reference Manual](https://pyfpdf.github.io/fpdf2/ReferenceManual.html)
+- Release notes: [CHANGELOG.md](https://github.com/PyFPDF/fpdf2/blob/master/CHANGELOG.md)
 
 You can also have a look at the `tests/`, they're great usage examples!
 

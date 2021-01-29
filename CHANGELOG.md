@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.3.0] - 2021-01-29
+Many thanks to [@eumiro](https://github.com/PyFPDF/fpdf2/pulls?q=is%3Apr+author%3Aeumiro) & [@fbernhart](https://github.com/PyFPDF/fpdf2/pulls?q=is%3Apr+author%3Aeumiro) for their contributions to make `fpdf2` code cleaner!
 ### Added
 - `FPDF.unbreakable` : a new method providing a context-manager in which automatic page breaks are disabled.
   _cf._ https://pyfpdf.github.io/fpdf2/PageBreaks.html
