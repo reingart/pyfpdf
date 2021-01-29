@@ -61,3 +61,23 @@ def test_doc_option_only_core_fonts_encoding():
 
     msg = 'Unknown document option "not core_fonts_encoding"'
     assert str(e.value) == msg
+
+
+def test_adding_content_after_closing():
+    pdf = fpdf.FPDF()
+    pdf.set_font("helvetica", size=24)
+    pdf.add_page()
+    pdf.cell(w=pdf.epw, h=10, txt="Hello fpdf2!", align="C")
+    pdf.output()
+    with pytest.raises(FPDFException) as error:
+        pdf.add_page()
+    assert (
+        str(error.value)
+        == "A page cannot be added on a closed document, after calling output()"
+    )
+    with pytest.raises(FPDFException) as error:
+        pdf.cell(w=pdf.epw, h=10, txt="Hello again!", align="C")
+    assert (
+        str(error.value)
+        == "Content cannot be added on a closed document, after calling output()"
+    )

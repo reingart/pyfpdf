@@ -99,12 +99,10 @@ def test_multi_cell_ln_3_table(tmp_path):
         ("Marydgfsfsfgdgvfdggfd", "Ramos", 45, "Orlando"),
         ("Carlsonfdgfdgsfdxhfggjdfgfgu", "Banks", 19, "Los Angeles"),
     )
-    # Effective page width, or just epw
-    epw = pdf.w - 2 * pdf.l_margin
     line_height = pdf.font_size * 2.5
     # Set column width to 1/4 of effective page width to distribute content
     # evenly across table and page
-    col_width = epw / 4
+    col_width = pdf.epw / 4
     for row in data:
         for datum in row:
             pdf.multi_cell(

@@ -9,11 +9,14 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.2.1] - Not released yet
 ### Added
+- `FPDF.unbreakable` : a new method providing a context-manager in which automatic page breaks are disabled.
+  _cf._ https://pyfpdf.github.io/fpdf2/PageBreaks.html
+- `FPDF.epw` & `FPDF.eph` : new `@property` methods to retrieve the **effective page width / height**, that is the page width / height minus its horizontal / vertical margins.
 - `FPDF.image` now accepts also a `Pillow.Image.Image` as input
 - `FPDF.multi_cell` parameters evolve in order to generate tables with multiline text in cells:
   * its `ln` parameter now accepts a value of `3` that sets the new position to the right without altering vertical offset
   * a new optional `max_line_height` parameter sets a maximum height of each sub-cell generated
-- documentation on how to add content to existing PDFs
+- new documentation pages : how to add content to existing PDFs, HTML, links, tables, text styling & page breaks
 - all PDF samples are now validated using 3 different PDF checkers
 ### Fixed
 - `FPDF.alias_nb_pages`: fixed this feature that was broken since v2.0.6

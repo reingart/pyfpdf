@@ -25,6 +25,7 @@ import warnings
 import zlib
 from contextlib import contextmanager
 from datetime import datetime
+from enum import IntEnum
 from functools import wraps
 from hashlib import md5
 from pathlib import Path
@@ -33,6 +34,7 @@ from uuid import uuid4
 from .errors import FPDFException, FPDFPageFormatException
 from .fonts import fpdf_charwidths
 from .image_parsing import get_img_info, load_resource
+from .recorder import FPDFRecorder
 from .ttfonts import TTFontFile
 from .util import (
     enclose_in_parens,
@@ -64,6 +66,13 @@ PAGE_FORMATS = {
     "letter": (612, 792),
     "legal": (612, 1008),
 }
+
+
+class DocumentState(IntEnum):
+    UNINITIALIZED = 0
+    READY = 1  # page not started yet
+    GENERATING_PAGE = 2
+    CLOSED = 3  # EOF printed
 
 
 # Disabling this check due to the "format" parameter below:
@@ -139,7 +148,7 @@ class FPDF:
         self.n = 2  # current object number
         self.buffer = bytearray()  # buffer holding in-memory PDF
         self.pages = {}  # array containing pages and metadata
-        self.state = 0  # current document state
+        self.state = DocumentState.UNINITIALIZED  # current document state
         self.fonts = {}  # array of used fonts
         self.font_files = {}  # array of font files
         self.diffs = {}  # array of encoding differences
@@ -158,10 +167,8 @@ class FPDF:
         self.draw_color = "0 G"
         self.fill_color = "0 g"
         self.text_color = "0 g"
-        # indicates whether fill and text colors are different
-        self.color_flag = 0
         self.ws = 0  # word spacing
-        self.angle = 0
+        self.angle = 0  # used by deprecated method: rotate()
 
         # Standard fonts
         self.core_fonts = {
@@ -217,12 +224,30 @@ class FPDF:
         # Page margins (1 cm)
         margin = 28.35 / self.k
         self.set_margins(margin, margin)
+        self.x = self.l_margin
+        self.y = self.t_margin
         self.c_margin = margin / 10.0  # Interior cell margin (1 mm)
         self.line_width = 0.567 / self.k  # line width (0.2 mm)
-        self.set_auto_page_break(1, 2 * margin)  # Automatic page break
+        self.set_auto_page_break(
+            True, 2 * margin
+        )  # sets self.auto_page_break, self.b_margin & self.page_break_trigger
         self.set_display_mode("fullwidth")  # Full width display mode
         self.compress = True  # Enable compression by default
         self.pdf_version = "1.3"  # Set default PDF version No.
+
+    @property
+    def epw(self):
+        """
+        Effective page width: the page width minus its horizontal margins.
+        """
+        return self.w - self.l_margin - self.r_margin
+
+    @property
+    def eph(self):
+        """
+        Effective page height: the page height minus its vertical margins.
+        """
+        return self.h - self.t_margin - self.b_margin
 
     def set_margins(self, left, top, right=-1):
         """Set left, top and right margins"""
@@ -311,11 +336,11 @@ class FPDF:
 
     def open(self):
         """Begin document"""
-        self.state = 1
+        self.state = DocumentState.READY
 
     def close(self):
         """Terminate document"""
-        if self.state == 3:
+        if self.state == DocumentState.CLOSED:
             return
         if self.page == 0:
             self.add_page()
@@ -330,7 +355,11 @@ class FPDF:
 
     def add_page(self, orientation="", format="", same=False):
         """Start a new page, if same page format will be same as previous"""
-        if self.state == 0:
+        if self.state == DocumentState.CLOSED:
+            raise FPDFException(
+                "A page cannot be added on a closed document, after calling output()"
+            )
+        if self.state == DocumentState.UNINITIALIZED:
             self.open()
         family = self.font_family
         style = f"{self.font_style}U" if self.underline else self.font_style
@@ -339,7 +368,6 @@ class FPDF:
         dc = self.draw_color
         fc = self.fill_color
         tc = self.text_color
-        cf = self.color_flag
         stretching = self.font_stretching
         if self.page > 0:
             # Page footer
@@ -367,7 +395,6 @@ class FPDF:
         if fc != "0 g":
             self._out(fc)
         self.text_color = tc
-        self.color_flag = cf
 
         # BEGIN Page header
         self.header()
@@ -386,7 +413,6 @@ class FPDF:
             self.fill_color = fc
             self._out(fc)
         self.text_color = tc
-        self.color_flag = cf
 
         if stretching != 100:  # Restore stretching
             self.set_stretching(stretching)
@@ -417,7 +443,6 @@ class FPDF:
             self.fill_color = f"{r / 255:.3f} g"
         else:
             self.fill_color = f"{r / 255:.3f} {g / 255:.3f} {b / 255:.3f} rg"
-        self.color_flag = self.fill_color != self.text_color
         if self.page > 0:
             self._out(self.fill_color)
 
@@ -427,7 +452,6 @@ class FPDF:
             self.text_color = f"{r / 255:.3f} g"
         else:
             self.text_color = f"{r / 255:.3f} {g / 255:.3f} {b / 255:.3f} rg"
-        self.color_flag = self.fill_color != self.text_color
 
     def get_string_width(self, s, normalized=False):
         """Get width of a string in the current font"""
@@ -538,9 +562,11 @@ class FPDF:
         """Add a TrueType or Type1 font"""
         if not fname:
             fname = family.replace(" ", "") + f"{style.lower()}.pkl"
-        style = style.upper()
-        if style == "IB":
-            style = "BI"
+        style = "".join(sorted(style.upper()))
+        if any(letter not in "BI" for letter in style):
+            raise ValueError(
+                f"Unknown style provided (only B & I letters are allowed): {style}"
+            )
         fontkey = f"{family}{style}"
 
         # Font already added!
@@ -649,7 +675,16 @@ class FPDF:
                     }
 
     def set_font(self, family=None, style="", size=0):
-        """Select a font; size given in points"""
+        """
+        Select a font.
+
+        Args:
+            family (str): name of a font added with `FPDF.add_font`,
+              or name of one of the 14 standard "PostScript" fonts
+            style (str): empty string (by default) or a combination
+              of one or several letters among B, I, U to
+            size (int): in points
+        """
         if not family:
             family = self.font_family
         if family.lower() == "arial" and (family + style) not in self.fonts:
@@ -660,14 +695,16 @@ class FPDF:
                 'Built-in fonts Symbol & Zapfdingbats only have a single "style"'
             )
             style = ""
-        style = style.upper()
+        style = "".join(sorted(style.upper()))
+        if any(letter not in "BIU" for letter in style):
+            raise ValueError(
+                f"Unknown style provided (only B/I/U letters are allowed): {style}"
+            )
         if "U" in style:
             self.underline = 1
             style = style.replace("U", "")
         else:
             self.underline = 0
-        if style == "IB":
-            style = "BI"
         if size == 0:
             size = self.font_size_pt
 
@@ -770,7 +807,7 @@ class FPDF:
         s = f"BT {x * self.k:.2f} {(self.h - y) * self.k:.2f} Td ({txt2}) Tj ET"
         if self.underline and txt != "":
             s += " " + self._dounderline(x, y, txt)
-        if self.color_flag:
+        if self.fill_color != self.text_color:
             s = f"q {self.text_color} {s} Q"
         self._out(s)
 
@@ -875,32 +912,12 @@ class FPDF:
                 "ignored"
             )
             border = 1
-        page_break_triggered = False
-        txt = self.normalize_text(txt)
-        k = self.k
-        if (
-            self.y + h > self.page_break_trigger
-            and not self.in_footer
-            and self.accept_page_break
-        ):
-
-            # Automatic page break
-            page_break_triggered = True
-            x = self.x
-            ws = self.ws
-            if ws > 0:
-                self.ws = 0
-                self._out("0 Tw")
-            self.add_page(same=True)
-            self.x = x  # restore x but not y after drawing header
-
-            if ws > 0:
-                self.ws = ws
-                self._out(f"{ws * k:.3f} Tw")
+        page_break_triggered = self.perform_page_break_if_need_be(h)
         if w == 0:
             w = self.w - self.r_margin - self.x
         s = ""
 
+        k = self.k
         if fill:
             op = "B" if border == 1 else "f"
             s = (
@@ -937,6 +954,7 @@ class FPDF:
                     f"{(x + w) * k:.2f} {(self.h - (y + h)) * k:.2f} l S "
                 )
 
+        txt = self.normalize_text(txt)
         if txt != "":
             if align == "R":
                 dx = w - self.c_margin - self.get_string_width(txt, True)
@@ -944,7 +962,7 @@ class FPDF:
                 dx = (w - self.get_string_width(txt, True)) / 2
             else:
                 dx = self.c_margin
-            if self.color_flag:
+            if self.fill_color != self.text_color:
                 s += f"q {self.text_color} "
 
             # If multibyte, Tw has no effect - do word spacing using an
@@ -991,7 +1009,7 @@ class FPDF:
                 s += " " + self._dounderline(
                     self.x + dx, self.y + (0.5 * h) + (0.3 * self.font_size), txt
                 )
-            if self.color_flag:
+            if self.fill_color != self.text_color:
                 s += " Q"
             if link:
                 self.link(
@@ -1013,6 +1031,30 @@ class FPDF:
             self.x += w
 
         return page_break_triggered
+
+    def perform_page_break_if_need_be(self, h):
+        if (
+            self.y + h > self.page_break_trigger
+            and not self.in_footer
+            and self.accept_page_break
+        ):
+            LOGGER.info(
+                "Page break on page %d at y=%d for element of height %d",
+                self.page,
+                self.y,
+                h,
+            )
+            x, ws = self.x, self.ws
+            if ws > 0:
+                self.ws = 0
+                self._out("0 Tw")
+            self.add_page(same=True)
+            self.x = x  # restore x but not y after drawing header
+            if ws > 0:
+                self.ws = ws
+                self._out(f"{ws * self.k:.3f} Tw")
+            return True
+        return False
 
     @check_page
     def multi_cell(
@@ -1373,15 +1415,7 @@ class FPDF:
 
         # Flowing mode
         if y is None:
-            if (
-                self.y + h > self.page_break_trigger
-                and not self.in_footer
-                and self.accept_page_break
-            ):
-                # Automatic page break
-                x = self.x
-                self.add_page(same=True)
-                self.x = x
+            self.perform_page_break_if_need_be(h)
             y = self.y
             self.y += h
 
@@ -1451,7 +1485,7 @@ class FPDF:
                 PendingDeprecationWarning,
             )
         # Finish document if necessary:
-        if self.state < 3:
+        if self.state < DocumentState.CLOSED:
             self.close()
         if name:
             if isinstance(name, os.PathLike):
@@ -1530,7 +1564,8 @@ class FPDF:
                     annots += (
                         f"<</Type /Annot /Subtype /Link "
                         f"/Rect [{rect}] /Border [0 0 0] "
-                        # Flag "Print" (bit position 3) specifies to print the annotation when the page is printed.
+                        # Flag "Print" (bit position 3) specifies to print
+                        # the annotation when the page is printed.
                         # cf. https://docs.verapdf.org/validation/pdfa-part1/#rule-653-2
                         f"/F 4"
                     )
@@ -2140,12 +2175,12 @@ class FPDF:
             self._out("startxref")
             self._out(o)
         self._out("%%EOF")
-        self.state = 3
+        self.state = DocumentState.CLOSED
 
     def _beginpage(self, orientation, format, same):
         self.page += 1
         self.pages[self.page] = {"content": bytearray()}
-        self.state = 2
+        self.state = DocumentState.GENERATING_PAGE
         self.x = self.l_margin
         self.y = self.t_margin
         self.font_family = ""
@@ -2178,7 +2213,7 @@ class FPDF:
 
     def _endpage(self):
         # End of page contents
-        self.state = 1
+        self.state = DocumentState.READY
 
     def _newobj(self):
         # Begin a new object
@@ -2198,12 +2233,15 @@ class FPDF:
         )
 
     def _out(self, s):
-        # Add a line to the document
+        if self.state == DocumentState.CLOSED:
+            raise FPDFException(
+                "Content cannot be added on a closed document, after calling output()"
+            )
         if not isinstance(s, bytes):
             if not isinstance(s, str):
                 s = str(s)
             s = s.encode("latin1")
-        if self.state == 2:
+        if self.state == DocumentState.GENERATING_PAGE:
             self.pages[self.page]["content"] += s + b"\n"
         else:
             self.buffer += s + b"\n"
@@ -2341,6 +2379,25 @@ class FPDF:
         prev_size = len(self.buffer)
         yield
         LOGGER.debug("- %s.size: %s", label, _sizeof_fmt(len(self.buffer) - prev_size))
+
+    @contextmanager
+    def unbreakable(self):
+        """
+        Ensures that all rendering performed in this context appear on a single page
+        by performing page break beforehand if need be.
+
+        Note that using this method means to duplicate the FPDF `bytearray` buffer:
+        when generating large PDFs, doubling memory usage may be troublesome.
+        """
+        prev_page, prev_y = self.page, self.y
+        recorder = FPDFRecorder(self, accept_page_break=False)
+        yield recorder
+        y_scroll = recorder.y - prev_y + (recorder.page - prev_page) * self.eph
+        if prev_y + y_scroll > self.page_break_trigger:
+            LOGGER.debug("Performing page jump due to unbreakable height")
+            recorder.rewind()
+            assert recorder.perform_page_break_if_need_be(y_scroll)
+            recorder.replay()
 
 
 def _hashpath(fn):

@@ -29,6 +29,16 @@ def test_set_unknown_font():
     )
 
 
+def test_set_unknown_style():
+    pdf = FPDF()
+    pdf.add_page()
+    with pytest.raises(ValueError) as e:
+        pdf.set_font("Times", style="bold")
+    assert (
+        str(e.value) == "Unknown style provided (only B/I/U letters are allowed): BDLO"
+    )
+
+
 def test_set_builtin_font(tmp_path):
     pdf = FPDF()
     pdf.add_page()

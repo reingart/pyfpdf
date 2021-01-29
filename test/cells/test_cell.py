@@ -9,6 +9,14 @@ LINE_HEIGHT = TEXT_SIZE * SPACING
 
 HERE = Path(__file__).resolve().parent
 
+TABLE_DATA = (
+    ("First name", "Last name", "Age", "City"),
+    ("Jules", "Smith", "34", "San Juan"),
+    ("Mary", "Ramos", "45", "Orlando"),
+    ("Carlson", "Banks", "19", "Los Angeles"),
+    ("Lucas", "Cimon", "31", "Angers"),
+)
+
 
 def test_ln_positioning_and_page_breaking_for_cell(tmp_path):
     doc = fpdf.FPDF(format="letter", unit="pt")
@@ -87,6 +95,37 @@ def test_cell_ln_1(tmp_path):
     doc.ln()
     doc.cell(w=100, h=LINE_HEIGHT, border=1, txt="Ut nostrud irure")
     assert_pdf_equal(doc, HERE / "ln_1.pdf", tmp_path)
+
+
+def test_cell_table_with_pagebreak(tmp_path):
+    pdf = fpdf.FPDF()
+    pdf.add_page()
+    pdf.set_font("Times", size=16)
+    line_height = pdf.font_size * 2
+    col_width = pdf.epw / 4  # distribute content evenly
+    for i in range(4):  # repeat table 4 times
+        for row in TABLE_DATA:
+            for datum in row:
+                pdf.cell(col_width, line_height, f"{datum} ({i})", border=1)
+            pdf.ln(line_height)
+        pdf.ln(line_height * 2)
+    assert_pdf_equal(pdf, HERE / "cell_table_with_pagebreak.pdf", tmp_path)
+
+
+def test_cell_table_unbreakable(tmp_path):
+    pdf = fpdf.FPDF()
+    pdf.add_page()
+    pdf.set_font("Times", size=16)
+    line_height = pdf.font_size * 2
+    col_width = pdf.epw / 4  # distribute content evenly
+    for i in range(4):  # repeat table 4 times
+        with pdf.unbreakable() as pdf:
+            for row in TABLE_DATA:
+                for datum in row:
+                    pdf.cell(col_width, line_height, f"{datum} ({i})", border=1)
+                pdf.ln(line_height)
+        pdf.ln(line_height * 2)
+    assert_pdf_equal(pdf, HERE / "cell_table_unbreakable.pdf", tmp_path)
 
 
 ## Code used to create this test
