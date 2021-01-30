@@ -486,12 +486,11 @@ class FPDF:
             f"{(self.h - y2) * self.k:.2f} l S"
         )
 
-    def _set_dash(self, dash_length=False, space_length=False):
+    def _set_dash(self, dash_length=None, space_length=None):
+        dash = ""
         if dash_length and space_length:
-            s = f"[{dash_length * self.k:.3f} {space_length * self.k:.3f}] 0 d"
-        else:
-            s = "[] 0 d"
-        self._out(s)
+            dash = f"{dash_length * self.k:.3f} {space_length * self.k:.3f}"
+        self._out(f"[{dash}] 0 d")
 
     @check_page
     def dashed_line(self, x1, y1, x2, y2, dash_length=1, space_length=1):
@@ -1608,10 +1607,7 @@ class FPDF:
         self.offsets[1] = len(self.buffer)
         self._out("1 0 obj")
         self._out("<</Type /Pages")
-        kids = "/Kids ["
-        for i in range(nb):
-            kids += f"{3 + 2 * i} 0 R "
-        self._out(kids + "]")
+        self._out("/Kids [" + " ".join(f"{3 + 2 * i} 0 R" for i in range(nb)) + "]")
         self._out(f"/Count {nb}")
         self._out(f"/MediaBox [0 0 {dw_pt:.2f} {dh_pt:.2f}]")
         self._out(">>")
@@ -1696,12 +1692,9 @@ class FPDF:
                 # Widths
                 self._newobj()
                 cw = font["cw"]
-                s = "["
-                for i in range(32, 256):
-                    # Get doesn't raise exception;
-                    # returns 0 instead of None if not set
-                    s += f"{cw.get(chr(i), 0)} "
-                self._out(f"{s}]")
+                self._out(
+                    "[" + " ".join(cw.get(chr(i), 0) for i in range(32, 256)) + "]"
+                )
                 self._out("endobj")
 
                 # Descriptor
