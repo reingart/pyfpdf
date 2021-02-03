@@ -26,10 +26,20 @@ def test_add_font_non_existing_file_unicode():
     assert str(error.value) == expected_msg
 
 
-def test_add_font_unicode(tmp_path):
+def test_add_font_unicode_with_path_fname_ok(tmp_path):
     pdf = FPDF()
     font_file_path = HERE / "../end_to_end_legacy/charmap/Roboto-Regular.ttf"
     pdf.add_font("Roboto-Regular", fname=font_file_path, uni=True)
+    pdf.set_font("Roboto-Regular", size=64)
+    pdf.add_page()
+    pdf.cell(pdf.epw, 20, "Hello World!")
+    assert_pdf_equal(pdf, HERE / "add_font_unicode.pdf", tmp_path)
+
+
+def test_add_font_unicode_with_str_fname_ok(tmp_path):
+    pdf = FPDF()
+    font_file_path = HERE / "../end_to_end_legacy/charmap/Roboto-Regular.ttf"
+    pdf.add_font("Roboto-Regular", fname=str(font_file_path), uni=True)
     pdf.set_font("Roboto-Regular", size=64)
     pdf.add_page()
     pdf.cell(pdf.epw, 20, "Hello World!")
