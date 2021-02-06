@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # ****************************************************************************
 # * Software: FPDF for python                                                *
-# * License:  LGPL v3.0                                                      *
+# * License:  LGPL v3.0+                                                     *
 # *                                                                          *
 # * Original Author (PHP):  Olivier PLATHEY 2004-12-31                       *
 # * Ported to Python 2.4 by Max (maxpat78@yahoo.it) on 2006-05               *
 # * Maintainer:  Mariano Reingart (reingart@gmail.com) et al since 2008 est. *
 # * Maintainer:  David Alexander (daveankin@gmail.com) et al since 2017 est. *
-# * NOTE: 'I' and 'D' destinations are disabled, and simply print to STDOUT  *
 # ****************************************************************************
 """fpdf module (in fpdf package housing FPDF class)
 
@@ -220,10 +219,10 @@ class FPDF:
 
         # Page spacing
         # Page margins (1 cm)
-        margin = 28.35 / self.k
+        margin = (7200 / 254) / self.k
+        self.x, self.y, self.l_margin, self.t_margin = 0, 0, 0, 0
         self.set_margins(margin, margin)
-        self.x = self.l_margin
-        self.y = self.t_margin
+        self.x, self.y = self.l_margin, self.t_margin
         self.c_margin = margin / 10.0  # Interior cell margin (1 mm)
         self.line_width = 0.567 / self.k  # line width (0.2 mm)
         self.set_auto_page_break(
@@ -247,30 +246,75 @@ class FPDF:
         """
         return self.h - self.t_margin - self.b_margin
 
+    def set_margin(self, margin):
+        """
+        Sets the document right, left, top & bottom margins to the same value.
+
+        Args:
+            margin (int): margin in the unit specified to FPDF constructor
+        """
+        self.set_margins(margin, margin)
+        self.set_auto_page_break(self.auto_page_break, margin)
+
     def set_margins(self, left, top, right=-1):
-        """Set left, top and right margins"""
-        self.l_margin = left
+        """
+        Sets the document left, top & optionaly right margins to the same value.
+        By default, they equal 1 cm.
+        Also sets the current FPDF.y on the page to this minimum vertical position.
+
+        Args:
+            left (int): left margin in the unit specified to FPDF constructor
+            top (int): top margin in the unit specified to FPDF constructor
+            right (int): optional right margin in the unit specified to FPDF constructor
+        """
+        self.set_left_margin(left)
+        if self.y < top or self.y == self.t_margin:
+            self.y = top
         self.t_margin = top
         if right == -1:
             right = left
         self.r_margin = right
 
     def set_left_margin(self, margin):
-        """Set left margin"""
-        self.l_margin = margin
-        if self.page > 0 and self.x < margin:
+        """
+        Sets the document left margin.
+        Also sets the current FPDF.x on the page to this minimum horizontal position.
+
+        Args:
+            margin (int): margin in the unit specified to FPDF constructor
+        """
+        if self.x < margin or self.x == self.l_margin:
             self.x = margin
+        self.l_margin = margin
 
     def set_top_margin(self, margin):
-        """Set top margin"""
+        """
+        Sets the document top margin.
+
+        Args:
+            margin (int): margin in the unit specified to FPDF constructor
+        """
         self.t_margin = margin
 
     def set_right_margin(self, margin):
-        """Set right margin"""
+        """
+        Sets the document right margin.
+
+        Args:
+            margin (int): margin in the unit specified to FPDF constructor
+        """
         self.r_margin = margin
 
     def set_auto_page_break(self, auto, margin=0):
-        """Set auto page break mode and triggering margin"""
+        """
+        Set auto page break mode and triggering bottom margin.
+        By default, the mode is on and the bottom margin is 2 cm.
+
+        Args:
+            auto (bool): enable or disable this mode
+            margin (int): optional bottom margin (distance from the bottom of the page)
+                in the unit specified to FPDF constructor
+        """
         self.auto_page_break = auto
         self.b_margin = margin
         self.page_break_trigger = self.h - margin
@@ -719,14 +763,29 @@ class FPDF:
 
     def set_font(self, family=None, style="", size=0):
         """
-        Select a font.
+        Sets the font used to print character strings.
+        It is mandatory to call this method at least once before printing text.
+
+        Default encoding is not specified, but all text writing methods accept only
+        unicode for external fonts and one byte encoding for standard.
+
+        Standard fonts use `Latin-1` encoding by default, but Windows
+        encoding `cp1252` (Western Europe) can be used with
+        [set_doc_option](set_doc_option.md) ("core_fonts_encoding", encoding).
+
+        The font specified is retained from page to page.
+        The method can be called before the first page is created.
 
         Args:
             family (str): name of a font added with `FPDF.add_font`,
-              or name of one of the 14 standard "PostScript" fonts
+                or name of one of the 14 standard "PostScript" fonts:
+                Courier (fixed-width), Helvetica (sans serif), Times (serif),
+                Symbol (symbolic) or ZapfDingbats (symbolic)
+                If an empty string is provided, the current family is retained.
             style (str): empty string (by default) or a combination
-              of one or several letters among B, I, U to
-            size (int): in points
+                of one or several letters among B (bold), I (italic) and U (underline).
+                Bold and italic styles do not apply to Symbol and ZapfDingbats fonts.
+            size (int): in points. The default value is the current size.
         """
         if not family:
             family = self.font_family
@@ -923,7 +982,14 @@ class FPDF:
     @check_page
     def cell(self, w, h=0, txt="", border=0, ln=0, align="", fill=False, link=""):
         """
-        Output a cell, cf. https://pyfpdf.github.io/fpdf2/reference/cell.html
+        Prints a cell (rectangular area) with optional borders, background color and
+        character string. The upper-left corner of the cell corresponds to the current
+        position. The text can be aligned or centered. After the call, the current
+        position moves to the right or to the next line. It is possible to put a link
+        on the text.
+
+        If automatic page breaking is enabled and the cell goes beyond the limit, a
+        page break is performed before outputting.
 
         Args:
             w (int): Cell width. If 0, the cell extends up to the right margin.
@@ -943,7 +1009,8 @@ class FPDF:
                 `R`: right align
             fill (bool): Indicates if the cell background must be painted (`True`)
                 or transparent (`False`). Default value: False.
-            link (str): optional link to add
+            link (str): optional link to add on the image, internal
+                (identifier returned by `add_link`) or external URL.
 
         Returns: a boolean indicating if page break was triggered
         """
@@ -1114,8 +1181,11 @@ class FPDF:
         max_line_height=None,
     ):
         """
-        Output text with line breaks, cf.
-        https://pyfpdf.github.io/fpdf2/reference/multi_cell.html
+        This method allows printing text with line breaks. They can be automatic (as
+        soon as the text reaches the right border of the cell) or explicit (via the
+        `\n` character). As many cells as necessary are stacked, one below the other.
+        Text can be aligned, centered or justified. The cell block can be framed and
+        the background painted.
 
         Args:
             w (int): cells width. If 0, they extend up to the right margin of the page.
@@ -1133,7 +1203,8 @@ class FPDF:
                 or transparent (`False`). Default value: False.
             split_only (bool): if `True`, does not output anything, only perform
                 word-wrapping and return the resulting multi-lines array of strings.
-            link (str): optional link to add
+            link (str): optional link to add on the image, internal
+                (identifier returned by `add_link`) or external URL.
             ln (int): Indicates where the current position should go after the call.
                 Possible values are: `0`: to the bottom right ; `1`: to the beginning
                 of the next line ; `2`: below with the same horizontal offset ;
@@ -1418,17 +1489,33 @@ class FPDF:
         link="",
     ):
         """
-        Put an image on the page
+        Put an image on the page.
+
+        The size of the image on the page can be specified in different ways:
+        * explicit width and height (expressed in user units)
+        * one explicit dimension, the other being calculated automatically
+          in order to keep the original proportions
+        * no explicit dimension, in which case the image is put at 72 dpi.
+
+        **Remarks**:
+        * if an image is used several times, only one copy is embedded in the file.
+        * when using an animated GIF, only the first frame is used.
 
         Args:
             name: either a string representing a file path to an image, or a instance of
             `PIL.Image.Image`
-            x (int): optional horizontal position where to put the image on the page
-            y (int): optional vertical position where to put the image on the page
-            w (int): optional width of the image
-            h (int): optional height of the image
-            type (str): [**DEPRECATED**] unused, will be removed in a later version
-            link (str): optional link, internal or external, to add on the image
+            x (int): optional horizontal position where to put the image on the page.
+                If not specified or equal to None, the current abscissa is used.
+            y (int): optional vertical position where to put the image on the page.
+                If not specified or equal to None, the current ordinate is used.
+                After the call, the current ordinate is moved to the bottom of the image
+            w (int): optional width of the image. If not specified or equal to zero,
+                it is automatically calculated.
+            h (int): optional height of the image. If not specified or equal to zero,
+                it is automatically calculated.
+            type (str): [**DEPRECATED**] unused, will be removed in a later version.
+            link (str): optional link to add on the image, internal
+                (identifier returned by `add_link`) or external URL.
         """
         if type:
             warnings.warn(
@@ -1514,6 +1601,7 @@ class FPDF:
     def output(self, name="", dest=""):
         """
         Output PDF to some destination.
+        The method first calls [close](close.md) if necessary to terminate the document.
 
         By default the bytearray buffer is returned.
         If a `name` is given, the PDF is written to a new file.
