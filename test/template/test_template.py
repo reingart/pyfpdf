@@ -6,7 +6,7 @@ from ..utilities import assert_pdf_equal
 HERE = Path(__file__).resolve().parent
 
 
-def test_nominal_hardcoded(tmp_path):
+def test_template_nominal_hardcoded(tmp_path):
     """Taken from docs/Templates.md"""
     elements = [
         {
@@ -121,14 +121,14 @@ def test_nominal_hardcoded(tmp_path):
     tmpl = Template(format="A4", elements=elements, title="Sample Invoice")
     tmpl.add_page()
     tmpl["company_name"] = "Sample Company"
+    assert tmpl["company_name"] == "Sample Company"  # testing Template.__getitem__
     tmpl["company_logo"] = HERE.parent.parent / "docs/fpdf2-logo.png"
     assert_pdf_equal(tmpl, HERE / "template_nominal_hardcoded.pdf", tmp_path)
 
 
-def test_nominal_csv(tmp_path):
+def test_template_nominal_csv(tmp_path):
     """Taken from docs/Templates.md"""
     tmpl = Template(format="A4", title="Sample Invoice")
     tmpl.parse_csv(HERE / "mycsvfile.csv", delimiter=";")
     tmpl.add_page()
-    tmpl["company_name"] = "Sample Company"
     assert_pdf_equal(tmpl, HERE / "template_nominal_csv.pdf", tmp_path)
