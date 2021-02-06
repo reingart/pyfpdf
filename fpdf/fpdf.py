@@ -480,7 +480,15 @@ class FPDF:
 
     @check_page
     def line(self, x1, y1, x2, y2):
-        """Draw a line"""
+        """
+        Draw a line between two points.
+
+        Args:
+            x1 (int): Abscissa of first point
+            y1 (int): Ordinate of first point
+            x2 (int): Abscissa of second point
+            y2 (int): Ordinate of second point
+        """
         self._out(
             f"{x1 * self.k:.2f} {(self.h - y1) * self.k:.2f} m {x2 * self.k:.2f} "
             f"{(self.h - y2) * self.k:.2f} l S"
@@ -494,16 +502,37 @@ class FPDF:
 
     @check_page
     def dashed_line(self, x1, y1, x2, y2, dash_length=1, space_length=1):
-        """Draw a dashed line. Same interface as line() except:
-        - dash_length: Length of the dash
-        - space_length: Length of the space between dashes"""
+        """
+        Draw a dashed line between two points.
+
+        Args:
+            x1 (int): Abscissa of first point
+            y1 (int): Ordinate of first point
+            x2 (int): Abscissa of second point
+            y2 (int): Ordinate of second point
+            dash_length (int): Length of the dash
+            space_length (int): Length of the space between 2 dashes
+        """
         self._set_dash(dash_length, space_length)
         self.line(x1, y1, x2, y2)
         self._set_dash()
 
     @check_page
     def rect(self, x, y, w, h, style=None):
-        """Draw a rectangle"""
+        """
+        Outputs a rectangle.
+        It can be drawn (border only), filled (with no border) or both.
+
+        Args:
+            x (int): Abscissa of upper-left bounging box.
+            y (int): Ordinate of upper-left bounging box.
+            w (int): Width.
+            h (int): Height.
+            style (int): Style of rendering. Possible values are:
+                * `D` or empty string: draw border. This is the default value.
+                * `F`: fill
+                * `DF` or `FD`: draw and fill
+        """
         style_to_operators = {"F": "f", "FD": "B", "DF": "B"}
         op = style_to_operators.get(style, "S")
         self._out(
@@ -513,7 +542,20 @@ class FPDF:
 
     @check_page
     def ellipse(self, x, y, w, h, style=None):
-        """Draw a ellipse"""
+        """
+        Outputs an ellipse.
+        It can be drawn (border only), filled (with no border) or both.
+
+        Args:
+            x (int): Abscissa of upper-left bounging box.
+            y (int): Ordinate of upper-left bounging box.
+            w (int): Width.
+            h (int): Height.
+            style (int): Style of rendering. Possible values are:
+                * `D` or empty string: draw border. This is the default value.
+                * `F`: fill
+                * `DF` or `FD`: draw and fill
+        """
         style_to_operators = {"F": "f", "FD": "B", "DF": "B"}
         op = style_to_operators.get(style, "S")
 
