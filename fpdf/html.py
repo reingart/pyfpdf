@@ -7,9 +7,10 @@ __license__ = "LGPL 3.0"
 # Inspired by tuto5.py and several examples from fpdf.org, html2fpdf, etc.
 
 import html
+import logging
 from html.parser import HTMLParser
 
-DEBUG = False
+LOGGER = logging.getLogger(__name__)
 
 
 def px2mm(px):
@@ -116,15 +117,13 @@ class HTML2FPDF(HTMLParser):
                 if not self.theader_out:
                     self.output_table_header()
                 self.box_shadow(w, h, bgcolor)
-                if DEBUG:
-                    print("td cell", self.pdf.x, w, data, "*")
+                LOGGER.debug("td cell %s %s %s *", self.pdf.x, w, data)
                 self.pdf.cell(w, h, data, border=border, ln=0, align=align)
         elif self.table is not None:
             # ignore anything else than td inside a table
             pass
         elif self.align:
-            if DEBUG:
-                print("cell", data, "*")
+            LOGGER.debug("cell %s *", data)
             self.pdf.cell(
                 0,
                 self.h,
@@ -139,13 +138,11 @@ class HTML2FPDF(HTMLParser):
             if self.href:
                 self.put_link(self.href, data)
             else:
-                if DEBUG:
-                    print("write", data, "*")
+                LOGGER.debug("write %s *")
                 self.pdf.write(self.h, data)
 
     def box_shadow(self, w, h, bgcolor):
-        if DEBUG:
-            print("box_shadow", w, h, bgcolor)
+        LOGGER.debug("box_shadow %s %s %s", w, h, bgcolor)
         if bgcolor:
             fill_color = self.pdf.fill_color
             self.pdf.set_fill_color(*bgcolor)
@@ -187,8 +184,7 @@ class HTML2FPDF(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        if DEBUG:
-            print("STARTTAG", tag, attrs)
+        LOGGER.debug("STARTTAG %s %s")
         if tag in ("b", "i", "u"):
             self.set_style(tag, True)
         if tag == "a":
@@ -302,8 +298,7 @@ class HTML2FPDF(HTMLParser):
 
     def handle_endtag(self, tag):
         # Closing tag
-        if DEBUG:
-            print("ENDTAG", tag)
+        LOGGER.debug("ENDTAG %s", tag)
         if tag in ("h1", "h2", "h3", "h4", "h5", "h6"):
             self.pdf.ln(self.h)
             self.set_font()
@@ -355,8 +350,7 @@ class HTML2FPDF(HTMLParser):
             self.tr = None
         if tag in ("td", "th"):
             if self.th:
-                if DEBUG:
-                    print("revert style")
+                LOGGER.debug("revert style")
                 self.set_style("b", False)  # revert style
             self.table_col_index += int(self.td.get("colspan", "1"))
             self.td = None
@@ -376,8 +370,7 @@ class HTML2FPDF(HTMLParser):
         if size:
             self.font_size = size
             self.h = size / 72 * 25.4
-            if DEBUG:
-                print("H", self.h)
+            LOGGER.debug("H %s", self.h)
         style = "".join(s for s in ("b", "i", "u") if self.style.get(s))
         self.pdf.set_font(self.font_face or "times", style, self.font_size or 12)
         self.pdf.set_font_size(self.font_size or 12)
@@ -387,8 +380,7 @@ class HTML2FPDF(HTMLParser):
         if tag:
             self.style[tag.lower()] = enable
         style = "".join(s for s in ("b", "i", "u") if self.style.get(s))
-        if DEBUG:
-            print("SET_FONT_STYLE", style)
+        LOGGER.debug("SET_FONT_STYLE %s", style)
         self.pdf.set_font(style=style)
 
     def set_text_color(self, r=None, g=0, b=0):

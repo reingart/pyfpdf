@@ -1583,9 +1583,11 @@ class FPDF:
                 If not specified or equal to None, the current ordinate is used.
                 After the call, the current ordinate is moved to the bottom of the image
             w (int): optional width of the image. If not specified or equal to zero,
-                it is automatically calculated.
+                it is automatically calculated from the image size.
+                Pass `pdf.epw` to scale horizontally to the full page width.
             h (int): optional height of the image. If not specified or equal to zero,
-                it is automatically calculated.
+                it is automatically calculated from the image size.
+                Pass `pdf.eph` to scale horizontally to the full page height.
             type (str): [**DEPRECATED**] unused, will be removed in a later version.
             link (str): optional link to add on the image, internal
                 (identifier returned by `add_link`) or external URL.
