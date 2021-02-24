@@ -28,6 +28,7 @@ from datetime import datetime
 from enum import IntEnum
 from functools import wraps
 from pathlib import Path
+from typing import NamedTuple, Optional
 
 from .errors import FPDFException, FPDFPageFormatException
 from .fonts import fpdf_charwidths
@@ -81,6 +82,15 @@ class DocumentState(IntEnum):
     READY = 1  # page not started yet
     GENERATING_PAGE = 2
     CLOSED = 3  # EOF printed
+
+
+class PageLink(NamedTuple):
+    x: int
+    y: int
+    width: int
+    height: int
+    link: str
+    alt_text: Optional[str] = None
 
 
 # Disabling this check due to the "format" parameter below:
@@ -172,7 +182,7 @@ class FPDF:
         self.font_files = {}  # array of font files
         self.diffs = {}  # array of encoding differences
         self.images = {}  # array of used images
-        self.page_links = {}  # array of links in pages
+        self.page_links = {}  # array of PageLink
         self.links = {}  # array of internal links
         self.in_footer = 0  # flag set when processing footer
         self.lasth = 0  # height of last cell printed
@@ -191,7 +201,7 @@ class FPDF:
         self.angle = 0  # used by deprecated method: rotate()
         self.font_cache_dir = font_cache_dir
         self._marked_contents = []  # list of MarkedContent
-        self._struct_parents_id_per_page = {}  # {page_object_id -> StructParents ID}
+        self._struct_parents_id_per_page = {}  # {page_object_id -> StructParent(s) ID}
         # Only set if a Structure Tree is added to the document:
         self._struct_tree_root_obj_id = None
 
@@ -927,13 +937,33 @@ class FPDF:
 
         self.links[link] = [page, y]
 
-    def link(self, x, y, w, h, link, alt_text=""):
-        """Put a link on the page"""
+    def link(self, x, y, w, h, link, alt_text=None):
+        """
+        Puts a link on a rectangular area of the page.
+        Text or image links are generally put via [cell](#fpdf.FPDF.cell),
+        [write](#fpdf.FPDF.write) or [image](#fpdf.FPDF.image),
+        but this method can be useful for instance to define a clickable area inside an image.
+
+        Args:
+            x (int): horizontal position (from the left) to the left side of the link rectangle
+            y (int): vertical position (from the top) to the bottom side of the link rectangle
+            w (int): width of the link rectangle
+            h (int): width of the link rectangle
+            link (str): either an URL or a integer returned by `add_link`, defining an internal link to a page
+            alt_text (str): optional textual description of the link, for accessibility purposes
+        """
         if self.page not in self.page_links:
             self.page_links[self.page] = []
-        self.page_links[self.page] += [
-            (x * self.k, self.h_pt - y * self.k, w * self.k, h * self.k, link, alt_text)
-        ]
+        self.page_links[self.page].append(
+            PageLink(
+                x * self.k,
+                self.h_pt - y * self.k,
+                w * self.k,
+                h * self.k,
+                link,
+                alt_text,
+            )
+        )
 
     @check_page
     def text(self, x, y, txt=""):
@@ -1559,9 +1589,9 @@ class FPDF:
             type (str): [**DEPRECATED**] unused, will be removed in a later version.
             link (str): optional link to add on the image, internal
                 (identifier returned by `add_link`) or external URL.
-            title (str): optional
+            title (str): optional. Currently, never seem rendered by PDF readers.
             alt_text (str): optional alternative text describing the image,
-                for accessibility purposes
+                for accessibility purposes. Displayed by some PDF readers on hover.
         """
         if type:
             warnings.warn(
@@ -1615,19 +1645,24 @@ class FPDF:
     @contextmanager
     def _marked_sequence(self, **kwargs):
         page_object_id = self._current_page_object_id()
-        struct_parents_id = self._struct_parents_id_per_page.get(page_object_id)
-        if struct_parents_id is None:
-            struct_parents_id = len(self._struct_parents_id_per_page)
-            self._struct_parents_id_per_page[page_object_id] = struct_parents_id
         mcid = sum(
             1 for mc in self._marked_contents if mc.page_object_id == page_object_id
         )
-        self._marked_contents.append(
-            MarkedContent(page_object_id, struct_parents_id, mcid, **kwargs)
+        self._add_marked_content(
+            page_object_id, struct_type="/Figure", mcid=mcid, **kwargs
         )
         self._out(f"/P <</MCID {mcid}>> BDC")
         yield
         self._out("EMC")
+
+    def _add_marked_content(self, page_object_id, **kwargs):
+        struct_parents_id = self._struct_parents_id_per_page.get(page_object_id)
+        if struct_parents_id is None:
+            struct_parents_id = len(self._struct_parents_id_per_page)
+            self._struct_parents_id_per_page[page_object_id] = struct_parents_id
+        marked_content = MarkedContent(page_object_id, struct_parents_id, **kwargs)
+        self._marked_contents.append(marked_content)
+        return marked_content
 
     def _current_page_object_id(self):
         # Predictable given that _putpages is invoked first in _enddoc:
@@ -1758,8 +1793,8 @@ class FPDF:
                 for pl in self.page_links[n]:
                     # first four things in 'link' list are coordinates?
                     rect = (
-                        f"{pl[0]:.2f} {pl[1]:.2f} "
-                        f"{pl[0] + pl[2]:.2f} {pl[1] - pl[3]:.2f}"
+                        f"{pl.x:.2f} {pl.y:.2f} "
+                        f"{pl.x + pl.width:.2f} {pl.y - pl.height:.2f}"
                     )
 
                     # start the annotation entry
@@ -1772,24 +1807,30 @@ class FPDF:
                         f"/F 4"
                     )
 
+                    if pl.alt_text is not None:
+                        # Note: the spec indicates that a /StructParent could be added **inside* this /Annot,
+                        # but tests with Adobe Acrobat Reader reveal that the page /StructParents inserted below
+                        # is enough to link the marked content in the hierarchy tree with this annotation link.
+                        self._add_marked_content(
+                            self.n, struct_type="/Link", alt_text=pl.alt_text
+                        )
+
                     # HTML ending of annotation entry
-                    if isinstance(pl[4], str):
-                        annots += f"/A <</S /URI /URI {enclose_in_parens(pl[4])}>>>>"
-
-                    # Dest type ending of annotation entry
-                    else:
-                        assert pl[4] in self.links, (
+                    if isinstance(pl.link, str):
+                        annots += f"/A <</S /URI /URI {enclose_in_parens(pl.link)}>>"
+                    else:  # Dest type ending of annotation entry
+                        assert pl.link in self.links, (
                             f"Page {n} has a link with an invalid index: "
-                            f"{pl[4]} (doc #links={len(self.links)})"
+                            f"{pl.link} (doc #links={len(self.links)})"
                         )
-                        l = self.links[pl[4]]
-                        # if l[0] in self.orientation_changes: h = w_pt
-                        # else:                                h = h_pt
+                        link = self.links[pl.link]
+                        # if link[0] in self.orientation_changes: h = w_pt
+                        # else:                                   h = h_pt
                         annots += (
-                            f"/Dest [{1 + 2 * l[0]} 0 R /XYZ 0 "
-                            f"{h_pt - l[1] * self.k:.2f} null]>>"
+                            f"/Dest [{1 + 2 * link[0]} 0 R /XYZ 0 "
+                            f"{h_pt - link[1] * self.k:.2f} null]"
                         )
-
+                    annots += ">>"
                 # End links list
                 self._out(f"{annots}]")
             if self.pdf_version > "1.3":
