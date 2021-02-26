@@ -49,7 +49,8 @@ class HTML2FPDF(HTMLParser):
         self.indent = 0
         self.bullet = []
         self.font_size = pdf.font_size_pt
-        self.set_font("times", self.font_size)
+        self.font_face = None  # must be initialized before calling HTML.set_font:
+        self.set_font(size=self.font_size)
         self.font_color = 0, 0, 0  # initialize font color, r,g,b format
         self.table = None  # table attributes
         self.table_col_width = None  # column (header) widths
@@ -117,13 +118,13 @@ class HTML2FPDF(HTMLParser):
                 if not self.theader_out:
                     self.output_table_header()
                 self.box_shadow(w, h, bgcolor)
-                LOGGER.debug("td cell %s %s %s *", self.pdf.x, w, data)
+                LOGGER.debug("td cell %s %s '%s' *", self.pdf.x, w, data)
                 self.pdf.cell(w, h, data, border=border, ln=0, align=align)
         elif self.table is not None:
             # ignore anything else than td inside a table
             pass
         elif self.align:
-            LOGGER.debug("cell %s *", data)
+            LOGGER.debug("cell '%s' *", data)
             self.pdf.cell(
                 0,
                 self.h,
@@ -138,7 +139,7 @@ class HTML2FPDF(HTMLParser):
             if self.href:
                 self.put_link(self.href, data)
             else:
-                LOGGER.debug("write %s *")
+                LOGGER.debug("write '%s' *", data)
                 self.pdf.write(self.h, data)
 
     def box_shadow(self, w, h, bgcolor):
@@ -184,7 +185,7 @@ class HTML2FPDF(HTMLParser):
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        LOGGER.debug("STARTTAG %s %s")
+        LOGGER.debug("STARTTAG %s %s", tag, attrs)
         if tag in ("b", "i", "u"):
             self.set_style(tag, True)
         if tag == "a":
@@ -367,6 +368,8 @@ class HTML2FPDF(HTMLParser):
     def set_font(self, face=None, size=None):
         if face:
             self.font_face = face
+        if not self.font_face:
+            self.font_face = self.pdf.current_font.get("fontkey")
         if size:
             self.font_size = size
             self.h = size / 72 * 25.4

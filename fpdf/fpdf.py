@@ -192,7 +192,6 @@ class FPDF:
         self.font_size_pt = 12  # current font size in points
         self.font_stretching = 100  # current font stretching
         self.str_alias_nb_pages = "{nb}"
-        self.unifontsubset = False
         self.underline = 0  # underlining flag
         self.draw_color = "0 G"
         self.fill_color = "0 g"
@@ -274,6 +273,10 @@ class FPDF:
         self.set_display_mode("fullwidth")  # Full width display mode
         self.compress = True  # Enable compression by default
         self.pdf_version = "1.3"  # Set default PDF version No.
+
+    @property
+    def unifontsubset(self):
+        return self.current_font.get("type") == "TTF"
 
     @property
     def epw(self):
@@ -707,6 +710,7 @@ class FPDF:
 
         # Check if font already added or one of the core fonts
         if fontkey in self.fonts or fontkey in self.core_fonts:
+            warnings.warn("Core font or font already added: doing nothing")
             return
         if uni:
             for parent in (".", FPDF_FONT_DIR, SYSTEM_TTFONTS):
@@ -786,6 +790,10 @@ class FPDF:
             }
             self.font_files[fname] = {"type": "TTF"}
         else:
+            if fname.endswith(".ttf"):
+                warnings.warn(
+                    "When providing a TTF font file you must pass uni=True to FPDF.set_font"
+                )
             font_dict = pickle.loads(Path(fname).read_bytes())
             self.fonts[fontkey] = {"i": len(self.fonts) + 1}
             self.fonts[fontkey].update(font_dict)
@@ -893,6 +901,7 @@ class FPDF:
                 "up": -100,
                 "ut": 50,
                 "cw": fpdf_charwidths[fontkey],
+                "fontkey": fontkey,
             }
 
         # Select it
@@ -901,7 +910,6 @@ class FPDF:
         self.font_size_pt = size
         self.font_size = size / self.k
         self.current_font = self.fonts[fontkey]
-        self.unifontsubset = self.current_font["type"] == "TTF"
         if self.page > 0:
             self._out(f"BT /F{self.current_font['i']} {self.font_size_pt:.2f} Tf ET")
 

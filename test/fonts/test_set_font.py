@@ -106,6 +106,7 @@ def test_set_font_core_font_attributes():
         "up": -100,
         "ut": 50,
         "cw": fpdf_charwidths["courier"],
+        "fontkey": "courier",
     }
     assert pdf.fonts["times"] == {
         "i": 2,
@@ -114,6 +115,7 @@ def test_set_font_core_font_attributes():
         "up": -100,
         "ut": 50,
         "cw": fpdf_charwidths["times"],
+        "fontkey": "times",
     }
 
 
