@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
-## [2.3.1] - not released yet
+## [2.3.1] - 2021-02-28
 ### Added
 - `FPDF.polyline` & `FPDF.polygon` : new methods added by @uovodikiwi - thanks!
 - `FPDF.set_margin` : new method to set the document right, left, top & bottom margins to the same value at once
