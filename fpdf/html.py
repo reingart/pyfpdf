@@ -29,6 +29,8 @@ def hex2dec(color="#000000"):
 class HTML2FPDF(HTMLParser):
     """Render basic HTML to FPDF"""
 
+    LI_TAG_INDENT = 5
+
     def __init__(self, pdf, image_map=None, table_line_separators=False):
         """
         Args:
@@ -226,7 +228,7 @@ class HTML2FPDF(HTMLParser):
                 bullet += 1
                 self.bullet[self.indent - 1] = bullet
                 bullet = f"{bullet}. "
-            self.pdf.write(self.h, f"{' ' * 5 * self.indent}{bullet} ")
+            self.pdf.write(self.h, f"{' ' * self.LI_TAG_INDENT * self.indent}{bullet} ")
             self.set_text_color()
         if tag == "font":
             # save previous font state:

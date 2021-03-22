@@ -10,6 +10,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 ## [2.3.2] - not released yet
 ### Added
 - `FPDF.set_xmp_metadata`
+- made `<li>` indentation configurable through `fpdf.HTML2FPDF.LI_TAG_INDENT` class constant
 ### Fixed
 - `FPDF.multi_cell`: line wrapping with justified content and unicode fonts, _cf._ [#118](https://github.com/PyFPDF/fpdf2/issues/118)
 
