@@ -1,5 +1,5 @@
-Changelog:
---------
+Changelog
+---------
 
 All notable changes to this project will be documented in this file.
 
@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
-## [2.3.2] - not released yet
+## [2.3.3] - not released yet
+
+## [2.3.2] - 2021-03-27
 ### Added
 - `FPDF.set_xmp_metadata`
 - made `<li>` bullets & indentation configurable through class attributes, instance attributes or optional method arguments, _cf._ `test_customize_ul`
