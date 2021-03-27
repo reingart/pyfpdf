@@ -5,7 +5,7 @@ from test.conftest import assert_pdf_equal
 
 HERE = Path(__file__).resolve().parent
 
-XMP_METADATA = f"""<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="fpdf2">
+XMP_METADATA = """<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="fpdf2">
   <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
     <rdf:Description rdf:about="">
       <dc:title xmlns:dc="http://purl.org/dc/elements/1.1/">
@@ -29,7 +29,7 @@ XMP_METADATA = f"""<x:xmpmeta xmlns:x="adobe:ns:meta/" x:xmptk="fpdf2">
       </dc:creator>
     </rdf:Description>
     <rdf:Description xmlns:pdf="http://ns.adobe.com/pdf/1.3/" rdf:about="" pdf:Keywords="test data pdf fpdf2"/>
-    <rdf:Description xmlns:pdf="http://ns.adobe.com/pdf/1.3/" rdf:about="" pdf:Producer="PyFPDF/fpdf{fpdf.FPDF_VERSION}"/>
+    <rdf:Description xmlns:pdf="http://ns.adobe.com/pdf/1.3/" rdf:about="" pdf:Producer="PyFPDF/fpdf2.X.Y"/>
     <rdf:Description xmlns:xmp="http://ns.adobe.com/xap/1.0/" rdf:about="" xmp:CreatorTool="fpdf2"/>
     <rdf:Description rdf:about="" xmlns:pdfaid="http://www.aiim.org/pdfa/ns/id/">
       <pdfaid:part>1</pdfaid:part>
@@ -55,7 +55,7 @@ def test_put_info_all(tmp_path):
     doc.set_author("sample author")
     doc.set_keywords("sample keywords")
     doc.set_creator("sample creator")
-    doc.set_producer(f"PyFPDF/fpdf{fpdf.FPDF_VERSION}")
+    doc.set_producer("PyFPDF/fpdf2.X.Y")
     assert_pdf_equal(doc, HERE / "put_info_all.pdf", tmp_path)
 
 
