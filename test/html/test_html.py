@@ -237,3 +237,30 @@ def test_html_bold_italic_underline(tmp_path):
            <B><I><U>all at once!</U></I></B>"""
     )
     assert_pdf_equal(pdf, HERE / "html_bold_italic_underline.pdf", tmp_path)
+
+
+def test_customize_ul(tmp_path):
+    html = """<ul>
+            <li><b>term1</b>: definition1</li>
+            <li><b>term2</b>: definition2</li>
+        </ul>"""
+    # 1. Customizing through class attributes:
+    class CustomPDF(fpdf.FPDF, fpdf.HTMLMixin):
+        li_tag_indent = 5
+        ul_bullet_char = "\x86"
+
+    pdf = CustomPDF()
+    pdf.set_font_size(30)
+    pdf.add_page()
+    pdf.write_html(html)
+    pdf.ln()
+    # 2. Customizing through instance attributes:
+    pdf.li_tag_indent = 10
+    pdf.ul_bullet_char = "\x9b"
+    pdf.write_html(html)
+    pdf.ln()
+    # 3. Customizing through optional method arguments:
+    for indent, bullet in ((15, "\xac"), (20, "\xb7")):
+        pdf.write_html(html, li_tag_indent=indent, ul_bullet_char=bullet)
+        pdf.ln()
+    assert_pdf_equal(pdf, HERE / "test_customize_ul.pdf", tmp_path)

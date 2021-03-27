@@ -10,7 +10,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 ## [2.3.2] - not released yet
 ### Added
 - `FPDF.set_xmp_metadata`
-- made `<li>` indentation configurable through `fpdf.HTML2FPDF.LI_TAG_INDENT` class constant
+- made `<li>` bullets & indentation configurable through class attributes, instance attributes or optional method arguments, _cf._ `test_customize_ul`
 ### Fixed
 - `FPDF.multi_cell`: line wrapping with justified content and unicode fonts, _cf._ [#118](https://github.com/PyFPDF/fpdf2/issues/118)
 - `FPDF.multi_cell`: when `ln=3`, automatic page breaks now behave correctly at the bottom of pages

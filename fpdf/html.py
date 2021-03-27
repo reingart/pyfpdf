@@ -11,6 +11,7 @@ import logging
 from html.parser import HTMLParser
 
 LOGGER = logging.getLogger(__name__)
+BULLET_WIN1252 = "\x95"  # BULLET character in Windows-1252 encoding
 
 
 def px2mm(px):
@@ -29,20 +30,30 @@ def hex2dec(color="#000000"):
 class HTML2FPDF(HTMLParser):
     """Render basic HTML to FPDF"""
 
-    LI_TAG_INDENT = 5
-
-    def __init__(self, pdf, image_map=None, table_line_separators=False):
+    def __init__(
+        self,
+        pdf,
+        image_map=None,
+        li_tag_indent=5,
+        table_line_separators=False,
+        ul_bullet_char=BULLET_WIN1252,
+        **_,
+    ):
         """
         Args:
             pdf (FPDF): an instance of `fpdf.FPDF`
             image_map (function): an optional one-argument function that map <img> "src"
                 to new image URLs
+            li_tag_indent (int): numeric indentation of <li> elements
             table_line_separators (bool): enable horizontal line separators in <table>
+            ul_bullet_char (str): bullet character for <ul> elements
         """
         super().__init__()
         self.pdf = pdf
         self.image_map = image_map or (lambda src: src)
+        self.li_tag_indent = li_tag_indent
         self.table_line_separators = table_line_separators
+        self.ul_bullet_char = ul_bullet_char
         self.style = dict(b=False, i=False, u=False)
         self.href = ""
         self.align = ""
@@ -216,7 +227,7 @@ class HTML2FPDF(HTMLParser):
             self.pdf.ln(3)
         if tag == "ul":
             self.indent += 1
-            self.bullet.append("\x95")
+            self.bullet.append(self.ul_bullet_char)
         if tag == "ol":
             self.indent += 1
             self.bullet.append(0)
@@ -228,7 +239,7 @@ class HTML2FPDF(HTMLParser):
                 bullet += 1
                 self.bullet[self.indent - 1] = bullet
                 bullet = f"{bullet}. "
-            self.pdf.write(self.h, f"{' ' * self.LI_TAG_INDENT * self.indent}{bullet} ")
+            self.pdf.write(self.h, f"{' ' * self.li_tag_indent * self.indent}{bullet} ")
             self.set_text_color()
         if tag == "font":
             # save previous font state:
@@ -410,6 +421,9 @@ class HTML2FPDF(HTMLParser):
 class HTMLMixin:
     def write_html(self, text, *args, **kwargs):
         """Parse HTML and convert it to PDF"""
-        h2p = HTML2FPDF(self, *args, **kwargs)
+        kwargs2 = vars(self)
+        # Method arguments must override class & instance attributes:
+        kwargs2.update(kwargs)
+        h2p = HTML2FPDF(self, *args, **kwargs2)
         text = html.unescape(text)  # To deal with HTML entities
         h2p.feed(text)
