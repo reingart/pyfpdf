@@ -106,8 +106,8 @@ def subst_streams_with_hashes(in_lines):
             # First line of stream, we check if it is binary or not:
             try:
                 line.decode("latin-1")
-                if b"\0" not in line:
-                    # It's text! No need to compact stream
+                if not (b"\0" in line or b"\xff" in line):
+                    # It's likely to be text! No need to compact stream
                     stream = None
             except UnicodeDecodeError:
                 pass

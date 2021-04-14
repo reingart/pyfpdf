@@ -96,13 +96,13 @@ class HTML2FPDF(HTMLParser):
             if not self.table_row_height and height:
                 self.table_row_height = height
             border = int(self.table.get("border", 0))
-            if not self.th:
-                align = self.td.get("align", "L")[0].upper()
-                border = border and "LR"
-            else:
+            if self.th:
                 self.set_style("B", True)
                 border = border or "B"
                 align = self.td.get("align", "C")[0].upper()
+            else:
+                align = self.td.get("align", "L")[0].upper()
+                border = border and "LR"
             bgcolor = hex2dec(self.td.get("bgcolor", self.tr.get("bgcolor", "")))
             # parsing table header/footer (drawn later):
             if self.thead is not None:
@@ -315,6 +315,8 @@ class HTML2FPDF(HTMLParser):
                     self.table_col_width
                 ), f"table_col_index={self.table_col_index} #table_col_width={len(self.table_col_width)}"
                 self.table_col_width.append(self.td["width"])
+            if attrs:
+                self.align = attrs.get("align")
         if tag == "th":
             self.td = {k.lower(): v for k, v in attrs.items()}
             self.th = True
@@ -334,6 +336,8 @@ class HTML2FPDF(HTMLParser):
                 # <img> in a <td>: its width must not exceed the cell width:
                 td_width = self._td_width()
                 if not width or width > td_width:
+                    if width:  # Preserving image aspect ratio:
+                        height *= td_width / width
                     width = td_width
                 x = self._td_x()
                 if self.align and self.align[0].upper() == "C":

@@ -273,7 +273,7 @@ def test_img_inside_html_table(tmp_path):
         """<table>
         <tr>
             <td width="50%">
-                <img src="test/image/png_images/6c853ed9dacd5716bc54eb59cec30889.png" height="256" width="181"/>
+                <img src="test/image/png_images/affc57dfffa5ec448a0795738d456018.png" height="235" width="435"/>
             </td>
             <td width="50%">
                 <img src="test/image/image_types/insert_images_insert_png.png" height="162" width="154"/>
@@ -291,7 +291,7 @@ def test_img_inside_html_table_without_explicit_dimensions(tmp_path):
         """<table>
         <tr>
             <td width="50%">
-                <img src="test/image/png_images/6c853ed9dacd5716bc54eb59cec30889.png"/>
+                <img src="test/image/png_images/affc57dfffa5ec448a0795738d456018.png"/>
             </td>
             <td width="50%">
                 <img src="test/image/image_types/insert_images_insert_png.png"/>
@@ -313,7 +313,7 @@ def test_img_inside_html_table_centered(tmp_path):
         """<table>
         <tr>
             <td width="50%"><center>
-                <img src="test/image/png_images/6c853ed9dacd5716bc54eb59cec30889.png" height="256" width="181"/>
+                <img src="test/image/png_images/affc57dfffa5ec448a0795738d456018.png" height="235" width="435"/>
             </center></td>
             <td width="50%"><center>
                 <img src="test/image/image_types/insert_images_insert_png.png" height="162" width="154"/>
@@ -322,3 +322,23 @@ def test_img_inside_html_table_centered(tmp_path):
     </table>"""
     )
     assert_pdf_equal(pdf, HERE / "test_img_inside_html_table_centered.pdf", tmp_path)
+
+
+def test_img_inside_html_table_centered_with_align(tmp_path):
+    pdf = MyFPDF()
+    pdf.add_page()
+    pdf.write_html(
+        """<table>
+        <tr>
+            <td width="50%" align="center">
+                <img src="test/image/png_images/affc57dfffa5ec448a0795738d456018.png" height="235" width="435"/>
+            </td>
+            <td width="50%" align="center">
+                <img src="test/image/image_types/insert_images_insert_png.png" height="162" width="154"/>
+            </td>
+        </tr>
+    </table>"""
+    )
+    assert_pdf_equal(
+        pdf, HERE / "test_img_inside_html_table_centered_with_align.pdf", tmp_path
+    )
