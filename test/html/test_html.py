@@ -363,8 +363,5 @@ def test_img_inside_html_table_centered_with_caption(tmp_path):
     </table>"""
     )
     assert_pdf_equal(
-        pdf,
-        HERE / "test_img_inside_html_table_centered_with_caption.pdf",
-        tmp_path,
-        generate=True,
+        pdf, HERE / "test_img_inside_html_table_centered_with_caption.pdf", tmp_path
     )
