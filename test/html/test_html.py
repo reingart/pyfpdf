@@ -342,3 +342,29 @@ def test_img_inside_html_table_centered_with_align(tmp_path):
     assert_pdf_equal(
         pdf, HERE / "test_img_inside_html_table_centered_with_align.pdf", tmp_path
     )
+
+
+def test_img_inside_html_table_centered_with_caption(tmp_path):
+    pdf = MyFPDF()
+    pdf.add_page()
+    pdf.write_html(
+        """<table border="1">
+        <tr>
+            <td colspan="2" align="center"><b>Side by side centered pictures and captions</b></td>
+        </tr>
+        <tr>
+            <td width="50%" align="center"><img src="docs/fpdf2-logo.png" height="200" width="200"/></td>
+            <td width="50%" align="center"><img src="docs/fpdf2-logo.png" height="200" width="200"/></td>
+        </tr>
+        <tr>
+            <td width="50%" align="center">left caption</td>
+            <td width="50%" align="center">right caption</td>
+        </tr>
+    </table>"""
+    )
+    assert_pdf_equal(
+        pdf,
+        HERE / "test_img_inside_html_table_centered_with_caption.pdf",
+        tmp_path,
+        generate=True,
+    )
