@@ -32,6 +32,8 @@ Note that a page break will always be triggered after inserting the table of con
 When using [`fpdf.HTMLMixin`](HTML.md), a document outline is automatically built.
 You can insert a table of content with the special `<toc>` tag.
 
+Custom styling of the table of contents can be achieved by overriding the `render_toc` method in a subclass.
+
 ## Code samples ##
 
 The regression tests are a good place to find code samples.

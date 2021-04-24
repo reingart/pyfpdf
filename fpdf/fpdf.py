@@ -2800,6 +2800,7 @@ class FPDF:
             recorder.replay()
         LOGGER.debug("Ending unbreakable block")
 
+    @check_page
     def insert_toc_placeholder(self, render_toc_function, pages=1):
         """
         Configure Table Of Contents rendering at the end of the document generation,
