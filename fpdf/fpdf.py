@@ -202,7 +202,8 @@ class FPDF:
         self.page = 0  # current page number
         self.n = 2  # current object number
         self.buffer = bytearray()  # buffer holding in-memory PDF
-        self.pages = {}  # array containing pages and metadata
+        # Associative array from page number to dicts containing pages and metadata:
+        self.pages = {}
         self.state = DocumentState.UNINITIALIZED  # current document state
         self.fonts = {}  # array of used fonts
         self.font_files = {}  # array of font files
@@ -1989,7 +1990,7 @@ class FPDF:
         tocp.render_function(self, self._outline)
         expected_final_age = tocp.start_page + tocp.pages - 1
         if self.page != expected_final_age:
-            error_msg = "The rendering function passed to FPDF.insert_toc_placeholder triggered to many page breaks: "
+            error_msg = "The rendering function passed to FPDF.insert_toc_placeholder triggered too many page breaks: "
             error_msg += f"page {self.page} was reached while it was expected to span only {tocp.pages} pages"
             raise FPDFException(error_msg)
         self.state = prev_state
