@@ -382,7 +382,9 @@ class HTML2FPDF(HTMLParser):
         if tag == "center":
             self.align = "Center"
         if tag == "toc":
-            self.pdf.insert_toc_placeholder(self.render_toc)
+            self.pdf.insert_toc_placeholder(
+                self.render_toc, pages=int(attrs.get("pages", 1))
+            )
 
     def handle_endtag(self, tag):
         # Closing tag

@@ -1988,10 +1988,11 @@ class FPDF:
         self.state = DocumentState.GENERATING_PAGE
         self.y = tocp.y
         tocp.render_function(self, self._outline)
-        expected_final_age = tocp.start_page + tocp.pages - 1
-        if self.page != expected_final_age:
-            error_msg = "The rendering function passed to FPDF.insert_toc_placeholder triggered too many page breaks: "
-            error_msg += f"page {self.page} was reached while it was expected to span only {tocp.pages} pages"
+        expected_final_page = tocp.start_page + tocp.pages - 1
+        if self.page != expected_final_page:
+            too = "many" if self.page > expected_final_page else "few"
+            error_msg = f"The rendering function passed to FPDF.insert_toc_placeholder triggered too {too} page breaks: "
+            error_msg += f"ToC ended on page {self.page} while it was expected to span exactly {tocp.pages} pages"
             raise FPDFException(error_msg)
         self.state = prev_state
 
