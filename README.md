@@ -68,9 +68,9 @@ Features:
 
 We validate all our PDF samples using 3 different checkers:
 
-[![QPDF logo](docs/qpdf-logo.svg)](https://github.com/qpdf/qpdf)
-[![PDF Checker logo](docs/pdfchecker-logo.png)](https://www.datalogics.com/products/pdf-tools/pdf-checker/)
-[![VeraPDF logo](docs/vera-logo.jpg)](https://verapdf.org)
+[![QPDF logo](https://pyfpdf.github.io/fpdf2/qpdf-logo.svg)](https://github.com/qpdf/qpdf)
+[![PDF Checker logo](https://pyfpdf.github.io/fpdf2/pdfchecker-logo.png)](https://www.datalogics.com/products/pdf-tools/pdf-checker/)
+[![VeraPDF logo](https://pyfpdf.github.io/fpdf2/vera-logo.jpg)](https://verapdf.org)
 
 Documentation:
 --------------

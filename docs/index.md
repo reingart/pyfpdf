@@ -30,6 +30,11 @@ This repository is a fork of the library's [original port by Max Pat](http://www
 * Clean error handling through exceptions
 * Only **one** dependency so far: [Pillow](https://pillow.readthedocs.io/en/stable/)
 * Unit tests with `qpdf`-based PDF diffing
+* PDF samples validation using 3 different checkers:
+
+[![QPDF logo](qpdf-logo.svg)](https://github.com/qpdf/qpdf)
+[![PDF Checker logo](pdfchecker-logo.png)](https://www.datalogics.com/products/pdf-tools/pdf-checker/)
+[![VeraPDF logo](vera-logo.jpg)](https://verapdf.org)
 
 FPDF original features:
 
