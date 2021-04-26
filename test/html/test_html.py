@@ -210,6 +210,24 @@ def test_html_table_line_separators(tmp_path):
     assert_pdf_equal(pdf, HERE / "html_table_line_separators.pdf", tmp_path)
 
 
+def test_html_table_th_inside_tr_issue_137(tmp_path):
+    pdf = MyFPDF()
+    pdf.add_page()
+    pdf.write_html(
+        """<table border="1">
+    <tr>
+        <th width="40%">header1</th>
+        <th width="60%">header2</th>
+    </tr>
+    <tr>
+        <th width="40%">value1</th>
+        <td width="60%">value2</td>
+    </tr>
+</table>"""
+    )
+    assert_pdf_equal(pdf, HERE / "html_table_line_separators_issue_137.pdf", tmp_path)
+
+
 def test_html_table_with_border(tmp_path):
     pdf = MyFPDF()
     pdf.set_font_size(30)

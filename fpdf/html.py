@@ -332,7 +332,10 @@ class HTML2FPDF(HTMLParser):
         if tag == "th":
             self.td = {k.lower(): v for k, v in attrs.items()}
             self.th = True
-            if "width" in self.td:
+            if "width" in self.td and self.table_col_index >= len(self.table_col_width):
+                assert self.table_col_index == len(
+                    self.table_col_width
+                ), f"table_col_index={self.table_col_index} #table_col_width={len(self.table_col_width)}"
                 self.table_col_width.append(self.td["width"])
         if tag == "thead":
             self.thead = {}
