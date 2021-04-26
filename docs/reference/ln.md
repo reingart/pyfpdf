@@ -1,6 +1,6 @@
-cf. https://pypi.org/project/fpdf2/fpdf/#fpdf.FPDF.ln
+cf. https://pyfpdf.github.io/fpdf2/fpdf/#fpdf.FPDF.ln
 
 <script>
 // Migrating Markdown doc to docstrings - cf. https://github.com/PyFPDF/fpdf2/issues/31
-window.location = 'https://pypi.org/project/fpdf2/fpdf/#fpdf.FPDF.ln'
+window.location = 'https://pyfpdf.github.io/fpdf2/fpdf/#fpdf.FPDF.ln'
 </script>

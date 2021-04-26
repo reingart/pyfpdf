@@ -1,6 +1,6 @@
-cf. https://pypi.org/project/fpdf2/fpdf/#fpdf.FPDF.set_font
+cf. https://pyfpdf.github.io/fpdf2/fpdf/#fpdf.FPDF.set_font
 
 <script>
 // Migrating Markdown doc to docstrings - cf. https://github.com/PyFPDF/fpdf2/issues/31
-window.location = 'https://pypi.org/project/fpdf2/fpdf/#fpdf.FPDF.set_font'
+window.location = 'https://pyfpdf.github.io/fpdf2/fpdf/#fpdf.FPDF.set_font'
 </script>
