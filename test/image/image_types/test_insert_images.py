@@ -2,7 +2,7 @@ import io
 import sys
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
 
 import fpdf
 from test.conftest import assert_pdf_equal
@@ -58,6 +58,18 @@ def test_insert_pillow(tmp_path):
     img = Image.open(file_path)
     pdf.image(img, x=15, y=15, h=140)
     assert_pdf_equal(pdf, HERE / "image_types_insert_png.pdf", tmp_path)
+
+
+def test_insert_pillow_issue_139(tmp_path):
+    pdf = fpdf.FPDF()
+    pdf.add_page()
+    font = ImageFont.truetype("arial.ttf", 40)
+    for y in range(5):
+        for x in range(4):
+            img = Image.new(mode="RGB", size=(100, 100), color=(60, 255, 10))
+            ImageDraw.Draw(img).text((20, 20), f"{y}{x}", fill="black", font=font)
+            pdf.image(img, x=x * 50 + 5, y=y * 50 + 5, w=45)
+    assert_pdf_equal(pdf, HERE / "insert_pillow_issue_139.pdf", tmp_path)
 
 
 def test_insert_bytesio(tmp_path):

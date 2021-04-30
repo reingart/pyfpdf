@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
+## [2.3.4] - 2021-04-30
+### Fixed
+- a "fake duplicates" bug when a `Pillow.Image.Image` was passed to `FPDF.image`
+
 ## [2.3.3] - 2021-04-21
 ### Added
 - new features: **document outline & table of contents**! Check out the new dedicated [documentation page](https://pyfpdf.github.io/fpdf2/DocumentOutlineAndTableOfContents.html) for more information

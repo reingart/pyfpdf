@@ -34,6 +34,8 @@ from functools import wraps
 from pathlib import Path
 from typing import Callable, NamedTuple, Optional, Union
 
+from PIL import Image
+
 from .errors import FPDFException, FPDFPageFormatException
 from .fonts import fpdf_charwidths
 from .image_parsing import get_img_info, load_resource
@@ -59,7 +61,7 @@ LOGGER = logging.getLogger(__name__)
 HERE = Path(__file__).resolve().parent
 
 # Global variables
-FPDF_VERSION = "2.3.3"
+FPDF_VERSION = "2.3.4"
 FPDF_FONT_DIR = HERE / "font"
 SYSTEM_TTFONTS = None
 
@@ -1720,6 +1722,8 @@ class FPDF:
             )
         if isinstance(name, str):
             img = None
+        elif isinstance(name, Image.Image):
+            name, img = hashlib.md5(name.tobytes()).hexdigest(), name
         elif isinstance(name, io.BytesIO):
             name, img = hashlib.md5(name.getvalue()).hexdigest(), name
         else:
