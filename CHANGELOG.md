@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
+## [2.3.5] - 2021-05-12
+### Fixed
+- a bug in the `deprecation` module that prevented to configure `fpdf2` constants at the module level
+
 ## [2.3.4] - 2021-04-30
 ### Fixed
 - a "fake duplicates" bug when a `Pillow.Image.Image` was passed to `FPDF.image`

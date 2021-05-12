@@ -627,9 +627,8 @@ class TTFontFile:
             cmap.append(1)  # idDelta of last Segment
             # idRangeOffset(s)
             for subrange in range_:
-                cmap.append(
-                    0
-                )  # idRangeOffset[segCount]   Offset in bytes to glyph indexArray, or 0
+                # idRangeOffset[segCount]   Offset in bytes to glyph indexArray, or 0
+                cmap.append(0)
 
             cmap.append(0)  # idRangeOffset of last Segment
             for subrange, glidx in range_:
@@ -892,7 +891,13 @@ class TTFontFile:
         return hm
 
     def getLOCA(self, indexToLocFormat, numGlyphs):
-        start = self.seek_table("loca")
+        try:
+            start = self.seek_table("loca")
+        except KeyError:
+            # pylint: disable=raise-missing-from
+            raise RuntimeError(
+                f"Unknown location table format, index={indexToLocFormat}"
+            )
         self.glyphPos = []
         if indexToLocFormat == 0:
             data = self.get_chunk(start, (numGlyphs * 2) + 2)
@@ -905,7 +910,9 @@ class TTFontFile:
             for n in range(numGlyphs):
                 self.glyphPos.append(arr[n])  # n+1 !?
         else:
-            raise RuntimeError(f"Unknown location table format {indexToLocFormat}")
+            raise RuntimeError(
+                f"Unknown location table format, index={indexToLocFormat}"
+            )
 
     # CMAP Format 4
     def getCMAP4(self, unicode_cmap_offset, glyphToChar, charToGlyph):
