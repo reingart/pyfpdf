@@ -183,7 +183,10 @@ def check_page(fn):
 
 
 class FPDF:
-    """PDF Generation class"""
+    "PDF Generation class"
+    MARKDOWN_BOLD_MARKER = "**"
+    MARKDOWN_ITALICS_MARKER = "__"
+    MARKDOWN_UNDERLINE_MARKER = "--"
 
     def __init__(
         self, orientation="portrait", unit="mm", format="A4", font_cache_dir=True
@@ -629,25 +632,28 @@ class FPDF:
         else:
             self.text_color = f"{r / 255:.3f} {g / 255:.3f} {b / 255:.3f} rg"
 
-    def get_string_width(self, s, normalized=False):
+    def get_string_width(self, s, normalized=False, markdown=False):
         """Get width of a string in the current font"""
         # normalized is parameter for internal use
         s = s if normalized else self.normalize_text(s)
-        cw = self.current_font["cw"]
         w = 0
-        if self.unifontsubset:
-            for char in s:
-                char = ord(char)
-                if len(cw) > char:
-                    w += cw[char]
-                elif self.current_font["desc"]["MissingWidth"]:
-                    w += self.current_font["desc"]["MissingWidth"]
-                else:
-                    w += 500
-        else:
-            w += sum(cw.get(char, 0) for char in s)
+        for txt_frag, style, _ in (
+            self._markdown_parse(s)
+            if markdown
+            else ((s, self.font_style, bool(self.underline)),)
+        ):
+            cw = self.fonts[self.font_family + style]["cw"]
+            if self.unifontsubset:
+                for char in s:
+                    char = ord(char)
+                    if len(cw) > char:
+                        w += cw[char]
+                    else:
+                        w += self.current_font["desc"].get("MissingWidth") or 500
+            else:
+                w += sum(cw.get(char, 0) for char in txt_frag)
         if self.font_stretching != 100:
-            w = w * self.font_stretching / 100
+            w *= self.font_stretching / 100
         return w * self.font_size / 1000
 
     def set_line_width(self, width):
@@ -1056,8 +1062,6 @@ class FPDF:
 
     def set_link(self, link, y=0, page=-1):
         """Set destination of internal link"""
-        if y == -1:
-            y = self.y
         if page == -1:
             page_object_id = self._current_page_object_id()
         else:
@@ -1127,7 +1131,7 @@ class FPDF:
             txt2 = escape_parens(txt)
         s = f"BT {x * self.k:.2f} {(self.h - y) * self.k:.2f} Td ({txt2}) Tj ET"
         if self.underline and txt != "":
-            s += " " + self._dounderline(x, y, txt)
+            s += " " + self._do_underline(x, y, txt)
         if self.fill_color != self.text_color:
             s = f"q {self.text_color} {s} Q"
         self._out(s)
@@ -1214,6 +1218,7 @@ class FPDF:
         fill=False,
         link="",
         center=False,
+        markdown=False,
     ):
         """
         Prints a cell (rectangular area) with optional borders, background color and
@@ -1248,6 +1253,8 @@ class FPDF:
             link (str): optional link to add on the cell, internal
                 (identifier returned by `add_link`) or external URL.
             center (bool): center the cell horizontally in the page
+            markdown (bool): enable minimal markdown-like markup to render part
+                of text as bold / italics / underlined. Default to False.
 
         Returns: a boolean indicating if page break was triggered
         """
@@ -1259,12 +1266,15 @@ class FPDF:
                 "ignored"
             )
             border = 1
+        # Font styles preloading must be performed before any call to FPDF.get_string_width:
+        txt = self.normalize_text(txt)
+        styled_txt_frags = self._preload_font_styles(txt, markdown)
         if w == 0:
             w = self.w - self.r_margin - self.x
         elif w is None:
             if not txt:
                 raise ValueError("A 'txt' parameter must be provided if 'w' is None")
-            w = self.get_string_width(txt, True) + 2
+            w = self.get_string_width(txt, True, markdown) + 2
         if h is None:
             h = self.font_size
         # pylint: disable=invalid-unary-operand-type
@@ -1309,65 +1319,84 @@ class FPDF:
                     f"{(x + w) * k:.2f} {(self.h - (y + h)) * k:.2f} l S "
                 )
 
-        txt = self.normalize_text(txt)
-        if txt != "":
+        if txt:
             if align == "R":
-                dx = w - self.c_margin - self.get_string_width(txt, True)
+                dx = w - self.c_margin - self.get_string_width(txt, True, markdown)
             elif align == "C":
-                dx = (w - self.get_string_width(txt, True)) / 2
+                dx = (w - self.get_string_width(txt, True, markdown)) / 2
             else:
                 dx = self.c_margin
+
             if self.fill_color != self.text_color:
                 s += f"q {self.text_color} "
+
+            s += (
+                f"BT {(self.x + dx) * k:.2f} "
+                f"{(self.h - self.y - 0.5 * h - 0.3 * self.font_size) * k:.2f} Td"
+            )
+
+            s_width, underlines = 0, []
 
             # If multibyte, Tw has no effect - do word spacing using an
             # adjustment before each space
             if self.ws and self.unifontsubset:
-                for char in txt:
-                    self.current_font["subset"].append(ord(char))
                 space = escape_parens(" ".encode("UTF-16BE").decode("latin-1"))
-
-                s += (
-                    f"BT 0 Tw {(self.x + dx) * k:.2F} "
-                    f"{(self.h - self.y - 0.5 * h - 0.3 * self.font_size) * k:.2F} "
-                    "Td ["
-                )
-
-                words = txt.split(" ")
-                for i, word in enumerate(words):
-                    word = escape_parens(word.encode("UTF-16BE").decode("latin-1"))
-                    s += f"({word}) "
-                    is_last_word = (i + 1) == len(words)
-                    if not is_last_word:
-                        adj = -(self.ws * self.k) * 1000 / self.font_size_pt
-                        s += f"{adj}({space}) "
-                s += "] TJ"
-                s += " ET"
-            else:
-                if self.unifontsubset:
-                    txt2 = escape_parens(txt.encode("UTF-16BE").decode("latin-1"))
-                    for char in txt:
+                s += " 0 Tw"
+                for txt_frag, style, underline in styled_txt_frags:
+                    if markdown and self.font_style != style:
+                        s += f" /F{self.fonts[self.font_family + style]['i']} {self.font_size_pt:.2f} Tf"
+                    self.font_style = style
+                    self.current_font = self.fonts[self.font_family + self.font_style]
+                    for char in txt_frag:
                         self.current_font["subset"].append(ord(char))
-                else:
-                    txt2 = escape_parens(txt)
+                    words = txt_frag.split(" ")
+                    s += " ["
+                    for i, word in enumerate(words):
+                        word = escape_parens(word.encode("UTF-16BE").decode("latin-1"))
+                        s += f"({word}) "
+                        is_last_word = (i + 1) == len(words)
+                        if not is_last_word:
+                            adj = -(self.ws * self.k) * 1000 / self.font_size_pt
+                            s += f"{adj}({space}) "
+                    if underline:
+                        underlines.append((self.x + dx + s_width, txt_frag))
+                    self.underline = underline
+                    s_width += self.get_string_width(txt_frag, True)
+                    s += "] TJ"
+            else:
+                for txt_frag, style, underline in styled_txt_frags:
+                    if markdown and self.font_style != style:
+                        s += f" /F{self.fonts[self.font_family + style]['i']} {self.font_size_pt:.2f} Tf"
+                    self.font_style = style
+                    self.current_font = self.fonts[self.font_family + self.font_style]
+                    if self.unifontsubset:
+                        txt_frag_escaped = escape_parens(
+                            txt_frag.encode("UTF-16BE").decode("latin-1")
+                        )
+                        for char in txt_frag_escaped:
+                            self.current_font["subset"].append(ord(char))
+                    else:
+                        txt_frag_escaped = escape_parens(txt_frag)
+                    s += f" ({txt_frag_escaped}) Tj"
+                    if underline:
+                        underlines.append((self.x + dx + s_width, txt_frag))
+                    self.underline = underline
+                    s_width += self.get_string_width(txt_frag, True)
+            s += " ET"
 
-                s += (
-                    f"BT {(self.x + dx) * k:.2f} "
-                    f"{(self.h - self.y - 0.5 * h - 0.3 * self.font_size) * k:.2f} "
-                    f"Td ({txt2}) Tj ET"
+            for start_x, txt_frag in underlines:
+                s += " " + self._do_underline(
+                    start_x, self.y + (0.5 * h) + (0.3 * self.font_size), txt_frag
                 )
 
-            if self.underline:
-                s += " " + self._dounderline(
-                    self.x + dx, self.y + (0.5 * h) + (0.3 * self.font_size), txt
-                )
             if self.fill_color != self.text_color:
                 s += " Q"
+
             if link:
                 self.link(
                     self.x + dx,
                     self.y + (0.5 * h) - (0.5 * self.font_size),
-                    self.get_string_width(txt, True),
+                    self.get_string_width(txt, True, markdown),
                     self.font_size,
                     link,
                 )
@@ -1383,6 +1412,79 @@ class FPDF:
             self.x += w
 
         return page_break_triggered
+
+    def _preload_font_styles(self, txt, markdown):
+        """
+        When Markdown styling is enabled, we require secondary fonts
+        to ender text in bold & italics.
+        This function ensure that those fonts are available.
+        It needs to perform Markdown parsing,
+        so we return the resulting `styled_txt_frags` tuple
+        to avoid repeating this processing later on.
+        """
+        if not txt or not markdown:
+            return ((txt, self.font_style, bool(self.underline)),)
+        prev_font_style = self.font_style
+        styled_txt_frags = tuple(self._markdown_parse(txt))
+        page = self.page
+        # We set the current to page to zero so that
+        # set_font() does not produce any text object on the stream buffer:
+        self.page = 0
+        if any("B" in style for _, style, _ in styled_txt_frags):
+            # Ensuring bold font is supported:
+            self.set_font(style="B")
+        if any("I" in style for _, style, _ in styled_txt_frags):
+            # Ensuring italics font is supported:
+            self.set_font(style="I")
+        # Restoring initial style:
+        self.set_font(style=prev_font_style)
+        self.page = page
+        return styled_txt_frags
+
+    def _markdown_parse(self, txt):
+        "Split some text into fragments based on styling: **bold**, __italics__, --underlined--"
+        txt_frag, in_bold, in_italics, in_underline = (
+            "",
+            "B" in self.font_style,
+            "I" in self.font_style,
+            bool(self.underline),
+        )
+        while txt:
+            is_marker = txt[:2] in (
+                self.MARKDOWN_BOLD_MARKER,
+                self.MARKDOWN_ITALICS_MARKER,
+                self.MARKDOWN_UNDERLINE_MARKER,
+            )
+            half_marker = txt[0]
+            # Check that previous & next characters are not identical to the marker:
+            if (
+                is_marker
+                and (not txt_frag or txt_frag[0] != half_marker)
+                and (len(txt) < 3 or txt[2] != half_marker)
+            ):
+                if txt_frag:
+                    yield (
+                        txt_frag,
+                        ("B" if in_bold else "") + ("I" if in_italics else ""),
+                        in_underline,
+                    )
+                if txt[:2] == self.MARKDOWN_BOLD_MARKER:
+                    in_bold = not in_bold
+                if txt[:2] == self.MARKDOWN_ITALICS_MARKER:
+                    in_italics = not in_italics
+                if txt[:2] == self.MARKDOWN_UNDERLINE_MARKER:
+                    in_underline = not in_underline
+                txt_frag = ""
+                txt = txt[2:]
+            else:
+                txt_frag += txt[0]
+                txt = txt[1:]
+        if txt_frag:
+            yield (
+                txt_frag,
+                ("B" if in_bold else "") + ("I" if in_italics else ""),
+                in_underline,
+            )
 
     def _perform_page_break_if_need_be(self, h):
         if (
@@ -1412,7 +1514,7 @@ class FPDF:
     def multi_cell(
         self,
         w,
-        h,
+        h=None,
         txt="",
         border=0,
         align="J",
@@ -1430,8 +1532,8 @@ class FPDF:
         the background painted.
 
         Args:
-            w (int): cells width. If 0, they extend up to the right margin of the page.
-            h (int): cells height.
+            w (int): cell width. If 0, they extend up to the right margin of the page.
+            h (int): cell height. Default value: None, meaning to use the current font size.
             txt (str): strign to print.
             border: Indicates if borders must be drawn around the cell.
                 The value can be either a number (`0`: no border ; `1`: frame)
@@ -1470,6 +1572,8 @@ class FPDF:
         # If width is 0, set width to available width between margins
         if w == 0:
             w = self.w - self.r_margin - self.x
+        if h is None:
+            h = self.font_size
         wmax = (w - 2 * self.c_margin) * 1000 / self.font_size
 
         # Calculate text length
@@ -1577,11 +1681,13 @@ class FPDF:
 
                 else:
                     if align == "J":
+                        print(f"wmax={wmax} ls={ls} ns={ns}")
                         self.ws = (
                             (wmax - ls) / 1000 * self.font_size / (ns - 1)
                             if ns > 1
                             else 0
                         )
+                        print(self.ws, f"{self.ws * self.k:.3f} Tw")
                         self._out(f"{self.ws * self.k:.3f} Tw")
 
                     if max_line_height and h > max_line_height:
@@ -1655,10 +1761,23 @@ class FPDF:
         return page_break_triggered
 
     @check_page
-    def write(self, h, txt="", link=""):
-        """Output text in flowing mode"""
+    def write(self, h=None, txt="", link=""):
+        """
+        Prints text from the current position.
+        When the right margin is reached (or the \n character is met),
+        a line break occurs and text continues from the left margin.
+        Upon method exit, the current position is left just at the end of the text.
+
+        Args:
+            h (int): line height. Default value: None, meaning to use the current font size.
+            txt (str): text content
+            link (str): optional link to add on the text, internal
+                (identifier returned by `add_link`) or external URL.
+        """
         if not self.font_family:
             raise FPDFException("No font set, you need to call set_font() beforehand")
+        if h is None:
+            h = self.font_size
         txt = self.normalize_text(txt)
         cw = self.current_font["cw"]
         w = self.w - self.r_margin - self.x
@@ -2671,8 +2790,8 @@ class FPDF:
         self._out(f"{self.n} 0 obj")
         return self.n
 
-    def _dounderline(self, x, y, txt):
-        # Underline text
+    def _do_underline(self, x, y, txt):
+        "Draw an horizontal line starting from (x, y) with a length equal to 'txt' width"
         up = self.current_font["up"]
         ut = self.current_font["ut"]
         w = self.get_string_width(txt, True) + self.ws * txt.count(" ")
