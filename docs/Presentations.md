@@ -2,7 +2,7 @@
 
 **Presentation mode** can usually be enabled with the `CTRL + L` shortcut.
 
-As of june 2021, the features described bellow are onored by Adobe Acrobat reader,
+As of june 2021, the features described below are onored by Adobe Acrobat reader,
 but ignored by Sumatra PDF reader.
 
 ## Page display duration
@@ -34,6 +34,7 @@ from another page to the given page during a presentation:
 
 ```python
 from fpdf import FPDF
+from fpdf.transitions import *
 
 pdf = fpdf.FPDF()
 pdf.set_font("Helvetica", size=120)
