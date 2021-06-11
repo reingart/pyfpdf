@@ -25,7 +25,3 @@ Example output using the [Tutorial](Tutorial.md) first code snippet:
     14:09:56 fpdf.py [DEBUG] - catalog.size: 103.0B
     14:09:56 fpdf.py [DEBUG] - xref.size: 169.0B
     14:09:56 fpdf.py [DEBUG] - trailer.size: 60.0B
-
-## See also ##
-[Tutorial](Tutorial.md), [ReferenceManual](reference),
-[Unicode](Unicode.md).

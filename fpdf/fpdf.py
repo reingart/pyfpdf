@@ -39,7 +39,7 @@ from PIL import Image
 from .actions import Action
 from .errors import FPDFException, FPDFPageFormatException
 from .fonts import fpdf_charwidths
-from .image_parsing import get_img_info, load_resource, SUPPORTED_IMAGE_FILTERS
+from .image_parsing import get_img_info, load_image, SUPPORTED_IMAGE_FILTERS
 from .outline import serialize_outline, OutlineSection
 from .recorder import FPDFRecorder
 from .structure_tree import MarkedContent, StructureTreeBuilder
@@ -62,9 +62,8 @@ LOGGER = logging.getLogger(__name__)
 HERE = Path(__file__).resolve().parent
 
 # Global variables
-FPDF_VERSION = "2.3.5"
+FPDF_VERSION = "2.4.0"
 FPDF_FONT_DIR = HERE / "font"
-SYSTEM_TTFONTS = None
 
 PAGE_FORMATS = {
     "a3": (841.89, 1190.55),
@@ -79,7 +78,6 @@ LAYOUT_NAMES = {
     "two": "/TwoColumnLeft",
 }
 ZOOM_CONFIGS = {  # cf. section 8.2.1 "Destinations" of the 2006 PDF spec 1.7:
-    "default": ("/Fit",),  # TODO FIXME
     "fullpage": ("/Fit",),
     "fullwidth": ("/FitH", "null"),
     "real": ("/XYZ", "null", "null", "1"),
@@ -195,11 +193,14 @@ class FPDF:
     ):
         """
         Args:
-            orientation (str): "portrait" (can be abbreviated "P")
+            orientation (str): possible values are "portrait" (can be abbreviated "P")
                 or "landscape" (can be abbreviated "L"). Default to "portrait".
-            unit (str): "pt", "mm", "cm" or "in". Default to "mm".
-            format (str): "a3", "a4", "a5", "letter", "legal" or a tuple
-                (width, height). Default to "a4".
+            unit (str): possible values are "pt", "mm", "cm" or "in".
+                A point equals 1/72 of an inch, that is to say about 0.35 mm (an inch being 2.54 cm).
+                This is a very common unit in typography; font sizes are expressed in this unit.
+                Default to "mm".
+            format (str): possible values are "a3", "a4", "a5", "letter", "legal" or a tuple
+                (width, height) expressed in the given unit. Default to "a4".
             font_cache_dir (Path or str): directory where pickle files
                 for TTF font files are kept.
                 The default is `True`, meaning the current folder.
@@ -233,6 +234,7 @@ class FPDF:
         self.ws = 0  # word spacing
         self.angle = 0  # used by deprecated method: rotate()
         self.font_cache_dir = font_cache_dir
+        self.producer = f"PyFPDF/fpdf{FPDF_VERSION}"
         self.xmp_metadata = None
         self.image_filter = "AUTO"
         self.page_duration = 0  # optional pages display duration, cf. add_page()
@@ -411,34 +413,54 @@ class FPDF:
 
     def set_display_mode(self, zoom, layout="continuous"):
         """
-        Set display mode in viewer
+        Defines the way the document is to be displayed by the viewer.
+
+        It allows to set tje zoom level: pages can be displayed entirely on screen,
+        occupy the full width of the window, use the real size,
+        be scaled by a specific zooming factor or use the viewer default (configured in its Preferences menu).
+
+        The page layout can also be specified: single page at a time, continuous display, two columns or viewer default.
 
         Args:
-            zoom: either 'fullpage', 'fullwidth', 'real', 'default',
-                or a number, interpreted as a percentage.
-            layout (str): either "single", "continuous" or "two".
+            zoom: either "fullpage", "fullwidth", "real", "default",
+                or a number indicating the zooming factor to use, interpreted as a percentage.
+                The default value is "default".
+            layout (str): either "single", "continuous", "two" or "default",
+                meaning to use the viewer default mode.
+                The default value is "default".
         """
         if zoom in ZOOM_CONFIGS or not isinstance(zoom, str):
             self.zoom_mode = zoom
-        else:
+        elif zoom != "default":
             raise FPDFException(f"Incorrect zoom display mode: {zoom}")
 
         if layout in LAYOUT_NAMES:
             self.layout_mode = layout
-        else:
+        elif layout != "default":
             raise FPDFException(f"Incorrect layout display mode: {layout}")
 
     def set_compression(self, compress):
         """
-        Set page compression using the zlib/deflate method (FlateDecode)
+        Activates or deactivates page compression.
+
+        When activated, the internal representation of each page is compressed
+        using the zlib/deflate method (FlateDecode), which leads to a compression ratio
+        of about 2 for the resulting document.
+
+        Page compression is enabled by default.
 
         Args:
-            compress (bool): enable page compression or not
+            compress (bool): indicates if compression should be enabled
         """
         self.compress = compress
 
     def set_title(self, title):
-        """Title of document"""
+        """
+        Defines the title of the document.
+
+        Args:
+            title (str): the title
+        """
         self.title = title
 
     def set_lang(self, lang):
@@ -447,23 +469,47 @@ class FPDF:
         except where overridden by language specifications for structure elements or marked content.
         A language identifier can either be the empty text string, to indicate that the language is unknown,
         or a Language-Tag as defined in RFC 3066, "Tags for the Identification of Languages".
+
+        Args:
+            lang (str): the document main language
         """
         self.lang = lang
 
     def set_subject(self, subject):
-        """Subject of document"""
+        """
+        Defines the subject of the document.
+
+        Args:
+            subject (str): the document main subject
+        """
         self.subject = subject
 
     def set_author(self, author):
-        """Author of document"""
+        """
+        Defines the author of the document.
+
+        Args:
+            author(str): the name of the author
+        """
         self.author = author
 
     def set_keywords(self, keywords):
-        """Keywords of document"""
+        """
+        Associate keywords with the document
+
+        Args:
+            keywords (str): a space-separated list of words
+        """
         self.keywords = keywords
 
     def set_creator(self, creator):
-        """Creator of document"""
+        """
+        Defines the creator of the document.
+        This is typically the name of the application that generates the PDF.
+
+        Args:
+            creator (str): name of the PDF creator
+        """
         self.creator = creator
 
     def set_producer(self, producer):
@@ -482,11 +528,24 @@ class FPDF:
         self.xmp_metadata = xmp_metadata
 
     def set_doc_option(self, opt, value):
-        """Set document option"""
-        if opt == "core_fonts_encoding":
-            self.core_fonts_encoding = value
-        else:
+        """
+        Defines a document option.
+
+        Args:
+            opt (str): name of the option to set
+            value (str) option value
+
+        .. deprecated:: 2.4.0
+            Simply set the `core_fonts_encoding` property as a replacement.
+        """
+        warnings.warn(
+            "set_doc_option() is deprecated. "
+            "Simply set the `core_fonts_encoding` property as a replacement.",
+            PendingDeprecationWarning,
+        )
+        if opt != "core_fonts_encoding":
             raise FPDFException(f'Unknown document option "{opt}"')
+        self.core_fonts_encoding = value
 
     def set_image_filter(self, image_filter):
         """
@@ -501,15 +560,48 @@ class FPDF:
         self.image_filter = image_filter
 
     def alias_nb_pages(self, alias="{nb}"):
-        """Define an alias for total number of pages"""
+        """
+        Defines an alias for the total number of pages.
+        It will be substituted as the document is closed.
+
+        This is useful to insert the number of pages of the document
+        at a time when this number is not known by the program.
+
+        This substitution can be disabled for performances reasons, by caling `alias_nb_pages(None)`.
+
+        Args:
+            alias (str): the alias. Defaults to "{nb}".
+
+        Notes
+        -----
+
+        When using this feature with the `cell` / `multicell` methods,
+        or the `underline` attribute of `FPDF` class,
+        the width of the text rendered will take into account the alias length,
+        not the length of the "actual number of pages" string,
+        which can causes slight positioning differences.
+        """
         self.str_alias_nb_pages = alias
 
     def open(self):
-        """Begin document"""
+        """
+        Starts the generation of the PDF document.
+        It is not necessary to call it explicitly because `add_page()` does it automatically.
+
+        Notes
+        -----
+
+        This method does not add any page.
+        """
         self.state = DocumentState.READY
 
     def close(self):
-        """Terminate document"""
+        """
+        Terminates the PDF document.
+
+        It is not necessary to call this method explicitly because `output()` does it automatically.
+        If the document contains no page, `add_page()` is called to prevent from generating an invalid document.
+        """
         if self.state == DocumentState.CLOSED:
             return
         if self.page == 0:
@@ -619,17 +711,41 @@ class FPDF:
         # END Page header
 
     def header(self):
-        """Header to be implemented in your own inherited class"""
+        """
+        Header to be implemented in your own inherited class
+
+        This is automatically called by `add_page()`
+        and should not be called directly by the user application.
+        The default implementation performs nothing: you have to override this method
+        in a subclass to implement your own rendering logic.
+        """
 
     def footer(self):
-        """Footer to be implemented in your own inherited class"""
+        """
+        Footer to be implemented in your own inherited class.
+
+        This is automatically called by `add_page()` and `close()`
+        and should not be called directly by the user application.
+        The default implementation performs nothing: you have to override this method
+        in a subclass to implement your own rendering logic.
+        """
 
     def page_no(self):
-        """Get current page number"""
+        """Get the current page number"""
         return self.page
 
     def set_draw_color(self, r, g=-1, b=-1):
-        """Set color for all stroking operations"""
+        """
+        Defines the color used for all stroking operations (lines, rectangles and cell borders).
+        It can be expressed in RGB components or grey scale.
+        The method can be called before the first page is created and the value is retained from page to page.
+
+        Args:
+            r (int): if `g` and `b` are given, this indicates the red component.
+                Else, this indicates the grey level. The value must be between 0 and 255.
+            g (int): green component (between 0 and 255)
+            b (int): blue component (between 0 and 255)
+        """
         if (r == 0 and g == 0 and b == 0) or g == -1:
             self.draw_color = f"{r / 255:.3f} G"
         else:
@@ -638,7 +754,17 @@ class FPDF:
             self._out(self.draw_color)
 
     def set_fill_color(self, r, g=-1, b=-1):
-        """Set color for all filling operations"""
+        """
+        Defines the color used for all filling operations (filled rectangles and cell backgrounds).
+        It can be expressed in RGB components or grey scale.
+        The method can be called before the first page is created and the value is retained from page to page.
+
+        Args:
+            r (int): if `g` and `b` are given, this indicates the red component.
+                Else, this indicates the grey level. The value must be between 0 and 255.
+            g (int): green component (between 0 and 255)
+            b (int): blue component (between 0 and 255)
+        """
         if (r == 0 and g == 0 and b == 0) or g == -1:
             self.fill_color = f"{r / 255:.3f} g"
         else:
@@ -647,14 +773,32 @@ class FPDF:
             self._out(self.fill_color)
 
     def set_text_color(self, r, g=-1, b=-1):
-        """Set color for text"""
+        """
+        Defines the color used for text.
+        It can be expressed in RGB components or grey scale.
+        The method can be called before the first page is created and the value is retained from page to page.
+
+        Args:
+            r (int): if `g` and `b` are given, this indicates the red component.
+                Else, this indicates the grey level. The value must be between 0 and 255.
+            g (int): green component (between 0 and 255)
+            b (int): blue component (between 0 and 255)
+        """
         if (r == 0 and g == 0 and b == 0) or g == -1:
             self.text_color = f"{r / 255:.3f} g"
         else:
             self.text_color = f"{r / 255:.3f} {g / 255:.3f} {b / 255:.3f} rg"
 
     def get_string_width(self, s, normalized=False, markdown=False):
-        """Get width of a string in the current font"""
+        """
+        Returns the length of a string in user unit. A font must be selected.
+        The value is calculated with stretching and spacing.
+
+        Args:
+            s (str): the string whose length is to be computed.
+            normalized (bool): whether normalization needs to be performed on the input string.
+            markdown (bool): indicates if basic markdown support is enabled
+        """
         # normalized is parameter for internal use
         s = s if normalized else self.normalize_text(s)
         w = 0
@@ -678,7 +822,14 @@ class FPDF:
         return w * self.font_size / 1000
 
     def set_line_width(self, width):
-        """Set line width"""
+        """
+        Defines the line width of all stroking operations (lines, rectangles and cell borders).
+        By default, the value equals 0.2 mm.
+        The method can be called before the first page is created and the value is retained from page to page.
+
+        Args:
+            width (int): the width in user unit
+        """
         self.line_width = width
         if self.page > 0:
             self._out(f"{width * self.k:.2f} w")
@@ -839,7 +990,32 @@ class FPDF:
         )
 
     def add_font(self, family, style="", fname=None, uni=False):
-        """Add a TrueType or Type1 font"""
+        """
+        Imports a TrueType, OpenType or Type1 font and makes it available
+        for later calls to the `set_font()` method.
+
+        **Warning:** for Type1 and legacy fonts it is necessary to generate a font definition file first with the `MakeFont` utility.
+        This feature is currently deprecated in favour of TrueType Unicode font support
+        (whose fonts are automatically processed with the included `ttfonts.py` module).
+
+        You will find more information on the "Unicode" documentation page.
+
+        Args:
+            family (str): font family. Used as a reference for `set_font()`
+            style (str): font style. "B" for bold, "I" for italic.
+            fname (str): font file name. You can specify a relative or full path.
+                If the file is not found, it will be searched in `FPDF_FONT_DIR`.
+            uni (bool): if set to `True`, enable TrueType font subset embedding.
+                Text will then be treated as `utf8` by default.
+                Calling this method with uni=False is discouraged as legacy font support is complex and deprecated.
+
+        Notes
+        -----
+
+        Due to the fact that font processing can occupy large amount of time, some data is cached.
+        Cache files are created in the current folder by default.
+        This can be controlled with the `font_cache_dir` paramater of the `FPDF` constructor.
+        """
         if not fname:
             fname = family.replace(" ", "") + f"{style.lower()}.pkl"
         style = "".join(sorted(style.upper()))
@@ -854,7 +1030,7 @@ class FPDF:
             warnings.warn(f"Core font or font already added '{fontkey}': doing nothing")
             return
         if uni:
-            for parent in (".", FPDF_FONT_DIR, SYSTEM_TTFONTS):
+            for parent in (".", FPDF_FONT_DIR):
                 if not parent:
                     continue
                 if (Path(parent) / fname).exists():
@@ -1055,7 +1231,12 @@ class FPDF:
             self._out(f"BT /F{self.current_font['i']} {self.font_size_pt:.2f} Tf ET")
 
     def set_font_size(self, size):
-        """Set font size in points"""
+        """
+        Configure the font size in points
+
+        Args:
+            size (int): font size in points
+        """
         if self.font_size_pt == size:
             return
         self.font_size_pt = size
@@ -1067,16 +1248,28 @@ class FPDF:
                 )
             self._out(f"BT /F{self.current_font['i']} {self.font_size_pt:.2f} Tf ET")
 
-    def set_stretching(self, factor):
-        """Set from stretch factor percents (default: 100.0)"""
-        if self.font_stretching == factor:
+    def set_stretching(self, stretching):
+        """
+        Sets horizontal font stretching.
+        By default, no stretching is set (which is equivalent to a value of 100).
+
+        Args:
+            stretching (int): horizontal stretching (scaling) in percents.
+        """
+        if self.font_stretching == stretching:
             return
-        self.font_stretching = factor
+        self.font_stretching = stretching
         if self.page > 0:
             self._out(f"BT {self.font_stretching:.2f} Tz ET")
 
     def add_link(self):
-        """Create a new internal link"""
+        """
+        Creates a new internal link and returns its identifier.
+        An internal link is a clickable area which directs to another place within the document.
+
+        The identifier can then be passed to the `cell()`, `write()`, `image()` or `link()` methods.
+        The destination must be defined using `set_link()`.
+        """
         n = len(self.links) + 1
         self.links[n] = DestinationXYZ(page=1)
         return n
@@ -1149,6 +1342,16 @@ class FPDF:
 
     @check_page
     def add_action(self, action, x, y, w, h):
+        """
+        Puts an Action annotation on a rectangular area of the page.
+
+        Args:
+            action (fpdf.actions.Action): the action to add
+            x (int): horizontal position (from the left) to the left side of the link rectangle
+            y (int): vertical position (from the top) to the bottom side of the link rectangle
+            w (int): width of the link rectangle
+            h (int): width of the link rectangle
+        """
         self.annots[self.page].append(
             Annotation(
                 "Action",
@@ -1162,7 +1365,16 @@ class FPDF:
 
     @check_page
     def text(self, x, y, txt=""):
-        """Output a string"""
+        """
+        Prints a character string. The origin is on the left of the first character,
+        on the baseline. This method allows placing a string precisely on the page,
+        but it is usually easier to use the `cell()`, `multi_cell() or `write()` methods.
+
+        Args:
+            x (int): abscissa of the origin
+            y (int): ordinate of the origin
+            txt (str): string to print
+        """
         if not self.font_family:
             raise FPDFException("No font set, you need to call set_font() beforehand")
         txt = self.normalize_text(txt)
@@ -1246,7 +1458,13 @@ class FPDF:
 
     @property
     def accept_page_break(self):
-        """Accept automatic page break or not"""
+        """
+        Whenever a page break condition is met, this method is called,
+        and the break is issued or not depending on the returned value.
+
+        The default implementation returns a value according to the mode selected by `set_auto_page_break()`.
+        This method is called automatically and should not be called directly by the application.
+        """
         return self.auto_page_break
 
     @check_page
@@ -1945,7 +2163,7 @@ class FPDF:
         else:
             name, img = str(name), name
         if name not in self.images:
-            info = get_img_info(img or load_resource(name), self.image_filter)
+            info = get_img_info(img or load_image(name), self.image_filter)
             info["i"] = len(self.images) + 1
             self.images[name] = info
         else:
@@ -2023,24 +2241,43 @@ class FPDF:
         self.y += self.lasth if h is None else h
 
     def get_x(self):
-        """Get x position"""
+        """Returns the abscissa of the current position."""
         return self.x
 
     def set_x(self, x):
-        """Set x position"""
+        """
+        Defines the abscissa of the current position.
+        If the value provided is negative, it is relative to the right of the page.
+
+        Args:
+            x (int): the new current abscissa
+        """
         self.x = x if x >= 0 else self.w + x
 
     def get_y(self):
-        """Get y position"""
+        """Returns the ordinate of the current position."""
         return self.y
 
     def set_y(self, y):
-        """Set y position and reset x"""
+        """
+        Moves the current abscissa back to the left margin and sets the ordinate.
+        If the value provided is negative, it is relative to the bottom of the page.
+
+        Args:
+            y (int): the new current ordinate
+        """
         self.x = self.l_margin
         self.y = y if y >= 0 else self.h + y
 
     def set_xy(self, x, y):
-        """Set x and y positions"""
+        """
+        Defines the abscissa and ordinate of the current position.
+        If the values provided are negative, they are relative respectively to the right and bottom of the page.
+
+        Args:
+            x (int): the new current abscissa
+            y (int): the new current ordinate
+        """
         self.set_y(y)
         self.set_x(x)
 
@@ -2700,7 +2937,7 @@ class FPDF:
             "/Author": enclose_in_parens(getattr(self, "author", None)),
             "/Keywords": enclose_in_parens(getattr(self, "keywords", None)),
             "/Creator": enclose_in_parens(getattr(self, "creator", None)),
-            "/Producer": enclose_in_parens(getattr(self, "producer", None)),
+            "/Producer": enclose_in_parens(self.producer),
         }
 
         if hasattr(self, "creation_date"):
@@ -3005,7 +3242,10 @@ class FPDF:
         Ensures that all rendering performed in this context appear on a single page
         by performing page break beforehand if need be.
 
-        Note that using this method means to duplicate the FPDF `bytearray` buffer:
+        Notes
+        -----
+
+        Using this method means to duplicate the FPDF `bytearray` buffer:
         when generating large PDFs, doubling memory usage may be troublesome.
         """
         prev_page, prev_y = self.page, self.y

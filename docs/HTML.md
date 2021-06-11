@@ -1,9 +1,9 @@
 # HTML #
 
-`fpdf2` can perform rendering from HTML.
+`fpdf2` supports basic rendering from HTML.
 
 This is implemented by using `html.parser.HTMLParser` from the Python standard library.
-The whole HTML 5 specification is very likely **not** supported,
+The whole HTML 5 specification is very likely **not** supported, neither as CSS,
 but bug reports & contributions are very welcome to improve this.
 
 
@@ -64,3 +64,24 @@ pdf.write_html("""
 """)
 pdf.output("html.pdf")
 ```
+
+
+## Supported HTML features
+
+* `<h1>` to `<h8>`: headings (and `align` attribute)
+* `<p>`: paragraphs (and `align` attribute)
+* `<b>`, `<i>`, `<u>`: bold, italic, underline
+* `<font>`: (and `face`, `size`, `color` attributes)
+* `<center>` for aligning
+* `<a>`: links (and `href` attribute)
+* `<img>`: images (and `src`, `width`, `height` attributes)
+* `<ol>`, `<ul>`, `<li>`: ordered, unordered and list items (can be nested)
+* `<table>`: (and `border`, `width` attributes)
+    + `<thead>`: header (opens each page)
+    + `<tfoot>`: footer (closes each page)
+    + `<tbody>`: actual rows
+    + `<tr>`: rows (with `bgcolor` attribute)
+    + `<th>`: heading cells (with `align`, `bgcolor`, `width` attributes)
+    * `<td>`: cells (with `align`, `bgcolor`, `width` attributes)
+
+**Note**: tables should have at least a first `<th>` row with a `width` attribute.

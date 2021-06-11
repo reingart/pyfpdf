@@ -21,7 +21,7 @@ pdf.output('tuto1.pdf')
 [Demo](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 After including the library file, we create an `FPDF` object. The 
-[FPDF](reference/FPDF.md) constructor is used here with the default values: 
+[FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) constructor is used here with the default values: 
 pages are in A4 portrait and the measure unit is millimeter.
 It could have been specified explicitly with:
 
@@ -33,12 +33,12 @@ It is possible to set the PDF in landscape mode (`L`) or to use other page forma
 (such as `Letter` and `Legal`) and measure units (`pt`, `cm`, `in`).
 
 There is no page for the moment, so we have to add one with 
-[add_page](reference/add_page.md). The origin is at the upper-left corner and the
+[add_page](fpdf/fpdf.html#fpdf.fpdf.FPDF.add_page). The origin is at the upper-left corner and the
 current position is by default placed at 1 cm from the borders; the margins can
-be changed with [set_margins](reference/set_margins.md).
+be changed with [set_margins](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_margins).
 
 Before we can print text, it is mandatory to select a font with 
-[set_font](reference/set_font.md), otherwise the document would be invalid.
+[set_font](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font), otherwise the document would be invalid.
 We choose Helvetica bold 16:
 
 ```python
@@ -50,7 +50,7 @@ with an empty string (or any combination). Note that the font size is given in
 points, not millimeters (or another user unit); it is the only exception.
 The other built-in fonts are `Times`, `Courier`, `Symbol` and `ZapfDingbats`.
 
-We can now print a cell with [cell](reference/cell.md). A cell is a rectangular
+We can now print a cell with [cell](fpdf/fpdf.html#fpdf.fpdf.FPDF.cell). A cell is a rectangular
 area, possibly framed, which contains some text. It is rendered at the current
 position. We specify its dimensions, its text (centered or aligned), if borders
 should be drawn, and where the current position moves after it (to the right,
@@ -67,11 +67,11 @@ would do:
 pdf.cell(60, 10, 'Powered by FPDF.', ln=1, align='C')
 ```
 
-**Remark**: the line break can also be done with [ln](reference/ln.md). This
+**Remark**: the line break can also be done with [ln](fpdf/fpdf.html#fpdf.fpdf.FPDF.ln). This
 method allows to specify in addition the height of the break.
 
 Finally, the document is closed and saved under the provided file path using
-[output](reference/output.md). Without any parameter provided, `output()`
+[output](fpdf/fpdf.html#fpdf.fpdf.FPDF.output). Without any parameter provided, `output()`
 returns the PDF `bytearray` buffer.
 
 ## Tuto 2 - Header, footer, page break and image ##
@@ -115,23 +115,23 @@ pdf.output('tuto2.pdf')
 
 [Demo](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
 
-This example makes use of the [header](reference/header.md) and 
-[footer](reference/footer.md) methods to process page headers and footers. They
+This example makes use of the [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) and 
+[footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) methods to process page headers and footers. They
 are called automatically. They already exist in the FPDF class but do nothing,
 therefore we have to extend the class and override them.
 
-The logo is printed with the [image](reference/image.md) method by specifying
+The logo is printed with the [image](fpdf/fpdf.html#fpdf.fpdf.FPDF.image) method by specifying
 its upper-left corner and its width. The height is calculated automatically to
 respect the image proportions.
 
 To print the page number, a null value is passed as the cell width. It means
 that the cell should extend up to the right margin of the page; it is handy to
 center text. The current page number is returned by
-the [page_no](reference/page_no.md) method; as for
+the [page_no](fpdf/fpdf.html#fpdf.fpdf.FPDF.page_no) method; as for
 the total number of pages, it is obtained by means of the special value `{nb}`
 which will be substituted on document closure (provided you first called 
-[alias_nb_pages](reference/alias_nb_pages.md)).
-Note the use of the [set_y](reference/set_y.md) method which allows to set
+[alias_nb_pages](fpdf/fpdf.html#fpdf.fpdf.FPDF.alias_nb_pages)).
+Note the use of the [set_y](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_y) method which allows to set
 position at an absolute location in the page, starting from the top or the
 bottom.
 
@@ -141,7 +141,7 @@ default), a break is performed and the font restored. Although the header and
 footer select their own font (`helvetica`), the body continues with `Times`.
 This mechanism of automatic restoration also applies to colors and line width.
 The limit which triggers page breaks can be set with 
-[set_auto_page_break](reference/set_auto_page_break.md).
+[set_auto_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_auto_page_break).
 
 
 ## Tuto 3 - Line breaks and colors ##
@@ -221,24 +221,24 @@ pdf.output('tuto3.pdf')
 
 [Demo](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-The [get_string_width](reference/get_string_width.md) method allows determining
+The [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) method allows determining
 the length of a string in the current font, which is used here to calculate the
 position and the width of the frame surrounding the title. Then colors are set
-(via [set_draw_color](reference/set_draw_color.md), 
-[set_fill_color](reference/set_fill_color.md) and 
-[set_text_color](reference/set_text_color.md)) and the thickness of the line is set
+(via [set_draw_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_draw_color),
+[set_fill_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_fill_color) and 
+[set_text_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_text_color)) and the thickness of the line is set
 to 1 mm (against 0.2 by default) with
-[set_line_width](reference/set_line_width.md). Finally, we output the cell (the
+[set_line_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_line_width). Finally, we output the cell (the
 last parameter to true indicates that the background must be filled).
 
-The method used to print the paragraphs is [multi_cell](reference/multi_cell.md).
+The method used to print the paragraphs is [multi_cell](fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell).
 Each time a line reaches the right extremity of the cell or a carriage return
 character is met, a line break is issued and a new cell automatically created
 under the current one. Text is justified by default.
 
 Two document properties are defined: the title 
-([set_title](reference/set_title.md)) and the author 
-([set_author](reference/set_author.md)). Properties can be viewed by two means.
+([set_title](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_title)) and the author 
+([set_author](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_author)). Properties can be viewed by two means.
 First is to open the document directly with Acrobat Reader, go to the File menu
 and choose the Document Properties option. The second, also available from the
 plug-in, is to right-click and select Document Properties.

@@ -12,16 +12,8 @@ HERE = Path(__file__).resolve().parent
 
 def test_recognize_bytesIO():
     s = BytesIO()
-    a = fpdf.image_parsing.load_resource(s)
+    a = fpdf.image_parsing.load_image(s)
     assert a == s
-
-
-def test_error_wrong_reason():
-    with pytest.raises(FPDFException) as e:
-        fpdf.image_parsing.load_resource(None, reason="not image")
-
-    msg = 'Unknown resource loading reason "not image"'
-    assert msg == str(e.value)
 
 
 def test_load_text_file():
@@ -29,5 +21,5 @@ def test_load_text_file():
     contents = '"""This package contains image tests"""\n'
     bc = contents.encode()
 
-    resource = fpdf.image_parsing.load_resource(str(file)).getvalue()
+    resource = fpdf.image_parsing.load_image(str(file)).getvalue()
     assert bytes(resource) == bc

@@ -40,7 +40,7 @@ These fonts are included with this library's installers; see
 more information.
 
 Then, to use a Unicode font in your script, pass `True` as the fourth parameter 
-of [add_font](reference/add_font.md).
+of [`add_font`](fpdf/fpdf.html#fpdf.fpdf.FPDF.add_font).
 
 ## Example ##
 
@@ -128,7 +128,7 @@ TTF font files to speed up their processing.
 Such metrics are stored using the Python Pickle format (`.pkl` extension), by 
 default in the font directory (ensure read and write permission!). Additional 
 information about the caching mechanism is defined in the
-[add_font](reference/add_font.md) reference.
+[`add_font`](fpdf/fpdf.html#fpdf.fpdf.FPDF.add_font) method documentation.
 
 TTF metric files often weigh about 650K, so keep that in mind if you use many
 TTF fonts and have disk size or memory limitations.

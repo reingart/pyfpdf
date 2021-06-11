@@ -10,20 +10,21 @@ from .errors import FPDFException
 SUPPORTED_IMAGE_FILTERS = ("AUTO", "FlateDecode", "DCTDecode", "JPXDecode")
 
 
-def load_resource(filename, reason="image"):
-    """Load external file"""
+def load_image(filename):
+    """
+    This method is used to load external resources, such as images.
+    It is automatically called when resource added to document by `FPDF.image()`.
+    """
     # if a bytesio instance is passed in, use it as is.
     if isinstance(filename, BytesIO):
         return filename
     # by default loading from network is allowed for all images
-    if reason == "image":
-        if filename.startswith(("http://", "https://")):
-            f = BytesIO(urlopen(filename).read())
-        else:
-            with open(filename, "rb") as fl:
-                f = BytesIO(fl.read())
-        return f
-    raise FPDFException(f'Unknown resource loading reason "{reason}"')
+    if filename.startswith(("http://", "https://")):
+        f = BytesIO(urlopen(filename).read())
+    else:
+        with open(filename, "rb") as fl:
+            f = BytesIO(fl.read())
+    return f
 
 
 def get_img_info(img, image_filter="AUTO"):
