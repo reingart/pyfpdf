@@ -7,7 +7,6 @@ from .fpdf import (
     TitleStyle,
     FPDF_FONT_DIR as _FPDF_FONT_DIR,
     FPDF_VERSION as _FPDF_VERSION,
-    SYSTEM_TTFONTS as _SYSTEM_TTFONTS,
 )
 from .html import HTMLMixin
 from .template import Template
@@ -25,10 +24,6 @@ FPDF_VERSION = _FPDF_VERSION
 
 FPDF_FONT_DIR = _FPDF_FONT_DIR
 """This is the location of where to look for fonts."""
-
-SYSTEM_TTFONTS = _SYSTEM_TTFONTS
-"""This is the directory searched for fonts when a font file path is not given.
-"""
 
 sys.modules[__name__].__class__ = WarnOnDeprecatedModuleAttributes
 
@@ -49,5 +44,4 @@ __all__ = [
     # FPDF Constants
     "FPDF_VERSION",
     "FPDF_FONT_DIR",
-    "SYSTEM_TTFONTS",
 ]
