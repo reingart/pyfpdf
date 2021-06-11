@@ -423,10 +423,11 @@ class FPDF:
         Args:
             zoom: either "fullpage", "fullwidth", "real", "default",
                 or a number indicating the zooming factor to use, interpreted as a percentage.
-                The default value is "default".
+                The zoom level set by default is "default".
             layout (str): either "single", "continuous", "two" or "default",
                 meaning to use the viewer default mode.
-                The default value is "default".
+                The layout set by default is "default",
+                and this method default value is "continuous".
         """
         if zoom in ZOOM_CONFIGS or not isinstance(zoom, str):
             self.zoom_mode = zoom
