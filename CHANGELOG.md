@@ -15,7 +15,6 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 - `FPDF.cell`: the `w` (width) parameter becomes optional, with a default value of `None`, meaning to generate a cell with the size of the text content provided
 - the `h` (height) parameter of the `cell`, `multi_cell` & `write` methods gets a default value change, `None`, meaning to use the current font size
 - removed the useless `w` & `h` parameters of the `FPDF.text_annotation()` method
-- the default `FPDF.producer` is now `PyFPDF/fpdf{FPDF_VERSION}`
 ### Added
 - new `FPDF.add_action()` method, documented in the [Annotations section](https://pyfpdf.github.io/fpdf2/Annotations.html)
 - `FPDF.cell`: new optional `markdown=True` parameter that enables basic Markdown-like styling: `**bold**, __italics__, --underlined--`

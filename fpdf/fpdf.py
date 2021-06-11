@@ -234,7 +234,6 @@ class FPDF:
         self.ws = 0  # word spacing
         self.angle = 0  # used by deprecated method: rotate()
         self.font_cache_dir = font_cache_dir
-        self.producer = f"PyFPDF/fpdf{FPDF_VERSION}"
         self.xmp_metadata = None
         self.image_filter = "AUTO"
         self.page_duration = 0  # optional pages display duration, cf. add_page()
@@ -2937,7 +2936,7 @@ class FPDF:
             "/Author": enclose_in_parens(getattr(self, "author", None)),
             "/Keywords": enclose_in_parens(getattr(self, "keywords", None)),
             "/Creator": enclose_in_parens(getattr(self, "creator", None)),
-            "/Producer": enclose_in_parens(self.producer),
+            "/Producer": enclose_in_parens(getattr(self, "producer", None)),
         }
 
         if hasattr(self, "creation_date"):
