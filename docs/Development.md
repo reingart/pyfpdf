@@ -42,8 +42,8 @@ Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2)
   * `[.github]` - GitHub Actions configuration
   * `[docs]` - documentation folder
   * `[fpdf]` - library source
-  * `[scripts]` - manipulate this repository
-  * `[test]` - tests
+  * `[scripts]` - utilities to validate PDF files & publish the package on Pypi
+  * `[test]` - non-regression tests
   * `[tutorial]` - tutorials (see also [Tutorial](Tutorial.md))
   * `README.md` - Github and PyPI ReadMe
   * `CHANGELOG.md` - details of each release content
@@ -103,8 +103,8 @@ and you will just have to run `git commit -a` again.
 
 ## Testing ##
 
-To run tests, ``cd`` into the repository, install the dependencies using
-``pip install -r test/requirements.txt``,  and run `pytest`.
+To run tests, `cd` into the repository, install the dependencies using
+`pip install -r test/requirements.txt`,  and run `pytest`.
 
 Alternatively, you can use [Tox](https://tox.readthedocs.io/en/latest/).
 It is self-documented in the `tox.ini` file in the repository.
@@ -173,6 +173,16 @@ To preview the Markdown documentation, launch a local rendering server with:
 To preview the API documentation, launch a local rendering server with:
 
     pdoc --html -o public/ fpdf --http :
+
+## PDF spec & new features ##
+
+The **PDF 1.7 spec** is available on Adobe website:
+[PDF32000_2008.pdf](https://www.adobe.com/content/dam/acom/en/devnet/pdf/pdfs/PDF32000_2008.pdf).
+
+It may be intimidating at first, but while technical, it is usually quite clear and understandable.
+
+It is also a great place to look for new features for `fpdf2`:
+there are still many PDF features that this library does not support.
 
 ## See also ##
 [Project Home](index.md), [Frequently asked questions](FAQ.md), 
