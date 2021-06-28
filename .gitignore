@@ -12,6 +12,8 @@ verapdf/
 pdfchecker-aggregated.json
 verapdf-aggregated.json
 
+contributors/contributors.html
+
 *.py[cod]
 *.pkl
 

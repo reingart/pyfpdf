@@ -87,7 +87,12 @@ Developers:
 
 Please check [the documentation page dedicated to development](https://pyfpdf.github.io/fpdf2/Development.html).
 
-This library was only possible thanks to the dedication of the following people: [CONTRIBUTORS.md](CONTRIBUTORS.md).
+This library was only possible thanks to the dedication of many volunteers around the world,
+listed in [CONTRIBUTORS.md](CONTRIBUTORS.md).
+
+[![Contributors map](contributors/contributors-map-small.png)](https://pyfpdf.github.io/fpdf2/contributors.html)
+
+_(screenshot from June 2021, click on the map above to access an up-to-date online version)_
 
 Other libraries
 ---------------

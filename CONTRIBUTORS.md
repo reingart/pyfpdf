@@ -25,3 +25,6 @@ On the original [PyFPDF](https://github.com/reingart/pyfpdf/graphs/contributors)
 - José L. Redrejo Rodríguez
 - Craig Hobbs
 - Larivact
+
+Check also the [world map of contributors](https://pyfpdf.github.io/fpdf2/contributors.html)
+and [GitHub contributors graphs](https://github.com/PyFPDF/fpdf2/graphs/contributors).

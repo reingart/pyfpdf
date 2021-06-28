@@ -53,10 +53,14 @@ jobs:
           # Uploading coverage report to codecov.io
           bash <(curl -s https://codecov.io/bash)
       - name: Generating HTML documentation 🏗️
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p public/
           mkdocs build
           pdoc --html -o public/ fpdf
+          contributors/build_contributors_html_page.py PyFPDF/fpdf2
+          mv contributors/contributors.html public/
       - name: Deploy documentation 🚀
         # GitHub Pages deployment should not be done for all Python versions,
         # otherwise commits will conflict on the gh-pages branch:
