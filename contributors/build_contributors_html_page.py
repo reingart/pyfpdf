@@ -7,8 +7,9 @@
 
 # API DOC: https://developer.github.com/v3/issues/
 
-import argparse, json, os, sys
-from datetime import datetime
+import argparse
+import os
+import sys
 
 from agithub.GitHub import GitHub
 from agithub.base import IncompleteRequest
@@ -18,40 +19,47 @@ THIS_SCRIPT_PARENT_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 def main():
-    if 'GITHUB_TOKEN' not in os.environ:
-        raise RuntimeError('Environment variable GITHUB_TOKEN must be defined')
+    if "GITHUB_TOKEN" not in os.environ:
+        raise RuntimeError("Environment variable GITHUB_TOKEN must be defined")
     args = parse_args()
-    ag = GitHubAPIWrapper(token=os.environ['GITHUB_TOKEN'])
-    org, repo = args.org_repo.split('/')
-    print('Fetching all issues...')
-    issues = ag.repos[org][repo].issues.get(state='all')
-    print('Now retrieving each user location...')
+    ag = GitHubAPIWrapper(token=os.environ["GITHUB_TOKEN"])
+    org, repo = args.org_repo.split("/")
+    print("Fetching all issues...")
+    issues = ag.repos[org][repo].issues.get(state="all")
+    print("Now retrieving each user location...")
     user_locations = {}
     for issue in issues:
-        user_login = issue['user']['login']
+        user_login = issue["user"]["login"]
         if user_login not in user_locations:
             user_locations[user_login] = {
-                'location': ag.users[user_login].get()['location'],
-                'issues': 0,
-                'pulls': 0,
+                "location": ag.users[user_login].get()["location"],
+                "issues": 0,
+                "pulls": 0,
             }
-        if 'pull_request' in issue:
-            user_locations[user_login]['pulls'] += 1
+        if "pull_request" in issue:
+            user_locations[user_login]["pulls"] += 1
         else:
-            user_locations[user_login]['issues'] += 1
+            user_locations[user_login]["issues"] += 1
     env = Environment(loader=FileSystemLoader(THIS_SCRIPT_PARENT_DIR))
-    template = env.get_template('contributors.html.jinja2')
-    with open(os.path.join(THIS_SCRIPT_PARENT_DIR, 'contributors.html'), 'w') as out_file:
-        out_file.write(template.render(org_repo=args.org_repo, user_locations=user_locations))
+    template = env.get_template("contributors.html.jinja2")
+    with open(
+        os.path.join(THIS_SCRIPT_PARENT_DIR, "contributors.html"), "w"
+    ) as out_file:
+        out_file.write(
+            template.render(org_repo=args.org_repo, user_locations=user_locations)
+        )
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter, allow_abbrev=False)
-    parser.add_argument('org_repo')
+    parser = argparse.ArgumentParser(
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter, allow_abbrev=False
+    )
+    parser.add_argument("org_repo")
     return parser.parse_args()
 
 
 # Below are some utility methods to enhance the agithub library:
+
 
 class GitHubAPIWrapper(GitHub):
     def __init__(self, *args, ignore_403s=False, **kwargs):
@@ -60,6 +68,7 @@ class GitHubAPIWrapper(GitHub):
 
     def __getattr__(self, key):
         return IncompleteRequestWrapper(self.client, self.ignore_403s).__getattr__(key)
+
     __getitem__ = __getattr__
 
 
@@ -73,15 +82,16 @@ class IncompleteRequestWrapper(IncompleteRequest):
         if key in self.client.http_methods:
             return HTTPRequester(result, self.ignore_403s)
         return result
+
     __getitem__ = __getattr__
 
 
 class HTTPRequester:
-    '''
+    """
     Callable, providing:
     - auto pages fetching when result count is > 100
     - raise exceptions on HTTP errors
-    '''
+    """
 
     MAX_RESULTS_COUNT = 30
 
@@ -104,12 +114,12 @@ class HTTPRequester:
     def _fetch(self, *args, **kwargs):
         http_code, response = self.http_method_executer(*args, **kwargs)
         if http_code == 403 and self.ignore_403s:
-            print('HTTP {}: {}'.format(http_code, response['message']), file=sys.stderr)
+            print("HTTP {}: {}".format(http_code, response["message"]), file=sys.stderr)
             return []
         if http_code != 200:
-            raise RuntimeError('HTTP code: {}: {}'.format(http_code, response))
+            raise RuntimeError("HTTP code: {}: {}".format(http_code, response))
         return response
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
