@@ -14,3 +14,6 @@ As of june 2021, the map looks like this (click on it to access the up-to-date o
 
 The page is built by the [GitHub Actions pipeline](https://github.com/PyFPDF/fpdf2/blob/master/.github/workflows/continuous-integration-workflow.yml#L62)
 on every push on the `master` branch, and deployed on the project dedicated [GitHub page](https://pages.github.com).
+
+The code in this directory can be freely re-used.
+It is under [CC-0 license](https://creativecommons.org/publicdomain/zero/1.0/deed.en).

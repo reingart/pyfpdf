@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+# LICENSE: CC-0
 # INSTALL: pip install agithub jinja2
 # USAGE:
 #   export GITHUB_TOKEN=...
