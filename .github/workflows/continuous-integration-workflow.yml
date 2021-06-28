@@ -26,7 +26,7 @@ jobs:
         run: |
           sudo apt-get install qpdf libjpeg-dev
           python -m pip install --upgrade pip
-          pip install . -r test/requirements.txt -r docs/requirements.txt
+          pip install . -r test/requirements.txt -r docs/requirements.txt -r contributors/requirements.txt
       - name: Statically checking code 🔎
         run: pylint fpdf test
       - name: Ensure code has been autoformatted with black 🖌️
