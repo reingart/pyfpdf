@@ -2,7 +2,7 @@
 
 # INSTALL: pip install agithub jinja2
 # USAGE:
-#   export GITHUB_OAUTH_TOKEN=...
+#   export GITHUB_TOKEN=...
 #   ./build_contributors_html_page.py $org/$repo
 
 # API DOC: https://developer.github.com/v3/issues/
@@ -40,11 +40,11 @@ def main():
             user_locations[user_login]["pulls"] += 1
         else:
             user_locations[user_login]["issues"] += 1
+    print("Now generating the HTML page...")
     env = Environment(loader=FileSystemLoader(THIS_SCRIPT_PARENT_DIR))
     template = env.get_template("contributors.html.jinja2")
-    with open(
-        os.path.join(THIS_SCRIPT_PARENT_DIR, "contributors.html"), "w"
-    ) as out_file:
+    out_filepath = os.path.join(THIS_SCRIPT_PARENT_DIR, "contributors.html")
+    with open(out_filepath, "w") as out_file:
         out_file.write(
             template.render(org_repo=args.org_repo, user_locations=user_locations)
         )
