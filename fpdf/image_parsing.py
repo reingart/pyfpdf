@@ -20,11 +20,10 @@ def load_image(filename):
         return filename
     # by default loading from network is allowed for all images
     if filename.startswith(("http://", "https://")):
-        f = BytesIO(urlopen(filename).read())
-    else:
-        with open(filename, "rb") as fl:
-            f = BytesIO(fl.read())
-    return f
+        with urlopen(filename) as url_file:
+            return BytesIO(url_file.read())
+    with open(filename, "rb") as local_file:
+        return BytesIO(local_file.read())
 
 
 def get_img_info(img, image_filter="AUTO"):

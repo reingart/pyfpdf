@@ -2506,13 +2506,13 @@ class FPDF:
 
     def _putfonts(self):
         nf = self.n
-        for diff in self.diffs:
+        for diff in self.diffs.values():
             # Encodings
             self._newobj()
             self._out(
                 "<</Type /Encoding /BaseEncoding /WinAnsiEncoding "
                 + "/Differences ["
-                + self.diffs[diff]
+                + diff
                 + "]>>"
             )
             self._out("endobj")
@@ -2521,7 +2521,7 @@ class FPDF:
             if "type" in info and info["type"] != "TTF":
                 # Font file embedding
                 self._newobj()
-                self.font_files[name]["n"] = self.n
+                info["n"] = self.n
                 font = (FPDF_FONT_DIR / name).read_bytes()
                 compressed = substr(name, -2) == ".z"
                 if not compressed and "length2" in info:
