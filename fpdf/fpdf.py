@@ -48,6 +48,7 @@ from .util import (
     enclose_in_parens,
     escape_parens,
     substr,
+    get_scale_factor,
 )
 from .deprecation import WarnOnDeprecatedModuleAttributes
 from .syntax import (
@@ -195,9 +196,10 @@ class FPDF:
         Args:
             orientation (str): possible values are "portrait" (can be abbreviated "P")
                 or "landscape" (can be abbreviated "L"). Default to "portrait".
-            unit (str): possible values are "pt", "mm", "cm" or "in".
+            unit (str, int, float): possible values are "pt", "mm", "cm", "in", or a number.
                 A point equals 1/72 of an inch, that is to say about 0.35 mm (an inch being 2.54 cm).
                 This is a very common unit in typography; font sizes are expressed in this unit.
+                If given a number, then it will be treated as the number of points per unit.  (eg. 72 = 1 in)
                 Default to "mm".
             format (str): possible values are "a3", "a4", "a5", "letter", "legal" or a tuple
                 (width, height) expressed in the given unit. Default to "a4".
@@ -275,16 +277,7 @@ class FPDF:
             "timesnewroman": "times",
         }
         # Scale factor
-        if unit == "pt":
-            self.k = 1
-        elif unit == "mm":
-            self.k = 72 / 25.4
-        elif unit == "cm":
-            self.k = 72 / 2.54
-        elif unit == "in":
-            self.k = 72.0
-        else:
-            raise FPDFException(f"Incorrect unit: {unit}")
+        self.k = get_scale_factor(unit)
 
         self.dw_pt, self.dh_pt = get_page_format(format, self.k)
         self._set_orientation(orientation, self.dw_pt, self.dh_pt)
