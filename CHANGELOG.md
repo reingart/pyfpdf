@@ -9,6 +9,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.4.3] - not released yet
 ### Added
+- support for emoticons, more precisely characters above `0xFFFF` in general, thanks to @moe-25!
 - `get_scale_factor` utility function to obtain FPDF.k without having to create a document.
 - `convert_unit` utility function to convert a number, x,y point, or list of x,y points from one unit to another unit
 

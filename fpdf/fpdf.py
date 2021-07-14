@@ -1489,7 +1489,10 @@ class FPDF:
     @contextmanager
     def rotation(self, angle, x=None, y=None):
         """
-        This method allows to perform a rotation around a given center. It must be used as a context-manager using `with`.
+        This method allows to perform a rotation around a given center. It must be used as a context-manager using `with`:
+
+            with rotation(angle=90, x=x, y=y):
+                pdf.something()
 
         The rotation affects all elements which are printed inside the indented context
         (with the exception of clickable areas).
