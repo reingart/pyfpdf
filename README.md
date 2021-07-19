@@ -2,6 +2,7 @@
 [![Pypi latest version](https://img.shields.io/pypi/v/fpdf2.svg)](https://pypi.python.org/pypi/fpdf2)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 [![codecov](https://codecov.io/gh/PyFPDF/fpdf2/branch/master/graph/badge.svg)](https://codecov.io/gh/PyFPDF/fpdf2)
+[![Downloads per month](https://pepy.tech/badge/fpdf2/month)](https://pepy.tech/project/fpdf2)
 
 [![](https://img.shields.io/github/contributors/PyFPDF/fpdf2.svg)](https://github.com/PyFPDF/fpdf2/graphs/contributors)
 [![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
