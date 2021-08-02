@@ -16,6 +16,10 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 ### Changed
 - `fpdf.FPDF` constructor now accepts ints or floats as a unit, and raises a `ValueError` if an invalid unit is provided.
 
+### Fixed
+- the code snippet to generate Code 39 barcodes in the documentation was missing the start & end `*` characters.
+This has been fixed, and a warning is now triggered by the `FPDF.code39` method when those characters are missing.
+
 ## [2.4.2] - 2021-06-29
 ### Added
 - disable font caching when `fpdf.FPDF` constructor invoked with `font_cache_dir=None`, thanks to @moe-25 !

@@ -99,6 +99,8 @@ def test_link_with_zoom_and_shift(tmp_path):
         " Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur."
         " Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
     )
+    # Drawing Adobe Reader viewport after clicking on the link,
+    # with the right panel open. The initial zoom level does not matter.
     pdf.set_draw_color(r=255, g=0, b=0)
     pdf.rect(x=pdf.epw / 4, y=pdf.epw / 3, w=53.5, h=31)
     assert_pdf_equal(pdf, HERE / "link_with_zoom_and_shift.pdf", tmp_path)

@@ -3271,6 +3271,11 @@ class FPDF:
     def code39(self, txt, x, y, w=1.5, h=5):
         """Barcode 3of9"""
         dim = {"w": w, "n": w / 3}
+        if not txt.startswith("*") or not txt.endswith("*"):
+            warnings.warn(
+                "Code 39 input must start and end with a '*' character to be valid."
+                " This method does not insert it automatically."
+            )
         chars = {
             "0": "nnnwwnwnn",
             "1": "wnnwnnnnw",

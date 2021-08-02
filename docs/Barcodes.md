@@ -7,7 +7,7 @@ Here is an example on how to generate a [Code 39](https://fr.wikipedia.org/wiki/
 ```python
 pdf = FPDF()
 pdf.add_page()
-pdf.code39("fpdf2", x=50, y=50, w=4, h=20)
+pdf.code39("*fpdf2*", x=30, y=50, w=4, h=20)
 pdf.output("code39.pdf")
 ```
 
