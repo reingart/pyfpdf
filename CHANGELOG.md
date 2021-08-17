@@ -9,30 +9,30 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.4.3] - not released yet
 ### Added
-- support for emoticons, more precisely characters above `0xFFFF` in general, thanks to @moe-25!
-- `get_scale_factor` utility function to obtain `FPDF.k` without having to create a document.
-- `convert_unit` utility function to convert a number, `x,y` point, or list of `x,y` points from one unit to another unit
+- support for **emojis**! Me precisely unicode characters above `0xFFFF` in general, thanks to @moe-25
+- [`get_scale_factor`](https://pyfpdf.github.io/fpdf2/fpdf/util.html#fpdf.util.get_scale_factor) utility function to obtain `FPDF.k` without having to create a document
+- [`convert_unit`](https://pyfpdf.github.io/fpdf2/fpdf/util.html#fpdf.util.convert_unit) utility function to convert a number, `x,y` point, or list of `x,y` points from one unit to another unit
 
 ### Changed
-- `fpdf.FPDF` constructor now accepts ints or floats as a unit, and raises a `ValueError` if an invalid unit is provided.
+- `fpdf.FPDF()` constructor now accepts ints or floats as a unit, and raises a `ValueError` if an invalid unit is provided.
 
 ### Fixed
 - the code snippet to generate Code 39 barcodes in the documentation was missing the start & end `*` characters.
-This has been fixed, and a warning is now triggered by the `FPDF.code39` method when those characters are missing.
+This has been fixed, and a warning is now triggered by the [`FPDF.code39`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.code39) method when those characters are missing.
 
 ### Fixed
-- Detect missing uni=True when loading cached fonts (page numbering was missing digits)
+- Detect missing `uni=True` when loading cached fonts (page numbering was missing digits)
 
 ## [2.4.2] - 2021-06-29
 ### Added
 - disable font caching when `fpdf.FPDF` constructor invoked with `font_cache_dir=None`, thanks to @moe-25 !
-- `FPDF.circle`: new method added, thanks to @viraj-shah18 !
+- [`FPDF.circle`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.circle): new method added, thanks to @viraj-shah18 !
 - `HTMLMixin` / `HTML2FPDF`: support setting HTML font colors by name and short hex codes
 - [`FPDF.will_page_break`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.will_page_break)
 utility method to let users know in advance when adding an elemnt will trigger a page break.
 This can be useful to repeat table headers on each page for exemple,
 _cf._ [documentation on Tables](https://pyfpdf.github.io/fpdf2/Tables.html#repeat-table-header-on-each-page).
-- `FPDF.set_link` now support a new optional `x` parameter to set the horizontal position after following the link
+- [`FPDF.set_link`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_link) now support a new optional `x` parameter to set the horizontal position after following the link
 
 ### Fixed
 - fixed a bug when `fpdf.Template` was used to render QRCodes, due to a forced conversion to string (#175)

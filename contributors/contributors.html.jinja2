@@ -45,7 +45,10 @@
             const topResult = results[0];
             console.log(`geocoding ${contributor.name} topResult: ${JSON.stringify(topResult, null, 2)}`);
             if (topResult) {
-                let popupHtml = `<b>${contributor.name}</b><br>${contributor.location}<br>`;
+                let popupHtml = `<a href="https://github.com/${contributor.name}" target="_blank"><b>${contributor.name}</b></a><br>${contributor.location}<br>`;
+                if (contributor.issues || contributor.pulls) {
+                    popupHtml += `<a href="https://github.com/PyFPDF/fpdf2/issues?q=author%3A${contributor.name}" target="_blank">`;
+                }
                 if (contributor.issues) {
                     popupHtml += `Opened ${contributor.issues} issue`;
                     if (contributor.issues > 1) popupHtml += 's';
@@ -54,6 +57,9 @@
                     popupHtml += contributor.issues ? ' and s' : 'S';
                     popupHtml += `ubmitted ${contributor.pulls} PR`;
                     if (contributor.pulls > 1) popupHtml += 's';
+                }
+                if (contributor.issues || contributor.pulls) {
+                    popupHtml += `</a>`;
                 }
                 L.marker(topResult.center).bindPopup(popupHtml).addTo(cMap);
             }
