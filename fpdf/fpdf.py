@@ -988,9 +988,13 @@ class FPDF(object):
             self.cell(l/1000.0*self.font_size,h,substr(s,j),0,0,'',0,link)
 
     @check_page
-    def image(self, name, x=None, y=None, w=0,h=0,type='',link='', is_mask=False, mask_image=None):
+    def image(self, name, x=None, y=None, w=0,h=0,type='',link='', is_mask=False, mask_image=None, sub_type=''):
+        "sub_type can be new, tounique"
+        "sub_type=new will be used to ensure the image sent is processed"
+        """sub_type=tounique ensures the image sent is processed. Processed data is stored in the dict 'FPDF.images' with 'name' as key.
+           This mode will append index to the name for key storage, so that you can reuse the same BytesIO instance or file name"""
         "Put an image on the page"
-        if not name in self.images:
+        if not str(name) in self.images or sub_type in ['new','tounique']:
             #First use of image, get info
             if(type==''):
                 pos=name.rfind('.')
@@ -1032,9 +1036,12 @@ class FPDF(object):
                 self.error('Mask must be a gray scale image')
             if mask_image:
                 info['masked'] = mask_image
-            self.images[name]=info
+            if sub_type == 'tounique': # appending index to the key so the key will be unique every time the function is called with this argument
+                self.images[str(name)+str(len(self.images)+1)]=info
+            else:
+                self.images[str(name)]=info
         else:
-            info=self.images[name]
+            info=self.images[str(name)]
         #Automatic width and height calculation if needed
         if(w==0 and h==0):
             #Put image at 72 dpi
@@ -1557,7 +1564,7 @@ class FPDF(object):
         if self.compress:
             filter='/Filter /FlateDecode '
         i = [(x[1]["i"],x[1]) for x in self.images.items()]
-        i.sort()
+        i.sort(key=str)
         for idx,info in i:
             self._putimage(info)
             del info['data']
@@ -1775,7 +1782,9 @@ class FPDF(object):
         "Load external file"
         # by default loading from network is allowed for all images
         if reason == "image":
-            if filename.startswith("http://") or filename.startswith("https://"):
+            if isinstance(filename,BytesIO): # when argument passed is a BytesIO instance
+                f = filename
+            elif filename.startswith("http://") or filename.startswith("https://"):
                 f = BytesIO(urlopen(filename).read())
             else:
                 f = open(filename, "rb")
