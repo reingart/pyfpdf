@@ -25,6 +25,7 @@ from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
 from .py3k import PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, exception, b, hashpath
+import hashlib, copy
 
 # Global variables
 FPDF_VERSION = '1.7.2'
@@ -156,6 +157,10 @@ class FPDF(object):
                 raise RuntimeError("Unknown page format: " + format)
         else:
             return (format[0] * k, format[1] * k)
+
+    @staticmethod
+    def s256(str_to_hash):
+        return hashlib.sha256(str(str_to_hash).encode()).hexdigest()
 
     def check_page(fn):
         "Decorator to protect drawing methods"
@@ -989,12 +994,15 @@ class FPDF(object):
 
     @check_page
     def image(self, name, x=None, y=None, w=0,h=0,type='',link='', is_mask=False, mask_image=None, sub_type=''):
-        "sub_type can be new, tounique"
+        "sub_type can be new, tounique, tohash"
         "sub_type=new will be used to ensure the image sent is processed"
         """sub_type=tounique ensures the image sent is processed. Processed data is stored in the dict 'FPDF.images' with 'name' as key.
            This mode will append index to the name for key storage, so that you can reuse the same BytesIO instance or file name"""
+        """sub_type=tohash will be used to ensure the image sent is processed, and key will consist of SHA256 hash of the 'name',
+           which allows us to send the whole processed data (dict) in argument. and it will has the data to make the key
+           Only Key will be required to be passed from next time we want to reuse the same image"""
         "Put an image on the page"
-        if not str(name) in self.images or sub_type in ['new','tounique']:
+        if not str(name) in self.images or sub_type in ['new','tounique','tohash']:
             #First use of image, get info
             if(type==''):
                 pos=name.rfind('.')
@@ -1002,7 +1010,9 @@ class FPDF(object):
                     self.error('image file has no extension and no type was specified: '+name)
                 type=substr(name,pos+1)
             type=type.lower()
-            if(type=='jpg' or type=='jpeg'):
+            if isinstance(name,dict):
+                info=copy.deepcopy(name)
+            elif(type=='jpg' or type=='jpeg'):
                 info=self._parsejpg(name)
             elif(type=='png'):
                 info=self._parsepng(name)
@@ -1038,6 +1048,8 @@ class FPDF(object):
                 info['masked'] = mask_image
             if sub_type == 'tounique': # appending index to the key so the key will be unique every time the function is called with this argument
                 self.images[str(name)+str(len(self.images)+1)]=info
+            elif sub_type == 'tohash':
+                self.images[FPDF.s256(name)]=info
             else:
                 self.images[str(name)]=info
         else:
