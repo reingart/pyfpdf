@@ -5,10 +5,12 @@ __copyright__ = "Copyright (C) 2010 Mariano Reingart"
 __license__ = "LGPL 3.0"
 
 import csv
+import locale
 import warnings
 
 from .errors import FPDFException
 from .fpdf import FPDF
+from .util import try_to_type
 
 
 def rgb(col):
@@ -64,7 +66,7 @@ class Template:
         self.elements = elements
         self.keys = [v["name"].lower() for v in self.elements]
 
-    def parse_csv(self, infile, delimiter=",", decimal_sep="."):
+    def parse_csv(self, infile, delimiter=",", decimal_sep=".", encoding=None):
         """Parse template format csv file and create elements dict"""
         keys = (
             "name",
@@ -87,13 +89,17 @@ class Template:
         )
         self.elements = []
         self.pg_no = 0
-        with open(infile) as f:
+        if encoding is None:
+            encoding = locale.getpreferredencoding()
+        with open(infile, encoding=encoding) as f:
             for row in csv.reader(f, delimiter=delimiter):
                 kargs = {}
                 for i, v in enumerate(row):
                     if not v.startswith("'") and decimal_sep != ".":
                         v = v.replace(decimal_sep, ".")
-                    kargs[keys[i]] = v.strip()
+                    stripped_value = v.strip()
+                    typed_value = try_to_type(stripped_value)
+                    kargs[keys[i]] = typed_value
                 self.elements.append(kargs)
         self.keys = [v["name"].lower() for v in self.elements]
 
@@ -174,7 +180,9 @@ class Template:
             pdf.set_font("helvetica", "B", 16)
             pdf.set_auto_page_break(False, margin=0)
 
-            for element in sorted(self.elements, key=lambda x: x["priority"]):
+            sorted_elements = sorted(self.elements, key=lambda x: x["priority"])
+
+            for element in sorted_elements:
                 element = element.copy()
                 element["text"] = self.texts[pg].get(
                     element["name"].lower(), element["text"]
