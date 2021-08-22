@@ -1,14 +1,15 @@
 import locale
 from typing import Union, Iterable
 
-try_to_type_known_types = [
+_TRY_TO_TYPE_KNOWN_TYPES = (
     int,
     float,
-]
+)
 
 
 def try_to_type(value):
-    for known_type in try_to_type_known_types:
+    "Try to convert a string into a number"
+    for known_type in _TRY_TO_TYPE_KNOWN_TYPES:
         try:
             return known_type(value)
         except ValueError:
