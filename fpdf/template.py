@@ -17,6 +17,13 @@ def rgb(col):
     return (col // 65536), (col // 256 % 256), (col % 256)
 
 
+def rgb_as_str(col):
+    r, g, b = rgb(col)
+    if (r == 0 and g == 0 and b == 0) or g == -1:
+        return f"{r / 255:.3f} g"
+    return f"{r / 255:.3f} {g / 255:.3f} {b / 255:.3f} rg"
+
+
 class Template:
     # Disabling this check due to the "format" parameter below:
     # pylint: disable=redefined-builtin
@@ -212,16 +219,16 @@ class Template:
         underline=False,
         align="",
         foreground=0,
-        backgroud=65535,
+        background=0xFFFFFF,
         multiline=None,
         **__,
     ):
         if not text:
             return
-        if pdf.text_color != rgb(foreground):
+        if pdf.text_color != rgb_as_str(foreground):
             pdf.set_text_color(*rgb(foreground))
-        if pdf.fill_color != rgb(backgroud):
-            pdf.set_fill_color(*rgb(backgroud))
+        if pdf.fill_color != rgb_as_str(background):
+            pdf.set_fill_color(*rgb(background))
 
         font = font.strip().lower()
         if font == "helvetica black":
@@ -246,24 +253,28 @@ class Template:
         pdf.set_xy(x1, y1)
         if multiline is None:
             # multiline==None: write without wrapping/trimming (default)
-            pdf.cell(w=x2 - x1, h=y2 - y1, txt=text, border=0, ln=0, align=align)
+            pdf.cell(
+                w=x2 - x1, h=y2 - y1, txt=text, border=0, ln=0, align=align, fill=True
+            )
         elif multiline:
             # multiline==True: automatic word - warp
-            pdf.multi_cell(w=x2 - x1, h=y2 - y1, txt=text, border=0, align=align)
+            pdf.multi_cell(
+                w=x2 - x1, h=y2 - y1, txt=text, border=0, align=align, fill=True
+            )
         else:
             # multiline==False: trim to fit exactly the space defined
             text = pdf.multi_cell(
                 w=x2 - x1, h=y2 - y1, txt=text, align=align, split_only=True
             )[0]
-            print(f"trimming: *{text}*")
-            pdf.cell(w=x2 - x1, h=y2 - y1, txt=text, border=0, ln=0, align=align)
+            pdf.cell(
+                w=x2 - x1, h=y2 - y1, txt=text, border=0, ln=0, align=align, fill=True
+            )
 
             # pdf.Text(x=x1,y=y1,txt=text)
 
     @staticmethod
     def line(pdf, *_, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, **__):
-        if pdf.draw_color != rgb(foreground):
-            # print "SetDrawColor", hex(foreground)
+        if pdf.draw_color.lower() != rgb_as_str(foreground):
             pdf.set_draw_color(*rgb(foreground))
         # print "SetLineWidth", size
         pdf.set_line_width(size)
@@ -271,14 +282,14 @@ class Template:
 
     @staticmethod
     def rect(
-        pdf, *_, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, backgroud=65535, **__
+        pdf, *_, x1=0, y1=0, x2=0, y2=0, size=0, foreground=0, background=0xFFFFFF, **__
     ):
-        if pdf.draw_color != rgb(foreground):
+        if pdf.draw_color.lower() != rgb_as_str(foreground):
             pdf.set_draw_color(*rgb(foreground))
-        if pdf.fill_color != rgb(backgroud):
-            pdf.set_fill_color(*rgb(backgroud))
+        if pdf.fill_color != rgb_as_str(background):
+            pdf.set_fill_color(*rgb(background))
         pdf.set_line_width(size)
-        pdf.rect(x1, y1, x2 - x1, y2 - y1)
+        pdf.rect(x1, y1, x2 - x1, y2 - y1, style="FD")
 
     @staticmethod
     def image(pdf, *_, x1=0, y1=0, x2=0, y2=0, text="", **__):
@@ -300,7 +311,7 @@ class Template:
         **__,
     ):
         # pylint: disable=unused-argument
-        if pdf.draw_color != rgb(foreground):
+        if pdf.draw_color.lower() != rgb_as_str(foreground):
             pdf.set_draw_color(*rgb(foreground))
         font = font.lower().strip()
         if font == "interleaved 2of5 nt":
@@ -341,7 +352,7 @@ class Template:
         **__,
     ):
         # pylint: disable=unused-argument
-        if pdf.text_color != rgb(foreground):
+        if pdf.text_color != rgb_as_str(foreground):
             pdf.set_text_color(*rgb(foreground))
         font = font.strip().lower()
         if font == "helvetica black":
