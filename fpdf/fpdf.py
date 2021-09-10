@@ -1882,6 +1882,7 @@ class FPDF:
         link="",
         ln=0,
         max_line_height=None,
+        markdown=False,
     ):
         """
         This method allows printing text with line breaks. They can be automatic (as
@@ -1913,6 +1914,8 @@ class FPDF:
                 of the next line ; `2`: below with the same horizontal offset ;
                 `3`: to the right with the same vertical offset. Default value: 0.
             max_line_height (int): optional maximum height of each sub-cell generated
+            markdown (bool): enable minimal markdown-like markup to render part
+                of text as bold / italics / underlined. Default to False.
 
         Using `ln=3` and `maximum height=pdf.font_size` is useful to build tables
         with multiline text in cells.
@@ -1988,6 +1991,7 @@ class FPDF:
                     align=align,
                     fill=fill,
                     link=link,
+                    markdown=markdown,
                 )
                 page_break_triggered = page_break_triggered or new_page
                 text_cells.append(substr(s, j, i - j))
@@ -2034,6 +2038,7 @@ class FPDF:
                         align=align,
                         fill=fill,
                         link=link,
+                        markdown=markdown,
                     )
                     page_break_triggered = page_break_triggered or new_page
                     text_cells.append(substr(s, j, i - j))
@@ -2061,6 +2066,7 @@ class FPDF:
                         align=align,
                         fill=fill,
                         link=link,
+                        markdown=markdown,
                     )
                     page_break_triggered = page_break_triggered or new_page
                     text_cells.append(substr(s, j, sep - j))
@@ -2092,6 +2098,7 @@ class FPDF:
             align=align,
             fill=fill,
             link=link,
+            markdown=markdown,
         )
         if new_page:
             # When a page jump is performed and ln=3,

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.4.4] - not released yet
+### Added
+- markdown support in `multi_cell()`, thanks to Yeshi Namkhai
 
 ## [2.4.3] - 2021-09-01
 ### Added
