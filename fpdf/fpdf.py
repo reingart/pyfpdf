@@ -19,12 +19,14 @@ from datetime import datetime
 from functools import wraps
 import math
 import errno
-import os, sys, zlib, struct, re, tempfile, struct
+import os, sys, zlib, struct, re, tempfile, struct, io, base64
 
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
 from .py3k import PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, exception, b, hashpath
+from pystrich.datamatrix import DataMatrixEncoder, DataMatrixRenderer
+from pystrich.qrcode import QRCodeEncoder, QRCodeRenderer
 
 # Global variables
 FPDF_VERSION = '1.7.2'
@@ -1071,6 +1073,80 @@ class FPDF(object):
         else:
             self.y+=h
 
+    @check_page
+    def datamatrix(self, text='', x=0, y=0, w=57, h=57, cellsize=5):
+        "Convert text to a datamatrix barcode and put in on the page"
+
+        pilImage = self._to_datamatrix(text, w, h, cellsize)
+        base64Image = self._convert_pilimage_to_base64(pilImage)
+
+        self.image(base64Image, x, y, w, h, type="png")
+
+    def _to_datamatrix(self, text, width, height, cellsize):
+        "Convert text to a datamatrix barcode in the form of a pilimage"
+
+        encoder = self._place_in_datamatrix_encoder(text, width, height)
+        renderer = DataMatrixRenderer(encoder.matrix, encoder.regions)
+        pilImage = renderer.get_pilimage(cellsize)
+
+        return pilImage
+
+    def _place_in_datamatrix_encoder(self, text, width, height):
+        "Place text into a 'DataMatrixEncoder' instance"
+
+        encoder = DataMatrixEncoder(text)
+        encoder.width = width
+        encoder.height = height
+
+        return encoder
+
+    def _convert_pilimage_to_base64(self, pilImage):
+        "Convert pilimage to a base64 string"
+
+        with io.BytesIO() as memoryStream:
+            pilImage.save(memoryStream, "PNG")
+            imgageBytes = memoryStream.getvalue()
+            base64Image = self._convert_bytes_to_b64_image(imgageBytes, "png")
+
+        return base64Image
+
+    def _convert_bytes_to_b64_image(self, bytes, format):
+        "Convert a bytes array to a base64 string"
+
+        imageInfo = f"data:image/{format};base64, "
+        base64Data = base64 \
+            .b64encode(bytes) \
+            .decode("ascii")
+
+        return imageInfo + base64Data
+    
+    @check_page
+    def qrcode(self, text='', x=0, y=0, w=57, h=57, cellsize=5):
+        "Convert text to a qrcode and put in on the page"
+
+        pilImage = self._to_qrcode(text, w, h, cellsize)
+        base64Image = self._convert_pilimage_to_base64(pilImage)
+
+        self.image(base64Image, x, y, w, h, type="png")
+
+    def _to_qrcode(self, text, width, height, cellsize):
+        "Convert text to a qrcode in the form of a pilimage"
+
+        encoder = self._place_in_qrcode_encoder(text, width, height)
+        renderer = QRCodeRenderer(encoder.matrix)
+        pilImage = renderer.get_pilimage(cellsize)
+
+        return pilImage
+
+    def _place_in_qrcode_encoder(self, text, width, height):
+        "Place text into a 'Code128Encoder' instance"
+
+        encoder = QRCodeEncoder(text)
+        encoder.width = width
+        encoder.height = height
+
+        return encoder
+
     def get_x(self):
         "Get x position"
         return self.x
@@ -1777,11 +1853,22 @@ class FPDF(object):
         if reason == "image":
             if filename.startswith("http://") or filename.startswith("https://"):
                 f = BytesIO(urlopen(filename).read())
+            elif filename.startswith("data"):
+                f = self._decode_base64_image(filename)
             else:
                 f = open(filename, "rb")
             return f
         else:
             self.error("Unknown resource loading reason \"%s\"" % reason)
+
+    def _decode_base64_image(self, base64Image):
+        "Decode the base 64 image string into an io byte stream"
+
+        imageData = base64Image.split('base64,')[1]
+        decodedData = base64.b64decode(imageData)
+        imageBytes = io.BytesIO(decodedData)
+
+        return imageBytes
 
     def _parsejpg(self, filename):
         # Extract info from a JPEG file
