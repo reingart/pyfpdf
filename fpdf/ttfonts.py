@@ -511,8 +511,7 @@ class TTFontFile:
                 target = subset[code] if isinstance(subset, dict) else code
                 if target > 65535:
                     raise Exception(
-                        "Character U+%X must be remapped since it cannot be indexed in CMAP4 table"
-                        % target
+                        f"Character U+{target:X} must be remapped since it cannot be indexed in CMAP4 table"
                     )
                 if code in self.charToGlyph:
                     if (self.charToGlyph[code], target) not in subsetglyphs:

@@ -2728,10 +2728,10 @@ class FPDF:
                         code_high = 0xD800 | (code - 0x10000) >> 10
                         code_low = 0xDC00 | (code & 0x3FF)
                         bfChar.append(
-                            "<%04X> <%04X%04X>\n" % (code_mapped, code_high, code_low)
+                            f"<{code_mapped:04X}> <{code_high:04X}{code_low:04X}>\n"
                         )
                     else:
-                        bfChar.append("<%04X> <%04X>\n" % (code_mapped, code))
+                        bfChar.append(f"<{code_mapped:04X}> <{code:04X}>\n")
 
                 # ToUnicode
                 self._newobj()
