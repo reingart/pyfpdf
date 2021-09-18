@@ -30,7 +30,7 @@ def break_down_filename(image):
 
 def test_get_img_info():
     short_keys = {"f", "h", "bpc", "w", "cs", "trns", "dp", "pal"}
-    expected = json.loads((HERE / "image_info.json").read_text(encoding='utf8'))
+    expected = json.loads((HERE / "image_info.json").read_text(encoding="utf8"))
 
     for path in sorted((HERE / "png_test_suite").glob("*.png")):
         if not path.stem.startswith("x"):
