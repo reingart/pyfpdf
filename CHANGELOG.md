@@ -16,7 +16,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 - HTML headings (`<h1>`, `<h2>`...) can now contain non-ASCII characters without triggering a `UnicodeEncodeError`
 - when using `Template`, CSV column types are now safely parsed, thanks to @gmischler
 ### Changed
-- some `FPDF` should not used inside a `rotation` context, or things can get broken.
+- some `FPDF` should not be used inside a `rotation` context, or things can get broken.
   This is now forbidden: an exception is raised in case there is such risk.
 
 ## [2.4.3] - 2021-09-01
