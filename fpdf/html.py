@@ -410,6 +410,7 @@ class HTML2FPDF(HTMLParser):
             if attrs:
                 self.align = attrs.get("align")
         if tag in self.heading_sizes:
+            self.font_stack.append((self.font_face, self.font_size, self.font_color))
             self.heading_level = int(tag[1:])
             hsize = self.heading_sizes[tag]
             self.pdf.ln(5 * hsize)
@@ -441,7 +442,7 @@ class HTML2FPDF(HTMLParser):
                 self.bullet[self.indent - 1] = bullet
                 bullet = f"{bullet}. "
             self.pdf.write(self.h, f"{' ' * self.li_tag_indent * self.indent}{bullet} ")
-            self.set_text_color()
+            self.set_text_color(*self.font_color)
         if tag == "font":
             # save previous font state:
             self.font_stack.append((self.font_face, self.font_size, self.font_color))
@@ -458,7 +459,7 @@ class HTML2FPDF(HTMLParser):
             if "size" in attrs:
                 self.font_size = int(attrs.get("size"))
             self.set_font()
-            self.set_text_color()
+            self.set_text_color(*self.font_color)
         if tag == "table":
             self.table = {k.lower(): v for k, v in attrs.items()}
             if "width" not in self.table:
@@ -558,16 +559,17 @@ class HTML2FPDF(HTMLParser):
         LOGGER.debug("ENDTAG %s", tag)
         if tag in self.heading_sizes:
             self.heading_level = None
-            self.pdf.ln(self.h)
-            self.set_font()
-            self.set_text_color()
-            self.align = None
-        if tag == "pre":
-            # recover last font state, color is ignored as pre doesn't change it
             face, size, color = self.font_stack.pop()
             self.set_font(face, size)
+            self.set_text_color(*color)
+            self.pdf.ln(self.h)
+            self.align = None
+        if tag == "pre":
+            face, size, color = self.font_stack.pop()
+            self.set_font(face, size)
+            self.set_text_color(*color)
         if tag == "blockquote":
-            self.set_text_color()
+            self.set_text_color(*self.font_color)
             self.indent -= 1
             self.pdf.ln(3)
         if tag == "strong":
@@ -621,7 +623,7 @@ class HTML2FPDF(HTMLParser):
             face, size, color = self.font_stack.pop()
             self.font_color = color
             self.set_font(face, size)
-            self.set_text_color()
+            self.set_text_color(*self.font_color)
         if tag == "center":
             self.align = None
 
@@ -647,10 +649,7 @@ class HTML2FPDF(HTMLParser):
         self.pdf.set_font(style=style)
 
     def set_text_color(self, r=None, g=0, b=0):
-        if r is None:
-            self.pdf.set_text_color(*self.font_color)
-        else:
-            self.pdf.set_text_color(r, g, b)
+        self.pdf.set_text_color(r, g, b)
 
     def put_link(self, txt):
         # Put a hyperlink
@@ -658,7 +657,7 @@ class HTML2FPDF(HTMLParser):
         self.set_style("u", True)
         self.pdf.write(self.h, txt, self.href)
         self.set_style("u", False)
-        self.set_text_color()
+        self.set_text_color(*self.font_color)
 
     # pylint: disable=no-self-use
     def render_toc(self, pdf, outline):
