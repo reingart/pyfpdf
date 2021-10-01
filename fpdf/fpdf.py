@@ -3522,11 +3522,10 @@ class FPDF:
         """
         if level < 0:
             raise ValueError('"level" mut be equal or greater than zero')
-        if self._outline:
-            if level > self._outline[-1].level + 1:
-                raise ValueError(
-                    f"Incoherent hierarchy: cannot start a level {level} section after a level {self._outline[-1].level} one"
-                )
+        if self._outline and level > self._outline[-1].level + 1:
+            raise ValueError(
+                f"Incoherent hierarchy: cannot start a level {level} section after a level {self._outline[-1].level} one"
+            )
         dest = DestinationXYZ(self.page, y=self.y)
         struct_elem = None
         if self.section_title_styles:

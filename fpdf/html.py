@@ -663,7 +663,7 @@ class HTML2FPDF(HTMLParser):
     def render_toc(self, pdf, outline):
         "This method can be overriden by subclasses to customize the Table of Contents style."
         pdf.ln()
-        for section in outline[1:]:  # skipping top-level h1
+        for section in outline:
             link = pdf.add_link()
             pdf.set_link(link, page=section.page_number)
             text = f'{" " * section.level * 2} {section.name}'

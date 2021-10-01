@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from fpdf import FPDF, HTMLMixin, HTML2FPDF
+from fpdf import FPDF, HTMLMixin
 from fpdf.errors import FPDFException
 from fpdf.html import px2mm
 from test.conftest import assert_pdf_equal
@@ -469,28 +469,3 @@ def test_html_custom_heading_sizes(tmp_path):  # issue-223
         heading_sizes=dict(h1=6, h2=12, h3=18, h4=24, h5=30, h6=36),
     )
     assert_pdf_equal(pdf, HERE / "html_custom_heading_sizes.pdf", tmp_path)
-
-
-def test_custom_HTML2FPDF(tmp_path):
-    class CustomHTML2FPDF(HTML2FPDF):
-        def render_toc(self, pdf, outline):
-            pdf.cell(txt="Table of contents:", ln=1)
-            for section in outline:
-                pdf.cell(txt=f"* {section.name} (page {section.page_number})", ln=1)
-
-    class CustomPDF(FPDF, HTMLMixin):
-        HTML2FPDF_CLASS = CustomHTML2FPDF
-
-    pdf = CustomPDF()
-    pdf.add_page()
-    pdf.write_html(
-        """<toc></toc>
-        <h1>Level 1</h1>
-        <h2>Level 2</h2>
-        <h3>Level 3</h3>
-        <h4>Level 4</h4>
-        <h5>Level 5</h5>
-        <h6>Level 6</h6>
-        <p>paragraph<p>"""
-    )
-    assert_pdf_equal(pdf, HERE / "custom_HTML2FPDF.pdf", tmp_path)
