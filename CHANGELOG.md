@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
-## [2.4.4] - not released yet
+## [2.4.5] - not released yet
+
+## [2.4.4] - 2021-10-01
 ### Added
 - `Template()` has gained a more flexible cousin `FlexTemplate()`, thanks to @gmischler
 - markdown support in `multi_cell()`, thanks to Yeshi Namkhai
