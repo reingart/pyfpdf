@@ -59,3 +59,7 @@ nosetests.xml
 
 # Idea
 .idea
+
+# Vim backup and swap files
+*.*~
+*.swp

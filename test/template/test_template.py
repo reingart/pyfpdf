@@ -1,8 +1,9 @@
 from pathlib import Path
+from pytest import raises
 
 import qrcode
 
-from fpdf.template import Template
+from fpdf.template import Template, FPDFException
 
 from ..conftest import assert_pdf_equal
 
@@ -64,7 +65,7 @@ def test_template_nominal_hardcoded(tmp_path):
             "align": "I",
             "text": "Lorem ipsum dolor sit amet, consectetur adipisici elit",
             "priority": 2,
-            "multiline": 1,
+            "multiline": True,
         },
         {
             "name": "box",
@@ -82,7 +83,6 @@ def test_template_nominal_hardcoded(tmp_path):
             "align": "I",
             "text": None,
             "priority": 0,
-            "multiline": 0,
         },
         {
             "name": "box_x",
@@ -100,7 +100,6 @@ def test_template_nominal_hardcoded(tmp_path):
             "align": "I",
             "text": None,
             "priority": 2,
-            "multiline": 0,
         },
         {
             "name": "line1",
@@ -118,7 +117,7 @@ def test_template_nominal_hardcoded(tmp_path):
             "align": "I",
             "text": None,
             "priority": 3,
-            "multiline": 0,
+            "multiline": False,
         },
         {
             "name": "barcode",
@@ -136,7 +135,7 @@ def test_template_nominal_hardcoded(tmp_path):
             "align": "I",
             "text": "200000000001000159053338016581200810081",
             "priority": 3,
-            "multiline": 0,
+            "multiline": False,
         },
     ]
     tmpl = Template(format="A4", elements=elements, title="Sample Invoice")
@@ -153,11 +152,78 @@ def test_template_nominal_csv(tmp_path):
     tmpl = Template(format="A4", title="Sample Invoice")
     tmpl.parse_csv(HERE / "mycsvfile.csv", delimiter=";")
     tmpl.add_page()
+    tmpl["empty_fields"] = "empty"
     assert_pdf_equal(tmpl, HERE / "template_nominal_csv.pdf", tmp_path)
     tmpl = Template(format="A4", title="Sample Invoice")
     tmpl.parse_csv(HERE / "mycsvfile.csv", delimiter=";", encoding="utf-8")
     tmpl.add_page()
+    tmpl["empty_fields"] = "empty"
     assert_pdf_equal(tmpl, HERE / "template_nominal_csv.pdf", tmp_path)
+
+
+def test_template_multipage(tmp_path):
+    """Testing a Template() populating several pages."""
+    tmpl = Template(format="A4", title="Sample Invoice")
+    tmpl.parse_csv(HERE / "mycsvfile.csv", delimiter=";")
+    tmpl.add_page()
+    tmpl["name0"] = "Joe Doe"
+    tmpl["title0"] = "Director"
+    tmpl.add_page()
+    tmpl["name0"] = "Jane Doe"
+    tmpl["title0"] = "General Manager"
+    tmpl.add_page()
+    tmpl["name0"] = "Heinz Mustermann"
+    tmpl["title0"] = "Worker"
+    assert_pdf_equal(tmpl, HERE / "template_multipage.pdf", tmp_path)
+
+
+# pylint: disable=unused-argument
+def test_template_badinput(tmp_path):
+    """Testing Template() with non-conforming definitions."""
+    for arg in (
+        "format",
+        "orientation",
+        "unit",
+        "title",
+        "author",
+        "subject",
+        "creator",
+        "keywords",
+    ):
+        with raises(TypeError):
+            Template(**{arg: 7})
+    elements = [{}]
+    with raises(KeyError):
+        tmpl = Template(elements=elements)
+    elements = [{"name": "n", "type": "X"}]
+    with raises(KeyError):
+        tmpl = Template(elements=elements)
+        tmpl.render()
+    elements = [
+        {
+            "name": "n",
+            "type": "T",
+            "x1": 0,
+            "y1": 0,
+            "x2": 0,
+            "y2": "x",
+            "text": "Hello!",
+        }
+    ]
+    with raises(TypeError):
+        tmpl = Template(elements=elements)
+        tmpl["n"] = "hello"
+        tmpl.render()
+    tmpl = Template()
+    with raises(FPDFException):
+        tmpl.parse_csv(HERE / "mandmissing.csv", delimiter=";")
+    with raises(ValueError):
+        tmpl.parse_csv(HERE / "badint.csv", delimiter=";")
+    with raises(ValueError):
+        tmpl.parse_csv(HERE / "badfloat.csv", delimiter=";")
+    with raises(KeyError):
+        tmpl.parse_csv(HERE / "badtype.csv", delimiter=";")
+        tmpl.render()
 
 
 def test_template_code39(tmp_path):  # issue-161
@@ -165,16 +231,35 @@ def test_template_code39(tmp_path):  # issue-161
         {
             "name": "code39",
             "type": "C39",
-            "x": 40,
-            "y": 50,
-            "h": 20,
-            "text": "Code 39 barcode",
+            "x1": 40,
+            "y1": 50,
+            "y2": 70,
+            "size": 1.5,
+            "text": "*Code 39 barcode*",
             "priority": 1,
         },
     ]
     tmpl = Template(format="A4", title="Sample Code 39 barcode", elements=elements)
     tmpl.add_page()
     assert_pdf_equal(tmpl, HERE / "template_code39.pdf", tmp_path)
+
+
+def test_template_code39_defaultheight(tmp_path):  # height <= 0 invokes default
+    elements = [
+        {
+            "name": "code39",
+            "type": "C39",
+            "x1": 40,
+            "y1": 50,
+            "y2": 50,
+            "size": 1.5,
+            "text": "*Code 39 barcode*",
+            "priority": 1,
+        },
+    ]
+    tmpl = Template(format="A4", title="Sample Code 39 barcode", elements=elements)
+    tmpl.add_page()
+    assert_pdf_equal(tmpl, HERE / "template_code39_defaultheight.pdf", tmp_path)
 
 
 def test_template_qrcode(tmp_path):  # issue-175
@@ -251,3 +336,46 @@ def test_template_justify(tmp_path):  # issue-207
     tmpl = Template(format="A4", unit="pt", elements=elements)
     tmpl.add_page()
     assert_pdf_equal(tmpl, HERE / "template_justify.pdf", tmp_path)
+
+
+def test_template_split_multicell(tmp_path):
+    elements = [
+        {
+            "name": "multline_text",
+            "type": "T",
+            "x1": 20,
+            "y1": 100,
+            "x2": 60,
+            "y2": 105,
+            "font": "helvetica",
+            "size": 12,
+            "bold": 0,
+            "italic": 0,
+            "underline": 0,
+            "foreground": 0,
+            "background": 0x88FF00,
+            "align": "I",
+            "text": "Lorem ipsum",
+            "priority": 2,
+            "multiline": True,
+        }
+    ]
+    text = (
+        "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,"
+        " sed diam nonumy eirmod tempor invidunt ut labore et dolore"
+        " magna aliquyam erat, sed diam voluptua."
+    )
+    expected = [
+        "Lorem ipsum dolor",
+        "sit amet, consetetur",
+        "sadipscing elitr, sed",
+        "diam nonumy",
+        "eirmod tempor",
+        "invidunt ut labore et",
+        "dolore magna",
+        "aliquyam erat, sed",
+        "diam voluptua.",
+    ]
+    tmpl = Template(format="A4", unit="pt", elements=elements)
+    res = tmpl.split_multicell(text, "multline_text")
+    assert res == expected
