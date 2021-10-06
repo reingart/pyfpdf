@@ -27,10 +27,13 @@ document.output("hello_world.pdf")
 ```
 
 It is a fork and the successor of `PyFPDF`.
-Compared with other PDF libraries, `fpdf2` is simple, small and versatile, with
-advanced capabilities, and is easy to learn, extend and maintain.
+Compared with other PDF libraries, `fpdf2` is simple, small and versatile, with advanced capabilities, and is easy to learn and extend.
+It is also entirely writen in Python (no C is involved), and has only **one** dependency so far, to handle images: [Pillow](https://pillow.readthedocs.io/en/stable/).
 
-Looking for Developer Help!
+**Development status**: this project is **mature** and **actively maintained**.
+
+We are looking for contributing developers: if you want to get involved but don't know how,
+or would like to volunteer helping maintain this lib, [open a discussion](https://github.com/PyFPDF/fpdf2/discussions)!
 
 Installation Instructions:
 --------------------------
@@ -60,13 +63,13 @@ Features:
  * Shape, Line Drawing
  * Generate [Code 39](https://fr.wikipedia.org/wiki/Code_39) & [Interleaved 2 of 5](https://en.wikipedia.org/wiki/Interleaved_2_of_5) barcodes
  * Cell / multi-cell / plaintext writing, automatic page breaks
- * Basic conversion from HTML to PDF
+ * Basic [conversion from HTML to PDF](https://pyfpdf.github.io/fpdf2/HTML.html)
+ * A [templating system](https://pyfpdf.github.io/fpdf2/Templates.html) to render PDFs in batchs
  * Images & links alternative descriptions
  * Table of contents & [document outline](https://pyfpdf.github.io/fpdf2/DocumentOutlineAndTableOfContents.html)
  * Optional basic Markdown-like styling: `**bold**, __italics__, --underlined--`
  * Clean error handling through exceptions
- * Only **one** dependency so far: [Pillow](https://pillow.readthedocs.io/en/stable/)
- * Unit tests with `qpdf`-based PDF diffing
+ * Unit tests with `qpdf`-based PDF diffing and a high code coverage
 
 We validate all our PDF samples using 3 different checkers:
 
