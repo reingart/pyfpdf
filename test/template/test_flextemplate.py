@@ -86,6 +86,14 @@ def test_flextemplate_multipage(tmp_path):
             "y2": 0,
         },
         {
+            "name": "e",
+            "type": "E",
+            "x1": 0,
+            "y1": 50,
+            "x2": 50,
+            "y2": 0,
+        },
+        {
             "name": "label",
             "type": "T",
             "x1": 0,
@@ -156,6 +164,7 @@ def test_flextemplate_rotation(tmp_path):
             "y2": 15,
             "text": "Lorem ipsum dolor sit amet, consectetur adipisici elit",
             "rotate": 90.0,
+            "background": 0xEEFFFF,
             "multiline": True,
         },
         {
@@ -173,7 +182,6 @@ def test_flextemplate_rotation(tmp_path):
             "type": "BC",
             "x1": 60,
             "y1": 00,
-            "x2": 70,
             "y2": 10,
             "text": "123456",
             "size": 1,
@@ -198,6 +206,16 @@ def test_flextemplate_rotation(tmp_path):
             "x2": 40,
             "y2": 10,
             "rotate": 45,
+        },
+        {
+            "name": "ellipse",
+            "type": "E",
+            "x1": 50,
+            "y1": -10,
+            "x2": 70,
+            "y2": 0,
+            "background": 0x88FFFF,
+            "rotate": -45,
         },
     ]
     pdf = FPDF()
