@@ -1,3 +1,4 @@
+Country,Capital,Area (sq km),Population
 Algeria,Algiers,2381740,33770000
 American Samoa,Pago Pago,199,57500
 Andorra,Andorra la Vella,468,72400
