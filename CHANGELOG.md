@@ -25,7 +25,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.4.4] - 2021-10-01
 ### Added
-- `Template()` has gained a more flexible cousin `FlexTemplate()`, thanks to @gmischler
+- `Template()` has gained a more flexible cousin `FlexTemplate()`, _cf._ [documentation](https://pyfpdf.github.io/fpdf2/Templates.html), thanks to @gmischler
 - markdown support in `multi_cell()`, thanks to Yeshi Namkhai
 - base 64 images can now be provided to `FPDF.image`, thanks to @MWhatsUp
 - documentation on how to generate datamatrix barcodes using the `pystrich` lib: [documentation section](https://pyfpdf.github.io/fpdf2/Barcodes.html#datamatrix),
