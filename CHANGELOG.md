@@ -9,6 +9,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.4.6] - not released yet
 ### Added
+- New `set_dash_pattern()`, which works with all lines and curves, thanks to @gmischler.
 - Templates now support drawing ellipses, thanks to @gmischler
 - New sections have been added to [the tutorial](https://pyfpdf.github.io/fpdf2/Tutorial.html), thanks to @portfedh:
 
@@ -18,6 +19,8 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 - The exception making the "x2" template field optional for barcode elements did not work correctly, thanks to @gmischler
 ### Changed
 - All template elements now have a transparent default background instead of white, thanks to @gmischler
+### Deprecated
+- `dashed_line()` is now deprecated, thanks to @gmischler.
 
 ## [2.4.5] - 2021-10-03
 ### Fixed
