@@ -15,6 +15,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 - New `set_dash_pattern()`, which works with all lines and curves, thanks to @gmischler.
 - Templates now support drawing ellipses, thanks to @gmischler
 - New documentation on how to display equations, using Google Charts or `matplotlib`: [Maths](https://pyfpdf.github.io/fpdf2/Maths.html)
+- The whole documentation can now be downloaded as a PDF: [fpdf2-manual.pdf](pyfpdf.github.io/fpdf2/fpdf2-manual.pdf)
 - New sections have been added to [the tutorial](https://pyfpdf.github.io/fpdf2/Tutorial.html), thanks to @portfedh:
 
     5. [Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
