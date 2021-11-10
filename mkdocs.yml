@@ -20,6 +20,7 @@ theme:
 markdown_extensions: [toc, pymdownx.highlight, pymdownx.superfences]
 plugins:
   - include-markdown
+  - search
 nav:
 - 'Project Home':                   'index.md'
 - 'Tutorial':                       'Tutorial.md'
