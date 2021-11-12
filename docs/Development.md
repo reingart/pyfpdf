@@ -119,10 +119,12 @@ If you do not want to run tests for all versions of python, run `tox -e py39`
 ### Why is a test failing?
 
 If there are some failing tests after you made a code change,
-`pytest` output will display **the difference of PDF source code between the expected & actual files**.
+it is usually because **there are difference between an expected PDF generated and the actual one produced**.
 
-This "diff" can be quite difficult to understand,
-but you can have a look at the PDF files involved by navigating to the temporary test directory
+Calling `pytest -vv` will display **the difference of PDF source code** between the expected & actual files,
+but that may be difficult to understand,
+
+You can also have a look at the PDF files involved by navigating to the temporary test directory
 that is printed out during the test failure:
 ```
 =================================== FAILURES ===================================
