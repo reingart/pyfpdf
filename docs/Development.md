@@ -162,11 +162,10 @@ once with `generate=True`.
 ## GitHub pipeline ##
 
 A [GitHub Actions](https://help.github.com/en/actions/reference) pipeline
-is executed on every commit on the `master` branch,
-and for every _Pull Request_.
+is executed on every commit on the `master` branch, and for every _Pull Request_.
 
 It performs all validation steps detailed above: code checking with `black`,
-linting with `pylint`, unit tests...
+static code analysis with `pylint`, unit tests...
 _Pull Requests_ submitted must pass all those checks in order to be approved.
 Ask maintainers through comments if some errors in the pipeline seem obscure to you.
 
