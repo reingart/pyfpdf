@@ -211,7 +211,3 @@ It may be intimidating at first, but while technical, it is usually quite clear 
 
 It is also a great place to look for new features for `fpdf2`:
 there are still many PDF features that this library does not support.
-
-## See also ##
-[Project Home](index.md), [Frequently asked questions](FAQ.md), 
-[Unicode](Unicode.md).
