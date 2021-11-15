@@ -14,6 +14,10 @@ https://github.com/PyFPDF/fpdf2/issues
 
 Describe the bug
 
+**Error details**
+If an exception is raised, it is very important that you provide the full error message.
+Otherwise members of the fpdf2 won't be able to help you with your problem.
+
 **Minimal code**
 Please include some minimal Python code reproducing your issue:
 ```python
