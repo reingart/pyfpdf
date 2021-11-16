@@ -366,6 +366,13 @@ class FPDF(GraphicsStateMixin):
         """
         return self.h - self.t_margin - self.b_margin
 
+    @property
+    def pages_count(self):
+        """
+        Returns the total pages of the document.
+        """
+        return len(self.pages)
+
     def set_margin(self, margin):
         """
         Sets the document right, left, top & bottom margins to the same value.
@@ -691,6 +698,7 @@ class FPDF(GraphicsStateMixin):
             )
         if self.state == DocumentState.UNINITIALIZED:
             self.open()
+
         family = self.font_family
         style = f"{self.font_style}U" if self.underline else self.font_style
         size = self.font_size_pt
@@ -699,6 +707,7 @@ class FPDF(GraphicsStateMixin):
         fc = self.fill_color
         tc = self.text_color
         stretching = self.font_stretching
+
         if self.page > 0:
             # Page footer
             self.in_footer = 1
@@ -714,7 +723,9 @@ class FPDF(GraphicsStateMixin):
             same,
             duration or self.page_duration,
             transition or self.page_transition,
+            new_page=not self._has_next_page(),
         )
+
         self._out("2 J")  # Set line cap style to square
         self.line_width = lw  # Set line width
         self._out(f"{lw * self.k:.2f} w")
@@ -2179,6 +2190,9 @@ class FPDF(GraphicsStateMixin):
             self.ws = ws
             self._out(f"{ws * self.k:.3f} Tw")
 
+    def _has_next_page(self):
+        return self.pages_count > self.page
+
     @check_page
     def multi_cell(
         self,
@@ -2820,7 +2834,7 @@ class FPDF(GraphicsStateMixin):
         return txt
 
     def _putpages(self):
-        nb = self.page  # total number of pages
+        nb = self.pages_count  # total number of pages
         if self.str_alias_nb_pages:
             self._substitute_page_number()
         if self._toc_placeholder:
@@ -2922,7 +2936,7 @@ class FPDF(GraphicsStateMixin):
         self._out("endobj")
 
     def _substitute_page_number(self):
-        nb = self.page  # total number of pages
+        nb = self.pages_count  # total number of pages
         substituted = False
         # Replace number of pages in fonts using subsets (unicode)
         alias = self.str_alias_nb_pages.encode("UTF-16BE")
@@ -3567,10 +3581,19 @@ class FPDF(GraphicsStateMixin):
         self._out("%%EOF")
         self.state = DocumentState.CLOSED
 
-    def _beginpage(self, orientation, format, same, duration, transition):
+    def _beginpage(
+        self, orientation, format, same, duration, transition, new_page=True
+    ):
         self.page += 1
-        page = {"content": bytearray(), "duration": duration, "transition": transition}
-        self.pages[self.page] = page
+        if new_page:
+            page = {
+                "content": bytearray(),
+                "duration": duration,
+                "transition": transition,
+            }
+            self.pages[self.page] = page
+        else:
+            page = self.pages[self.page]
         self.state = DocumentState.GENERATING_PAGE
         self.x = self.l_margin
         self.y = self.t_margin
