@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
-## [2.4.6] - not released yet
+## [2.4.7] - not released yet
+
+## [2.4.6] - 2021-11-16
 ### Added
 - New `FPDF.pages_count` property, thanks to @paulacampigotto
 - Temporary changes to graphics state variables are now possible by `with FPDF.local_context():`, thanks to @gmischler
