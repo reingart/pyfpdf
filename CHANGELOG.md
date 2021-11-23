@@ -12,14 +12,14 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 ## [2.4.6] - 2021-11-16
 ### Added
 - New `FPDF.pages_count` property, thanks to @paulacampigotto
-- Temporary changes to graphics state variables are now possible by `with FPDF.local_context():`, thanks to @gmischler
+- Temporary changes to graphics state variables are now possible using `with FPDF.local_context():`, thanks to @gmischler
 - a mechanism to detect & downscale oversized images,
   _cf._ [documentation](https://pyfpdf.github.io/fpdf2/Images.html#oversized-images-detection-downscaling).
   [Feedbacks](https://github.com/PyFPDF/fpdf2/discussions) on this new feature are welcome!
 - New `set_dash_pattern()`, which works with all lines and curves, thanks to @gmischler.
 - Templates now support drawing ellipses, thanks to @gmischler
 - New documentation on how to display equations, using Google Charts or `matplotlib`: [Maths](https://pyfpdf.github.io/fpdf2/Maths.html)
-- The whole documentation can now be downloaded as a PDF: [fpdf2-manual.pdf](pyfpdf.github.io/fpdf2/fpdf2-manual.pdf)
+- The whole documentation can now be downloaded as a PDF: [fpdf2-manual.pdf](https://pyfpdf.github.io/fpdf2/fpdf2-manual.pdf)
 - New sections have been added to [the tutorial](https://pyfpdf.github.io/fpdf2/Tutorial.html), thanks to @portfedh:
 
     5. [Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)

@@ -1813,7 +1813,7 @@ class FPDF(GraphicsStateMixin):
         Create a local grapics state, which won't affect the surrounding code.
         This method must be used as a context manager using `with`:
 
-            with local_context():
+            with pdf.local_context():
                 set_some_state()
                 draw_some_stuff()
 
