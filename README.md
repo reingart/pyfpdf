@@ -35,8 +35,8 @@ It is also entirely writen in Python (no C is involved), and has only **one** de
 We are looking for contributing developers: if you want to get involved but don't know how,
 or would like to volunteer helping maintain this lib, [open a discussion](https://github.com/PyFPDF/fpdf2/discussions)!
 
-Installation Instructions:
---------------------------
+Installation Instructions
+-------------------------
 ```bash
 pip install fpdf2
 ```
@@ -53,8 +53,8 @@ cd fpdf2
 python setup.py install
 ```
 
-Features:
----------
+Features
+--------
 
  * Python 3.6+ support
  * Unicode (UTF-8) TrueType font subset embedding
@@ -77,8 +77,8 @@ We validate all our PDF samples using 3 different checkers:
 [![PDF Checker logo](https://pyfpdf.github.io/fpdf2/pdfchecker-logo.png)](https://www.datalogics.com/products/pdf-tools/pdf-checker/)
 [![VeraPDF logo](https://pyfpdf.github.io/fpdf2/vera-logo.jpg)](https://verapdf.org)
 
-Documentation:
---------------
+Documentation
+-------------
 
 - [Documentation Home](https://pyfpdf.github.io/fpdf2/)
 - Tutorial in several languages: [English](https://pyfpdf.github.io/fpdf2/Tutorial.html) - [Deutsch](https://pyfpdf.github.io/fpdf2/Tutorial-de.html) - [español](https://pyfpdf.github.io/fpdf2/Tutorial-es.html) - [हिंदी](https://pyfpdf.github.io/fpdf2/Tutorial-हिंदी.html) [português](https://pyfpdf.github.io/fpdf2/Tutorial-pt.html) - [Русский](https://pyfpdf.github.io/fpdf2/Tutorial-ru.html) - [Italian](https://pyfpdf.github.io/fpdf2/Tutorial-it.html) - [français](https://pyfpdf.github.io/fpdf2/Tutorial-fr.html)
@@ -86,10 +86,10 @@ Documentation:
 
 You can also have a look at the `tests/`, they're great usage examples!
 
-Developers:
------------
+Developement
+------------
 
-Please check [the documentation page dedicated to development](https://pyfpdf.github.io/fpdf2/Development.html).
+Please check the [dedicated documentation page](https://pyfpdf.github.io/fpdf2/Development.html).
 
 ## Contributors ✨
 
@@ -172,16 +172,7 @@ Contributions of any kind welcome!
 
 _(screenshot from June 2021, click on the map above to access an up-to-date online version)_
 
-Other libraries
----------------
+Community, related tools, alternative libraries
+-----------------------------------------------
 
-For alternatives, check out [this detailed list of PDF-related Python libs by Patrick Maupin](https://github.com/pmaupin/pdfrw#other-libraries). There is also `pikepdf`, `PyFPDF2` & `WeasyPrint`.
-
-
-Related
--------
-
-* [Create PDFs with Python](https://www.youtube.com/playlist?list=PLjNQtX45f0dR9K2sMJ5ad9wVjqslNBIC0) : a series of tutorial videos by bvalgard
-* [digidigital/Extensions-and-Scripts-for-pyFPDF-fpdf2](https://github.com/digidigital/Extensions-and-Scripts-for-pyFPDF-fpdf2) : scripts ported from PHP to add transpareny to elements of the page or part of an image, allow to write circular text,
-   draw pie charts and bar diagrams, embed JavaScript, draw rectangles with rounded corners, draw a star shape,
-   restrict the rendering of some elements to screen or printout, paint linear / radial / multi-color gradients gradients, add stamps & watermarks, write sheared text...
+More about those in [the documentation](https://pyfpdf.github.io/fpdf2/#community).
