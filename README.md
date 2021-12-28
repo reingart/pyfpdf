@@ -49,7 +49,7 @@ Documentation:
 
  * [Read the Docs](http://pyfpdf.readthedocs.org/en/latest/)
  * [FAQ](docs/FAQ.md)
- * [Tutorial](docs/Tutorial.md) (Spanish translation available)
+ * [Tutorial](docs/Tutorial.md) ([Spanish translation](https://github.com/reingart/pyfpdf/blob/master/docs/Tutorial-es.md) available)
  * [Reference Manual](docs/ReferenceManual.md)
 
 For further information, see the project site:
