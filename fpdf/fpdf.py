@@ -1445,9 +1445,12 @@ class FPDF(object):
                 except IOError:
                     if not exception().errno == errno.EACCES:
                         raise  # Not a permission error.
-            if (font['cw'][cid] == 0):
+            try:
+                if (font['cw'][cid] == 0):
+                    continue
+                width = font['cw'][cid]
+            except IndexError:
                 continue
-            width = font['cw'][cid]
             if (width == 65535): width = 0
             if (cid > 255 and (cid not in font['subset']) or not cid): #
                 continue
