@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
-## [2.5.0] - not released yet
+## [2.5.0] - 2022-01-22
 ### Added
 - add [`fpdf.drawing`](https://pyfpdf.github.io/fpdf2/Drawing.html) API for composing paths from an arbitrary sequence of lines and curves.
 - add [`fpdf.svg.convert_svg_to_drawing`](https://pyfpdf.github.io/fpdf2/SVG.html) function to support converting basic scalable vector graphics (SVG) images to PDF paths.
