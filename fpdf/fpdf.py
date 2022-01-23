@@ -2482,7 +2482,10 @@ class FPDF(GraphicsStateMixin):
                 else:
                     if align == "J":
                         self.ws = (
-                            (wmax - chars_total_width) / 1000 * self.font_size / (whitespace_count - 1)
+                            (wmax - chars_total_width)
+                            / 1000
+                            * self.font_size
+                            / (whitespace_count - 1)
                             if whitespace_count > 1
                             else 0
                         )
