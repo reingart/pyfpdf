@@ -2400,7 +2400,7 @@ class FPDF(GraphicsStateMixin):
         i = 0
         j = 0
         l = 0
-        ns = 0
+        whitespace_count = 0
         nl = 1
         prev_x, prev_y = self.x, self.y
         while i < normalized_string_length:
@@ -2436,7 +2436,7 @@ class FPDF(GraphicsStateMixin):
                 sep = -1
                 j = i
                 l = 0
-                ns = 0
+                whitespace_count = 0
                 nl += 1
                 if border and nl == 2:
                     b = b2
@@ -2444,8 +2444,8 @@ class FPDF(GraphicsStateMixin):
 
             if c == " ":
                 sep = i
-                ls = l
-                ns += 1
+                chars_total_width = l
+                whitespace_count += 1
             if self.unifontsubset:
                 l += self.get_string_width(c, True) / self.font_size * 1000
             else:
@@ -2482,8 +2482,8 @@ class FPDF(GraphicsStateMixin):
                 else:
                     if align == "J":
                         self.ws = (
-                            (wmax - ls) / 1000 * self.font_size / (ns - 1)
-                            if ns > 1
+                            (wmax - chars_total_width) / 1000 * self.font_size / (whitespace_count - 1)
+                            if whitespace_count > 1
                             else 0
                         )
                         self._out(f"{self.ws * self.k:.3f} Tw")
@@ -2511,7 +2511,7 @@ class FPDF(GraphicsStateMixin):
                 sep = -1
                 j = i
                 l = 0
-                ns = 0
+                whitespace_count = 0
                 nl += 1
                 if border and nl == 2:
                     b = b2
