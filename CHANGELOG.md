@@ -9,6 +9,9 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.5.1] - not released yet
 
+### Changed
+- log level of `_substitute_page_number()` has been lowered from `INFO` to `DEBUG`
+
 ## [2.5.0] - 2022-01-22
 ### Added
 Thanks to @torque for contributing this massive new feature:
@@ -18,9 +21,6 @@ Thanks to @torque for contributing this massive new feature:
 ### Fixed
 - `will_page_break()` & `accept_page_break` are not invoked anymore during a call to `multi_cell(split_only=True)`
 - Unicode characters in headings are now properly displayed in the table of content, _cf._ [#320](https://github.com/PyFPDF/fpdf2/issues/320) - thanks @lcomrade
-
-### Changed
-- log level of `_substitute_page_number()` has been lowered from `INFO` to `DEBUG`
 
 ## [2.4.6] - 2021-11-16
 ### Added
