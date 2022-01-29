@@ -8,9 +8,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.5.1] - not released yet
-
 ### Changed
 - log level of `_substitute_page_number()` has been lowered from `INFO` to `DEBUG`
+
+### Fixed
+- a bug in `get_string_width()` with unicode fonts and Markdown enabled,
+  resulting in calls to `cell()` / `multi_cell()` with `align="R"` to display nothing - thanks @mcerveny for the fix!
 
 ## [2.5.0] - 2022-01-22
 ### Added
