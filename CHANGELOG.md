@@ -9,13 +9,12 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.5.1] - not released yet
 ### Added
-- documentation on combining `borb` & `fpdf2`: [Creating a borb.pdf.document.Document from a FPDF instance](https://pyfpdf.github.io/fpdf2/ExistingPDFs.html)
+- support for soft-hyphen (`\u00ad`) break in `cell()` & `multi_cell()` calls - thanks @oleksii-shyman!
 - new documentation page on [Emojis, Symbols & Dingbats](https://pyfpdf.github.io/fpdf2/EmojisSymbolsDingbats.html)
-- support for soft-hyphen break in `multi_cell` calls
+- documentation on combining `borb` & `fpdf2`: [Creating a borb.pdf.document.Document from a FPDF instance](https://pyfpdf.github.io/fpdf2/ExistingPDFs.html)
 
 ### Changed
 - log level of `_substitute_page_number()` has been lowered from `INFO` to `DEBUG`
-- `multi_cell` logic of splitting text into multiple lines was reworked and moved into separate module
 
 ### Fixed
 - a bug in `get_string_width()` with unicode fonts and Markdown enabled,
