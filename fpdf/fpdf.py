@@ -24,7 +24,7 @@ import os, sys, zlib, struct, re, tempfile, struct
 from .ttfonts import TTFontFile
 from .fonts import fpdf_charwidths
 from .php import substr, sprintf, print_r, UTF8ToUTF16BE, UTF8StringToArray
-from .py3k import PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, exception, b, hashpath
+from .py3k import PY3K, pickle, urlopen, BytesIO, Image, basestring, unicode, exception, b, hashpath, Request
 
 # Global variables
 FPDF_VERSION = '1.7.2'
@@ -1776,7 +1776,9 @@ class FPDF(object):
         # by default loading from network is allowed for all images
         if reason == "image":
             if filename.startswith("http://") or filename.startswith("https://"):
-                f = BytesIO(urlopen(filename).read())
+                custom_request = Request(filename)
+                custom_request.add_header('User-agent', 'Mozilla/5.0')
+                f = BytesIO(urlopen(custom_request).read())
             else:
                 f = open(filename, "rb")
             return f

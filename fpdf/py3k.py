@@ -14,8 +14,10 @@ except ImportError:
 
 try:
 	from urllib import urlopen
+    from urllib import Request
 except ImportError:
 	from urllib.request import urlopen
+    from urllib.request import Request
 
 try:
     from io import BytesIO
