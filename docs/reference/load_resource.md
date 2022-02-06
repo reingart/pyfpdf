@@ -9,8 +9,10 @@ fpdf.load_resource(reason: string, filename: string)
 This method is used to load external resources, such as images. It is 
 automatically called when resource added to document by [image](image.md). The 
 implementation in library sre try to load resource from local file system or 
-from network if filename starts with `http://` or `https://`. This method can 
-be overrided within subclass if you want a specific processing. 
+from network if filename starts with `http://` or `https://`. With the HTTP request
+custom headers set using method [set_http_request_header](set_http_request_header) is
+also passed. This method can be overrided within subclass if you want a specific processing. 
+
 
 Returns file-like object.
 
@@ -25,4 +27,5 @@ filename:
 ### See also ###
 
 [image](image.md).
+[set_http_request_header](set_http_request_header)
 
