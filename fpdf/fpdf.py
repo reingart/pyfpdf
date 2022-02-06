@@ -144,6 +144,8 @@ class FPDF(object):
         self.set_compression(1)
         # Set default PDF version number
         self.pdf_version = '1.3'
+        # Set HTTP request header
+        self.http_request_header = {} 
 
     @staticmethod
     def get_page_format(format, k):
@@ -1776,9 +1778,8 @@ class FPDF(object):
         # by default loading from network is allowed for all images
         if reason == "image":
             if filename.startswith("http://") or filename.startswith("https://"):
-                custom_request = Request(filename)
-                custom_request.add_header('User-agent', 'Mozilla/5.0')
-                f = BytesIO(urlopen(custom_request).read())
+                prepared_request = Request(filename, headers=self.http_request_header)
+                f = BytesIO(urlopen(prepared_request).read())
             else:
                 f = open(filename, "rb")
             return f
@@ -2069,3 +2070,7 @@ class FPDF(object):
                     self.rect(x, y, dim[d], h, 'F')
                 x += dim[d]
             x += dim['n']
+    
+    def set_http_request_header(self, header):
+        self.http_request_header = header
+
