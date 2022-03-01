@@ -2732,11 +2732,15 @@ class FPDF(GraphicsStateMixin):
         if isinstance(name, str):
             img = None
         elif isinstance(name, Image.Image):
-            name, img = hashlib.md5(name.tobytes()).hexdigest(), name  # nosec B303,B324 # we just build a cache key, this is secure
+            bytes = name.tobytes()
+            # disabling bandit rule as we just build a cache key, this is secure
+            name, img = hashlib.md5(bytes).hexdigest(), name  # nosec B303 B324
         elif isinstance(name, io.BytesIO):
             if _is_xml(name):
                 return self._vector_image(name, x, y, w, h, link, title, alt_text)
-            name, img = hashlib.md5(name.getvalue()).hexdigest(), name  # nosec B303,B324 # we just build a cache key, this is secure
+            bytes = name.getvalue()
+            # disabling bandit rule as we just build a cache key, this is secure
+            name, img = hashlib.md5(bytes).hexdigest(), name  # nosec B303 B324
         else:
             name, img = str(name), name
         info = self.images.get(name)

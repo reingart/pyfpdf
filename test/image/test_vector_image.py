@@ -60,6 +60,7 @@ def test_svg_image_from_bytesio(tmp_path):
 
 
 def test_svg_image_billion_laughs():
+    "cf. https://pypi.org/project/defusedxml/#attack-vectors"
     pdf = fpdf.FPDF()
     pdf.add_page()
     with pytest.raises(EntitiesForbidden):
