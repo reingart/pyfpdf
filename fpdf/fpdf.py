@@ -33,7 +33,6 @@ from enum import IntEnum
 from functools import wraps
 from pathlib import Path
 from typing import Callable, NamedTuple, Optional, Union, List
-from xml.etree.ElementTree import ParseError, XML
 
 from PIL import Image
 
@@ -4184,11 +4183,8 @@ def _sizeof_fmt(num, suffix="B"):
 
 
 def _is_xml(img: io.BytesIO):
-    try:
-        XML(img.getvalue())
-        return True
-    except ParseError:
-        return False
+    bytes = img.getvalue()
+    return bytes.startswith(b"<?xml ") or bytes.startswith(b"<svg ")
 
 
 sys.modules[__name__].__class__ = WarnOnDeprecatedModuleAttributes

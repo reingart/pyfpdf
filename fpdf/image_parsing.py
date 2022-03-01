@@ -22,7 +22,7 @@ def load_image(filename):
         return filename
     # by default loading from network is allowed for all images
     if filename.startswith(("http://", "https://")):
-        with urlopen(filename) as url_file:
+        with urlopen(filename) as url_file:  # nosec B310
             return BytesIO(url_file.read())
     elif filename.startswith("data"):
         return _decode_base64_image(filename)
