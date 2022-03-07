@@ -2190,6 +2190,7 @@ class FPDF(GraphicsStateMixin):
 
             if self.fill_color != self.text_color:
                 s += f"q {self.text_color} "
+            style_changed = False
 
             prev_font_style, prev_underline = self.font_style, self.underline
             s += (
@@ -2197,9 +2198,8 @@ class FPDF(GraphicsStateMixin):
                 f"{(self.h - self.y - 0.5 * h - 0.3 * self.font_size) * k:.2f} Td"
             )
 
-            word_spacing = (
-                0  # precursor to self.ws, or manual spacing of unicode fonts.
-            )
+            # precursor to self.ws, or manual spacing of unicode fonts/
+            word_spacing = 0
             if align == "J" and text_line.number_of_spaces_between_words:
                 word_spacing = (
                     w - self.c_margin - self.c_margin - styled_txt_width
@@ -2221,6 +2221,7 @@ class FPDF(GraphicsStateMixin):
                             self.font_family + self.font_style
                         ]
                         s += f" /F{self.current_font['i']} {self.font_size_pt:.2f} Tf"
+                        style_changed = True
                     txt_frag_mapped = ""
                     for char in txt_frag:
                         uni = ord(char)
@@ -2264,6 +2265,7 @@ class FPDF(GraphicsStateMixin):
                             self.font_family + self.font_style
                         ]
                         s += f" /F{self.current_font['i']} {self.font_size_pt:.2f} Tf"
+                        style_changed = True
                     if self.unifontsubset:
                         txt_frag_mapped = ""
                         for char in txt_frag:
@@ -2301,6 +2303,8 @@ class FPDF(GraphicsStateMixin):
 
             if self.fill_color != self.text_color:
                 s += " Q"
+                if style_changed:
+                    s += f" /F{self.current_font['i']} {self.font_size_pt:.2f} Tf"
 
             if link:
                 self.link(

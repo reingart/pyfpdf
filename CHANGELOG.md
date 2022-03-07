@@ -21,6 +21,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 - log level of `_substitute_page_number()` has been lowered from `INFO` to `DEBUG`
 
 ### Fixed
+- a bug when rendering Markdown and setting a custom `text_color` or `fill_color`
 - a bug in `get_string_width()` with unicode fonts and Markdown enabled,
   resulting in calls to `cell()` / `multi_cell()` with `align="R"` to display nothing - thanks @mcerveny for the fix!
 - a bug with incorrect width calculation of markdown text
