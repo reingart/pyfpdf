@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.5.2] - not released yet
+### Fixed
+- a bug with string width calculation when Markdown is enabled - _cf._ [#351](https://github.com/PyFPDF/fpdf2/issues/351)
 
 ## [2.5.1] - 2022-03-07
 ### Added

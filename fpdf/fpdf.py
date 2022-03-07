@@ -2124,7 +2124,12 @@ class FPDF(GraphicsStateMixin):
         styled_txt_width = text_line.text_width / 1000 * self.font_size
         if not styled_txt_width:
             for styled_txt_frag in text_line.fragments:
-                styled_txt_width += self.get_string_width(styled_txt_frag.string)
+                unscaled_width = self.get_normalized_string_width_with_style(
+                    styled_txt_frag.string, styled_txt_frag.style
+                )
+                if self.font_stretching != 100:
+                    unscaled_width *= self.font_stretching / 100
+                styled_txt_width += unscaled_width * self.font_size / 1000
         if w == 0:
             w = self.w - self.r_margin - self.x
         elif w is None:
@@ -2212,18 +2217,15 @@ class FPDF(GraphicsStateMixin):
                     s += " 0 Tw"
                     self.ws = 0
                 for frag in text_line.fragments:
-                    txt_frag = frag.string
-                    style = frag.style
-                    underline = frag.underline
-                    if self.font_style != style:
-                        self.font_style = style
+                    if self.font_style != frag.style:
+                        self.font_style = frag.style
                         self.current_font = self.fonts[
                             self.font_family + self.font_style
                         ]
                         s += f" /F{self.current_font['i']} {self.font_size_pt:.2f} Tf"
                         style_changed = True
                     txt_frag_mapped = ""
-                    for char in txt_frag:
+                    for char in frag.string:
                         uni = ord(char)
                         txt_frag_mapped += chr(self.current_font["subset"].pick(uni))
 
@@ -2241,12 +2243,12 @@ class FPDF(GraphicsStateMixin):
                         if not is_last_word:
                             adj = -(word_spacing * self.k) * 1000 / self.font_size_pt
                             s += f"{adj:.3f}({space}) "
-                    if underline:
-                        underlines.append((self.x + dx + s_width, txt_frag))
-                    self.underline = underline
+                    if frag.underline:
+                        underlines.append((self.x + dx + s_width, frag.string))
+                    self.underline = frag.underline
                     s_width += self.get_string_width(
-                        txt_frag, True
-                    ) + word_spacing * txt_frag.count(" ")
+                        frag.string, True
+                    ) + word_spacing * frag.string.count(" ")
                     s += "] TJ"
             else:
                 if word_spacing and word_spacing != self.ws:
@@ -2256,11 +2258,8 @@ class FPDF(GraphicsStateMixin):
                 self.ws = word_spacing
 
                 for frag in text_line.fragments:
-                    txt_frag = frag.string
-                    style = frag.style
-                    underline = frag.underline
-                    if self.font_style != style:
-                        self.font_style = style
+                    if self.font_style != frag.style:
+                        self.font_style = frag.style
                         self.current_font = self.fonts[
                             self.font_family + self.font_style
                         ]
@@ -2268,7 +2267,7 @@ class FPDF(GraphicsStateMixin):
                         style_changed = True
                     if self.unifontsubset:
                         txt_frag_mapped = ""
-                        for char in txt_frag:
+                        for char in frag.string:
                             uni = ord(char)
                             txt_frag_mapped += chr(
                                 self.current_font["subset"].pick(uni)
@@ -2278,14 +2277,14 @@ class FPDF(GraphicsStateMixin):
                             txt_frag_mapped.encode("utf-16-be").decode("latin-1")
                         )
                     else:
-                        txt_frag_escaped = escape_parens(txt_frag)
+                        txt_frag_escaped = escape_parens(frag.string)
                     s += f" ({txt_frag_escaped}) Tj"
-                    if underline:
-                        underlines.append((self.x + dx + s_width, txt_frag))
-                    self.underline = underline
+                    if frag.underline:
+                        underlines.append((self.x + dx + s_width, frag.string))
+                    self.underline = frag.underline
                     s_width += self.get_string_width(
-                        txt_frag, True
-                    ) + self.ws * txt_frag.count(" ")
+                        frag.string, True
+                    ) + self.ws * frag.string.count(" ")
             s += " ET"
             # Restoring font style & underline mode after handling changes
             # by Markdown annotations:
