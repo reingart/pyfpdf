@@ -66,7 +66,7 @@ LOGGER = logging.getLogger(__name__)
 HERE = Path(__file__).resolve().parent
 
 # Global variables
-FPDF_VERSION = "2.5.0"
+FPDF_VERSION = "2.5.1"
 FPDF_FONT_DIR = HERE / "font"
 
 PAGE_FORMATS = {
