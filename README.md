@@ -29,7 +29,8 @@ pdf.output("hello_world.pdf")
 
 It is a fork and the successor of `PyFPDF`.
 Compared with other PDF libraries, `fpdf2` is simple, small and versatile, with advanced capabilities, and is easy to learn and extend.
-It is also entirely writen in Python (no C is involved), and has only **one** dependency so far, to handle images: [Pillow](https://pillow.readthedocs.io/en/stable/).
+It is also entirely writen in Python and has only a couple of dependencies
+([Pillow](https://pillow.readthedocs.io/en/stable/) & [defusedxml](https://pypi.org/project/defusedxml/)).
 
 **Development status**: this project is **mature** and **actively maintained**.
 
