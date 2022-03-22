@@ -2539,9 +2539,6 @@ class FPDF(GraphicsStateMixin):
 
         page_break_triggered = False
         if split_only:
-            _add_page = self.add_page
-            _out = self._out
-            _perform_page_break_if_need_be = self._perform_page_break_if_need_be
             self._out = lambda *args, **kwargs: None
             self.add_page = lambda *args, **kwargs: None
             self._perform_page_break_if_need_be = lambda *args, **kwargs: None
@@ -2630,9 +2627,9 @@ class FPDF(GraphicsStateMixin):
 
         if split_only:
             # restore writing functions
-            self.add_page = _add_page
-            self._out = _out
-            self._perform_page_break_if_need_be = _perform_page_break_if_need_be
+            del self.add_page
+            del self._out
+            del self._perform_page_break_if_need_be
             self.set_xy(prev_x, prev_y)  # restore location
             result = []
             for text_line in text_lines:
