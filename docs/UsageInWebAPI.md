@@ -19,6 +19,6 @@ def report(request):
 
 ## web2py ##
 
-Usage of the original PyFPDF lib with [web2py](http://www.web2py.com/) is described here: https://github.com/reingart/pyfpdf/blob/master/docs/Web2Py.md
+Usage of the original PyFPDF lib with [web2py](http://www.web2py.com/) is described here: <https://github.com/reingart/pyfpdf/blob/master/docs/Web2Py.md>
 
-PyFPDF is included in `web2py` since release `1.85.2`: <https://github.com/web2py/web2py/tree/master/gluon/contrib/fpdf>
+`v1.7.2` of PyFPDF is included in `web2py` since release `1.85.2`: <https://github.com/web2py/web2py/tree/master/gluon/contrib/fpdf>
