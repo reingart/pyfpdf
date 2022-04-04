@@ -20,17 +20,17 @@ This repository is a fork of the library's [original port by Max Pat](http://www
 
 * Python 3.6+ support
 * [Unicode](Unicode.md) (UTF-8) TrueType font subset embedding (Central European, Cyrillic, Greek, Baltic, Thai, Chinese, Japanese, Korean, Hindi and almost any other language in the world)
-* PNG, GIF and JPG support (including transparency and alpha channel)
-* Shape, Line Drawing
+* Embedding images, including transparency and alpha channel
 * Arbitrary path drawing and basic SVG import
-* Generate [Code 39](https://fr.wikipedia.org/wiki/Code_39) & [Interleaved 2 of 5](https://en.wikipedia.org/wiki/Interleaved_2_of_5) barcodes
-* Cell / multi-cell / plaintext writing, automatic page breaks
-* Basic conversion from HTML to PDF
+* Embedding [barcodes](Barcodes.md), [charts & graphs](Maths.md), [emojis, symbols & dingbats](EmojisSymbolsDingbats.md)
+* [Cell / multi-cell / plaintext writing](Text.md), [automatic page breaks](PageBreaks.md)
+* Basic [conversion from HTML to PDF](HTML.md)
 * Images & links alternative descriptions
-* Table of contents & [document outline](https://pyfpdf.github.io/fpdf2/DocumentOutlineAndTableOfContents.html)
+* Table of contents & [document outline](DocumentOutlineAndTableOfContents.md)
+* [Annotations](Annotations.md), including text highlights
+* [presentation mode](Presentations.md) with control over page display duration & transitions
 * Optional basic Markdown-like styling: `**bold**, __italics__, --underlined--`
-* Clean error handling through exceptions
-* Only **one** dependency so far: [Pillow](https://pillow.readthedocs.io/en/stable/)
+* Only has 2 dependencies: [Pillow](https://pillow.readthedocs.io/en/stable/) & [defusedxml](https://pypi.org/project/defusedxml/)
 * Unit tests with `qpdf`-based PDF diffing
 * PDF samples validation using 3 different checkers:
 
@@ -48,14 +48,14 @@ FPDF original features:
 
 ## Tutorials ##
 
-* [English](https://pyfpdf.github.io/fpdf2/Tutorial.html)
-* [Deutsch](https://pyfpdf.github.io/fpdf2/Tutorial-de.html)
-* [Italian](https://pyfpdf.github.io/fpdf2/Tutorial-it.html)
-* [español](https://pyfpdf.github.io/fpdf2/Tutorial-es.html)
-* [français](https://pyfpdf.github.io/fpdf2/Tutorial-fr.html)
-* [हिंदी](https://pyfpdf.github.io/fpdf2/Tutorial-हिंदी.html)
-* [português](https://pyfpdf.github.io/fpdf2/Tutorial-pt.html)
-* [Русский](https://pyfpdf.github.io/fpdf2/Tutorial-ru.html)
+* [English](Tutorial.md)
+* [Deutsch](Tutorial-de.md)
+* [Italian](Tutorial-it.md)
+* [español](Tutorial-es.md)
+* [français](Tutorial-fr.md)
+* [हिंदी](Tutorial-हिंदी.md)
+* [português](Tutorial-pt.md)
+* [Русский](Tutorial-ru.md)
 
 ## Installation ##
 

@@ -11,6 +11,7 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 ### Added
 - new parameters `new_x` and `new_y` for `cell()` and `multi_cell()`, replacing `ln=0`, thanks to @gmischler
 - new `add_highlight()` method to insert highlight annotations: [documentation](https://pyfpdf.github.io/fpdf2/Annotations.html#highlights)
+- the page structure of the documentation has been revised, with a new page about [adding text](https://pyfpdf.github.io/fpdf2/Text.html), thanks to @gmischler
 ### Fixed
 - If `multi_cell(align="J")` is given text with multiple paragraphs (text followed by an empty line) at once, it now renders the last line of each paragraph left-aligned, instead of just the very last line [#364](https://github.com/PyFPDF/fpdf2/issues/364), thanks to @gmischler
 - a regression: now again `multi_cell()` always renders a cell, even if `txt` is an empty string - _cf._ [#349](https://github.com/PyFPDF/fpdf2/issues/349)
@@ -23,7 +24,6 @@ and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## [2.5.1] - 2022-03-07
 ### Added
-- The documentation outline is revised, and a page about creating Text added, thanks to @gmischler
 - support for soft-hyphen (`\u00ad`) break in `write()`, `cell()` & `multi_cell()` calls - thanks @oleksii-shyman & @gmischler!
   Documentation: [Line breaks](https://pyfpdf.github.io/fpdf2/LineBreaks.html)
 - new documentation page on [Emojis, Symbols & Dingbats](https://pyfpdf.github.io/fpdf2/EmojisSymbolsDingbats.html)

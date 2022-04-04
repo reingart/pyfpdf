@@ -61,17 +61,17 @@ Features
  * Python 3.6+ support
  * Unicode (UTF-8) TrueType font subset embedding
  * Internal/External Links
- * PNG, GIF and JPG support (including transparency and alpha channel)
- * Shape, Line Drawing
+ * Embedding images, including transparency and alpha channel
  * Arbitrary path drawing and basic SVG import
- * Generate [Code 39](https://fr.wikipedia.org/wiki/Code_39) & [Interleaved 2 of 5](https://en.wikipedia.org/wiki/Interleaved_2_of_5) barcodes
- * Cell / multi-cell / plaintext writing, automatic page breaks
+ * Embedding [barcodes](https://pyfpdf.github.io/fpdf2/Barcodes.html), [charts & graphs](https://pyfpdf.github.io/fpdf2/Maths.html), [emojis, symbols & dingbats](https://pyfpdf.github.io/fpdf2/EmojisSymbolsDingbats.html)
+ * [Cell / multi-cell / plaintext writing](https://pyfpdf.github.io/fpdf2/Text.html), [automatic page breaks](https://pyfpdf.github.io/fpdf2/PageBreaks.html)
  * Basic [conversion from HTML to PDF](https://pyfpdf.github.io/fpdf2/HTML.html)
  * A [templating system](https://pyfpdf.github.io/fpdf2/Templates.html) to render PDFs in batchs
  * Images & links alternative descriptions
  * Table of contents & [document outline](https://pyfpdf.github.io/fpdf2/DocumentOutlineAndTableOfContents.html)
+ * [Annotations](https://pyfpdf.github.io/fpdf2/Annotations.html), including text highlights
+ * [presentation mode](https://pyfpdf.github.io/fpdf2/Presentations.html) with control over page display duration & transitions
  * Optional basic Markdown-like styling: `**bold**, __italics__, --underlined--`
- * Clean error handling through exceptions
  * Unit tests with `qpdf`-based PDF diffing and a high code coverage
 
 We validate all our PDF samples using 3 different checkers:

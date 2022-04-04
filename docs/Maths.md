@@ -1,4 +1,4 @@
-# Metadata #
+# Charts & graphs #
 
 `fpdf2` can only insert mathematical formula in the form of **images**.
 The following sections will explaing how to generate and embed such images.
