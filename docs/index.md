@@ -20,15 +20,17 @@ This repository is a fork of the library's [original port by Max Pat](http://www
 
 * Python 3.6+ support
 * [Unicode](Unicode.md) (UTF-8) TrueType font subset embedding (Central European, Cyrillic, Greek, Baltic, Thai, Chinese, Japanese, Korean, Hindi and almost any other language in the world)
+* Internal / external [links](Links.md)
 * Embedding images, including transparency and alpha channel
-* Arbitrary path drawing and basic SVG import
+* Arbitrary path drawing and basic [SVG](SVG.md) import
 * Embedding [barcodes](Barcodes.md), [charts & graphs](Maths.md), [emojis, symbols & dingbats](EmojisSymbolsDingbats.md)
 * [Cell / multi-cell / plaintext writing](Text.md), [automatic page breaks](PageBreaks.md)
 * Basic [conversion from HTML to PDF](HTML.md)
+* A [templating system](Templates.md) to render PDFs in batchs
 * Images & links alternative descriptions
 * Table of contents & [document outline](DocumentOutlineAndTableOfContents.md)
 * [Annotations](Annotations.md), including text highlights
-* [presentation mode](Presentations.md) with control over page display duration & transitions
+* [Presentation mode](Presentations.md) with control over page display duration & transitions
 * Optional basic Markdown-like styling: `**bold**, __italics__, --underlined--`
 * Only has 2 dependencies: [Pillow](https://pillow.readthedocs.io/en/stable/) & [defusedxml](https://pypi.org/project/defusedxml/)
 * Unit tests with `qpdf`-based PDF diffing

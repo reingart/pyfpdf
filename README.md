@@ -59,10 +59,10 @@ Features
 --------
 
  * Python 3.6+ support
- * Unicode (UTF-8) TrueType font subset embedding
- * Internal/External Links
+ * [Unicode](https://pyfpdf.github.io/fpdf2/Unicode.html) (UTF-8) TrueType font subset embedding
+ * Internal / external [links](https://pyfpdf.github.io/fpdf2/Links.html)
  * Embedding images, including transparency and alpha channel
- * Arbitrary path drawing and basic SVG import
+ * Arbitrary path drawing and basic [SVG](https://pyfpdf.github.io/fpdf2/SVG.html) import
  * Embedding [barcodes](https://pyfpdf.github.io/fpdf2/Barcodes.html), [charts & graphs](https://pyfpdf.github.io/fpdf2/Maths.html), [emojis, symbols & dingbats](https://pyfpdf.github.io/fpdf2/EmojisSymbolsDingbats.html)
  * [Cell / multi-cell / plaintext writing](https://pyfpdf.github.io/fpdf2/Text.html), [automatic page breaks](https://pyfpdf.github.io/fpdf2/PageBreaks.html)
  * Basic [conversion from HTML to PDF](https://pyfpdf.github.io/fpdf2/HTML.html)
@@ -70,7 +70,7 @@ Features
  * Images & links alternative descriptions
  * Table of contents & [document outline](https://pyfpdf.github.io/fpdf2/DocumentOutlineAndTableOfContents.html)
  * [Annotations](https://pyfpdf.github.io/fpdf2/Annotations.html), including text highlights
- * [presentation mode](https://pyfpdf.github.io/fpdf2/Presentations.html) with control over page display duration & transitions
+ * [Presentation mode](https://pyfpdf.github.io/fpdf2/Presentations.html) with control over page display duration & transitions
  * Optional basic Markdown-like styling: `**bold**, __italics__, --underlined--`
  * Unit tests with `qpdf`-based PDF diffing and a high code coverage
 
