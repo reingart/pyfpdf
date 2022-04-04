@@ -26,7 +26,12 @@ def test_multi_cell_table_unbreakable(tmp_path):  # issue 111
             for row in TABLE_DATA:
                 for datum in row:
                     pdf.multi_cell(
-                        col_width, line_height, f"{datum} ({i})", border=1, ln=3
+                        col_width,
+                        line_height,
+                        f"{datum} ({i})",
+                        border=1,
+                        new_x=fpdf.XPos.RIGHT,
+                        new_y=fpdf.YPos.TOP,
                     )
                 pdf.ln(line_height)
         pdf.ln(line_height * 2)
@@ -56,7 +61,8 @@ def test_multi_cell_table_unbreakable2(tmp_path):  # issue 120 - 2nd snippet
             line_height,
             header,
             border=1,
-            ln=3,
+            new_x=fpdf.XPos.RIGHT,
+            new_y=fpdf.YPos.TOP,
             max_line_height=pdf.font_size,
             align="C",
         )
@@ -72,7 +78,8 @@ def test_multi_cell_table_unbreakable2(tmp_path):  # issue 120 - 2nd snippet
                     line_height,
                     cell,
                     border=1,
-                    ln=3,
+                    new_x=fpdf.XPos.RIGHT,
+                    new_y=fpdf.YPos.TOP,
                     max_line_height=pdf.font_size,
                     align="C",
                 )
@@ -114,7 +121,8 @@ def test_multi_cell_table_unbreakable_with_split_only(tmp_path):  # issue 359
                 cell,
                 border=1,
                 align="L",
-                ln=3,
+                new_x=fpdf.XPos.RIGHT,
+                new_y=fpdf.YPos.TOP,
                 max_line_height=l_height,
                 split_only=True,
             )
@@ -134,7 +142,8 @@ def test_multi_cell_table_unbreakable_with_split_only(tmp_path):  # issue 359
                     border=1,
                     fill=False,
                     align="L",
-                    ln=3,
+                    new_x=fpdf.XPos.RIGHT,
+                    new_y=fpdf.YPos.TOP,
                     max_line_height=l_height,
                     markdown=False,
                 )
@@ -145,7 +154,8 @@ def test_multi_cell_table_unbreakable_with_split_only(tmp_path):  # issue 359
                     cell,
                     border=1,
                     align="L",
-                    ln=3,
+                    new_x=fpdf.XPos.RIGHT,
+                    new_y=fpdf.YPos.TOP,
                     max_line_height=l_height,
                 )
         pdf.ln(cell_height)
@@ -163,7 +173,8 @@ def test_multi_cell_table_unbreakable_with_split_only(tmp_path):  # issue 359
                         cell,
                         border=1,
                         align="L",
-                        ln=3,
+                        new_x=fpdf.XPos.RIGHT,
+                        new_y=fpdf.YPos.TOP,
                         max_line_height=l_height,
                         split_only=True,
                     )
@@ -183,7 +194,8 @@ def test_multi_cell_table_unbreakable_with_split_only(tmp_path):  # issue 359
                             border=1,
                             fill=False,
                             align="L",
-                            ln=3,
+                            new_x=fpdf.XPos.RIGHT,
+                            new_y=fpdf.YPos.TOP,
                             max_line_height=l_height,
                             markdown=False,
                         )
@@ -194,7 +206,8 @@ def test_multi_cell_table_unbreakable_with_split_only(tmp_path):  # issue 359
                             cell,
                             border=1,
                             align="L",
-                            ln=3,
+                            new_x=fpdf.XPos.RIGHT,
+                            new_y=fpdf.YPos.TOP,
                             max_line_height=l_height,
                         )
                 pdf.ln(cell_height)
