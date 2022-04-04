@@ -123,7 +123,7 @@ def test_cell_without_w_nor_h(tmp_path):
     assert_pdf_equal(pdf, HERE / "cell_without_w_nor_h.pdf", tmp_path)
 
 
-def test_cell_missing_text_or_width(tmp_path):  # pylint: disable=unused-argument
+def test_cell_missing_text_or_width():
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Times", size=16)
@@ -163,7 +163,7 @@ def test_cell_markdown_with_ttf_fonts(tmp_path):
     assert_pdf_equal(pdf, HERE / "cell_markdown_with_ttf_fonts.pdf", tmp_path)
 
 
-def test_cell_markdown_missing_ttf_font(tmp_path):  # pylint: disable=unused-argument
+def test_cell_markdown_missing_ttf_font():
     pdf = FPDF()
     pdf.add_page()
     pdf.add_font("Roboto", fname=HERE / "../fonts/Roboto-Regular.ttf")
@@ -236,7 +236,7 @@ def test_table_with_headers_on_every_page(tmp_path):
     assert_pdf_equal(pdf, HERE / "table_with_headers_on_every_page.pdf", tmp_path)
 
 
-def test_cell_newpos_badinput(tmp_path):  # pylint: disable=unused-argument
+def test_cell_newpos_badinput():
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Times", size=16)

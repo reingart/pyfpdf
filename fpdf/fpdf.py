@@ -1894,9 +1894,10 @@ class FPDF(GraphicsStateMixin):
         page=None,
     ):
         """
-        Adds a text markup annotation on a rectangular area of the page.
+        Adds a text markup annotation on some quadrilateral areas of the page.
 
         Args:
+            type (str): "Highlight", "Underline", "Squiggly" or "StrikeOut"
             text (str): text of the annotation
             quad_points (tuple): array of 8 × n numbers specifying the coordinates of n quadrilaterals
                 in default user space that comprise the region in which the link should be activated.
@@ -1907,6 +1908,7 @@ class FPDF(GraphicsStateMixin):
             color (tuple): a tuple of numbers in the range 0.0 to 1.0, representing a colour used for
                 the title bar of the annotation’s pop-up window
             modification_time (datetime): date and time when the annotation was most recently modified
+            page (int): index of the page where this annotation is added
         """
         if type not in ("Highlight", "Underline", "Squiggly", "StrikeOut"):
             raise ValueError(f"Invalid text markup annotation subtype: {type}")

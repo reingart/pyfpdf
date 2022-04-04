@@ -249,7 +249,7 @@ def test_multi_cell_with_empty_contents(tmp_path):  # issue 349
     assert_pdf_equal(pdf, HERE / "multi_cell_with_empty_contents.pdf", tmp_path)
 
 
-def test_multicell_newpos_badinput(tmp_path):  # pylint: disable=unused-argument
+def test_multicell_newpos_badinput():
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Times", size=16)
