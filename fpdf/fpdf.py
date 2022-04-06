@@ -305,6 +305,7 @@ class FPDF(GraphicsStateMixin):
             warnings.warn(
                 '"font_cache_dir" parameter is deprecated, unused and will soon be removed',
                 DeprecationWarning,
+                stacklevel=2,
             )
         super().__init__()
         # Initialization of instance attributes
@@ -660,6 +661,7 @@ class FPDF(GraphicsStateMixin):
             "set_doc_option() is deprecated. "
             "Simply set the `core_fonts_encoding` property as a replacement.",
             DeprecationWarning,
+            stacklevel=2,
         )
         if opt != "core_fonts_encoding":
             raise FPDFException(f'Unknown document option "{opt}"')
@@ -1167,6 +1169,7 @@ class FPDF(GraphicsStateMixin):
             "dashed_line() is deprecated, and will be removed in a future release. "
             "Use set_dash_pattern() and the normal drawing operations instead.",
             DeprecationWarning,
+            stacklevel=3,
         )
         self.set_dash_pattern(dash_length, space_length)
         self.line(x1, y1, x2, y2)
@@ -1510,6 +1513,7 @@ class FPDF(GraphicsStateMixin):
             warnings.warn(
                 '"uni" parameter is deprecated, unused and will soon be removed',
                 DeprecationWarning,
+                stacklevel=2,
             )
         else:
             uni = str(fname).endswith(".ttf")
@@ -1594,6 +1598,7 @@ class FPDF(GraphicsStateMixin):
                 "Support for .pkl font files definition is deprecated, and will be removed from fpdf2 soon."
                 " If you require this feature, please report your need on fpdf2 GitHub project.",
                 DeprecationWarning,
+                stacklevel=2,
             )
             font_dict = pickle.loads(Path(fname).read_bytes())
             font_dict["i"] = len(self.fonts) + 1
@@ -1998,6 +2003,7 @@ class FPDF(GraphicsStateMixin):
             "rotate() can produces malformed PDFs and is deprecated. "
             "Use the rotation() context manager instead.",
             DeprecationWarning,
+            stacklevel=3,
         )
         if x is None:
             x = self.x
@@ -2183,15 +2189,9 @@ class FPDF(GraphicsStateMixin):
             warnings.warn(
                 ('The parameter "center" is deprecated.' ' Use align="C" instead.'),
                 DeprecationWarning,
+                stacklevel=3,
             )
         if ln != "DEPRECATED":
-            warnings.warn(
-                (
-                    'The parameter "ln" is deprecated.'
-                    ' Use "new_x" and "new_y" instead.'
-                ),
-                DeprecationWarning,
-            )
             # For backwards compatibility, if "ln" is used we overwrite "new_[xy]".
             if ln == 0:
                 new_x = XPos.RIGHT
@@ -2207,6 +2207,14 @@ class FPDF(GraphicsStateMixin):
                     f'Invalid value for parameter "ln" ({ln}),'
                     " must be an int between 0 and 2."
                 )
+            warnings.warn(
+                (
+                    'The parameter "ln" is deprecated.'
+                    f" Instead of ln={ln} use new_x=XPos.{new_x.name}, new_y=YPos.{new_y.name}."
+                ),
+                DeprecationWarning,
+                stacklevel=3,
+            )
         # Font styles preloading must be performed before any call to FPDF.get_string_width:
         txt = self.normalize_text(txt)
         styled_txt_frags = self._preload_font_styles(txt, markdown)
@@ -2724,13 +2732,6 @@ class FPDF(GraphicsStateMixin):
                 "must be instance of Enum YPos"
             )
         if ln != "DEPRECATED":
-            warnings.warn(
-                (
-                    'The parameter "ln" is deprecated.'
-                    ' Use "new_x" and "new_y" instead.'
-                ),
-                DeprecationWarning,
-            )
             # For backwards compatibility, if "ln" is used we overwrite "new_[xy]".
             if ln == 0:
                 new_x = XPos.RIGHT
@@ -2749,6 +2750,14 @@ class FPDF(GraphicsStateMixin):
                     f'Invalid value for parameter "ln" ({ln}),'
                     " must be an int between 0 and 3."
                 )
+            warnings.warn(
+                (
+                    'The parameter "ln" is deprecated.'
+                    f" Instead of ln={ln} use new_x=XPos.{new_x.name}, new_y=YPos.{new_y.name}."
+                ),
+                DeprecationWarning,
+                stacklevel=3,
+            )
 
         page_break_triggered = False
         if split_only:
@@ -2990,6 +2999,7 @@ class FPDF(GraphicsStateMixin):
             warnings.warn(
                 '"type" parameter is deprecated, unused and will soon be removed',
                 DeprecationWarning,
+                stacklevel=3,
             )
         if str(name).endswith(".svg"):
             # Insert it as a PDF path:
@@ -3194,8 +3204,11 @@ class FPDF(GraphicsStateMixin):
         marked_content = self._add_marked_content(
             page_object_id, struct_type="/Figure", mcid=mcid, **kwargs
         )
+        start_page = self.page
         self._out(f"/P <</MCID {mcid}>> BDC")
         yield marked_content
+        if self.page != start_page:
+            raise FPDFException("A page jump occured inside a marked sequence")
         self._out("EMC")
 
     def _add_marked_content(self, page_object_id, **kwargs):
@@ -3286,6 +3299,7 @@ class FPDF(GraphicsStateMixin):
             warnings.warn(
                 '"dest" parameter is deprecated, unused and will soon be removed',
                 DeprecationWarning,
+                stacklevel=2,
             )
         # Finish document if necessary:
         if self.state < DocumentState.CLOSED:
