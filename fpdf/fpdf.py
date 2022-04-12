@@ -333,7 +333,6 @@ class FPDF(GraphicsStateMixin):
         # Do nothing by default. Allowed values: 'WARN', 'DOWNSCALE':
         self.oversized_images = None
         self.oversized_images_ratio = 2  # number of pixels per UserSpace point
-        self._markdown_leak_end_style = False
         # Only set if XMP metadata is added to the document:
         self._xmp_metadata_obj_id = None
         self.struct_builder = StructureTreeBuilder()
@@ -2264,7 +2263,7 @@ class FPDF(GraphicsStateMixin):
         # Font styles preloading must be performed before any call to FPDF.get_string_width:
         txt = self.normalize_text(txt)
         styled_txt_frags = self._preload_font_styles(txt, markdown)
-        return self._render_styled_cell_text(
+        return self._render_styled_text_line(
             TextLine(
                 styled_txt_frags,
                 text_width=0.0,
@@ -2282,7 +2281,7 @@ class FPDF(GraphicsStateMixin):
             center=center,
         )
 
-    def _render_styled_cell_text(
+    def _render_styled_text_line(
         self,
         text_line: TextLine,
         w: float = None,
@@ -2361,22 +2360,21 @@ class FPDF(GraphicsStateMixin):
             h = self.font_size
         if center:
             self.x = self.l_margin + (self.epw - w) / 2
-            align = "C"
         page_break_triggered = self._perform_page_break_if_need_be(h)
-        s = ""
+        sl = []
         k = self.k
         # pylint: disable=invalid-unary-operand-type
         # "h" can't actually be None
         if fill:
             op = "B" if border == 1 else "f"
-            s = (
+            sl.append(
                 f"{self.x * k:.2f} {(self.h - self.y) * k:.2f} "
-                f"{w * k:.2f} {-h * k:.2f} re {op} "
+                f"{w * k:.2f} {-h * k:.2f} re {op}"
             )
         elif border == 1:
-            s = (
+            sl.append(
                 f"{self.x * k:.2f} {(self.h - self.y) * k:.2f} "
-                f"{w * k:.2f} {-h * k:.2f} re S "
+                f"{w * k:.2f} {-h * k:.2f} re S"
             )
         # pylint: enable=invalid-unary-operand-type
 
@@ -2384,24 +2382,24 @@ class FPDF(GraphicsStateMixin):
             x = self.x
             y = self.y
             if "L" in border:
-                s += (
+                sl.append(
                     f"{x * k:.2f} {(self.h - y) * k:.2f} m "
-                    f"{x * k:.2f} {(self.h - (y + h)) * k:.2f} l S "
+                    f"{x * k:.2f} {(self.h - (y + h)) * k:.2f} l S"
                 )
             if "T" in border:
-                s += (
+                sl.append(
                     f"{x * k:.2f} {(self.h - y) * k:.2f} m "
-                    f"{(x + w) * k:.2f} {(self.h - y) * k:.2f} l S "
+                    f"{(x + w) * k:.2f} {(self.h - y) * k:.2f} l S"
                 )
             if "R" in border:
-                s += (
+                sl.append(
                     f"{(x + w) * k:.2f} {(self.h - y) * k:.2f} m "
-                    f"{(x + w) * k:.2f} {(self.h - (y + h)) * k:.2f} l S "
+                    f"{(x + w) * k:.2f} {(self.h - (y + h)) * k:.2f} l S"
                 )
             if "B" in border:
-                s += (
+                sl.append(
                     f"{x * k:.2f} {(self.h - (y + h)) * k:.2f} m "
-                    f"{(x + w) * k:.2f} {(self.h - (y + h)) * k:.2f} l S "
+                    f"{(x + w) * k:.2f} {(self.h - (y + h)) * k:.2f} l S"
                 )
 
         if self.record_text_quad_points:
@@ -2422,6 +2420,9 @@ class FPDF(GraphicsStateMixin):
 
         s_start = self.x
         s_width, underlines = 0, []
+        # We try to avoid modifying global settings for temporary changes.
+        current_font_style = self.font_style
+        current_font = self.current_font
         if text_line.fragments:
             if align == "R":
                 dx = w - self.c_margin - styled_txt_width
@@ -2432,17 +2433,15 @@ class FPDF(GraphicsStateMixin):
             s_start += dx
 
             if self.fill_color != self.text_color:
-                s += f"q {self.text_color} "
-            style_changed = False
+                sl.append(self.text_color)
 
-            prev_font_style, prev_underline = self.font_style, self.underline
-            s += (
+            sl.append(
                 f"BT {(self.x + dx) * k:.2f} "
                 f"{(self.h - self.y - 0.5 * h - 0.3 * self.font_size) * k:.2f} Td"
             )
 
             if self.text_mode != TextMode.FILL:
-                s += f" {self.text_mode} Tr {self.line_width:.2f} w"
+                sl.append(f"{self.text_mode} Tr {self.line_width:.2f} w")
 
             # precursor to self.ws, or manual spacing of unicode fonts/
             word_spacing = 0
@@ -2455,98 +2454,83 @@ class FPDF(GraphicsStateMixin):
                 # adjustment before each space
                 space = escape_parens(" ".encode("utf-16-be").decode("latin-1"))
                 if self.ws > 0:
-                    s += " 0 Tw"
+                    sl.append("0 Tw")
                     self.ws = 0
                 for frag in text_line.fragments:
-                    if self.font_style != frag.style:
-                        self.font_style = frag.style
-                        self.current_font = self.fonts[
-                            self.font_family + self.font_style
-                        ]
-                        s += f" /F{self.current_font['i']} {self.font_size_pt:.2f} Tf"
-                        style_changed = True
+                    if current_font_style != frag.style:
+                        current_font_style = frag.style
+                        current_font = self.fonts[self.font_family + current_font_style]
+                        sl.append(f"/F{current_font['i']} {self.font_size_pt:.2f} Tf")
                     txt_frag_mapped = ""
                     for char in frag.string:
                         uni = ord(char)
-                        txt_frag_mapped += chr(self.current_font["subset"].pick(uni))
+                        txt_frag_mapped += chr(current_font["subset"].pick(uni))
 
                     # Determine the position of space (" ") in the current subset and
                     # split words whenever this mapping code is found
                     words = txt_frag_mapped.split(
-                        chr(self.current_font["subset"].pick(ord(" ")))
+                        chr(current_font["subset"].pick(ord(" ")))
                     )
 
-                    s += " ["
+                    words_strl = []
                     for i, word in enumerate(words):
                         word = escape_parens(word.encode("utf-16-be").decode("latin-1"))
-                        s += f"({word}) "
-                        is_last_word = (i + 1) == len(words)
-                        if not is_last_word:
+                        if i == 0:
+                            words_strl.append(f"({word})")
+                        else:
                             adj = -(word_spacing * self.k) * 1000 / self.font_size_pt
-                            s += f"{adj:.3f}({space}) "
+                            words_strl.append(f"{adj:.3f}({space}{word})")
+                    sl.append(f"[{' '.join(words_strl)}] TJ")
                     if frag.underline:
                         underlines.append((self.x + dx + s_width, frag.string))
-                    self.underline = frag.underline
-                    s_width += self.get_string_width(
-                        frag.string, True
-                    ) + word_spacing * frag.string.count(" ")
-                    s += "] TJ"
+                    frag_width = self.get_normalized_string_width_with_style(
+                        frag.string, current_font_style
+                    )
+                    # /1000 for font space conversion, /100 for percentage -> *0.00001
+                    frag_width *= self.font_stretching * self.font_size * 0.00001
+                    s_width += frag_width + self.ws * frag.string.count(" ")
             else:
                 if word_spacing and word_spacing != self.ws:
-                    self._out(f"{word_spacing * self.k:.3f} Tw")
+                    sl.append(f"{word_spacing * self.k:.3f} Tw")
                 elif self.ws > 0:
-                    self._out("0 Tw")
+                    sl.append("0 Tw")
                 self.ws = word_spacing
 
                 for frag in text_line.fragments:
-                    if self.font_style != frag.style:
-                        self.font_style = frag.style
-                        self.current_font = self.fonts[
-                            self.font_family + self.font_style
-                        ]
-                        s += f" /F{self.current_font['i']} {self.font_size_pt:.2f} Tf"
-                        style_changed = True
+                    if current_font_style != frag.style:
+                        current_font_style = frag.style
+                        current_font = self.fonts[self.font_family + current_font_style]
+                        sl.append(f"/F{current_font['i']} {self.font_size_pt:.2f} Tf")
                     if self.unifontsubset:
                         txt_frag_mapped = ""
                         for char in frag.string:
                             uni = ord(char)
-                            txt_frag_mapped += chr(
-                                self.current_font["subset"].pick(uni)
-                            )
-
+                            txt_frag_mapped += chr(current_font["subset"].pick(uni))
                         txt_frag_escaped = escape_parens(
                             txt_frag_mapped.encode("utf-16-be").decode("latin-1")
                         )
                     else:
                         txt_frag_escaped = escape_parens(frag.string)
-                    s += f" ({txt_frag_escaped}) Tj"
+                    sl.append(f"({txt_frag_escaped}) Tj")
                     if frag.underline:
                         underlines.append((self.x + dx + s_width, frag.string))
-                    self.underline = frag.underline
-                    s_width += self.get_string_width(
-                        frag.string, True
-                    ) + self.ws * frag.string.count(" ")
-            s += " ET"
-            # Restoring font style & underline mode after handling changes
-            # by Markdown annotations:
-            if not self._markdown_leak_end_style:
-                if self.font_style != prev_font_style:
-                    self.font_style = prev_font_style
-                    self.current_font = self.fonts[self.font_family + self.font_style]
-                    s += f" /F{self.current_font['i']} {self.font_size_pt:.2f} Tf"
-                self.underline = prev_underline
+                    frag_width = self.get_normalized_string_width_with_style(
+                        frag.string, current_font_style
+                    )
+                    # /1000 for font space conversion, /100 for percentage -> *0.00001
+                    frag_width *= self.font_stretching * self.font_size * 0.00001
+                    s_width += frag_width + self.ws * frag.string.count(" ")
+            sl.append("ET")
 
             for start_x, txt_frag in underlines:
-                s += " " + self._do_underline(
-                    start_x, self.y + (0.5 * h) + (0.3 * self.font_size), txt_frag
+                sl.append(
+                    self._do_underline(
+                        start_x,
+                        self.y + (0.5 * h) + (0.3 * self.font_size),
+                        txt_frag,
+                        current_font,
+                    )
                 )
-
-            if self.fill_color != self.text_color:
-                s += " Q"
-                # cf. issue 348 & test_multi_cell_markdown_with_fill_color:
-                if style_changed:
-                    s += f" /F{self.current_font['i']} {self.font_size_pt:.2f} Tf"
-
             if link:
                 self.link(
                     self.x + dx,
@@ -2555,7 +2539,15 @@ class FPDF(GraphicsStateMixin):
                     self.font_size,
                     link,
                 )
-        if s:
+        if sl:
+            # If any PDF settings have been left modified, wrap the line in a local context.
+            if (
+                current_font_style != self.font_style
+                or self.fill_color != self.text_color
+            ):
+                s = f"q {' '.join(sl)} Q"
+            else:
+                s = " ".join(sl)
             self._out(s)
         self.lasth = h
 
@@ -2827,8 +2819,6 @@ class FPDF(GraphicsStateMixin):
         styled_text_fragments = self._preload_font_styles(normalized_string, markdown)
 
         prev_font_style, prev_underline = self.font_style, self.underline
-        if markdown and not split_only:
-            self._markdown_leak_end_style = True
         prev_x, prev_y = self.x, self.y
 
         if not border:
@@ -2867,7 +2857,7 @@ class FPDF(GraphicsStateMixin):
             else:
                 current_cell_height = h
 
-            new_page = self._render_styled_cell_text(
+            new_page = self._render_styled_text_line(
                 text_line,
                 w,
                 h=current_cell_height,
@@ -2914,7 +2904,6 @@ class FPDF(GraphicsStateMixin):
                 self.font_style = prev_font_style
                 self.current_font = self.fonts[self.font_family + self.font_style]
             self.underline = prev_underline
-            self._markdown_leak_end_style = False
 
         return page_break_triggered
 
@@ -2982,7 +2971,7 @@ class FPDF(GraphicsStateMixin):
             else:
                 line_width = full_width
                 self.ln()
-            new_page = self._render_styled_cell_text(
+            new_page = self._render_styled_text_line(
                 text_line,
                 line_width,
                 h=h,
@@ -4123,8 +4112,10 @@ class FPDF(GraphicsStateMixin):
         self._out(f"{self.n} 0 obj")
         return self.n
 
-    def _do_underline(self, x, y, txt):
+    def _do_underline(self, x, y, txt, current_font=None):
         "Draw an horizontal line starting from (x, y) with a length equal to 'txt' width"
+        if current_font is None:
+            current_font = self.current_font
         up = self.current_font["up"]
         ut = self.current_font["ut"]
         w = self.get_string_width(txt, True) + self.ws * txt.count(" ")
