@@ -2080,7 +2080,7 @@ class FPDF(GraphicsStateMixin):
         with self.local_context():
             self._out(
                 f"{c:.5F} {s:.5F} {-s:.5F} {c:.5F} {cx:.2F} {cy:.2F} cm "
-                f"1 0 0 1 {-cx:.2F} {-cy:.2F} cm\n"
+                f"1 0 0 1 {-cx:.2F} {-cy:.2F} cm"
             )
             yield
 
