@@ -4323,7 +4323,7 @@ class FPDF(GraphicsStateMixin):
         self._out(
             (
                 f"q {x * self.k:.2f} {(self.h - y - h) * self.k:.2f} {w * self.k:.2f} "
-                f"{h * self.k:.2f} re W n\n"
+                f"{h * self.k:.2f} re W n"
             )
         )
         yield
