@@ -16,7 +16,9 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.5.2] - not released yet
+## [2.5.3] - not released yet
+
+## [2.5.2] - 2022-04-13
 ### Added
 - new parameters `new_x` and `new_y` for `cell()` and `multi_cell()`, replacing `ln=0`, thanks to @gmischler
 - new `add_highlight()` method to insert highlight annotations: [documentation](https://pyfpdf.github.io/fpdf2/Annotations.html#highlights)
