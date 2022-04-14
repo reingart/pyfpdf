@@ -2861,7 +2861,8 @@ class FPDF(GraphicsStateMixin):
             w = self.w - self.r_margin - self.x
         if w <= 2 * self.c_margin:
             raise FPDFException(
-                "Not enough horizontal space to render cell. Consider introducing a line break."
+                "Not enough horizontal space to render cell."
+                " Consider introducing a line break or using x_pos=XPos.LEFT in your previous call."
             )
         maximum_allowed_emwidth = (w - 2 * self.c_margin) * 1000 / self.font_size
 
