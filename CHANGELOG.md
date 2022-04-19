@@ -17,6 +17,8 @@ in order to get warned about deprecated features used in your code.
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
 ## [2.5.3] - not released yet
+### Added
+- some documentation on how to embed Matplotlib charts: [Maths](https://pyfpdf.github.io/fpdf2/Maths.html)
 ### Fixed
 - infinite loop when calling `.multi_cell()` without enough horizontal space - _cf._ [#389](https://github.com/PyFPDF/fpdf2/issues/389)
 
