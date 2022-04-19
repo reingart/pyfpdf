@@ -27,6 +27,10 @@ pdf.image(img, w=30)
 pdf.output("equation-with-gcharts.pdf")
 ```
 
+Result:
+
+![](equation-with-gcharts.png)
+
 
 ## Using Matplotlib ##
 
@@ -53,3 +57,7 @@ pdf.add_page()
 pdf.image(img, w=30)
 pdf.output("equation-with-matplotlib.pdf")
 ```
+
+Result:
+
+![](equation-with-matplotlib.png)
