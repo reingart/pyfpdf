@@ -68,6 +68,13 @@ pdf.output('table_html.pdf')
 ```
 
 
+## Recipes ##
+
+- our 5th tutorial provide examples on how to build tables: [Tuto 5 - Creating Tables](Tutorial.md#tuto-5-creating-tables)
+- `@bvalgard` wrote a custom `table()` method: [YouTube video](https://www.youtube.com/watch?v=euNvxWaRQMY) - [source code](https://github.com/bvalgard/create-pdf-with-python-fpdf2/blob/main/create_table_fpdf2.py)
+
+
+
 ## Repeat table header on each page ##
 
 The following recipe demonstrates a solution to handle this requirement:
