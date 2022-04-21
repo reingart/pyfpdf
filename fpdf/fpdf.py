@@ -24,13 +24,13 @@ import re
 import sys
 import warnings
 import zlib
-from collections import defaultdict, OrderedDict
+from collections import OrderedDict, defaultdict
 from collections.abc import Sequence
 from contextlib import contextmanager
 from datetime import datetime
 from functools import wraps
 from pathlib import Path
-from typing import Callable, NamedTuple, Optional, Union, List
+from typing import Callable, List, NamedTuple, Optional, Union
 
 from PIL import Image
 
@@ -38,30 +38,22 @@ from . import drawing
 from .actions import Action
 from .deprecation import WarnOnDeprecatedModuleAttributes
 from .enums import DocumentState, PathPaintRule, TextMode, XPos, YPos
-from .errors import FPDFException, FPDFPageFormatException
+from .errors import FPDFException, FPDFPageFormatException, FPDFUnicodeEncodingException
 from .fonts import fpdf_charwidths
 from .graphics_state import GraphicsStateMixin
-from .image_parsing import get_img_info, load_image, SUPPORTED_IMAGE_FILTERS
-from .line_break import Fragment, TextLine, MultiLineBreak
-from .outline import serialize_outline, OutlineSection
+from .image_parsing import SUPPORTED_IMAGE_FILTERS, get_img_info, load_image
+from .line_break import Fragment, MultiLineBreak, TextLine
+from .outline import OutlineSection, serialize_outline
 from .recorder import FPDFRecorder
 from .structure_tree import MarkedContent, StructureTreeBuilder
 from .svg import Percent, SVGObject
-from .syntax import (
-    create_dictionary_string as pdf_d,
-    create_list_string as pdf_l,
-    create_stream as pdf_stream,
-    iobj_ref as pdf_ref,
-    DestinationXYZ,
-)
+from .syntax import DestinationXYZ
+from .syntax import create_dictionary_string as pdf_d
+from .syntax import create_list_string as pdf_l
+from .syntax import create_stream as pdf_stream
+from .syntax import iobj_ref as pdf_ref
 from .ttfonts import TTFontFile
-from .util import (
-    enclose_in_parens,
-    escape_parens,
-    substr,
-    get_scale_factor,
-)
-
+from .util import enclose_in_parens, escape_parens, get_scale_factor, substr
 
 LOGGER = logging.getLogger(__name__)
 HERE = Path(__file__).resolve().parent
@@ -3408,7 +3400,14 @@ class FPDF(GraphicsStateMixin):
         # - for TTF unicode fonts: unicode object (utf8 encoding)
         # - for built-in fonts: string instances (encoding: latin-1, cp1252)
         if not self.unifontsubset and self.core_fonts_encoding:
-            return txt.encode(self.core_fonts_encoding).decode("latin-1")
+            try:
+                return txt.encode(self.core_fonts_encoding).decode("latin-1")
+            except UnicodeEncodeError as error:
+                raise FPDFUnicodeEncodingException(
+                    encoding=self.core_fonts_encoding,
+                    start=error.start,
+                    character=txt[error.start],
+                ) from error
         return txt
 
     def _putpages(self):
