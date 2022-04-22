@@ -25,7 +25,6 @@ class PDF(FPDF):
 
 # Instantiation of inherited class
 pdf = PDF()
-pdf.alias_nb_pages()
 pdf.add_page()
 pdf.set_font("Times", size=12)
 for i in range(1, 41):

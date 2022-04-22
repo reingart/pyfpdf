@@ -16,6 +16,10 @@ methods.
 Simply call `.add_page()`.
 
 
+## Inserting the final number of pages of the document ##
+
+The special string `{nb}` will be substituted by the total number of pages on document closure.This special value can changed by calling [alias_nb_pages()](fpdf/fpdf.html#fpdf.fpdf.FPDF.alias_nb_pages).
+
 ## will_page_break ##
 
 `will_page_break(height)` lets you know if adding an element will trigger a page break,
@@ -45,7 +49,7 @@ for i in range(4):  # repeat table 4 times
 pdf.("unbreakable_tables.pdf")
 ```
 
-An alternative approach is [`offset_rendering()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.offset_rendering)
+An alternative approach is [`offset_rendering()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.offset_rendering)
 that allows to test the results of some operations on the global layout
 before performing them "for real":
 

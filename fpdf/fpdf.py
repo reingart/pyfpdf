@@ -3090,9 +3090,9 @@ class FPDF(GraphicsStateMixin):
             # disabling bandit rule as we just build a cache key, this is secure
             name, img = hashlib.md5(bytes).hexdigest(), name  # nosec B303 B324
         elif isinstance(name, io.BytesIO):
-            if _is_xml(name):
-                return self._vector_image(name, x, y, w, h, link, title, alt_text)
             bytes = name.getvalue()
+            if _is_svg(bytes):
+                return self._vector_image(name, x, y, w, h, link, title, alt_text)
             # disabling bandit rule as we just build a cache key, this is secure
             name, img = hashlib.md5(bytes).hexdigest(), name  # nosec B303 B324
         else:
@@ -4548,8 +4548,7 @@ def _sizeof_fmt(num, suffix="B"):
     return f"{num:.1f}Yi{suffix}"
 
 
-def _is_xml(img: io.BytesIO):
-    bytes = img.getvalue()
+def _is_svg(bytes):
     return bytes.startswith(b"<?xml ") or bytes.startswith(b"<svg ")
 
 

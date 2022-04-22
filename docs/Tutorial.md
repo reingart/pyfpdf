@@ -92,8 +92,8 @@ that the cell should extend up to the right margin of the page; it is handy to
 center text. The current page number is returned by
 the [page_no](fpdf/fpdf.html#fpdf.fpdf.FPDF.page_no) method; as for
 the total number of pages, it is obtained by means of the special value `{nb}`
-which will be substituted on document closure (provided you first called 
-[alias_nb_pages](fpdf/fpdf.html#fpdf.fpdf.FPDF.alias_nb_pages)).
+which will be substituted on document closure (this special value can changed by 
+[alias_nb_pages()](fpdf/fpdf.html#fpdf.fpdf.FPDF.alias_nb_pages)).
 Note the use of the [set_y](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_y) method which allows to set
 position at an absolute location in the page, starting from the top or the
 bottom.

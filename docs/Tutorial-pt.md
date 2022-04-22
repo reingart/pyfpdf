@@ -71,7 +71,7 @@ Este exemplo usa os [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) e o [footer](
 
 O logótipo é impresso utilizando o método [image](fpdf/fpdf.html#fpdf.fpdf.FPDF.image), especificando o seu canto superior esquerdo e sua largura. A altura é calculada automaticamente para respeitar as proporções da imagem.
 
-Para imprimir o número da página, um valor nulo é passado como a largura da célula. Isso significa que a célula deve se estender até a margem direita da página; é útil para centralizar texto. O número da página atual é retornado pelo método [page_no](fpdf/fpdf.html#fpdf.fpdf.FPDF.page_no); quanto ao número total de páginas, é obtido por meio do valor especial `{nb}` que será substituído quando se fecha o documento (desde que use primeiro o  [alias_nb_pages](fpdf/fpdf.html#fpdf.fpdf.FPDF.alias_nb_pages)).
+Para imprimir o número da página, um valor nulo é passado como a largura da célula. Isso significa que a célula deve se estender até a margem direita da página; é útil para centralizar texto. O número da página atual é retornado pelo método [page_no](fpdf/fpdf.html#fpdf.fpdf.FPDF.page_no); quanto ao número total de páginas, é obtido por meio do valor especial `{nb}` que será substituído quando se fecha o documento.
 Observe que o uso do método [set_y](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_y) permite definir a posição em um local absoluto da página, começando do início ou do fim.
 
 Outro recurso interessante que se usa aqui é a quebra de página automática. Desde do momento em que uma célula cruza o limite da página (a 2 centímetros da parte inferior por

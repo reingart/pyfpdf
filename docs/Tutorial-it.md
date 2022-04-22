@@ -74,8 +74,7 @@ quindi è necessario estendere la classe e sovrascriverli.
 Il logo è stampato con il metodo [image](fpdf/fpdf.html#fpdf.fpdf.FPDF.image) specificando la posizione del suo angolo in alto a sinistra e la sua larghezza. L'altezza è calcolata automaticamente per rispettare le proporzioni dell'immagine.
 
 Per stampare il numero della pagina, un valore nullo può essere passato come larghezza della cella. Significa che la cella "crescerà" fino al margine destro della pagina; è utile per centrare il testo. Il numero di pagina è ritornato da [page_no](fpdf/fpdf.html#fpdf.fpdf.FPDF.page_no); mentre per il numero totale di pagine, si ottiene attraverso il valore speciale `{nb}`
-che verrà sostituito quando le pagine saranno generate (assumendo che 
-[alias_nb_pages](fpdf/fpdf.html#fpdf.fpdf.FPDF.alias_nb_pages) venga chiamato).
+che verrà sostituito quando le pagine saranno generate.
 Importante menzionare il metodo [set_y](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_y) che permette di selezionare una posizione assoluta all'interno della pagina, incominciando dall'alto o dal basso.
 
 Un'altra feature interessante: l'interruzione di pagina automatica. Non appena una cella dovesse superare il limite nella pagina (a 2 centimetri dal fondo di default), ci sarebbe un'interruzione e un reset del font. Nonostante l'intestazione e il piè di pagina scelgano il proprio font (`helvetica`), il contenuto continua in `Times`.

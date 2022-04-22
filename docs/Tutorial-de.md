@@ -81,8 +81,7 @@ dass die Zelle bis zum rechten Rand der Seite reichen soll. Das ist besonders pr
 Text zu zentrieren. Die aktuelle Seitenzahl wird durch
 die Methode [`page_no`](fpdf/fpdf.html#fpdf.fpdf.FPDF.page_no) ermittelt und in die Zelle geschrieben.
 Die Gesamtseitenzahl wird mit Hilfe des speziellen Platzhalterwertes `{nb}` ermittelt,
-der beim Schließen des Dokuments ersetzt wird (vorausgesetzt, du hast vorher 
-[`alias_nb_pages`](fpdf/fpdf.html#fpdf.fpdf.FPDF.alias_nb_pages)) aufgerufen.
+der beim Schließen des Dokuments ersetzt wird aufgerufen.
 Beachte die Verwendung der Methode [`set_y`](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_y), mit der du die
 vertikale Schreibposition an einer absoluten Stelle der Seite - von oben oder von
 unten aus - setzen kannst. 
