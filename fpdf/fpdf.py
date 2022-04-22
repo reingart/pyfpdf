@@ -3404,9 +3404,9 @@ class FPDF(GraphicsStateMixin):
                 return txt.encode(self.core_fonts_encoding).decode("latin-1")
             except UnicodeEncodeError as error:
                 raise FPDFUnicodeEncodingException(
-                    encoding=self.core_fonts_encoding,
-                    start=error.start,
+                    text_index=error.start,
                     character=txt[error.start],
+                    font_name=self.font_family + self.font_style,
                 ) from error
         return txt
 

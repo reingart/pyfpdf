@@ -32,6 +32,7 @@ n, bins, patches = ax2.hist(np.random.randn(1000), 50,
                             facecolor='yellow', edgecolor='yellow')
 ax2.set_xlabel('time (s)')
 
+# Converting Figure to an image:
 canvas = FigureCanvas(fig)
 canvas.draw()
 img = Image.fromarray(np.asarray(canvas.buffer_rgba()))
@@ -97,6 +98,7 @@ axes = fig.gca()
 axes.text(0, .5, r"$x^n + y^n = \frac{a}{b}$", fontsize=60)
 axes.axis("off")
 
+# Converting Figure to an image:
 canvas = FigureCanvas(fig)
 canvas.draw()
 img = Image.fromarray(np.asarray(canvas.buffer_rgba()))
