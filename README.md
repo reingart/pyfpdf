@@ -27,8 +27,8 @@ pdf.cell(txt="hello world")
 pdf.output("hello_world.pdf")
 ```
 
-It is a fork and the successor of `PyFPDF`.
-Compared with other PDF libraries, `fpdf2` is simple, small and versatile, with advanced capabilities, and is easy to learn and extend.
+It is a fork and the successor of `PyFPDF` (_cf._ [history](https://pyfpdf.github.io/fpdf2/Development.html#history)).
+Compared with other PDF libraries, `fpdf2` is simple, fast and versatile, with advanced capabilities, and is easy to learn and extend.
 It is also entirely writen in Python and has only a couple of dependencies
 ([Pillow](https://pillow.readthedocs.io/en/stable/) & [defusedxml](https://pypi.org/project/defusedxml/)).
 

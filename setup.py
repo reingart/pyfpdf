@@ -14,7 +14,7 @@ if __name__ == "__main__":
     setup(
         name="fpdf2",
         version=version,
-        description="Simple PDF generation for Python",
+        description="Simple & fast PDF generation for Python",
         long_description=Path("README.md").read_text(encoding="utf-8"),
         long_description_content_type="text/markdown",
         author="Olivier PLATHEY ported by Max",

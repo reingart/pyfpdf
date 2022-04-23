@@ -7,26 +7,21 @@ This page has summary information about developing the PyPDF library.
 ## History ##
 
 This project, `fpdf2` is a _fork_ of the `PyFPDF` project, which can be found
-[on GitHub at reingart/pyfpdf](https://github.com/reingart/pyfpdf).
+[on GitHub at reingart/pyfpdf](https://github.com/reingart/pyfpdf)
+but has been inactive since January of 2018.
 
-Its aim is to keep the library up to date, to fulfill the goals of its
-[original roadmap](https://github.com/reingart/pyfpdf/wiki/Roadmap) and provide
-a general overhaul of the codebase to address technical debt keeping features from being
-added and bugs to be eradicated.
+About the original `PyFPDF` lib:
 
-More on `PyFPDF`:
-
-> This project started as Python fork of the [FPDF](http://fpdf.org/) PHP library. 
-> Later, code for native reading TTF fonts was added. FPDF has not been updated since
-> 2011. See also the [TCPDF](http://www.tcpdf.org/) library.
-> 
-> Until 2015 the code was developed at [Google Code](https://code.google.com/p/pyfpdf/).
-> Now the main repository is at [Github](https://github.com/reingart/pyfpdf).
-> 
-> You can also view the
-> [old repository](https://github.com/reingart/pyfpdf_googlecode),
-> [old issues](https://github.com/reingart/pyfpdf_googlecode/issues), and 
-> [old wiki](https://github.com/reingart/pyfpdf_googlecode/tree/wiki).
+> This project started as a Python fork of the [FPDF](http://fpdf.org/) PHP library,
+> ported to Python by Max Pat: <http://www.fpdf.org/dl.php?id=94>.
+> Later, code for native reading TTF fonts was added.
+> The project aim is to keep the library up to date, to fulfill the goals of its
+> [original roadmap](https://github.com/reingart/pyfpdf/wiki/Roadmap) and provide
+> a general overhaul of the codebase to address technical debt keeping features from being added
+> and bugs to be eradicated.
+> Until 2015 the code was developed at [Google Code](https://code.google.com/p/pyfpdf/):
+> you can still access the [old issues](https://github.com/reingart/pyfpdf_googlecode/issues),
+> and [old wiki](https://github.com/reingart/pyfpdf_googlecode/tree/wiki).
 
 
 ## Usage ##

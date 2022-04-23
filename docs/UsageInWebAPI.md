@@ -47,6 +47,7 @@ def hello_world():
 The following code demonstrates how to display a PDF and add a button allowing to download it:
 
 ```python
+from base64 import b64encode
 from fpdf import FPDF
 import streamlit as st
 

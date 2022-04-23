@@ -44,17 +44,16 @@ bypasses needless complexities for simpler use cases.
 It is small:
 ```
 $ du -sh fpdf
-272K    fpdf
+1,6M    fpdf
 
 $ scc fpdf
 ───────────────────────────────────────────────────────────────────────────────
 Language                 Files     Lines   Blanks  Comments     Code Complexity
-───────────────────────────────────────────────────────────────────────────────
-Python                      14      8204      142       232     7830        192
+Python                      21     16879      480       571    15828        462
 ```
 
-It includes `cell` and `multi_cell` primitives to draw fluid document like
-invoices, listings and reports, and includes basic support for HTML rendering.
+It includes [`cell()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.cell) and [`multi_cell()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
+primitives to draw fluid document like invoices, listings and reports, and includes basic support for HTML rendering.
 
 > Compared to other solutions, this library should be easier to use and adapt
 > for most common documents (no need to use a page layout engine, style
@@ -137,7 +136,7 @@ Look at [Web2Py](Web2Py.md) for examples.
 This library was improved over the years since the initial port from PHP.
 As of 2021, it is **stable** and actively maintained, with bug fixes and new features developped regularly.
 
-In contrast, `write_html` support is not complete, so it must be considered in beta state.
+In contrast, [`write_html`](HTML.md) support is not complete, so it must be considered in beta state.
 
 ## What is the license of this library (fpdf2)? ##
 
@@ -160,8 +159,8 @@ FPDF version 1.6's license.txt says:
 
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
 
-The fpdf.py library is a revision of a port by Max Pat. The original source uses the same
-licence: <http://www.fpdf.org/dl.php?id=94>
+The original `fpdf.py` library was a revision of a port by Max Pat.
+The original source uses the same licence: <http://www.fpdf.org/dl.php?id=94>
 
 ```python
 # * Software: FPDF
