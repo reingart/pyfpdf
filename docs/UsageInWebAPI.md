@@ -42,9 +42,9 @@ def hello_world():
 
 ## streamlit ##
 [streamlit](https://streamlit.io) is:
-> a Python library that makes it easy to create and share custom web apps for data science. 
+> a Python library that makes it easy to create and share custom web apps for data science
 
-The following code inserts a button allowing to download a PDF file:
+The following code demonstrates how to display a PDF and add a button allowing to download it:
 
 ```python
 from fpdf import FPDF
@@ -60,6 +60,12 @@ def gen_pdf():
     pdf.cell(txt="hello world")
     return bytes(pdf.output())
 
+# Embed PDF to display it:
+base64_pdf = b64encode(gen_pdf()).decode('utf-8')
+pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="700" height="400" type="application/pdf">'
+st.markdown(pdf_display, unsafe_allow_html=True)
+
+# Add a download button:
 st.download_button(
     label="Download PDF",
     data=gen_pdf(),
