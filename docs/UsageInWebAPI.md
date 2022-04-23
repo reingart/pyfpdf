@@ -15,7 +15,7 @@ def report(request):
     pdf.add_page()
     pdf.set_font("Helvetica", size=24)
     pdf.cell(txt="hello world")
-    return HttpResponse(bytes(pdf.output()), content_type='application/pdf')
+    return HttpResponse(bytes(pdf.output()), content_type="application/pdf")
 ```
 
 ## Flask ##
@@ -36,7 +36,7 @@ def hello_world():
     pdf.set_font("Helvetica", size=24)
     pdf.cell(txt="hello world")
     response = make_response(pdf.output())
-    response.headers['Content-Type'] = "application/pdf"
+    response.headers["Content-Type"] = "application/pdf"
     return response
 ```
 
@@ -51,7 +51,7 @@ from base64 import b64encode
 from fpdf import FPDF
 import streamlit as st
 
-st.title('Demo of fpdf2 usage with streamlit')
+st.title("Demo of fpdf2 usage with streamlit")
 
 @st.cache
 def gen_pdf():
@@ -62,7 +62,7 @@ def gen_pdf():
     return bytes(pdf.output())
 
 # Embed PDF to display it:
-base64_pdf = b64encode(gen_pdf()).decode('utf-8')
+base64_pdf = b64encode(gen_pdf()).decode("utf-8")
 pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="700" height="400" type="application/pdf">'
 st.markdown(pdf_display, unsafe_allow_html=True)
 

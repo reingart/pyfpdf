@@ -35,7 +35,7 @@ pdf.output("hello_world.pdf")
 * Table of contents & [document outline](DocumentOutlineAndTableOfContents.md)
 * [Annotations](Annotations.md), including text highlights
 * [Presentation mode](Presentations.md) with control over page display duration & transitions
-* Optional basic Markdown-like styling: `**bold**, __italics__, --underlined--`
+* Optional basic Markdown-like styling: `**bold**, __italics__`
 * Only has 2 dependencies: [Pillow](https://pillow.readthedocs.io/en/stable/) & [defusedxml](https://pypi.org/project/defusedxml/)
 * Unit tests with `qpdf`-based PDF diffing
 * Many example scripts available throughout this documentation, including usage examples with [Django](https://www.djangoproject.com/), [Flask](https://flask.palletsprojects.com), [streamlit](https://streamlit.io/)... : [Usage in web APIs](UsageInWebAPI.md)
@@ -108,13 +108,13 @@ or [open a discussion](https://github.com/PyFPDF/fpdf2/discussions).
 
 ### Related ###
 
+* Looking for alternative libraries? Check out [this detailed list of PDF-related Python libs by Patrick Maupin (`pdfrw` author)](https://github.com/pmaupin/pdfrw#other-libraries).
+  There is also [borb](https://github.com/jorisschellekens/borb), [pikepdf](https://github.com/pikepdf/pikepdf) & [WeasyPrint](https://github.com/Kozea/WeasyPrint).
+  We have some documentations about combining `fpdf2` with [`borb`](borb.md) & [`pdfrw`](ExistingPDFs.md).
 * [Create PDFs with Python](https://www.youtube.com/playlist?list=PLjNQtX45f0dR9K2sMJ5ad9wVjqslNBIC0) : a series of tutorial videos by bvalgard
 * [digidigital/Extensions-and-Scripts-for-pyFPDF-fpdf2](https://github.com/digidigital/Extensions-and-Scripts-for-pyFPDF-fpdf2) : scripts ported from PHP to add transpareny to elements of the page or part of an image, allow to write circular text,
    draw pie charts and bar diagrams, embed JavaScript, draw rectangles with rounded corners, draw a star shape,
    restrict the rendering of some elements to screen or printout, paint linear / radial / multi-color gradients gradients, add stamps & watermarks, write sheared text...
-* Looking for alternative libraries? Check out [this detailed list of PDF-related Python libs by Patrick Maupin (`pdfrw` author)](https://github.com/pmaupin/pdfrw#other-libraries).
-  There is also [borb](https://github.com/jorisschellekens/borb), [pikepdf](https://github.com/pikepdf/pikepdf) & [WeasyPrint](https://github.com/Kozea/WeasyPrint).
-  We have some documentations about combining `fpdf2` with [`borb`](borb.md) & [`pdfrw`](ExistingPDFs.md).
 
 ## Misc ##
 

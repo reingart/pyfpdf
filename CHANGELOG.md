@@ -25,6 +25,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 - infinite loop when calling `.multi_cell()` without enough horizontal space - _cf._ [#389](https://github.com/PyFPDF/fpdf2/issues/389)
 ### Removed
 - support for `.pkl` files passed to `add_font()`. This was deprecated since v2.5.1.
+  As a consequence, `fpdf2` no more uses the `pickle` module.
 
 ## [2.5.2] - 2022-04-13
 ### Added

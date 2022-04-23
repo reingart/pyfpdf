@@ -65,7 +65,7 @@ Features
  * Table of contents & [document outline](https://pyfpdf.github.io/fpdf2/DocumentOutlineAndTableOfContents.html)
  * [Annotations](https://pyfpdf.github.io/fpdf2/Annotations.html), including text highlights
  * [Presentation mode](https://pyfpdf.github.io/fpdf2/Presentations.html) with control over page display duration & transitions
- * Optional basic Markdown-like styling: `**bold**, __italics__, --underlined--`
+ * Optional basic Markdown-like styling: `**bold**, __italics__`
  * Unit tests with `qpdf`-based PDF diffing and a high code coverage
  * Usage examples with [Django](https://www.djangoproject.com/), [Flask](https://flask.palletsprojects.com), [streamlit](https://streamlit.io/)... : [Usage in web APIs](https://pyfpdf.github.io/fpdf2/UsageInWebAPI.html)
 

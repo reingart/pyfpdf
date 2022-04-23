@@ -34,12 +34,12 @@ Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2)
 
 ## Repository structure ##
 
-  * `[.github]` - GitHub Actions configuration
-  * `[docs]` - documentation folder
-  * `[fpdf]` - library source
-  * `[scripts]` - utilities to validate PDF files & publish the package on Pypi
-  * `[test]` - non-regression tests
-  * `[tutorial]` - tutorials (see also [Tutorial](Tutorial.md))
+  * `.github/` - GitHub Actions configuration
+  * `docs/` - documentation folder
+  * `fpdf/` - library sources
+  * `scripts/` - utilities to validate PDF files & publish the package on Pypi
+  * `test/` - non-regression tests
+  * `tutorial/` - tutorials (see also [Tutorial](Tutorial.md))
   * `README.md` - Github and PyPI ReadMe
   * `CHANGELOG.md` - details of each release content
   * `LICENSE` - code license information
@@ -48,6 +48,7 @@ Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2)
   * `setup.cfg`, `setup.py`, `MANIFEST.in` - packaging configuration to publish [a package on Pypi](https://pypi.org/project/fpdf2/)
   * `mkdocs.yml` - configuration for [MkDocs](https://www.mkdocs.org/)
   * `tox.ini` - configuration for [Tox](https://tox.readthedocs.io/en/latest/)
+  * `.banditrc.yml` - configuration for [bandit](https://pypi.org/project/bandit/)
   * `.pylintrc` - configuration for [Pylint](http://pylint.pycqa.org/en/latest/)
 
 ## Installing fpdf2 from a local git repository ##
