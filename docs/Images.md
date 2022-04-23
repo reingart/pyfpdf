@@ -62,6 +62,8 @@ Demo of all color blend modes: [blending_images.pdf](https://github.com/PyFPDF/f
 
 ## Image clipping ##
 
+![](image-clipping.png)
+
 You can select only a portion of the image to render using clipping methods:
 
 * [`rect_clip()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.rect_clip):

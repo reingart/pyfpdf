@@ -1,4 +1,6 @@
-# Fonts:
+"""
+Definition of the character widths of all PDF standard fonts.
+"""
 
 courier = {chr(i): 600 for i in range(256)}
 fpdf_charwidths = {

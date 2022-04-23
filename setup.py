@@ -18,9 +18,7 @@ if __name__ == "__main__":
         long_description=Path("README.md").read_text(encoding="utf-8"),
         long_description_content_type="text/markdown",
         author="Olivier PLATHEY ported by Max",
-        author_email="maxpat78@yahoo.it",
-        maintainer="David Ankin",
-        maintainer_email="daveankin@gmail.com",
+        maintainer="Lucas Cimon",
         url="https://pyfpdf.github.io/fpdf2/",
         download_url=f"https://github.com/PyFPDF/fpdf2/tarball/{version}",
         project_urls={
