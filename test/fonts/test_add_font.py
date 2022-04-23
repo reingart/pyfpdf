@@ -1,5 +1,3 @@
-import os
-from contextlib import suppress
 from pathlib import Path
 
 import pytest
@@ -14,16 +12,17 @@ def test_add_font_non_existing_file():
     pdf = FPDF()
     with pytest.raises(FileNotFoundError) as error:
         pdf.add_font("MyFont", fname="non-existing-file.ttf")
-    expected_msg = "TTF Font file not found: non-existing-file.ttf"
-    assert str(error.value) == expected_msg
+    assert str(error.value) == "TTF Font file not found: non-existing-file.ttf"
 
 
-def test_add_font_non_existing_file_pkl():
+def test_add_font_pkl():
     pdf = FPDF()
-    with pytest.raises(FileNotFoundError) as error:
+    with pytest.raises(ValueError) as error:
         pdf.add_font("MyFont", fname="non-existing-file.pkl")
-    expected_msg = "[Errno 2] No such file or directory: 'non-existing-file.pkl'"
-    assert str(error.value) == expected_msg
+    assert str(error.value) == (
+        "Unsupported font file extension: .pkl. add_font() used to accept .pkl file as input, "
+        "but for security reasons this feature is deprecated since v2.5.1 and has been removed in v2.5.3."
+    )
 
 
 def test_deprecation_warning_for_FPDF_CACHE_DIR():
@@ -67,12 +66,6 @@ def test_add_font_with_str_fname_ok(tmp_path):
             pdf.add_page()
             pdf.cell(txt="Hello World!")
             assert_pdf_equal(pdf, HERE / "add_font_unicode.pdf", tmp_path)
-
-
-def teardown():
-    # Clean-up for test_add_font_from_pkl
-    with suppress(FileNotFoundError):
-        os.remove("Roboto-Regular.pkl")
 
 
 def test_add_core_fonts():
