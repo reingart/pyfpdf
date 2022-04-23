@@ -55,6 +55,15 @@ Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2)
   * `tox.ini` - configuration for [Tox](https://tox.readthedocs.io/en/latest/)
   * `.pylintrc` - configuration for [Pylint](http://pylint.pycqa.org/en/latest/)
 
+## Installing fpdf2 from a local git repository ##
+
+```
+pip install --editable $path/to/fpdf/repo
+```
+
+This will link the installed Python package to the repository location,
+basically meaning any changes to the code package will get reflected directly in your environment.
+
 ## Code auto-formatting ##
 
 We use [black](https://github.com/psf/black) as a code prettifier.

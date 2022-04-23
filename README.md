@@ -43,16 +43,10 @@ Installation Instructions
 pip install fpdf2
 ```
 
-To get the latest development version:
+To get the latest, unreleased, development version straight from the development branch of this repository:
 
 ```bash
-# Linux only:
-sudo apt-get install libjpeg-dev libpython-dev zlib1g-dev
-
-# Linux and Windows:
-git clone https://github.com/PyFPDF/fpdf2.git
-cd fpdf2
-python setup.py install
+pip install git+https://github.com/PyFPDF/fpdf2.git@master
 ```
 
 Features

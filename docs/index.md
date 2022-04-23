@@ -61,11 +61,16 @@ FPDF original features:
 
 ## Installation ##
 
-* From [PyPI](https://pypi.python.org/pypi/fpdf2): `pip install fpdf2`
-* From source:
-    * Clone the repository: `git clone https://github.com/PyFPDF/fpdf2.git`
-    * On ubuntu the following packages are required: `sudo apt-get install libjpeg-dev libpython-dev zlib1g-dev`
-    * Run `python setup.py install`
+From [PyPI](https://pypi.python.org/pypi/fpdf2):
+```nash
+pip install fpdf2
+```
+
+To get the latest, unreleased, development version straight from the development branch of this repository:
+
+```bash
+pip install git+https://github.com/PyFPDF/fpdf2.git@master
+```
 
 **Developement**: check the [dedicated documentation page](Development.md).
 
