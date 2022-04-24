@@ -37,6 +37,10 @@ class CustomMultiColumnLayoutWith(MultiColumnLayout):
 
 PAGES_COUNT = 1000
 HERE = Path(__file__).resolve().parent
+if not (HERE / "../test/image/").is_dir():
+    raise EnvironmentError(
+        "This script depends on PNG files present in fpdf2 repository: it cannot be executed as standalone"
+    )
 PNG_FILE_PATHS = []
 for img_path in (HERE / "../test/image/png_images/").glob("*.png"):
     # We skip the images that make borb crashes:
