@@ -72,25 +72,25 @@ nav:
   - 'Text styling':                   'TextStyling.md'
   - 'Unicode':                        'Unicode.md'
   - 'Emojis, Symbols & Dingbats':     'EmojisSymbolsDingbats.md'
+  - 'HTML':                           'HTML.md'
 - 'Graphics Content':
   - 'Images':                         'Images.md'
   - 'Shapes':                         'Shapes.md'
   - 'Barcodes':                       'Barcodes.md'
   - 'Drawing':                        'Drawing.md'
   - 'SVG':                            'SVG.md'
-  - 'Charts & Graphs':                          'Maths.md'
+  - 'Charts & Graphs':                'Maths.md'
 - 'PDF Features':
   - 'Links':                          'Links.md'
   - 'Metadata':                       'Metadata.md'
   - 'Annotations':                    'Annotations.md'
   - 'Presentation Mode':              'Presentations.md'
   - 'Document outline & table of contents': 'DocumentOutlineAndTableOfContents.md'
-- 'Processing Web Content':
-  - 'HTML':                           'HTML.md'
-  - 'Usage in web APIs':              'UsageInWebAPI.md'
-- 'Reading and Postprocessing':
+- 'Mixing other libs':
   - 'Existing PDFs':                  'ExistingPDFs.md'
-  - 'Borb':                           'borb.md'
+  - 'Usage in web APIs':              'UsageInWebAPI.md'
+  - 'Database storage':               'DatabaseStorage.md'
+  - 'borb':                           'borb.md'
 - 'Development':
   - 'Development Guidelines':         'Development.md'
   - 'Logging':                        'Logging.md'
