@@ -3,3 +3,6 @@ mkdocs-material
 mkdocs-include-markdown-plugin
 mkdocs-with-pdf
 pdoc3
+# Needed while waiting for a new release of pymdown-extensions:
+pygments==2.11
+pymdown-extensions==9.3
