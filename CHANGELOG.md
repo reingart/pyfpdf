@@ -20,7 +20,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 ### Added
 - new `round_clip()` & `elliptic_clip()` image clipping methods: [documentation](https://pyfpdf.github.io/fpdf2/Images.html#image-clipping)
 - documentation on how to embed Matplotlib charts: [Maths.html](https://pyfpdf.github.io/fpdf2/Maths.html)
-- documentation on how to use `fpdf2` with [Flask](https://flask.palletsprojects.com) and [streamlit](https://streamlit.io/): [Usage in web APIs](https://pyfpdf.github.io/fpdf2/UsageInWebAPI.html)
+- documentation on how to use `fpdf2` with [Flask](https://flask.palletsprojects.com), [streamlit](https://streamlit.io/), AWS lambdas: [Usage in web APIs](https://pyfpdf.github.io/fpdf2/UsageInWebAPI.html)
 ### Fixed
 - infinite loop when calling `.multi_cell()` without enough horizontal space - _cf._ [#389](https://github.com/PyFPDF/fpdf2/issues/389)
 ### Removed

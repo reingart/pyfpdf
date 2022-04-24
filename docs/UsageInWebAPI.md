@@ -40,6 +40,36 @@ def hello_world():
     return response
 ```
 
+## AWS lambda ##
+The following code demonstrates some minimal [AWS lambda handler function](https://docs.aws.amazon.com/lambda/latest/dg/python-handler.html)
+that returns a PDF file as binary output:
+```python
+from base64 import b64encode
+from fpdf import FPDF
+
+def handler(event, context):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=24)
+    pdf.cell(txt="hello world")
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+        },
+        'body': b64encode(pdf.output()).decode('utf-8'),
+        'isBase64Encoded': True
+    }
+```
+
+This AWS lambda function can then be linked to a HTTP endpoint using [API Gateway](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html),
+or simply exposed as a [Lambda Function URL](https://aws.amazon.com/fr/blogs/aws/announcing-aws-lambda-function-urls-built-in-https-endpoints-for-single-function-microservices/).
+More information on those pages:
+
+* [Tutorial: Creating a Lambda function with a function URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-tutorial.html)
+* [Return binary media from a Lambda](https://docs.aws.amazon.com/apigateway/latest/developerguide/lambda-proxy-binary-media.html)
+
+
 ## streamlit ##
 [streamlit](https://streamlit.io) is:
 > a Python library that makes it easy to create and share custom web apps for data science

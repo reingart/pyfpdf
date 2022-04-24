@@ -2,6 +2,7 @@
 
 # Script to convert a GIF into an animated PDF file.
 # Just for lulz.
+# Script used in this article: https://chezsoi.org/lucas/blog/fpdf2-4-0-and-converting-gifs-to-pdfs.html
 
 # REQUIRE: pip install fpdf2 imageio
 # USAGE: ./gif2pdf.py $gif_filepath

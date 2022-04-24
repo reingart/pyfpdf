@@ -38,7 +38,7 @@ pdf.output("hello_world.pdf")
 * Optional basic Markdown-like styling: `**bold**, __italics__`
 * Only has 2 dependencies: [Pillow](https://pillow.readthedocs.io/en/stable/) & [defusedxml](https://pypi.org/project/defusedxml/)
 * Unit tests with `qpdf`-based PDF diffing
-* Many example scripts available throughout this documentation, including usage examples with [Django](https://www.djangoproject.com/), [Flask](https://flask.palletsprojects.com), [streamlit](https://streamlit.io/)... : [Usage in web APIs](UsageInWebAPI.md)
+* Many example scripts available throughout this documentation, including usage examples with [Django](https://www.djangoproject.com/), [Flask](https://flask.palletsprojects.com), [streamlit](https://streamlit.io/), AWS lambdas... : [Usage in web APIs](UsageInWebAPI.md)
 * PDF samples validation using 3 different checkers:
 
 [![QPDF logo](qpdf-logo.svg)](https://github.com/qpdf/qpdf)
