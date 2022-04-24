@@ -3,7 +3,10 @@
 ![](https://raw.githubusercontent.com/jorisschellekens/borb/master/logo/borb_64.png)
 
 Joris Schellekens made another excellent pure-Python library dedicated to reading & write PDF: [borb](https://github.com/jorisschellekens/borb/).
-He even wrote a book about it, available publicly there: [borb-examples](https://github.com/jorisschellekens/borb-examples/).
+He even wrote a very detailed e-book about it, available publicly there: [borb-examples](https://github.com/jorisschellekens/borb-examples/).
+
+The maintainer of `fpdf2` wrote an article comparing it with `borb`:
+[borb vs fpdf2](https://chezsoi.org/lucas/blog/fpdf2-5-2-svg-support-and-borb.html).
 
 
 ## Creating a document with `fpdf2` and transforming it into a `borb.pdf.document.Document` ##

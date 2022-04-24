@@ -8,10 +8,26 @@ Not all SVGs will convert correctly. Please see
 [the list of unsupported features](#currently-unsupported-notable-svg-features)
 for more information about what to look out for.
 
-## A simple example ##
+## Basic usage ##
+
+SVG files can be directly inserted inside a PDF file using the [image()](fpdf/fpdf.html#fpdf.fpdf.FPDF.image) method:
+
+```python
+from fpdf import FPDF
+
+pdf = FPDF()
+pdf.add_page()
+pdf.image("vector.svg")
+pdf.output("doc-with-svg.pdf")
+```
+
+Either the embedded `.svg` file must includes `width` and/or `height` attributes (absolute or relative),
+or some dimensions must be provided to `.image()` through its `w=` and/or `h=` parameters.
+
+## Detailed example ##
 
 The following script will create a PDF that consists only of the graphics
-contents of the provided SVG file:
+contents of the provided SVG file, filling the whole page:
 
 ```python
 import fpdf
@@ -29,8 +45,8 @@ Because this takes the PDF document size from the source SVG, it does assume
 that the width/height of the SVG are specified in absolute units rather than
 relative ones (i.e. the top-level `<svg>` tag has something like `width="5cm"`
 and not `width=50%`). In this case, if the values are percentages, they will be
-interpreted as their literal numeric value (i.e. `100%` would be treated as
-`100 pt`). The next example uses `transform_to_page_viewport`, which will scale
+interpreted as their literal numeric value (i.e. `100%` would be treated as `100 pt`).
+The next example uses `transform_to_page_viewport`, which will scale
 an SVG with a percentage based `width` to the pre-defined PDF page size.
 
 The converted SVG object can be returned as an fpdf.drawing.GraphicsContext
@@ -80,7 +96,7 @@ converted fully correctly without some preprocessing.
 
 The biggest unsupported feature is probably:
 
-- CSS styling of SVG elements
+- CSS styling of SVG elements (_cf._ [issue #404](https://github.com/PyFPDF/fpdf2/issues/404))
 
 In addition to that:
 

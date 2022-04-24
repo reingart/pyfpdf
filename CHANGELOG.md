@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/),
 and [PEP 440](https://www.python.org/dev/peps/pep-0440/).
 
 ## Displaying deprecation warnings
-`DeprecationWarning`s are not displayed by Python by default.
+`DeprecationWarning` messages are not displayed by Python by default.
 
 Hence, every time you use a newer version of `fpdf2`, we strongly encourage you to execute your scripts
 with the `-Wd` option (_cf._ [documentation](https://docs.python.org/3/using/cmdline.html#cmdoption-W)) 
@@ -46,7 +46,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 - a few bugs when parsing some SVG files - _cf._ [#356](https://github.com/PyFPDF/fpdf2/issues/356), [#358](https://github.com/PyFPDF/fpdf2/issues/358) & [#376](https://github.com/PyFPDF/fpdf2/issues/376)
 - a bug when using `multi_cell(..., split_only=True)` inside an `unbreakable` section - _cf._ [#359](https://github.com/PyFPDF/fpdf2/issues/359)
 ### Deprecated
-- The parameter `ln` to `cell()` and `multi_cell()` is now deprecated, use `new_x` and `new_y` instead.
+- The parameter `ln` to `cell()` and `multi_cell()` is now deprecated: use `new_x` and `new_y` instead.
 - The parameter `center` to `cell()` is now deprecated, use `align="C"` instead.
 
 ## [2.5.1] - 2022-03-07

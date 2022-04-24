@@ -7,7 +7,7 @@ The whole HTML 5 specification is very likely **not** supported, neither as CSS,
 but bug reports & contributions are very welcome to improve this.
 
 For a more robust & feature-full HTML-to-PDF converter in Python,
-you may want to check [WeasyPrint](https://weasyprint.org).
+you may want to check [WeasyPrint](https://weasyprint.org) or [borb](https://github.com/jorisschellekens/borb-examples/#76-exporting-html-as-pdf).
 
 
 ## write_html usage example ##

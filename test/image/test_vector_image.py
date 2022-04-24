@@ -35,7 +35,10 @@ def test_svg_image_no_dimensions():
 def test_svg_image_with_custom_size(tmp_path):
     pdf = fpdf.FPDF()
     pdf.add_page()
-    pdf.image(HERE / "../svg/svg_sources/SVG_logo_no_dimensions.svg", w=30, h=60)
+    pdf.image(
+        HERE / "../svg/svg_sources/SVG_logo_no_dimensions.svg", x=50, y=50, w=30, h=60
+    )
+    pdf.rect(x=50, y=50, w=30, h=60)  # Displaying the bounding box
     assert_pdf_equal(pdf, HERE / "svg_image_with_custom_size.pdf", tmp_path)
 
 

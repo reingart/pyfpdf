@@ -13,7 +13,7 @@ but has been inactive since January of 2018.
 About the original `PyFPDF` lib:
 
 > This project started as a Python fork of the [FPDF](http://fpdf.org/) PHP library,
-> ported to Python by Max Pat: <http://www.fpdf.org/dl.php?id=94>.
+> ported to Python by Max Pat in 2006: <http://www.fpdf.org/dl.php?id=94>.
 > Later, code for native reading TTF fonts was added.
 > The project aim is to keep the library up to date, to fulfill the goals of its
 > [original roadmap](https://github.com/reingart/pyfpdf/wiki/Roadmap) and provide
