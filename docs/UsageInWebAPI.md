@@ -69,6 +69,40 @@ More information on those pages:
 * [Tutorial: Creating a Lambda function with a function URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-tutorial.html)
 * [Return binary media from a Lambda](https://docs.aws.amazon.com/apigateway/latest/developerguide/lambda-proxy-binary-media.html)
 
+For reference, the test lambda function was initiated using the following [AWS CLI](https://aws.amazon.com/cli/) commands:
+
+<details>
+  <summary>Creating &amp; uploading a lambda layer</summary>
+```bash
+pyv=3.8
+pip${pyv} install fpdf2 -t python/lib/python${pyv}/site-packages/
+# We use a distinct layer for Pillow:
+rm -r python/lib/python${pyv}/site-packages/{PIL,Pillow}*
+zip -r fpdf2-deps.zip python > /dev/null
+aws lambda publish-layer-version --layer-name fpdf2-deps \
+    --description "Dependencies for fpdf2 lambda" \
+    --zip-file fileb://fpdf2-deps.zip --compatible-runtimes python${pyv}
+```
+</details>
+
+<details>
+  <summary>Creating the lambda</summary>
+```bash
+AWS_ACCOUNT_ID=...
+AWS_REGION=eu-west-3
+zip -r fpdf2-test.zip lambda.py
+aws lambda create-function --function-name fpdf2-test --runtime python${pyv} \
+    --zip-file fileb://fpdf2-test.zip --handler lambda.handler \
+    --role arn:aws:iam::${AWS_ACCOUNT_ID}:role/lambda-fpdf2-role \
+    --layers arn:aws:lambda:${AWS_REGION}:770693421928:layer:Klayers-python${pyv/./}-Pillow:15 \
+             arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:layer:fpdf2-deps:1
+aws lambda create-function-url-config --function-name fpdf2-test --auth-type NONE
+```
+</details>
+
+Those commands do not cover the creation of the `lambda-fpdf2` role,
+nor configuring the lambda access permissions, for example with a `FunctionURLAllowPublicAccess` resource-based policy.
+
 
 ## streamlit ##
 [streamlit](https://streamlit.io) is:

@@ -36,3 +36,6 @@ user = session.query(User).filter_by(name="Bobby").first()
 with open("user.pdf", "wb") as pdf_file:
     pdf_file.write(user.pdf)
 ```
+
+Note that storing large binary data in a database is usually not recommended...
+You might be better off dynamically generating your PDFs from structured data in your database.
