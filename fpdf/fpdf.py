@@ -73,7 +73,7 @@ LOGGER = logging.getLogger(__name__)
 HERE = Path(__file__).resolve().parent
 
 # Global variables
-FPDF_VERSION = "2.5.2"
+FPDF_VERSION = "2.5.3"
 FPDF_FONT_DIR = HERE / "font"
 
 PAGE_FORMATS = {
@@ -2332,8 +2332,8 @@ class FPDF(GraphicsStateMixin):
                 or a string containing some or all of the following characters
                 (in any order):
                 `L`: left ; `T`: top ; `R`: right ; `B`: bottom. Default value: 0.
-            new_x (Enum XPos | str): New current position in x after the call.
-            new_y (Enum YPos | str): New current position in y after the call.
+            new_x (Enum XPos): New current position in x after the call.
+            new_y (Enum YPos): New current position in y after the call.
             align (Enum Align): Allows to align the text inside the cell.
             fill (bool): Indicates if the cell background must be painted (`True`)
                 or transparent (`False`). Default value: False.

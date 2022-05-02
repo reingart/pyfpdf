@@ -16,7 +16,9 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.5.3] - not released yet
+## [2.5.4] - not released yet
+
+## [2.5.3] - 2022-02-05
 ### Added
 - new `round_clip()` & `elliptic_clip()` image clipping methods: [link to docs](https://pyfpdf.github.io/fpdf2/Images.html#image-clipping)
 - `CoerciveEnum` subclasses have been added: [`Align`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.Align) &  [`RenderStyle`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.RenderStyle)
