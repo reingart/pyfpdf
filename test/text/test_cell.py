@@ -241,3 +241,5 @@ def test_cell_newpos_badinput():
         pdf.cell(w=0, new_x=5)
     with pytest.raises(TypeError):
         pdf.cell(w=0, new_y=None)
+    with pytest.raises(ValueError):
+        pdf.cell(w=0, align="J")

@@ -2276,6 +2276,10 @@ class FPDF(GraphicsStateMixin):
                 stacklevel=3,
             )
         align = Align.coerce(align)
+        if align == Align.J:
+            raise ValueError(
+                "cell() only produces one text line, justified alignment is not possible"
+            )
         # Font styles preloading must be performed before any call to FPDF.get_string_width:
         txt = self.normalize_text(txt)
         styled_txt_frags = self._preload_font_styles(txt, markdown)

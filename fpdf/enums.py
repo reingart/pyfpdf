@@ -99,9 +99,16 @@ class CoerciveIntEnum(IntEnum):
 
 class Align(CoerciveEnum):
     C = intern("CENTER")
+    "Center text"
+
     L = intern("LEFT")
+    "Left-align text"
+
     R = intern("RIGHT")
+    "Right-align text"
+
     J = intern("JUSTIFY")
+    "Justified text"
 
     @classmethod
     def coerce(cls, value):
@@ -112,8 +119,13 @@ class Align(CoerciveEnum):
 
 class RenderStyle(CoerciveEnum):
     D = intern("DRAW")
+    "Draw lines"
+
     F = intern("FILL")
+    "Fill areas"
+
     DF = intern("DRAW_FILL")
+    "Draw lines and fill areas"
 
     @property
     def operator(self):
@@ -141,43 +153,50 @@ class TextMode(CoerciveIntEnum):
 
 
 class XPos(CoerciveEnum):
-    """
-    Positional values in horizontal direction for use after printing text.
-        LEFT    - left end of the cell
-        RIGHT   - right end of the cell (default)
-        START   - start of actual text
-        END     - end of actual text
-        WCONT   - for write() to continue next (slightly left of END)
-        CENTER  - center of actual text
-        LMARGIN - left page margin (start of printable area)
-        RMARGIN - right page margin (end of printable area)
-    """
+    "Positional values in horizontal direction for use after printing text."
 
     LEFT = intern("LEFT")  # self.x
+    "left end of the cell"
+
     RIGHT = intern("RIGHT")  # self.x + w
-    START = intern("START")  # left end of actual text
-    END = intern("END")  # right end of actual text
-    WCONT = intern("WCONT")  # continuation point for write()
-    CENTER = intern("CENTER")  # center of actual text
+    "right end of the cell (default)"
+
+    START = intern("START")
+    "left start of actual text"
+
+    END = intern("END")
+    "right end of actual text"
+
+    WCONT = intern("WCONT")
+    "for write() to continue next (slightly left of END)"
+
+    CENTER = intern("CENTER")
+    "center of actual text"
+
     LMARGIN = intern("LMARGIN")  # self.l_margin
+    "left page margin (start of printable area)"
+
     RMARGIN = intern("RMARGIN")  # self.w - self.r_margin
+    "right page margin (end of printable area)"
 
 
 class YPos(CoerciveEnum):
-    """
-    Positional values in vertical direction for use after printing text.
-        TOP     - top of the first line (default)
-        LAST    - top of the last line (same as TOP for single-line text)
-        NEXT    - top of next line (bottom of current text)
-        TMARGIN - top page margin (start of printable area)
-        BMARGIN - bottom page margin (end of printable area)
-    """
+    "Positional values in vertical direction for use after printing text"
 
     TOP = intern("TOP")  # self.y
-    LAST = intern("LAST")  # top of last line (TOP for single lines)
+    "top of the first line (default)"
+
+    LAST = intern("LAST")
+    "top of the last line (same as TOP for single-line text)"
+
     NEXT = intern("NEXT")  # LAST + h
+    "top of next line (bottom of current text)"
+
     TMARGIN = intern("TMARGIN")  # self.t_margin
+    "top page margin (start of printable area)"
+
     BMARGIN = intern("BMARGIN")  # self.h - self.b_margin
+    "bottom page margin (end of printable area)"
 
 
 class BlendMode(CoerciveEnum):
@@ -432,3 +451,7 @@ class PDFStyleKeys(Enum):
     STROKE_JOIN_STYLE = Name("LJ")
     STROKE_MITER_LIMIT = Name("ML")
     STROKE_DASH_PATTERN = Name("D")  # array of array, number, e.g. [[1 1] 0]
+
+
+# This enum is only used internally:
+__pdoc__ = {"DocumentState": False}
