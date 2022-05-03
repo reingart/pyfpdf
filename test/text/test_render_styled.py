@@ -123,6 +123,8 @@ def test_cell_newpos(tmp_path):
         doc.y = 20 + (i * 20)
         s = item[0]
         align = item[1]
+        if align == "J":
+            continue
         newx = item[2]
         newy = item[3]
         doc.cell(
@@ -230,6 +232,8 @@ def test_cell_lnpos(tmp_path):
         doc.y = 20 + (i * 20)
         s = item[0]
         align = item[1]
+        if align == "J":
+            continue
         with pytest.warns(DeprecationWarning):
             doc.cell(
                 twidth,
