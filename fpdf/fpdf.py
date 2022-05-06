@@ -1832,7 +1832,7 @@ class FPDF(GraphicsStateMixin):
             x (float): horizontal position (from the left) to the left side of the link rectangle
             y (float): vertical position (from the top) to the bottom side of the link rectangle
             w (float): width of the link rectangle
-            h (float): width of the link rectangle
+            h (float): height of the link rectangle
             link: either an URL or a integer returned by `add_link`, defining an internal link to a page
             alt_text (str): optional textual description of the link, for accessibility purposes
             border_width (int): thickness of an optional black border surrounding the link.
@@ -1862,9 +1862,10 @@ class FPDF(GraphicsStateMixin):
             x (float): horizontal position (from the left) to the left side of the link rectangle
             y (float): vertical position (from the top) to the bottom side of the link rectangle
             text (str): text to display
-            w (float): width of the link rectangle
-            h (float): width of the link rectangle
-            name (fpdf.enums.AnnotationName, str): icon that shall be used in displaying the annotation
+            w (float): optional width of the link rectangle
+            h (float): optional height of the link rectangle
+            name (fpdf.enums.AnnotationName, str): optional icon that shall be used in displaying the annotation
+            flags (Tuple[fpdf.enums.AnnotationFlag], Tuple[str]): optional list of flags defining annotation properties
         """
         annotation = Annotation(
             "Text",
@@ -1889,7 +1890,7 @@ class FPDF(GraphicsStateMixin):
             x (float): horizontal position (from the left) to the left side of the link rectangle
             y (float): vertical position (from the top) to the bottom side of the link rectangle
             w (float): width of the link rectangle
-            h (float): width of the link rectangle
+            h (float): height of the link rectangle
         """
         annotation = Annotation(
             "Action",
