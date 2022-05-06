@@ -18,6 +18,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.5.5] - not released yet
 ### Added
+- A new option `align="X"` to `.cell()` and `.multi_cell()` allows to center text around the current x position, thanks to @gmischler
 - allowing to provide an [`AnnotationName`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.AnnotationName)
   and [`AnnotationFlags`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.AnnotationFlag)
   onto [text_annotation()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.text_annotation)
