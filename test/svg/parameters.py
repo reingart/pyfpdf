@@ -758,6 +758,8 @@ test_svg_sources = (
     # discovered while investigatin issue 358:
     pytest.param(svgfile("issue_358b.svg"), id="repeated relative move"),
     pytest.param(svgfile("issue_358.svg"), id="arc start & initial point"),  # issue 358
+    pytest.param(svgfile("Ghostscript_colorcircle.svg"), id="ghostscript colorcircle"),
+    pytest.param(svgfile("Ghostscript_escher.svg"), id="ghostscript escher"),
 )
 
 svg_path_edge_cases = (
