@@ -31,7 +31,7 @@ if __name__ == "__main__":
         package_dir={"fpdf": "fpdf"},
         install_requires=[
             "defusedxml",
-            "Pillow>=9.1.0",  # version where PIL.Image.Resampling was introduced
+            "Pillow>=6.2.2",  # minimum version tested there: https://github.com/PyFPDF/fpdf2/actions/runs/2295868575
         ],
         classifiers=[
             "Development Status :: 5 - Production/Stable",
