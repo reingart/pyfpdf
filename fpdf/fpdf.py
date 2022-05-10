@@ -3413,6 +3413,7 @@ class FPDF(GraphicsStateMixin):
         """
         Output PDF to some destination.
         The method first calls [close](close.md) if necessary to terminate the document.
+        After calling this method, content cannot be added to the document anymore.
 
         By default the bytearray buffer is returned.
         If a `name` is given, the PDF is written to a new file.
