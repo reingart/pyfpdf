@@ -6,7 +6,7 @@
 ### Using Matplotlib ###
 Before running this example, please install the required dependencies using the command below:
 ```
-pip install matplotlib
+pip install fpdf2 matplotlib
 ```
 Example taken from [Matplotlib artist tutorial](https://matplotlib.org/stable/tutorials/intermediate/artists.html):
 
