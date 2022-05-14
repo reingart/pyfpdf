@@ -18,13 +18,13 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.5.5] - not released yet
 ### Added
-- documentation on how to create table and chart using pandas dataframe: [link to docs](https://pyfpdf.github.io/fpdf2/Maths.html), thanks to @iwayankurniawan
-- A new option `align="X"` to `.cell()` and `.multi_cell()` allows to center text around the current x position, thanks to @gmischler
+- a new option `align="X"` to `.cell()` and `.multi_cell()` allows to center text around the current x position, thanks to @gmischler
 - allowing to provide an [`AnnotationName`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.AnnotationName)
   and [`AnnotationFlags`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.AnnotationFlag)
   onto [text_annotation()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.text_annotation)
 - allowing correctly parsing of SVG files with CSS styling (`style="..."` attribute) thanks to @RedShy
 - documentation on how to control objects transparency: [link to docs](https://pyfpdf.github.io/fpdf2/Transparency.html)
+- documentation on how to create tables and charts using [pandas](https://pandas.pydata.org/) DataFrames: [link to docs](https://pyfpdf.github.io/fpdf2/Maths.html), thanks to @iwayankurniawan
 
 ## [2.5.4] - 2022-05-05
 ### Added
