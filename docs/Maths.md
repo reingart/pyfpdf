@@ -52,14 +52,12 @@ Result:
 ![](matplotlib.png)
 
 ### Using Pandas ###
-Create a plot using [pandas.DataFrame.plot](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html)
-
-Before run this example, please install required dependencies following below command:
+The dependencies required for the following examples can be installed using this command:
 ```
-pip install matplotlib pandas
+pip install fpdf2 matplotlib pandas
 ```
 
-Code example:
+Create a plot using [pandas.DataFrame.plot](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html):
 ```python
 from fpdf import FPDF
 import pandas as pd
@@ -90,13 +88,7 @@ Result:
 ![](chart-pandas.PNG)
 
 
-Create a table with pandas dataframe.
-
-Before run this example, please install required dependencies following below command:
-```
-pip install matplotlib pandas
-```
-Code example:
+Create a table with pandas [DataFrame](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.html):
 ```python
 from fpdf import FPDF
 import pandas as pd

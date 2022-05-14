@@ -28,7 +28,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.5.4] - 2022-05-05
 ### Added
-- new `FPDF.page_mode` property, allowing to display a PDF in **full screen**: [link to docs](https://pyfpdf.github.io/fpdf2/PageFormatAndOrientation.html#full-screen)
+- new `FPDF.page_mode` property, allowing to display a PDF automatically in **full screen**: [link to docs](https://pyfpdf.github.io/fpdf2/PageFormatAndOrientation.html#full-screen)
 - new `FPDF.viewer_preferences` property: [link to docs](https://pyfpdf.github.io/fpdf2/PageFormatAndOrientation.html#viewer-preferences)
 ### Fixed
 - removed a debug `print()` statement (`multi_cell: new_x=... new_y=...`) that had been left in [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) method 🤦‍♂️
