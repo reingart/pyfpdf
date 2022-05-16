@@ -1369,7 +1369,6 @@ class FPDF(GraphicsStateMixin):
         centerY = y - radius
         # center point is (centerX, centerY)
         points = []
-        i = 1
         for i in range(1, numSides + 1):
             point = centerX + radius * math.cos(
                 math.radians((360 / numSides) * i) + math.radians(rotateDegrees)
@@ -1377,11 +1376,41 @@ class FPDF(GraphicsStateMixin):
                 math.radians((360 / numSides) * i) + math.radians(rotateDegrees)
             )
             points.append(point)
-            i += 1
         # creates list of touples containing cordinate points of vertices
 
         self.polygon(points, style=style)
         # passes points through polygon function
+
+    @check_page
+    def star(self, x, y, r_in, r_out, corners, rotate_degrees=0, style=None):
+        """
+        Outputs a regular star with n corners.
+        It can be rotated.
+        It can be drawn (border only), filled (with no border) or both.
+
+        Args:
+            x (float): Abscissa of star's centre.
+            y (float): Ordinate of star's centre.
+            r_in (float): radius of internal circle.
+            r_out (float): radius of external circle.
+            corners (int): number of star's corners.
+            rotate_degrees (float): Optional degree amount to rotate star clockwise.
+
+            style (fpdf.enums.RenderStyle, str): Optional style of rendering. Possible values are:
+            * `D`: draw border. This is the default value.
+            * `F`: fill.
+            * `DF` or `FD`: draw and fill.
+        """
+        th = math.radians(rotate_degrees)
+        point_list = []
+        for i in range(0, (corners * 2) + 1):
+            corner_x = x + (r_out if i % 2 == 0 else r_in) * math.sin(th)
+            corner_y = y + (r_out if i % 2 == 0 else r_in) * math.cos(th)
+            point_list.append((corner_x, corner_y))
+
+            th += math.radians(180 / corners)
+
+        self.polyline(point_list, polygon=True, style=style)
 
     def arc(
         self,
