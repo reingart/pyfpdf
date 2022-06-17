@@ -16,7 +16,9 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.5.5] - not released yet
+## [2.5.6] - not released yet
+
+## [2.5.5] - 2022-06-17
 ### Added
 - a new option `align="X"` to `.cell()` and `.multi_cell()` allows to center text around the current x position, thanks to @gmischler
 - allowing to provide an [`AnnotationName`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.AnnotationName)
