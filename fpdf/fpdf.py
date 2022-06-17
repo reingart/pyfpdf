@@ -60,6 +60,7 @@ from .enums import (
     TextMode,
     XPos,
     YPos,
+    Corner,
 )
 from .errors import FPDFException, FPDFPageFormatException, FPDFUnicodeEncodingException
 from .fonts import fpdf_charwidths
@@ -1256,7 +1257,7 @@ class FPDF(GraphicsStateMixin):
         self.set_dash_pattern()
 
     @check_page
-    def rect(self, x, y, w, h, style=None):
+    def rect(self, x, y, w, h, style=None, round_corners=False, corner_radius=0):
         """
         Outputs a rectangle.
         It can be drawn (border only), filled (with no border) or both.
@@ -1266,17 +1267,104 @@ class FPDF(GraphicsStateMixin):
             y (float): Ordinate of upper-left bounding box.
             w (float): Width.
             h (float): Height.
+
             style (fpdf.enums.RenderStyle, str): Optional style of rendering. Possible values are:
 
             * `D` or empty string: draw border. This is the default value.
             * `F`: fill
             * `DF` or `FD`: draw and fill
+
+            round_corners (tuple of str, tuple of fpdf.enums.Corner, bool): Optional draw a rectangle with round corners.
+            Possible values are:
+
+            *`TOP_LEFT`: a rectangle with round top left corner
+            *`TOP_RIGHT`: a rectangle with round top right corner
+            *`BOTTOM_LEFT`: a rectangle with round bottom left corner
+            *`BOTTOM_RIGHT`: a rectangle with round bottom right corner
+            *`True`: a rectangle with all round corners
+            *`False`: a rectangle with no round corners
+
+            corner_radius: Optional radius of the corners
         """
+
         style = RenderStyle.coerce(style)
-        self._out(
-            f"{x * self.k:.2f} {(self.h - y) * self.k:.2f} {w * self.k:.2f} "
-            f"{-h * self.k:.2f} re {style.operator}"
-        )
+        if round_corners is not False:
+            self._draw_rounded_rect(x, y, w, h, style, round_corners, corner_radius)
+        else:
+            self._out(
+                f"{x * self.k:.2f} {(self.h - y) * self.k:.2f} {w * self.k:.2f} "
+                f"{-h * self.k:.2f} re {style.operator}"
+            )
+
+    def _draw_rounded_rect(self, x, y, w, h, style, round_corners, r):
+        min = h
+        if w < h:
+            min = w
+
+        if r == 0:
+            r = min / 5
+
+        if r >= min / 2:
+            r /= min
+
+        point_1 = point_8 = (x, y)
+        point_2 = point_3 = (x + w, y)
+        point_4 = point_5 = (x + w, y + h)
+        point_6 = point_7 = (x, y + h)
+        coor_x = [x, x + w, x, x + w]
+        coor_y = [y, y, y + h, y + h]
+
+        if round_corners is True:
+            round_corners = [
+                Corner.TOP_RIGHT.value,
+                Corner.TOP_LEFT.value,
+                Corner.BOTTOM_RIGHT.value,
+                Corner.BOTTOM_LEFT.value,
+            ]
+        round_corners = tuple(Corner.coerce(rc) for rc in round_corners)
+
+        if Corner.TOP_RIGHT in round_corners:
+            self.arc(coor_x[0], coor_y[0], 2 * r, 180, 270, style=style)
+            point_1 = (x + r, y)
+            point_8 = (x, y + r)
+
+        if Corner.TOP_LEFT in round_corners:
+            self.arc(coor_x[1] - 2 * r, coor_y[1], 2 * r, 270, 0, style=style)
+            point_2 = (x + w - r, y)
+            point_3 = (x + w, y + r)
+
+        if Corner.BOTTOM_LEFT in round_corners:
+            self.arc(coor_x[3] - 2 * r, coor_y[3] - 2 * r, 2 * r, 0, 90, style=style)
+            point_4 = (x + w, y + h - r)
+            point_5 = (x + w - r, y + h)
+
+        if Corner.BOTTOM_RIGHT in round_corners:
+            self.arc(coor_x[2], coor_y[2] - 2 * r, 2 * r, 90, 180, style=style)
+            point_6 = (x + r, y + h)
+            point_7 = (x, y + h - r)
+
+        if style.is_fill:
+
+            self.polyline(
+                [
+                    point_1,
+                    point_2,
+                    point_3,
+                    point_4,
+                    point_5,
+                    point_6,
+                    point_7,
+                    point_8,
+                    point_1,
+                ],
+                style="F",
+            )
+
+        if style.is_draw:
+            self.line(point_1[0], point_1[1], point_2[0], point_2[1])
+            self.line(point_3[0], point_3[1], point_4[0], point_4[1])
+            self.line(point_5[0], point_5[1], point_6[0], point_6[1])
+            self.line(point_7[0], point_7[1], point_8[0], point_8[1])
 
     @check_page
     def ellipse(self, x, y, w, h, style=None):

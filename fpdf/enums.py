@@ -574,5 +574,12 @@ class PDFStyleKeys(Enum):
     STROKE_DASH_PATTERN = Name("D")  # array of array, number, e.g. [[1 1] 0]
 
 
+class Corner(CoerciveEnum):
+    TOP_RIGHT = "TOP_RIGHT"
+    TOP_LEFT = "TOP_LEFT"
+    BOTTOM_RIGHT = "BOTTOM_RIGHT"
+    BOTTOM_LEFT = "BOTTOM_LEFT"
+
+
 # This enum is only used internally:
 __pdoc__ = {"DocumentState": False}
