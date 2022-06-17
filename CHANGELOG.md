@@ -29,7 +29,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 - allowing to change appearance of [highlight annotations](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.highlight) by specifying a [`TextMarkupType`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.TextMarkupType)
 - documentation on how to control objects transparency: [link to docs](https://pyfpdf.github.io/fpdf2/Transparency.html)
 - documentation on how to create tables and charts using [pandas](https://pandas.pydata.org/) DataFrames: [link to docs](https://pyfpdf.github.io/fpdf2/Maths.html), thanks to @iwayankurniawan
-- added argument `round_corners` in FPDF.rect that allow to draw rectangles with round corners
+- added argument `round_corners` to `FPDF.rect()` that allows to draw rectangles with round corners: [link to docs](https://pyfpdf.github.io/fpdf2/Shapes.html#rectangle)
 ### Fixed
 - support for `"x"` & `"y"` attributes in SVG `<use>` tags - _cf._ [#446](https://github.com/PyFPDF/fpdf2/issues/446)
 - `CreationDate` of PDFs generated, that was broken - _cf._ [#451](https://github.com/PyFPDF/fpdf2/issues/451)

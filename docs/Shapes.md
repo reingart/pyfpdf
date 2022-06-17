@@ -79,7 +79,7 @@ pdf.output("squares.pdf")
 ```
 ![](squares.png)
 
-Using [`rect()`] (fpdf/fpdf.html#fpdf.fpdf.FPDF.rect) to draw rectangles with round corners:
+Using [`rect()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.rect) to draw rectangles with round corners:
 ```python
 from fpdf import FPDF
 
