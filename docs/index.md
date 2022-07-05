@@ -34,6 +34,7 @@ pdf.output("hello_world.pdf")
 * A [templating system](Templates.md) to render PDFs in batchs
 * Images & links alternative descriptions, for accessibility
 * Table of contents & [document outline](DocumentOutlineAndTableOfContents.md)
+* [Document signing](Signing.md)
 * [Annotations](Annotations.md), including text highlights
 * [Presentation mode](Presentations.md) with control over page display duration & transitions
 * Optional basic Markdown-like styling: `**bold**, __italics__`
