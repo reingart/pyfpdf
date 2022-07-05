@@ -1,6 +1,4 @@
-from datetime import timezone
 from pathlib import Path
-from unittest.mock import patch
 
 
 from fpdf import FPDF
@@ -11,16 +9,6 @@ HERE = Path(__file__).resolve().parent
 TRUSTED_CERT_PEMS = (HERE / "demo2_ca.crt.pem",)
 
 
-class mock_datetime:
-    @staticmethod
-    def now(tz):
-        return EPOCH.replace(tzinfo=timezone.utc)
-
-
-# This monkey-patching is needed (at the time of endesive v2.0.9)
-# to ensure the signature is always the same,
-# due to endesive.signer.sign() depending on datetime.now():
-@patch("endesive.signer.datetime", mock_datetime)
 def test_sign_pkcs12(tmp_path):
     pdf = FPDF()
     pdf.set_creation_date(EPOCH)

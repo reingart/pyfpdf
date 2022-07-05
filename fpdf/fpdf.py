@@ -76,9 +76,9 @@ from .line_break import Fragment, MultiLineBreak, TextLine
 from .outline import OutlineSection, serialize_outline
 from .recorder import FPDFRecorder
 from .structure_tree import MarkedContent, StructureTreeBuilder
+from .sign import Signature, sign_content
 from .svg import Percent, SVGObject
 from .syntax import DestinationXYZ
-from .syntax import build_obj_dict
 from .syntax import create_dictionary_string as pdf_dict
 from .syntax import create_list_string as pdf_list
 from .syntax import create_stream as pdf_stream
@@ -210,28 +210,6 @@ class Annotation(NamedTuple):
             out += f" /InkList [{ink_list}]"
 
         return out + ">>"
-
-
-class Signature:
-    def __init__(self, contact_info=None, location=None, m=None, reason=None, **kwargs):
-        super().__init__(**kwargs)
-        self.type = "/Sig"
-        self.filter = "/Adobe.PPKLite"
-        self.sub_filter = "/adbe.pkcs7.detached"
-        self.contact_info = contact_info
-        "Information provided by the signer to enable a recipient to contact the signer to verify the signature"
-        self.location = location
-        "The CPU host name or physical location of the signing"
-        self.m = m
-        "The time of signing"
-        self.reason = reason
-        "The reason for the signing"
-        self.byte_range = _SIGNATURE_BYTERANGE_PLACEHOLDER
-        self.contents = "<" + _SIGNATURE_CONTENTS_PLACEHOLDER + ">"
-
-    def serialize(self):
-        obj_dict = build_obj_dict({key: getattr(self, key) for key in dir(self)})
-        return pdf_dict(obj_dict)
 
 
 class TitleStyle(NamedTuple):
@@ -3358,16 +3336,16 @@ class FPDF(GraphicsStateMixin):
             img = None
         elif isinstance(name, Image):
             bytes = name.tobytes()
-            hash = hashlib.new("md5", usedforsecurity=False)  # nosec B324
-            hash.update(bytes)
-            name, img = hash.hexdigest(), name
+            img_hash = hashlib.new("md5", usedforsecurity=False)  # nosec B324
+            img_hash.update(bytes)
+            name, img = img_hash.hexdigest(), name
         elif isinstance(name, io.BytesIO):
             bytes = name.getvalue().strip()
             if _is_svg(bytes):
                 return self._vector_image(name, x, y, w, h, link, title, alt_text)
-            hash = hashlib.new("md5", usedforsecurity=False)  # nosec B324
-            hash.update(bytes)
-            name, img = hash.hexdigest(), name
+            img_hash = hashlib.new("md5", usedforsecurity=False)  # nosec B324
+            img_hash.update(bytes)
+            name, img = img_hash.hexdigest(), name
         else:
             name, img = str(name), name
         info = self.images.get(name)
@@ -3751,11 +3729,14 @@ class FPDF(GraphicsStateMixin):
             raise EnvironmentError(
                 "endesive.signer not available - PDF cannot be signed - Try: pip install endesive"
             )
+        if self._sign_key:
+            raise FPDFException(".sign* methods should be called only once")
 
         self._sign_key = key
         self._sign_cert = cert
         self._sign_extra_certs = extra_certs
         self._sign_hashalgo = hashalgo
+        self._sign_time = signing_time or self.creation_date
 
         self.annots[self.page].append(
             Annotation(
@@ -3770,39 +3751,11 @@ class FPDF(GraphicsStateMixin):
                 value=Signature(
                     contact_info=contact_info,
                     location=location,
-                    m=format_date(signing_time) if signing_time else None,
+                    m=format_date(self._sign_time),
                     reason=reason,
                 ),
             )
         )
-
-    def _sign_content(self):
-        """
-        Perform PDF signing based on ._sign_* properties
-        and the content of the .buffer, performing substitutions in it.
-        """
-        contents_placeholder = _SIGNATURE_CONTENTS_PLACEHOLDER.encode("latin1")
-        start_index = self.buffer.find(contents_placeholder)
-        end_index = start_index + len(contents_placeholder)
-        range = (0, start_index - 1, end_index + 1, len(self.buffer) - end_index - 1)
-        br_placeholder = _SIGNATURE_BYTERANGE_PLACEHOLDER.encode()
-        byte_range = b"[%010d %010d %010d %010d]" % range
-        self.buffer = self.buffer.replace(br_placeholder, byte_range, 1)
-        # We compute the ByteRange hash, of everything before & after the placeholder:
-        hash = hashlib.new(self._sign_hashalgo)
-        hash.update(self.buffer[: range[1]])  # before
-        hash.update(self.buffer[range[2] :])  # after
-        contents = signer.sign(
-            datau=None,
-            key=self._sign_key,
-            cert=self._sign_cert,
-            othercerts=self._sign_extra_certs,
-            hashalgo=self._sign_hashalgo,
-            attrs=True,
-            signed_value=hash.digest(),
-        )
-        contents = _pkcs11_aligned(contents).encode("latin1")
-        self.buffer = self.buffer.replace(contents_placeholder, contents, 1)
 
     def _putpages(self):
         nb = self.pages_count  # total number of pages
@@ -4499,9 +4452,9 @@ class FPDF(GraphicsStateMixin):
         # > based on the file’s contents at the time it was last updated.
         # > When a file is first written, both identifiers shall be set to the same value.
         bytes = self.buffer + self.creation_date.strftime("%Y%m%d%H%M%S").encode("utf8")
-        hash = hashlib.new("md5", usedforsecurity=False)  # nosec B324
-        hash.update(bytes)
-        hash_hex = hash.hexdigest().upper()
+        id_hash = hashlib.new("md5", usedforsecurity=False)  # nosec B324
+        id_hash.update(bytes)
+        hash_hex = id_hash.hexdigest().upper()
         return f"<{hash_hex}><{hash_hex}>"
 
     def _enddoc(self):
@@ -4551,7 +4504,15 @@ class FPDF(GraphicsStateMixin):
             self._out(o)
         self._out("%%EOF")
         if self._sign_key:
-            self._sign_content()
+            self.buffer = sign_content(
+                signer,
+                self.buffer,
+                self._sign_key,
+                self._sign_cert,
+                self._sign_extra_certs,
+                self._sign_hashalgo,
+                self._sign_time,
+            )
         self.state = DocumentState.CLOSED
 
     def _beginpage(
@@ -5016,15 +4977,6 @@ def _sizeof_fmt(num, suffix="B"):
 
 def _is_svg(bytes):
     return bytes.startswith(b"<?xml ") or bytes.startswith(b"<svg ")
-
-
-def _pkcs11_aligned(data):
-    data = "".join(f"{i:02x}" for i in data)
-    return data + "0" * (0x4000 - len(data))
-
-
-_SIGNATURE_BYTERANGE_PLACEHOLDER = "[0000000000 0000000000 0000000000 0000000000]"
-_SIGNATURE_CONTENTS_PLACEHOLDER = _pkcs11_aligned((0,))
 
 
 sys.modules[__name__].__class__ = WarnOnDeprecatedModuleAttributes
