@@ -315,28 +315,21 @@ def apply_styles(stylable, svg_element):
 
     stylable.style.auto_close = False
 
-    for svg_attr, converter in svg_attr_map.items():
-        try:
-            attr, value = converter(svg_element.attrib[svg_attr])
-        except KeyError:
-            pass
-        else:
-            setattr(stylable.style, attr, value)
+    for attr_name, converter in svg_attr_map.items():
+        value = svg_element.attrib.get(attr_name)
+        if value:
+            attr_name, value = converter(value)
+            setattr(stylable.style, attr_name, value)
 
     # handle this separately for now
-    try:
-        opacity = float(svg_element.attrib["opacity"])
-    except KeyError:
-        pass
-    else:
+    opacity = svg_element.attrib.get("opacity")
+    if opacity:
+        opacity = float(opacity)
         stylable.style.fill_opacity = opacity
         stylable.style.stroke_opacity = opacity
 
-    try:
-        tfstr = svg_element.attrib["transform"]
-    except KeyError:
-        pass
-    else:
+    tfstr = svg_element.attrib.get("transform")
+    if tfstr:
         stylable.transform = convert_transforms(tfstr)
 
 

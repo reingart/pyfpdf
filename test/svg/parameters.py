@@ -742,6 +742,12 @@ test_svg_attribute_conversion = (
         pytest.raises(ValueError),
         id="stroke-opacity invalid",
     ),
+    pytest.param(
+        '<path stroke-dasharray="" opacity="" transform=""/>',
+        Gs(),
+        no_error(),
+        id="empty attribute values",
+    ),
 )
 
 test_svg_sources = (
