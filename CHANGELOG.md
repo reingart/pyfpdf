@@ -16,7 +16,9 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.5.6] - not released yet
+## [2.5.7] - not released yet
+
+## [2.5.6] - 2022-08-16
 ### Added
 - new methods to allow signing PDF documents: [link to docs](https://pyfpdf.github.io/fpdf2/Signing.html)
 - support for colors defined with the `rgb()` syntax in SVG images - _cf._ [#480](https://github.com/PyFPDF/fpdf2/issues/480)
