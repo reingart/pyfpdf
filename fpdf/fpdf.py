@@ -287,7 +287,7 @@ def get_page_format(format, k=None):
     If format is a string, the (width, height) tuple returned is in points.
     For a width and height of 8.5 * 11, 72 dpi is assumed, so the value
     returned is (8.5 * 72, 11 * 72), or (612, 792). Additional formats can be
-    added by adding fields to the `fpdf.fpdf.PAGE_FORMATS` dictionary with a
+    added by adding fields to the `PAGE_FORMATS` dictionary with a
     case insensitive key (the name of the new format) and 2-tuple value of
     (width, height) in dots per inch with a 72 dpi resolution.
     """
@@ -759,7 +759,7 @@ class FPDF(GraphicsStateMixin):
         This is useful to insert the number of pages of the document
         at a time when this number is not known by the program.
 
-        This substitution can be disabled for performances reasons, by caling `alias_nb_pages(None)`.
+        This substitution can be disabled for performances reasons, by calling `alias_nb_pages(None)`.
 
         Args:
             alias (str): the alias. Defaults to "{nb}".
@@ -767,8 +767,8 @@ class FPDF(GraphicsStateMixin):
         Notes
         -----
 
-        When using this feature with the `cell` / `multicell` methods,
-        or the `underline` attribute of `FPDF` class,
+        When using this feature with the `FPDF.cell` / `FPDF.multi_cell` methods,
+        or the `.underline` attribute of `FPDF` class,
         the width of the text rendered will take into account the alias length,
         not the length of the "actual number of pages" string,
         which can causes slight positioning differences.
@@ -778,7 +778,7 @@ class FPDF(GraphicsStateMixin):
     def open(self):
         """
         Starts the generation of the PDF document.
-        It is not necessary to call it explicitly because `add_page()` does it automatically.
+        It is not necessary to call it explicitly because `FPDF.add_page()` does it automatically.
 
         Notes
         -----
@@ -791,8 +791,8 @@ class FPDF(GraphicsStateMixin):
         """
         Terminates the PDF document.
 
-        It is not necessary to call this method explicitly because `output()` does it automatically.
-        If the document contains no page, `add_page()` is called to prevent from generating an invalid document.
+        It is not necessary to call this method explicitly because `FPDF.output()` does it automatically.
+        If the document contains no page, `FPDF.add_page()` is called to prevent from generating an invalid document.
         """
         if self.state == DocumentState.CLOSED:
             return
@@ -812,9 +812,9 @@ class FPDF(GraphicsStateMixin):
     ):
         """
         Adds a new page to the document.
-        If a page is already present, the `footer()` method is called first.
+        If a page is already present, the `FPDF.footer()` method is called first.
         Then the page  is added, the current position is set to the top-left corner,
-        with respect to the left and top margins, and the `header()` method is called.
+        with respect to the left and top margins, and the `FPDF.header()` method is called.
 
         Args:
             orientation (str): "portrait" (can be abbreviated "P")
@@ -826,11 +826,11 @@ class FPDF(GraphicsStateMixin):
             duration (float): optional page’s display duration, i.e. the maximum length of time,
                 in seconds, that the page is displayed in presentation mode,
                 before the viewer application automatically advances to the next page.
-                Can be configured globally through the `page_duration` FPDF property.
+                Can be configured globally through the `.page_duration` FPDF property.
                 As of june 2021, onored by Adobe Acrobat reader, but ignored by Sumatra PDF reader.
             transition (Transition child class): optional visual transition to use when moving
                 from another page to the given page during a presentation.
-                Can be configured globally through the `page_transition` FPDF property.
+                Can be configured globally through the `.page_transition` FPDF property.
                 As of june 2021, onored by Adobe Acrobat reader, but ignored by Sumatra PDF reader.
         """
         if self.state == DocumentState.CLOSED:
@@ -910,7 +910,7 @@ class FPDF(GraphicsStateMixin):
         """
         Header to be implemented in your own inherited class
 
-        This is automatically called by `add_page()`
+        This is automatically called by `FPDF.add_page()`
         and should not be called directly by the user application.
         The default implementation performs nothing: you have to override this method
         in a subclass to implement your own rendering logic.
@@ -920,7 +920,7 @@ class FPDF(GraphicsStateMixin):
         """
         Footer to be implemented in your own inherited class.
 
-        This is automatically called by `add_page()` and `close()`
+        This is automatically called by `FPDF.add_page()` and `FPDF.close()`
         and should not be called directly by the user application.
         The default implementation performs nothing: you have to override this method
         in a subclass to implement your own rendering logic.
@@ -1728,12 +1728,12 @@ class FPDF(GraphicsStateMixin):
     def add_font(self, family, style="", fname=None, uni="DEPRECATED"):
         """
         Imports a TrueType or OpenType font and makes it available
-        for later calls to the `set_font()` method.
+        for later calls to the `FPDF.set_font()` method.
 
         You will find more information on the "Unicode" documentation page.
 
         Args:
-            family (str): font family. Used as a reference for `set_font()`
+            family (str): font family. Used as a reference for `FPDF.set_font()`
             style (str): font style. "B" for bold, "I" for italic.
             fname (str): font file name. You can specify a relative or full path.
                 If the file is not found, it will be searched in `FPDF_FONT_DIR`.
@@ -1954,8 +1954,9 @@ class FPDF(GraphicsStateMixin):
         Creates a new internal link and returns its identifier.
         An internal link is a clickable area which directs to another place within the document.
 
-        The identifier can then be passed to the `cell()`, `write()`, `image()` or `link()` methods.
-        The destination must be defined using `set_link()`.
+        The identifier can then be passed to the `FPDF.cell()`, `FPDF.write()`, `FPDF.image()`
+        or `FPDF.link()` methods.
+        The destination must be defined using `FPDF.set_link()`.
         """
         n = len(self.links) + 1
         self.links[n] = DestinationXYZ(page=1)
@@ -1966,7 +1967,7 @@ class FPDF(GraphicsStateMixin):
         Defines the page and position a link points to.
 
         Args:
-            link (int): a link identifier returned by `add_link`.
+            link (int): a link identifier returned by `FPDF.add_link()`.
             y (float): optional ordinate of target position.
                 The default value is 0 (top of page).
             x (float): optional abscissa of target position.
@@ -1984,8 +1985,8 @@ class FPDF(GraphicsStateMixin):
     def link(self, x, y, w, h, link, alt_text=None, border_width=0):
         """
         Puts a link annotation on a rectangular area of the page.
-        Text or image links are generally put via [cell](#fpdf.FPDF.cell),
-        [write](#fpdf.FPDF.write) or [image](#fpdf.FPDF.image),
+        Text or image links are generally put via `FPDF.cell`,
+        `FPDF.write` or `FPDF.image`,
         but this method can be useful for instance to define a clickable area inside an image.
 
         Args:
@@ -1993,7 +1994,7 @@ class FPDF(GraphicsStateMixin):
             y (float): vertical position (from the top) to the bottom side of the link rectangle
             w (float): width of the link rectangle
             h (float): height of the link rectangle
-            link: either an URL or a integer returned by `add_link`, defining an internal link to a page
+            link: either an URL or a integer returned by `FPDF.add_link`, defining an internal link to a page
             alt_text (str): optional textual description of the link, for accessibility purposes
             border_width (int): thickness of an optional black border surrounding the link.
                 Not all PDF readers honor this: Acrobat renders it but not Sumatra.
@@ -2194,7 +2195,7 @@ class FPDF(GraphicsStateMixin):
         """
         Prints a character string. The origin is on the left of the first character,
         on the baseline. This method allows placing a string precisely on the page,
-        but it is usually easier to use the `cell()`, `multi_cell() or `write()` methods.
+        but it is usually easier to use the `FPDF.cell()`, `FPDF.multi_cell() or `FPDF.write()` methods.
 
         Args:
             x (float): abscissa of the origin
@@ -2299,7 +2300,7 @@ class FPDF(GraphicsStateMixin):
         Notes
         -----
 
-        Only the rendering is altered. The `get_x()` and `get_y()` methods are
+        Only the rendering is altered. The `FPDF.get_x()` and `FPDF.get_y()` methods are
         not affected, nor the automatic page break mechanism.
         The rotation also establishes a local graphics state, so that any
         graphics state settings changed within will not affect the operations
@@ -2430,7 +2431,7 @@ class FPDF(GraphicsStateMixin):
         Whenever a page break condition is met, this method is called,
         and the break is issued or not depending on the returned value.
 
-        The default implementation returns a value according to the mode selected by `set_auto_page_break()`.
+        The default implementation returns a value according to the mode selected by `FPDF.set_auto_page_break()`.
         This method is called automatically and should not be called directly by the application.
         """
         return self.auto_page_break
@@ -2481,7 +2482,7 @@ class FPDF(GraphicsStateMixin):
             fill (bool): Indicates if the cell background must be painted (`True`)
                 or transparent (`False`). Default value: False.
             link (str): optional link to add on the cell, internal
-                (identifier returned by `add_link`) or external URL.
+                (identifier returned by `FPDF.add_link`) or external URL.
             center (bool): **DEPRECATED** since 2.5.1:
                 Use align="C" or align="X" instead.
             markdown (bool): enable minimal markdown-like markup to render part
@@ -2608,7 +2609,7 @@ class FPDF(GraphicsStateMixin):
             fill (bool): Indicates if the cell background must be painted (`True`)
                 or transparent (`False`). Default value: False.
             link (str): optional link to add on the cell, internal
-                (identifier returned by `add_link`) or external URL.
+                (identifier returned by `FPDF.add_link`) or external URL.
             center (bool): **DEPRECATED since 2.5.1**: Use `align="C"` instead.
             markdown (bool): enable minimal markdown-like markup to render part
                 of text as bold / italics / underlined. Default to False.
@@ -3222,7 +3223,7 @@ class FPDF(GraphicsStateMixin):
             h (float): line height. Default value: None, meaning to use the current font size.
             txt (str): text content
             link (str): optional link to add on the text, internal
-                (identifier returned by `add_link`) or external URL.
+                (identifier returned by `FPDF.add_link`) or external URL.
             print_sh (bool): Treat a soft-hyphen (\\u00ad) as a normal printable
                 character, instead of a line breaking opportunity. Default value: False
         """
@@ -3334,7 +3335,7 @@ class FPDF(GraphicsStateMixin):
                 Pass `pdf.eph` to scale horizontally to the full page height.
             type (str): [**DEPRECATED since 2.2.0**] unused, will be removed in a later version.
             link (str): optional link to add on the image, internal
-                (identifier returned by `add_link`) or external URL.
+                (identifier returned by `FPDF.add_link`) or external URL.
             title (str): optional. Currently, never seem rendered by PDF readers.
             alt_text (str): optional alternative text describing the image,
                 for accessibility purposes. Displayed by some PDF readers on hover.
@@ -4917,7 +4918,7 @@ class FPDF(GraphicsStateMixin):
     ):
         """
         Defines a style for section titles.
-        After calling this method, calls to `start_section` will render section names visually.
+        After calling this method, calls to `FPDF.start_section` will render section names visually.
 
         Args:
             level0 (TitleStyle): style for the top level section titles
