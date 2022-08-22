@@ -436,6 +436,7 @@ class FPDF(GraphicsStateMixin):
         self.draw_color = self.DEFAULT_DRAW_COLOR
         self.fill_color = self.DEFAULT_FILL_COLOR
         self.text_color = self.DEFAULT_TEXT_COLOR
+        self.page_background = None
         self.dash_pattern = dict(dash=0, gap=0, phase=0)
         self.line_width = 0.567 / self.k  # line width (0.2 mm)
         self.text_mode = TextMode.FILL
@@ -867,6 +868,14 @@ class FPDF(GraphicsStateMixin):
             new_page=not self._has_next_page(),
         )
 
+        if self.page_background:
+            if isinstance(self.page_background, tuple):
+                self.set_fill_color(*self.page_background)
+                self.rect(0, 0, self.w, self.h, style="F")
+                self.set_fill_color(*(255 * v for v in fc.colors))
+            else:
+                self.image(self.page_background, 0, 0, self.w, self.h)
+
         self._out("2 J")  # Set line cap style to square
         self.line_width = lw  # Set line width
         self._out(f"{lw * self.k:.2f} w")
@@ -1037,6 +1046,27 @@ class FPDF(GraphicsStateMixin):
         self.line_width = width
         if self.page > 0:
             self._out(f"{width * self.k:.2f} w")
+
+    def set_page_background(self, background):
+        """
+        Sets a background color or image to be drawn every time `FPDF.add_page()` is called.
+        The method can be called before the first page is created and the value is retained from page to page.
+
+        Args:
+            background: either a string representing a file path or URL to an image,
+                an io.BytesIO containg an image as bytes, an instance of `PIL.Image.Image`, drawing.DeviceRGB
+                or a RGB tuple representing a color to fill the background with
+        """
+
+        if isinstance(background, (str, io.BytesIO, Image, drawing.DeviceRGB, tuple)):
+            if isinstance(background, drawing.DeviceRGB):
+                self.page_background = tuple(255 * v for v in background.colors)
+            else:
+                self.page_background = background
+        else:
+            raise TypeError(
+                f"background must be of type str, io.BytesIO, PIL.Image.Image, drawing.DeviceRGB or tuple, got: {type(background)}"
+            )
 
     @contextmanager
     @check_page
