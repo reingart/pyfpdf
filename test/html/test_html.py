@@ -496,3 +496,25 @@ def test_html_custom_heading_sizes(tmp_path):  # issue-223
         heading_sizes=dict(h1=6, h2=12, h3=18, h4=24, h5=30, h6=36),
     )
     assert_pdf_equal(pdf, HERE / "html_custom_heading_sizes.pdf", tmp_path)
+
+
+def test_bgcolor_in_table(tmp_path):  # issue-512
+    pdf = MyFPDF()
+    pdf.add_page()
+    pdf.write_html(
+        """<table>
+    <thead>
+        <tr>
+            <th width="25%">Career</th>
+            <th width="75%">Quote</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr bgcolor="grey"><td>Engineer</td><td>The engineer has been, and is, a maker of history.</td></tr>
+        <tr bgcolor="white"><td>Developer</td><td>Logical thinking, passion and perseverance is the paint on your palette.</td></tr>
+        <tr bgcolor="grey"><td>Analyst</td><td>Seeing what other people can't see gives you great vision.</td></tr>
+        <tr bgcolor="white"><td><i>None of the above</i></td><td>I'm sorry. We could not find a quote for your job.</td></tr>
+    </tbody>
+</table>"""
+    )
+    assert_pdf_equal(pdf, HERE / "bgcolor_in_table.pdf", tmp_path)

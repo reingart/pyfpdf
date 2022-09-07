@@ -399,7 +399,7 @@ class HTML2FPDF(HTMLParser):
             fill_color = self.pdf.fill_color
             self.pdf.set_fill_color(*bgcolor)
             self.pdf.rect(self.pdf.x, self.pdf.y, w, h, "F")
-            self.pdf.fill_color = fill_color
+            self.pdf.set_fill_color(*fill_color.colors)
 
     def output_table_header(self):
         if self.theader:
