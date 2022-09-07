@@ -32,6 +32,9 @@ from math import isclose
 from os.path import splitext
 from pathlib import Path
 from typing import Callable, List, NamedTuple, Optional, Tuple, Union
+from fontTools import ttLib
+from fontTools import subset as ftsubset
+from io import BytesIO
 
 try:
     from PIL.Image import Image
@@ -69,6 +72,7 @@ from .enums import (
     XPos,
     YPos,
     Corner,
+    FontDescriptorFlags,
 )
 from .errors import FPDFException, FPDFPageFormatException, FPDFUnicodeEncodingException
 from .fonts import fpdf_charwidths
@@ -85,14 +89,12 @@ from .syntax import create_dictionary_string as pdf_dict
 from .syntax import create_list_string as pdf_list
 from .syntax import create_stream as pdf_stream
 from .syntax import iobj_ref as pdf_ref
-from .ttfonts import TTFontFile
 from .util import (
     enclose_in_parens,
     escape_parens,
     format_date,
     get_scale_factor,
     object_id_for_page,
-    substr,
 )
 
 # Public global variables:
@@ -520,7 +522,7 @@ class FPDF(GraphicsStateMixin):
         self.pdf_version = max(self.pdf_version, version)
 
     @property
-    def unifontsubset(self):
+    def is_ttf_font(self):
         return self.current_font.get("type") == "TTF"
 
     @property
@@ -1809,6 +1811,7 @@ class FPDF(GraphicsStateMixin):
         """
         if not fname:
             raise ValueError('"fname" parameter is required')
+
         ext = splitext(str(fname))[1]
         if ext not in (".otf", ".otc", ".ttf", ".ttc"):
             raise ValueError(
@@ -1816,12 +1819,14 @@ class FPDF(GraphicsStateMixin):
                 " add_font() used to accept .pkl file as input, but for security reasons"
                 " this feature is deprecated since v2.5.1 and has been removed in v2.5.3."
             )
+
         if uni != "DEPRECATED":
             warnings.warn(
                 '"uni" parameter is deprecated, unused and will soon be removed',
                 DeprecationWarning,
                 stacklevel=2,
             )
+
         style = "".join(sorted(style.upper()))
         if any(letter not in "BI" for letter in style):
             raise ValueError(
@@ -1833,14 +1838,69 @@ class FPDF(GraphicsStateMixin):
         if fontkey in self.fonts or fontkey in self.core_fonts:
             warnings.warn(f"Core font or font already added '{fontkey}': doing nothing")
             return
+
         for parent in (".", FPDF_FONT_DIR):
             if not parent:
                 continue
+
             if (Path(parent) / fname).exists():
                 ttffilename = Path(parent) / fname
                 break
         else:
             raise FileNotFoundError(f"TTF Font file not found: {fname}")
+
+        font = ttLib.TTFont(ttffilename)
+        self.font_files[fontkey] = {
+            "length1": os.stat(ttffilename).st_size,
+            "type": "TTF",
+            "ttffile": ttffilename,
+        }
+
+        scale = 1000 / font["head"].unitsPerEm
+        default_width = round(scale * font["hmtx"].metrics[".notdef"][0])
+
+        try:
+            cap_height = font["OS/2"].sCapHeight
+        except AttributeError:
+            cap_height = font["hhea"].ascent
+
+        # entry for the PDF font descriptor specifying various characteristics of the font
+        flags = FontDescriptorFlags.SYMBOLIC
+        if font["post"].isFixedPitch:
+            flags |= FontDescriptorFlags.FIXED_PITCH
+        if font["post"].italicAngle != 0:
+            flags |= FontDescriptorFlags.ITALIC
+        if font["OS/2"].usWeightClass >= 600:
+            flags |= FontDescriptorFlags.FORCE_BOLD
+
+        desc = {
+            "Ascent": round(font["hhea"].ascent * scale),
+            "Descent": round(font["hhea"].descent * scale),
+            "CapHeight": round(cap_height * scale),
+            "Flags": flags.value,
+            "FontBBox": (
+                f"[{font['head'].xMin * scale:.0f} {font['head'].yMin * scale:.0f}"
+                f" {font['head'].xMax * scale:.0f} {font['head'].yMax * scale:.0f}]"
+            ),
+            "ItalicAngle": int(font["post"].italicAngle),
+            "StemV": round(50 + int(pow((font["OS/2"].usWeightClass / 65), 2))),
+            "MissingWidth": default_width,
+        }
+
+        # a map unicode_char -> char_width
+        char_widths = defaultdict(lambda: default_width)
+        for char in font.getBestCmap().keys():
+            # take glyph associated to char
+            glyph = font.getBestCmap()[char]
+
+            # take width associated to glyph
+            w = font["hmtx"].metrics[glyph][0]
+
+            # probably this check could be deleted
+            if w == 65535:
+                w = 0
+
+            char_widths[char] = round(scale * w + 0.001)  # ROUND_HALF_UP
 
         # include numbers in the subset! (if alias present)
         # ensure that alias is mapped 1-by-1 additionally (must be replaceable)
@@ -1849,49 +1909,17 @@ class FPDF(GraphicsStateMixin):
             sbarr += "0123456789"
             sbarr += self.str_alias_nb_pages
 
-        ttf = TTFontFile()
-        ttf.getMetrics(ttffilename)
-        desc = {
-            "Ascent": round(ttf.ascent),
-            "Descent": round(ttf.descent),
-            "CapHeight": round(ttf.capHeight),
-            "Flags": ttf.flags,
-            "FontBBox": (
-                f"[{ttf.bbox[0]:.0f} {ttf.bbox[1]:.0f}"
-                f" {ttf.bbox[2]:.0f} {ttf.bbox[3]:.0f}]"
-            ),
-            "ItalicAngle": int(ttf.italicAngle),
-            "StemV": round(ttf.stemV),
-            "MissingWidth": round(ttf.defaultWidth),
-        }
-
-        font_dict = {
-            "type": "TTF",
-            "name": re.sub("[ ()]", "", ttf.fullName),
-            "desc": desc,
-            "up": round(ttf.underlinePosition),
-            "ut": round(ttf.underlineThickness),
-            "ttffile": ttffilename,
-            "fontkey": fontkey,
-            "originalsize": os.stat(ttffilename).st_size,
-            "cw": ttf.charWidths,
-        }
         self.fonts[fontkey] = {
             "i": len(self.fonts) + 1,
-            "type": font_dict["type"],
-            "name": font_dict["name"],
-            "desc": font_dict["desc"],
-            "up": font_dict["up"],
-            "ut": font_dict["ut"],
-            "cw": font_dict["cw"],
-            "ttffile": font_dict["ttffile"],
+            "type": "TTF",
+            "name": re.sub("[ ()]", "", font["name"].getBestFullName()),
+            "desc": desc,
+            "up": round(font["post"].underlinePosition * scale),
+            "ut": round(font["post"].underlineThickness * scale),
+            "cw": char_widths,
+            "ttffile": ttffilename,
             "fontkey": fontkey,
             "subset": SubsetMap(map(ord, sbarr)),
-        }
-        self.font_files[fontkey] = {
-            "length1": font_dict["originalsize"],
-            "type": "TTF",
-            "ttffile": ttffilename,
         }
 
     def set_font(self, family=None, style="", size=0):
@@ -2381,7 +2409,7 @@ class FPDF(GraphicsStateMixin):
         if not self.font_family:
             raise FPDFException("No font set, you need to call set_font() beforehand")
         txt = self.normalize_text(txt)
-        if self.unifontsubset:
+        if self.is_ttf_font:
             txt_mapped = ""
             for char in txt:
                 uni = ord(char)
@@ -2914,7 +2942,7 @@ class FPDF(GraphicsStateMixin):
                     current_text_mode = frag.text_mode
                     sl.append(f"{frag.text_mode} Tr {frag.line_width:.2f} w")
 
-                if frag.unicode_font:
+                if frag.is_ttf_font:
                     mapped_text = ""
                     for char in frag.string:
                         uni = ord(char)
@@ -3800,7 +3828,7 @@ class FPDF(GraphicsStateMixin):
         """Check that text input is in the correct format/encoding"""
         # - for TTF unicode fonts: unicode object (utf8 encoding)
         # - for built-in fonts: string instances (encoding: latin-1, cp1252)
-        if not self.unifontsubset and self.core_fonts_encoding:
+        if not self.is_ttf_font and self.core_fonts_encoding:
             try:
                 return txt.encode(self.core_fonts_encoding).decode("latin-1")
             except UnicodeEncodeError as error:
@@ -4042,7 +4070,6 @@ class FPDF(GraphicsStateMixin):
         self.state = prev_state
 
     def _putfonts(self):
-        nf = self.n
         for diff in self.diffs.values():
             # Encodings
             self._newobj()
@@ -4054,112 +4081,81 @@ class FPDF(GraphicsStateMixin):
             )
             self._out("endobj")
 
-        for name, info in self.font_files.items():
-            if "type" in info and info["type"] != "TTF":
-                # Font file embedding
-                self._newobj()
-                info["n"] = self.n
-                font = (FPDF_FONT_DIR / name).read_bytes()
-                compressed = substr(name, -2) == ".z"
-                if not compressed and "length2" in info:
-                    header = ord(font[0]) == 128
-                    if header:
-                        # Strip first binary header
-                        font = substr(font, 6)
-                    if header and ord(font[info["length1"]]) == 128:
-                        # Strip second binary header
-                        font = substr(font, 0, info["length1"]) + substr(
-                            font, info["length1"] + 6
-                        )
-
-                self._out(f"<</Length {len(font)}")
-                if compressed:
-                    self._out("/Filter /FlateDecode")
-                self._out(f"/Length1 {info['length1']}")
-                if "length2" in info:
-                    self._out(f"/Length2 {info['length2']} /Length3 0")
-                self._out(">>")
-                self._out(pdf_stream(font))
-                self._out("endobj")
-
         # Font objects
         flist = [(x[1]["i"], x[0], x[1]) for x in self.fonts.items()]
         flist.sort()
         for _, font_name, font in flist:
             self.fonts[font_name]["n"] = self.n + 1
-            my_type = font["type"]
-            name = font["name"]
             # Standard font
-            if my_type == "core":
+            if font["type"] == "core":
                 self._newobj()
                 self._out("<</Type /Font")
-                self._out(f"/BaseFont /{name}")
+                self._out(f"/BaseFont /{font['name']}")
                 self._out("/Subtype /Type1")
-                if name not in ("Symbol", "ZapfDingbats"):
+                if font["name"] not in ("Symbol", "ZapfDingbats"):
                     self._out("/Encoding /WinAnsiEncoding")
                 self._out(">>")
                 self._out("endobj")
-
-            # Additional Type1 or TrueType font
-            elif my_type in ("Type1", "TrueType"):
-                self._newobj()
-                self._out("<</Type /Font")
-                self._out(f"/BaseFont /{name}")
-                self._out(f"/Subtype /{my_type}")
-                self._out("/FirstChar 32 /LastChar 255")
-                self._out(f"/Widths {pdf_ref(self.n + 1)}")
-                self._out(f"/FontDescriptor {pdf_ref(self.n + 2)}")
-                if font["enc"]:
-                    if "diff" in font:
-                        self._out(f"/Encoding {pdf_ref(nf + font['diff'])}")
-                    else:
-                        self._out("/Encoding /WinAnsiEncoding")
-                self._out(">>")
-                self._out("endobj")
-
-                # Widths
-                self._newobj()
-                self._out(
-                    "["
-                    + " ".join(_char_width(font, chr(i)) for i in range(32, 256))
-                    + "]"
-                )
-                self._out("endobj")
-
-                # Descriptor
-                self._newobj()
-                s = f"<</Type /FontDescriptor /FontName /{name}"
-                for k in (
-                    "Ascent",
-                    "Descent",
-                    "CapHeight",
-                    "Flags",
-                    "FontBBox",
-                    "ItalicAngle",
-                    "StemV",
-                    "MissingWidth",
-                ):
-                    s += f" /{k} {font['desc'][k]}"
-
-                filename = font["file"]
-                if filename:
-                    s += " /FontFile"
-                    if my_type != "Type1":
-                        s += "2"
-                    s += " " + pdf_ref(self.font_files[filename]["n"])
-                self._out(f"{s}>>")
-                self._out("endobj")
-            elif my_type == "TTF":
-                self.fonts[font_name]["n"] = self.n + 1
-                ttf = TTFontFile()
+            elif font["type"] == "TTF":
                 fontname = f"MPDFAA+{font['name']}"
-                subset = font["subset"].dict()
-                del subset[0]
-                ttfontstream = ttf.makeSubset(font["ttffile"], subset)
+
+                # unicode_char -> new_code_char map for chars embedded in the PDF
+                uni_to_new_code_char = font["subset"].dict()
+
+                # why we delete 0-element?
+                del uni_to_new_code_char[0]
+
+                # ---- FONTTOOLS SUBSETTER ----
+                # recalcTimestamp=False means that it doesn't modify the "modified" timestamp in head table
+                # if we leave recalcTimestamp=True the tests will break every time
+                fonttools_font = ttLib.TTFont(
+                    file=font["ttffile"], recalcTimestamp=False
+                )
+
+                # 1. get all glyphs in PDF
+                cmap = fonttools_font["cmap"].getBestCmap()
+                glyph_names = [
+                    cmap[unicode] for unicode in uni_to_new_code_char if unicode in cmap
+                ]
+
+                # 2. make a subset
+                # notdef_outline=True means that keeps the white box for the .notdef glyph
+                # recommended_glyphs=True means that adds the .notdef, .null, CR, and space glyphs
+                options = ftsubset.Options(notdef_outline=True, recommended_glyphs=True)
+                # dropping the tables previous dropped in the old ttfonts.py file #issue 418
+                options.drop_tables += ["GDEF", "GSUB", "GPOS", "MATH", "hdmx"]
+                subsetter = ftsubset.Subsetter(options)
+                subsetter.populate(glyphs=glyph_names)
+                subsetter.subset(fonttools_font)
+
+                # 3. make codeToGlyph
+                # is a map Character_ID -> Glyph_ID
+                # it's used for associating glyphs to new codes
+                # this basically takes the old code of the character
+                # take the glyph associated with it
+                # and then associate to the new code the glyph associated with the old code
+                code_to_glyph = {}
+                for code, new_code_mapped in uni_to_new_code_char.items():
+                    if code in cmap:
+                        glyph_name = cmap[code]
+                        code_to_glyph[new_code_mapped] = fonttools_font.getGlyphID(
+                            glyph_name
+                        )
+                    else:
+                        # notdef is associated if no glyph was associated to the old code
+                        # it's not necessary to do this, it seems to be done by default
+                        code_to_glyph[new_code_mapped] = fonttools_font.getGlyphID(
+                            ".notdef"
+                        )
+
+                # 4. return the ttfile
+                output = BytesIO()
+                fonttools_font.save(output)
+
+                output.seek(0)
+                ttfontstream = output.read()
                 ttfontsize = len(ttfontstream)
                 fontstream = zlib.compress(ttfontstream)
-                codeToGlyph = ttf.codeToGlyph
-                # del codeToGlyph[0]
 
                 # Type0 Font
                 # A composite font - a font composed of other fonts,
@@ -4185,7 +4181,7 @@ class FPDF(GraphicsStateMixin):
                 self._out(f"/FontDescriptor {pdf_ref(self.n + 3)}")
                 if font["desc"].get("MissingWidth"):
                     self._out(f"/DW {font['desc']['MissingWidth']}")
-                self._putTTfontwidths(font, ttf.maxUni)
+                self._putTTfontwidths(font, max(uni_to_new_code_char))
                 self._out(f"/CIDToGIDMap {pdf_ref(self.n + 4)}")
                 self._out(">>")
                 self._out("endobj")
@@ -4195,9 +4191,9 @@ class FPDF(GraphicsStateMixin):
                 # character that each used 16-bit code belongs to. It
                 # allows searching the file and copying text from it.
                 bfChar = []
-                subset = font["subset"].dict()
-                for code in subset:
-                    code_mapped = subset.get(code)
+                uni_to_new_code_char = font["subset"].dict()
+                for code in uni_to_new_code_char:
+                    code_mapped = uni_to_new_code_char.get(code)
                     if code > 0xFFFF:
                         # Calculate surrogate pair
                         code_high = 0xD800 | (code - 0x10000) >> 10
@@ -4248,39 +4244,28 @@ class FPDF(GraphicsStateMixin):
                 self._newobj()
                 self._out("<</Type /FontDescriptor")
                 self._out("/FontName /" + fontname)
-                for kd in (
-                    "Ascent",
-                    "Descent",
-                    "CapHeight",
-                    "Flags",
-                    "FontBBox",
-                    "ItalicAngle",
-                    "StemV",
-                    "MissingWidth",
-                ):
-                    v = font["desc"][kd]
-                    if kd == "Flags":
-                        v = v | 4
-                        v = v & ~32  # SYMBOLIC font flag
-                    self._out(f" /{kd} {v}")
+                for key, value in font["desc"].items():
+                    self._out(f" /{key} {value}")
                 self._out(f"/FontFile2 {pdf_ref(self.n + 2)}")
                 self._out(">>")
                 self._out("endobj")
 
                 # Embed CIDToGIDMap
                 # A specification of the mapping from CIDs to glyph indices
-                cidtogidmap = ["\x00"] * 256 * 256 * 2
-                for cc, glyph in codeToGlyph.items():
-                    cidtogidmap[cc * 2] = chr(glyph >> 8)
-                    cidtogidmap[cc * 2 + 1] = chr(glyph & 0xFF)
-                cidtogidmap = "".join(cidtogidmap)
+                cid_to_gid_map = ["\x00"] * 256 * 256 * 2
+                for cc, glyph in code_to_glyph.items():
+                    cid_to_gid_map[cc * 2] = chr(glyph >> 8)
+                    cid_to_gid_map[cc * 2 + 1] = chr(glyph & 0xFF)
+                cid_to_gid_map = "".join(cid_to_gid_map)
+
                 # manage binary data as latin1 until PEP461-like function is implemented
-                cidtogidmap = zlib.compress(cidtogidmap.encode("latin1"))
+                cid_to_gid_map = zlib.compress(cid_to_gid_map.encode("latin1"))
+
                 self._newobj()
-                self._out(f"<</Length {len(cidtogidmap)}")
+                self._out(f"<</Length {len(cid_to_gid_map)}")
                 self._out("/Filter /FlateDecode")
                 self._out(">>")
-                self._out(pdf_stream(cidtogidmap))
+                self._out(pdf_stream(cid_to_gid_map))
                 self._out("endobj")
 
                 # Font file
@@ -4291,14 +4276,6 @@ class FPDF(GraphicsStateMixin):
                 self._out(">>")
                 self._out(pdf_stream(fontstream))
                 self._out("endobj")
-                del ttf
-            else:
-                # Allow for additional types
-                mtd = f"_put{my_type.lower()}"
-                # check if self has a attr mtd which is callable (method)
-                if not callable(getattr(self, mtd, None)):
-                    raise FPDFException(f"Unsupported font type: {my_type}")
-                self.mtd(font)  # pylint: disable=no-member
 
     def _putTTfontwidths(self, font, maxUni):
         rangeid = 0
@@ -5206,14 +5183,7 @@ class FPDF(GraphicsStateMixin):
 
 
 def _char_width(font, char):
-    cw = font["cw"]
-    try:
-        width = cw[char]
-    except (IndexError, KeyError):
-        width = font.get("desc", {}).get("MissingWidth") or 500
-    if width == 65535:
-        width = 0
-    return width
+    return font["cw"][char]
 
 
 def _sizeof_fmt(num, suffix="B"):
