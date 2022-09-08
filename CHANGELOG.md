@@ -16,8 +16,11 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.5.7] - not released yet
+## [2.5.8] - not released yet
+
+## [2.5.7] - 2022-09-08
 ### Changed
+- HTML headings are now rendered with an additional leading of 20% the font size above and below them; [#520](https://github.com/PyFPDF/fpdf2/issues/520)
 - `fpdf2` now uses [fontTools](https://fonttools.readthedocs.io/en/latest/) to read and embed fonts in the PDF, thanks to @gmischler and @RedShy
 
 ### Fixed
@@ -27,6 +30,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
     * `<em>` & `<strong>` HTML tags are now properly supported - they were ignored previously; [#498](https://github.com/PyFPDF/fpdf2/issues/498)
     * `bgcolor` is not properly support in `<table>` tags; [#512](https://github.com/PyFPDF/fpdf2/issues/512)
 - the `CreationDate` of PDFs & embedded files now includes the system timezone
+
 ### Added
 - Added support for subscript, superscript, nominator and denominator char positioning as well as \<sub\> and \<sup\> HTML tags, thanks to @gmischler
 - [`set_page_background()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_page_background): new method added by @semaeostomea: [link to documentation](https://pyfpdf.github.io/fpdf2/PageFormatAndOrientation.html#per-page-format-orientation-and-background)
@@ -35,8 +39,6 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 - workaround by @semaeostomea to support arabic and right-to-left scripts: [link to documentation](https://pyfpdf.github.io/fpdf2/Unicode.html#right-to-left-arabic-script-workaround)
 - documentation on shapes styling: [link to documentation](https://pyfpdf.github.io/fpdf2/Shapes.html#path-styling)
 - documentation on sharing the images cache among FPDF instances: [link to documentation](https://pyfpdf.github.io/fpdf2/Images.html#sharing-the-image-cache-among-fpdf-instances)
-### Changed
-- HTML headings are now rendered with an additional leading of 20% the font size above and below them.
 
 ## [2.5.6] - 2022-08-16
 ### Added
