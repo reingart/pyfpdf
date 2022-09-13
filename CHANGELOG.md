@@ -32,7 +32,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 - `arc()` not longer renders artefacts at intersection point, thanks to @Jmillan-Dev; [#488](https://github.com/PyFPDF/fpdf2/issues/488)
 - [`write_html()`](https://pyfpdf.github.io/fpdf2/HTML.html):
     * `<em>` & `<strong>` HTML tags are now properly supported - they were ignored previously; [#498](https://github.com/PyFPDF/fpdf2/issues/498)
-    * `bgcolor` is not properly supported in `<table>` tags; [#512](https://github.com/PyFPDF/fpdf2/issues/512)
+    * `bgcolor` is now properly supported in `<table>` tags; [#512](https://github.com/PyFPDF/fpdf2/issues/512)
 - the `CreationDate` of PDFs & embedded files now includes the system timezone
 
 ### Added
