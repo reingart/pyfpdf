@@ -6,7 +6,7 @@ __license__ = "LGPL 3.0"
 
 # Inspired by tuto5.py and several examples from fpdf.org, html2fpdf, etc.
 
-import html
+import warnings
 import logging
 from html.parser import HTMLParser
 
@@ -200,6 +200,7 @@ class HTML2FPDF(HTMLParser):
         pdf,
         image_map=None,
         li_tag_indent=5,
+        dd_tag_indent=10,
         table_line_separators=False,
         ul_bullet_char=BULLET_WIN1252,
         heading_sizes=None,
@@ -211,6 +212,7 @@ class HTML2FPDF(HTMLParser):
             image_map (function): an optional one-argument function that map <img> "src"
                 to new image URLs
             li_tag_indent (int): numeric indentation of <li> elements
+            dd_tag_indent (int): numeric indentation of <dd> elements
             table_line_separators (bool): enable horizontal line separators in <table>
             ul_bullet_char (str): bullet character for <ul> elements
         """
@@ -218,6 +220,7 @@ class HTML2FPDF(HTMLParser):
         self.pdf = pdf
         self.image_map = image_map or (lambda src: src)
         self.li_tag_indent = li_tag_indent
+        self.dd_tag_indent = dd_tag_indent
         self.table_line_separators = table_line_separators
         self.ul_bullet_char = ul_bullet_char
         self.style = dict(b=False, i=False, u=False)
@@ -439,6 +442,12 @@ class HTML2FPDF(HTMLParser):
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
         LOGGER.debug("STARTTAG %s %s", tag, attrs)
+        if tag == "dt":
+            self.pdf.ln(self.h)
+            tag = "b"
+        if tag == "dd":
+            self.pdf.ln(self.h)
+            self.pdf.write(self.h, " " * self.dd_tag_indent)
         if tag == "strong":
             tag = "b"
         if tag == "em":
@@ -622,7 +631,7 @@ class HTML2FPDF(HTMLParser):
             self.set_text_color(*self.font_color)
             self.indent -= 1
             self.pdf.ln(3)
-        if tag == "strong":
+        if tag in ("strong", "dt"):
             tag = "b"
         if tag == "em":
             tag = "i"
@@ -736,13 +745,11 @@ class HTML2FPDF(HTMLParser):
 
 
 class HTMLMixin:
-    HTML2FPDF_CLASS = HTML2FPDF
-
-    def write_html(self, text, *args, **kwargs):
-        """Parse HTML and convert it to PDF"""
-        kwargs2 = vars(self)
-        # Method arguments must override class & instance attributes:
-        kwargs2.update(kwargs)
-        h2p = self.HTML2FPDF_CLASS(self, *args, **kwargs2)
-        text = html.unescape(text)  # To deal with HTML entities
-        h2p.feed(text)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        warnings.warn(
+            "The HTMLMixin class is deprecated. "
+            "Simply use the FPDF class as a replacement.",
+            DeprecationWarning,
+            stacklevel=2,
+        )

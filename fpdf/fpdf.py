@@ -35,6 +35,8 @@ from typing import Callable, List, NamedTuple, Optional, Tuple, Union
 from fontTools import ttLib
 from fontTools import subset as ftsubset
 from io import BytesIO
+from fpdf.html import HTML2FPDF
+from html import unescape
 
 try:
     from PIL.Image import Image
@@ -361,6 +363,8 @@ class FPDF(GraphicsStateMixin):
     MARKDOWN_ITALICS_MARKER = "__"
     MARKDOWN_UNDERLINE_MARKER = "--"
 
+    HTML2FPDF_CLASS = HTML2FPDF
+
     def __init__(
         self,
         orientation="portrait",
@@ -504,6 +508,21 @@ class FPDF(GraphicsStateMixin):
         self.record_text_quad_points = False
         # page number -> array of 8 × n numbers:
         self.text_quad_points = defaultdict(list)
+
+    def write_html(self, text, *args, **kwargs):
+        """Parse HTML and convert it to PDF"""
+        kwargs2 = vars(self)
+        # Method arguments must override class & instance attributes:
+        kwargs2.update(kwargs)
+        h2p = self.HTML2FPDF_CLASS(self, *args, **kwargs2)
+        if self.HTML2FPDF_CLASS != HTML2FPDF:
+            warnings.warn(
+                "The HTML2FPDF_CLASS is deprecated. It will be removed in a future release.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
+        text = unescape(text)  # To deal with HTML entities
+        h2p.feed(text)
 
     def _add_quad_points(self, x, y, w, h):
         self.text_quad_points[self.page].extend(
