@@ -104,5 +104,4 @@ This method is very similar to `.write()`, but accepts basic HTML formatted text
 
 Note that when using data from actual web pages, the result may not look exactly as expected, because `.write_html()` prints all whitespace unchanged as it finds them, while webbrowsers rather collapse each run of consequitive whitespace into a single space character.
 
-[Signature and parameters for.write_html()](https://pyfpdf.github.io/fpdf2/fpdf/html.html#fpdf.html.HTMLMixin.write_html)
-
+[Signature and parameters for .write_html()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html)
