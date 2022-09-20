@@ -18,18 +18,16 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.5.8] - not released yet
 ### Added
+- demonstration Jupyter notebook: [tutorial/notebook.ipynb](https://github.com/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb)
 - support for description list (`<dl>`), description titles (`<dt>`), and description details (`<dd>`) in `write_html()` - thanks to @yk-jp
 - support for monochromatic images (PIL `image.mode == '1'`) thanks to @GerardoAllende
-- demonstration Jupyter notebook: [tutorial/notebook.ipynb](https://github.com/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb)
+- [fontTools](https://fonttools.readthedocs.io/en/latest/) minimal version requirement set to 4.30.0; [#524](https://github.com/PyFPDF/fpdf2/issues/524)
 ### Deprecated
 - `HTMLMixin` is deprecated, and not needed anymore: the `write_html()` method is now natively available in the `FPDF` class - thanks to @yk-jp
 ### Fixed
 - automatic page break is never performed on an empty page (when the Y position is at the top margin)
 - fixed [`insert_toc_placeholder()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.insert_toc_placeholder) usage with [`footer()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) and `{{nb}}`; [#548](https://github.com/PyFPDF/fpdf2/issues/548)
 - the SVG parser now accepts stroke-width attribute values with an explicit unit, thanks to @gmischler; [#526](https://github.com/PyFPDF/fpdf2/issues/526)
-
-### Added
-- [fontTools](https://fonttools.readthedocs.io/en/latest/) minimal version requirement set to 4.30.0; [#524](https://github.com/PyFPDF/fpdf2/issues/524)
 
 ### Added
 - [fontTools](https://fonttools.readthedocs.io/en/latest/) minimal version requirement set to 4.30.0; [#524](https://github.com/PyFPDF/fpdf2/issues/524)
