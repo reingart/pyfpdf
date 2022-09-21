@@ -8,6 +8,8 @@
 [![codecov](https://codecov.io/gh/PyFPDF/fpdf2/branch/master/graph/badge.svg)](https://codecov.io/gh/PyFPDF/fpdf2)
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
+[![issues closed](https://img.shields.io/github/issues-closed/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/issues)
+[![PRs closed](https://img.shields.io/github/issues-pr-closed/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/pulls)
 [![Discussions](https://img.shields.io/github/discussions/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/discussions)
 [![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
 [![first-timers-only Friendly](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
