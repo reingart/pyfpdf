@@ -1,16 +1,18 @@
 [![Pypi latest version](https://img.shields.io/pypi/v/fpdf2.svg)](https://pypi.python.org/pypi/fpdf2)
 [![Python Support](https://img.shields.io/pypi/pyversions/fpdf2.svg)](https://pypi.org/project/fpdf2/)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
-[![Downloads per month](https://pepy.tech/badge/fpdf2/month)](https://pepy.tech/project/fpdf2)
-[![GitHub last commit](https://img.shields.io/github/last-commit/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2)
 
 [![build status](https://github.com/PyFPDF/fpdf2/workflows/build/badge.svg)](https://github.com/PyFPDF/fpdf2/actions?query=branch%3Amaster)
 [![codecov](https://codecov.io/gh/PyFPDF/fpdf2/branch/master/graph/badge.svg)](https://codecov.io/gh/PyFPDF/fpdf2)
 [![security: bandit](https://img.shields.io/badge/security-bandit-yellow.svg)](https://github.com/PyCQA/bandit)
 
+[![Dependents](https://img.shields.io/librariesio/dependents/pypi/fpdf2)](https://libraries.io/pypi/fpdf2/dependents)
+[![Downloads per month](https://pepy.tech/badge/fpdf2/month)](https://pepy.tech/project/fpdf2)
+[![Contributors](https://img.shields.io/github/contributors/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/graphs/contributors)
+[![GitHub last commit](https://img.shields.io/github/last-commit/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2)
+
 [![issues closed](https://img.shields.io/github/issues-closed/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/issues)
 [![PRs closed](https://img.shields.io/github/issues-pr-closed/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/pulls)
-[![Discussions](https://img.shields.io/github/discussions/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/discussions)
 [![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
 [![first-timers-only Friendly](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
 -> come look at our [good first issues](https://github.com/PyFPDF/fpdf2/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
