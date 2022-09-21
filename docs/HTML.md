@@ -8,7 +8,7 @@ but bug reports & contributions are very welcome to improve this.
 _cf._ [Supported HTML features](#supported-html-features) below for details on its current limitations.
 
 For a more robust & feature-full HTML-to-PDF converter in Python,
-you may want to check [Reportlab](https://www.reportlab.com), [WeasyPrint](https://weasyprint.org)
+you may want to check [Reportlab](https://www.reportlab.com) (or [xhtml2pdf](https://pypi.org/project/xhtml2pdf/) based on it), [WeasyPrint](https://weasyprint.org)
 or [borb](https://github.com/jorisschellekens/borb-examples/#76-exporting-html-as-pdf).
 
 
