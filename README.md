@@ -1,4 +1,4 @@
-[![Pypi latest version](https://img.shields.io/pypi/v/fpdf2.svg)](https://pypi.python.org/pypi/fpdf2)
+[![Pypi latest version](https://img.shields.io/pypi/v/fpdf2.svg)](https://pypi.org/pypi/fpdf2#history)
 [![Python Support](https://img.shields.io/pypi/pyversions/fpdf2.svg)](https://pypi.org/project/fpdf2/)
 [![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
 
@@ -9,13 +9,13 @@
 [![Dependents](https://img.shields.io/librariesio/dependents/pypi/fpdf2)](https://libraries.io/pypi/fpdf2/dependents)
 [![Downloads per month](https://pepy.tech/badge/fpdf2/month)](https://pepy.tech/project/fpdf2)
 [![Contributors](https://img.shields.io/github/contributors/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/graphs/contributors)
-[![GitHub last commit](https://img.shields.io/github/last-commit/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2)
+[![GitHub last commit](https://img.shields.io/github/last-commit/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/commits/master)
 
 [![issues closed](https://img.shields.io/github/issues-closed/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/issues)
 [![PRs closed](https://img.shields.io/github/issues-pr-closed/PyFPDF/fpdf2)](https://github.com/PyFPDF/fpdf2/pulls)
 [![Pull Requests Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat)](http://makeapullrequest.com)
 [![first-timers-only Friendly](https://img.shields.io/badge/first--timers--only-friendly-blue.svg)](http://www.firsttimersonly.com/)
--> come look at our [good first issues](https://github.com/PyFPDF/fpdf2/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
+→ come look at our [good first issues](https://github.com/PyFPDF/fpdf2/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22)
 
 # fpdf2
 

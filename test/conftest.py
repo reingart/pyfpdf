@@ -122,10 +122,11 @@ def check_signature(pdf, trusted_cert_paths):
     for cert_filepath in trusted_cert_paths:
         with open(cert_filepath, encoding="utf8") as cert_file:
             trusted_certs.append(cert_file.read())
-    hash_ok, signature_ok, cert_ok = endesive_pdf.verify(pdf.output(), trusted_certs)
-    assert signature_ok
-    assert hash_ok
-    assert cert_ok
+    results = endesive_pdf.verify(pdf.output(), trusted_certs)
+    for hash_ok, signature_ok, cert_ok in results:
+        assert signature_ok
+        assert hash_ok
+        assert cert_ok
 
 
 def subst_streams_with_hashes(in_lines):
