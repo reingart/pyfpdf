@@ -20,6 +20,7 @@ theme:
 markdown_extensions: [toc, pymdownx.highlight, pymdownx.superfences]
 plugins:
   - include-markdown
+  - mknotebooks
   - search
   - with-pdf:  # https://github.com/orzih/mkdocs-with-pdf
       output_path: fpdf2-manual.pdf
@@ -52,10 +53,12 @@ plugins:
 nav:
 - 'Project Home':                   'index.md'
 - 'Tutorial':
-  - 'Tutorial in english':            'Tutorial.md'
+  - 'Jupyter notebook':               'notebook.ipynb'
+  - 'Tutorial in English':            'Tutorial.md'
   - 'Tutorial auf Deutsch':           'Tutorial-de.md'
   - 'Tutorial en español':            'Tutorial-es.md'
   - 'Tutorial en français':           'Tutorial-fr.md'
+  - 'Φροντιστήριο στα ελληνικά':      'Tutorial-gr.md'
   - 'Tutorial in italiano':           'Tutorial-it.md'
   - 'Tutorial em português':          'Tutorial-pt.md'
   - 'Учебник на русском языке':       'Tutorial-ru.md'

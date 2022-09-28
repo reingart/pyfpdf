@@ -196,5 +196,5 @@ created programmatically by creating instances of the
 groups of paths.
 
 Storing paths in intermediate objects allows reusing them and can open up more
-advanced use-cases. The [`fpdf.svg`](SVG.html) SVG converter, for example, is
+advanced use-cases. The [`fpdf.svg`](SVG.md) SVG converter, for example, is
 implemented using the `fpdf.drawing` interface.
