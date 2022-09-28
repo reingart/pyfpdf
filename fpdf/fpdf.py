@@ -812,7 +812,7 @@ class FPDF(GraphicsStateMixin):
     def set_image_filter(self, image_filter):
         """
         Args:
-            image_filter (str): name of a support image filter or "AUTO",
+            image_filter (str): name of a supported image filter or "AUTO",
                 meaning to use the best image filter given the images provided.
         """
         if image_filter not in SUPPORTED_IMAGE_FILTERS:

@@ -24,6 +24,14 @@ By default an image is rendered with a resolution of 72 dpi,
 but you can control its dimension on the page using the `w=` & `h=` parameters of the [`image()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.image) method.
 
 
+## Alpha / transparency ##
+
+`fpdf2` allows to embed images with alpha pixels.
+
+Technically, it is implemented by extracting an `/SMask` from images with transparency,
+and inserting it along with the image data in the PDF document. Related code is in the [image_parsing]( https://github.com/PyFPDF/fpdf2/blob/master/fpdf/image_parsing.py) module.
+
+
 ## Assembling images ##
 The following code snippets provide examples of some basic layouts for assembling images into PDF files.
 
@@ -146,6 +154,9 @@ pdf.output("pdf-with-image.pdf")
 ```
 
 Beware that "flattening" images this way will fill transparent areas of your images with color (usually black).
+
+The allowed `image_filter` values are listed in the [image_parsing]( https://github.com/PyFPDF/fpdf2/blob/master/fpdf/image_parsing.py) module and are currently:
+`FlateDecode` (lossless zlib/deflate compression), `DCTDecode` (lossy compression with JPEG) and `JPXDecode` (lossy compression with JPEG2000).
 
 
 ## Oversized images detection & downscaling ##

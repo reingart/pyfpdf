@@ -21,11 +21,10 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 - demonstration Jupyter notebook: [tutorial/notebook.ipynb](https://github.com/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb)
 - support for description list (`<dl>`), description titles (`<dt>`), and description details (`<dd>`) in `write_html()` - thanks to @yk-jp
 - support for monochromatic images (PIL `image.mode == '1'`) thanks to @GerardoAllende
-- [fontTools](https://fonttools.readthedocs.io/en/latest/) minimal version requirement set to 4.34.0; [#524](https://github.com/PyFPDF/fpdf2/issues/524)
+### Deprecated
+- `HTMLMixin` is deprecated, and not needed anymore: **the `write_html()` method is now natively available in the `FPDF` class** - thanks to @yk-jp
 ### Removed
 - `open()` & `close()` methods, that were only used internally and should never have been called by end-user code
-### Deprecated
-- `HTMLMixin` is deprecated, and not needed anymore: the `write_html()` method is now natively available in the `FPDF` class - thanks to @yk-jp
 ### Fixed
 - automatic page break is never performed on an empty page (when the Y position is at the top margin)
 - fixed [`insert_toc_placeholder()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.insert_toc_placeholder) usage with [`footer()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) and `{{nb}}`; [#548](https://github.com/PyFPDF/fpdf2/issues/548)
@@ -33,6 +32,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 - the SVG parser now accepts absolute units for `width` and `height` attributes, thanks to @darioackermann; [#555](https://github.com/PyFPDF/fpdf2/issues/555)
 ### Changed
 - forbid use of `get_y()` & `local_context()` inside `unbreakable()` as it is currently not supported; [#557](https://github.com/PyFPDF/fpdf2/discussions/557)
+- [fontTools](https://fonttools.readthedocs.io/en/latest/) minimal version requirement set to 4.34.0; [#524](https://github.com/PyFPDF/fpdf2/issues/524)
 
 ## [2.5.7] - 2022-09-08
 ### Changed
