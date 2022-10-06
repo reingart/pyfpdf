@@ -8,20 +8,56 @@
 ### 
 site_name: fpdf2
 site_url: https://pyfpdf.github.io/fpdf2/
-repo_url: https://github.com/PyFPDF/fpdf2
+site_author: Lucas Cimon et al
 site_description: fpdf2 - minimalist PDF creation library for Python
+
+repo_url: https://github.com/PyFPDF/fpdf2
+repo_name: PyFPDF/fpdf2
+
 docs_dir: docs/
 site_dir: public/
 use_directory_urls: false
 edit_uri: edit/master/docs
+
 theme:
   name: material
   custom_dir: docs/overrides/
-markdown_extensions: [toc, pymdownx.highlight, pymdownx.superfences]
+  features:
+    - navigation.top
+    - toc.follow
+  palette:
+    # Palette toggle for dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+    # Palette toggle for light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+
+markdown_extensions:
+  - admonition
+  # - md_in_html
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - toc:
+      permalink: true
+
 plugins:
+  - search
   - include-markdown
   - mknotebooks
-  - search
+  - minify:
+      minify_html: true
+  #- git-committers:
+  #    repository: PyFPDF/fpdf2
+  #    branch: master
+  # - redirects:
+  #     redirect_maps:
   - with-pdf:  # https://github.com/orzih/mkdocs-with-pdf
       output_path: fpdf2-manual.pdf
       cover_title: fpdf2 manual
@@ -103,3 +139,10 @@ nav:
   - 'Logging':                        'Logging.md'
 - 'API':                            'https://pyfpdf.github.io/fpdf2/fpdf/'
 - 'FAQ':                            'FAQ.md'
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/PyFPDF/fpdf2
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/fpdf2/
