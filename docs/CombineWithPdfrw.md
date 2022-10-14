@@ -1,6 +1,11 @@
 # Combine with Pdfrw
 
-This page provides several examples of using fpdf with [`pdfrw`](https://github.com/pmaupin/pdfrw),
+`fpdf2` cannot **parse** existing PDF files.
+
+However, other Python libraries can be combined with `fpdf2`
+in order to add new content to existing PDF files.
+
+This page provides several examples of using `fpdf2` with [`pdfrw`](https://github.com/pmaupin/pdfrw),
 a great zero-dependency pure Python library dedicated to reading & writing PDFs,
 with numerous examples and a very clean set of classes modelling the PDF internal syntax.
 
