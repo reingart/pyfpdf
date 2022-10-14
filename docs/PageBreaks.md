@@ -47,7 +47,7 @@ for i in range(4):  # repeat table 4 times
             doc.ln(line_height)
      print('page_break_triggered:', pdf.page_break_triggered)
     pdf.ln(line_height * 2)
-pdf.("unbreakable_tables.pdf")
+pdf.output("unbreakable_tables.pdf")
 ```
 
 An alternative approach is [`offset_rendering()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.offset_rendering)
