@@ -78,6 +78,7 @@ pip install fpdf2 matplotlib pandas
 
 Create a plot using [pandas.DataFrame.plot](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.plot.html):
 ```python
+from io import BytesIO
 from fpdf import FPDF
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -93,7 +94,7 @@ df = pd.DataFrame(data, columns=["Unemployment_Rate", "Stock_Index_Price"])
 df.plot(x="Unemployment_Rate", y="Stock_Index_Price", kind="scatter")
 
 # Converting Figure to an image:
-img_buf = io.BytesIO()  # Create image object
+img_buf = BytesIO()  # Create image object
 plt.savefig(img_buf, dpi=200)  # Save the image
 
 pdf = FPDF()
@@ -190,21 +191,18 @@ Matplotlib can render **LaTeX**: [Text rendering With LaTeX](https://matplotlib.
 Example:
 
 ```python
+from io import BytesIO
 from fpdf import FPDF
-from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 from matplotlib.figure import Figure
-import numpy as np
-from PIL import Image
 
-fig = Figure(figsize=(6, 2), dpi=300)
-axes = fig.gca()
-axes.text(0, 0.5, r"$x^n + y^n = \frac{a}{b}$", fontsize=60)
-axes.axis("off")
+fig = Figure(figsize=(6, 2))
+gca = fig.gca()
+gca.text(0, 0.5, r"$x^n + y^n = \frac{a}{b}$", fontsize=60)
+gca.axis("off")
 
-# Converting Figure to an image:
-canvas = FigureCanvas(fig)
-canvas.draw()
-img = Image.fromarray(np.asarray(canvas.buffer_rgba()))
+# Converting Figure to a SVG image:
+img = BytesIO()
+fig.savefig(img, format="svg")
 
 pdf = FPDF()
 pdf.add_page()

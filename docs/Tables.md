@@ -72,6 +72,7 @@ Note that `write_html` has [some limitations, notably regarding multi-lines cell
 - our 5th tutorial provides examples on how to build tables: [Tuto 5 - Creating Tables](Tutorial.md#tuto-5-creating-tables)
 - `@bvalgard` wrote a custom `table()` method: [YouTube video](https://www.youtube.com/watch?v=euNvxWaRQMY) - [`create_table()` source code](https://github.com/bvalgard/create-pdf-with-python-fpdf2/blob/main/create_table_fpdf2.py)
 - [code snippet by @RubendeBruin to adapt row height to the highest cell](https://github.com/PyFPDF/fpdf2/issues/91#issuecomment-813033012)
+- detect if adding a table row will result in a page break: this can be done using [`.offset_rendering()`](https://pyfpdf.github.io/fpdf2/PageBreaks.html#unbreakable-sections)
 
 
 ## Repeat table header on each page ##
