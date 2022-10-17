@@ -64,3 +64,19 @@ This example relies on [pdfrw _Pull Request_ #216](https://github.com/pmaupin/pd
 Until it is merged, you can install a forked version of `pdfrw` including the required patch:
 
     pip install git+https://github.com/PyFPDF/pdfrw.git@addpage_at_index
+
+## Altering with pdfrw a document generated with fpdf2
+A document created with `fpdf2` can the be edited with `pdfrw`
+by passing it `.output()` to a `pdfrw.PdfReader`:
+```python
+import io
+from fpdf import FPDF
+from pdfrw import PdfReader
+
+pdf = FPDF()
+pdf.add_page()
+pdf.set_font('times', 'B', 19)
+pdf.text(50, 10, 'Hello World!')
+
+reader = PdfReader(io.BytesIO(pdf.output()))
+```

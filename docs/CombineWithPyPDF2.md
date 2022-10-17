@@ -59,3 +59,19 @@ merger.merge(position=0, fileobj=IN_FILEPATH)
 merger.merge(position=ON_PAGE_INDEX, fileobj=new_page())
 merger.write(OUT_FILEPATH)
 ```
+
+## Altering with PyPDF2 a document generated with fpdf2
+A document created with `fpdf2` can the be edited with `PyPDF2`
+by passing it `.output()` to a `PyPDF2.PdfReader`:
+```python
+import io
+from fpdf import FPDF
+from PyPDF2 import PdfReader
+
+pdf = FPDF()
+pdf.add_page()
+pdf.set_font('times', 'B', 19)
+pdf.text(50, 10, 'Hello World!')
+
+reader = PdfReader(io.BytesIO(pdf.output()))
+```
