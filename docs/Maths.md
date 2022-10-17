@@ -185,7 +185,7 @@ Result:
 ![](equation-with-gcharts.png)
 
 
-### Using Matplotlib ###
+### Using LaTeX & Matplotlib ###
 Matplotlib can render **LaTeX**: [Text rendering With LaTeX](https://matplotlib.org/stable/tutorials/text/usetex.html).
 
 Example:
@@ -213,3 +213,23 @@ pdf.output("equation-with-matplotlib.pdf")
 Result:
 
 ![](equation-with-matplotlib.png)
+
+If you have trouble with the SVG export, you can also render the matplotlib figure as pixels:
+```python
+from fpdf import FPDF
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from matplotlib.figure import Figure
+import numpy as np
+from PIL import Image
+
+fig = Figure(figsize=(6, 2), dpi=300)
+gca = fig.gca()
+gca.text(0, 0.5, r"$x^n + y^n = \frac{a}{b}$", fontsize=60)
+gca.axis("off")
+
+canvas = FigureCanvas(fig)
+canvas.draw()
+img = Image.fromarray(np.asarray(canvas.buffer_rgba()))
+
+...
+```

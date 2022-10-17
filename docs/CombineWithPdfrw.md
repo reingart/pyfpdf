@@ -1,4 +1,4 @@
-# Combine with Pdfrw
+# Combine with pdfrw
 
 `fpdf2` cannot **parse** existing PDF files.
 
