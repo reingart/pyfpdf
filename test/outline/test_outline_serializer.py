@@ -1,23 +1,39 @@
-from fpdf.outline import OutlineSection, serialize_outline
+from fpdf.outline import OutlineSection, build_outline_objs
 from fpdf.syntax import DestinationXYZ, PDFString
+
+
+def _serialize_outline(sections, first_object_id=1):
+    n = first_object_id
+    outline_objs = list(build_outline_objs(sections))
+    for obj in outline_objs:
+        obj.id = n
+        if n > first_object_id:
+            obj.dest.page_ref = f"{2 * obj.dest.page_number + 1} 0 R"
+        n += 1
+    output = "\n".join(obj.serialize() for obj in outline_objs)
+    return output
 
 
 def test_serialize_outline():
     sections = (
-        OutlineSection("Title 1", level=0, page_number=1, dest=DestinationXYZ(page=1)),
         OutlineSection(
-            "Subtitle 1.1", level=1, page_number=1, dest=DestinationXYZ(page=2)
-        ),
-        OutlineSection("Title 2", level=0, page_number=1, dest=DestinationXYZ(page=3)),
-        OutlineSection(
-            "Subtitle 2.1", level=1, page_number=1, dest=DestinationXYZ(page=4)
+            "Title 1", level=0, page_number=1, dest=DestinationXYZ(page=1, top=0)
         ),
         OutlineSection(
-            "Subtitle 2.2", level=1, page_number=1, dest=DestinationXYZ(page=5)
+            "Subtitle 1.1", level=1, page_number=1, dest=DestinationXYZ(page=2, top=0)
+        ),
+        OutlineSection(
+            "Title 2", level=0, page_number=1, dest=DestinationXYZ(page=3, top=0)
+        ),
+        OutlineSection(
+            "Subtitle 2.1", level=1, page_number=1, dest=DestinationXYZ(page=4, top=0)
+        ),
+        OutlineSection(
+            "Subtitle 2.2", level=1, page_number=1, dest=DestinationXYZ(page=5, top=0)
         ),
     )
     assert (
-        serialize_outline(sections, first_object_id=6)
+        _serialize_outline(sections, first_object_id=6)
         == """\
 6 0 obj
 <<
@@ -78,16 +94,24 @@ endobj"""
     )
 
 
-def test_serialize_outline_with_headless_hierarchy():  # issues 239
+def test__serialize_outline_with_headless_hierarchy():  # issues 239
     sections = (
-        OutlineSection("?-1", level=1, page_number=2, dest=DestinationXYZ(page=2)),
-        OutlineSection("?-1-1", level=2, page_number=2, dest=DestinationXYZ(page=2)),
-        OutlineSection("1", level=0, page_number=2, dest=DestinationXYZ(page=2)),
-        OutlineSection("1-1", level=1, page_number=2, dest=DestinationXYZ(page=2)),
-        OutlineSection("1-1-1", level=2, page_number=2, dest=DestinationXYZ(page=2)),
+        OutlineSection(
+            "?-1", level=1, page_number=2, dest=DestinationXYZ(page=2, top=0)
+        ),
+        OutlineSection(
+            "?-1-1", level=2, page_number=2, dest=DestinationXYZ(page=2, top=0)
+        ),
+        OutlineSection("1", level=0, page_number=2, dest=DestinationXYZ(page=2, top=0)),
+        OutlineSection(
+            "1-1", level=1, page_number=2, dest=DestinationXYZ(page=2, top=0)
+        ),
+        OutlineSection(
+            "1-1-1", level=2, page_number=2, dest=DestinationXYZ(page=2, top=0)
+        ),
     )
     assert (
-        serialize_outline(sections, first_object_id=6)
+        _serialize_outline(sections, first_object_id=6)
         == """\
 6 0 obj
 <<
@@ -146,16 +170,16 @@ endobj"""
     )
 
 
-def test_serialize_outline_without_hex_encoding():  # issue-458
+def test__serialize_outline_without_hex_encoding():  # issue-458
     PDFString.USE_HEX_ENCODING = False
     try:
         sections = (
             OutlineSection(
-                "Title", level=0, page_number=1, dest=DestinationXYZ(page=1)
+                "Title", level=0, page_number=1, dest=DestinationXYZ(page=1, top=0)
             ),
         )
         assert (
-            serialize_outline(sections, first_object_id=1)
+            _serialize_outline(sections, first_object_id=1)
             == f"""\
 1 0 obj
 <<

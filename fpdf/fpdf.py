@@ -41,7 +41,13 @@ except ImportError:
 
 
 from . import drawing
-from .annotations import Annotation, DEFAULT_ANNOT_FLAGS
+from .actions import URIAction
+from .annotations import (
+    AnnotationDict,
+    PDFAnnotation,
+    PDFEmbeddedFile,
+    DEFAULT_ANNOT_FLAGS,
+)
 from .deprecation import WarnOnDeprecatedModuleAttributes
 from .enums import (
     Align,
@@ -66,20 +72,17 @@ from .graphics_state import GraphicsStateMixin
 from .html import HTML2FPDF
 from .image_parsing import SUPPORTED_IMAGE_FILTERS, get_img_info, load_image
 from .line_break import Fragment, MultiLineBreak, TextLine
-from .output import OutputProducer, ZOOM_CONFIGS
+from .output import OutputProducer, PDFFontDescriptor, PDFPage, ZOOM_CONFIGS
 from .outline import OutlineSection
 from .recorder import FPDFRecorder
-from .structure_tree import MarkedContent, StructureTreeBuilder
+from .structure_tree import StructureTreeBuilder
 from .sign import Signature
 from .svg import Percent, SVGObject
 from .syntax import DestinationXYZ
-from .syntax import create_dictionary_string as pdf_dict
 from .util import (
-    enclose_in_parens,
     escape_parens,
     format_date,
     get_scale_factor,
-    object_id_for_page,
 )
 
 # Public global variables:
@@ -103,26 +106,6 @@ LAYOUT_ALIASES = {
     "continuous": PageLayout.ONE_COLUMN,
     "two": PageLayout.TWO_COLUMN_LEFT,
 }
-
-
-class EmbeddedFile(NamedTuple):
-    basename: str
-    bytes: bytes
-    desc: str = ""
-    creation_date: Optional[datetime] = None
-    modification_date: Optional[datetime] = None
-    compress: bool = False
-    checksum: bool = False
-
-    def file_spec(self, embedded_file_ref):
-        pdf_obj = {
-            "/Type": "/Filespec",
-            "/F": enclose_in_parens(self.basename),
-            "/EF": pdf_dict({"/F": embedded_file_ref}),
-        }
-        if self.desc:
-            pdf_obj["/Desc"] = f"({escape_parens(self.desc)})"
-        return pdf_dict(pdf_obj)
 
 
 class TitleStyle(NamedTuple):
@@ -164,6 +147,9 @@ class SubsetMap:
 
         # int(x) to ensure values are integers
         self._map = {x: int(x) for x in self._reserved}
+
+    def __len__(self):
+        return len(self._map)
 
     def pick(self, unicode: int):
         if not unicode in self._map:
@@ -267,16 +253,11 @@ class FPDF(GraphicsStateMixin):
             )
         super().__init__()
         self.page = 0  # current page number
-        # Associative array from page number to dicts containing pages and metadata:
-        self.pages = {}
-        self.fonts = {}  # array of used fonts
-        self.images = {}  # array of used images
-        # map page numbers to a list of Annotations; they will be inlined in the Page object:
-        self.annots = defaultdict(list)
-        # map page numbers to a list of pairs (Annotations, obj_id); they will be embedded in the doc as separated objects:
-        self.annots_as_obj = defaultdict(list)
-        self.links = {}  # map link indices (starting at 1) to Destination objects
-        self.embedded_files = []
+        self.pages = {}  # array of PDFPage objects starting at index 1
+        self.fonts = {}  # map font string keys to dicts describing the fonts used
+        self.images = {}  # map image identifiers to dicts describing the images
+        self.links = {}  # array of Destination objects starting at index 1
+        self.embedded_files = []  # array of PDFEmbeddedFile
 
         self.in_footer = False  # flag set while rendering footer
         # indicates that we are inside an .unbreakable() code block:
@@ -295,7 +276,6 @@ class FPDF(GraphicsStateMixin):
         self.oversized_images = None
         self.oversized_images_ratio = 2  # number of pixels per UserSpace point
         self.struct_builder = StructureTreeBuilder()
-        self._struct_parents_id_per_page = {}  # {page_object_id -> StructParent(s) ID}
         self._toc_placeholder = None  # optional ToCPlaceholder instance
         self._outline = []  # list of OutlineSection
         self._sign_key = None
@@ -378,7 +358,10 @@ class FPDF(GraphicsStateMixin):
         self.buffer = None
 
     def write_html(self, text, *args, **kwargs):
-        """Parse HTML and convert it to PDF"""
+        """
+        Parse HTML and convert it to PDF.
+        cf. https://pyfpdf.github.io/fpdf2/HTML.html
+        """
         kwargs2 = vars(self)
         # Method arguments must override class & instance attributes:
         kwargs2.update(kwargs)
@@ -406,6 +389,10 @@ class FPDF(GraphicsStateMixin):
     @page_mode.setter
     def page_mode(self, page_mode):
         self._page_mode = PageMode.coerce(page_mode)
+        if self._page_mode == PageMode.USE_ATTACHMENTS:
+            self._set_min_pdf_version("1.6")
+        elif self._page_mode == PageMode.USE_OC:
+            self._set_min_pdf_version("1.5")
 
     @property
     def epw(self):
@@ -547,11 +534,17 @@ class FPDF(GraphicsStateMixin):
             self.zoom_mode = zoom
         elif zoom != "default":
             raise FPDFException(f"Incorrect zoom display mode: {zoom}")
+        self.page_layout = LAYOUT_ALIASES.get(layout, layout)
 
-        if layout in LAYOUT_ALIASES:
-            self.page_layout = LAYOUT_ALIASES[layout]
-        else:
-            self.page_layout = PageLayout.coerce(layout)
+    @property
+    def page_layout(self):
+        return self._page_layout
+
+    @page_layout.setter
+    def page_layout(self, page_layout):
+        self._page_layout = PageLayout.coerce(page_layout) if page_layout else None
+        if self._page_layout in (PageLayout.TWO_PAGE_LEFT, PageLayout.TWO_PAGE_RIGHT):
+            self._set_min_pdf_version("1.5")
 
     def set_compression(self, compress):
         """
@@ -792,10 +785,10 @@ class FPDF(GraphicsStateMixin):
         # Set colors
         self.draw_color = dc
         if dc != self.DEFAULT_DRAW_COLOR:
-            self._out(dc.pdf_repr().upper())
+            self._out(dc.serialize().upper())
         self.fill_color = fc
         if fc != self.DEFAULT_FILL_COLOR:
-            self._out(fc.pdf_repr().lower())
+            self._out(fc.serialize().lower())
         self.text_color = tc
 
         # BEGIN Page header
@@ -810,10 +803,10 @@ class FPDF(GraphicsStateMixin):
 
         if self.draw_color != dc:  # Restore colors
             self.draw_color = dc
-            self._out(dc.pdf_repr().upper())
+            self._out(dc.serialize().upper())
         if self.fill_color != fc:
             self.fill_color = fc
-            self._out(fc.pdf_repr().lower())
+            self._out(fc.serialize().lower())
         self.text_color = tc
 
         if stretching != 100:  # Restore stretching
@@ -827,11 +820,11 @@ class FPDF(GraphicsStateMixin):
     ):
         self.page += 1
         if new_page:
-            page = {
-                "content": bytearray(),
-                "duration": duration,
-                "transition": transition,
-            }
+            page = PDFPage(
+                contents=bytearray(),
+                duration=duration,
+                transition=transition,
+            )
             self.pages[self.page] = page
             if transition:
                 self._set_min_pdf_version("1.5")
@@ -856,7 +849,7 @@ class FPDF(GraphicsStateMixin):
                 orientation or self.def_orientation, page_width_pt, page_height_pt
             )
             self.page_break_trigger = self.h - self.b_margin
-        page["w_pt"], page["h_pt"] = self.w_pt, self.h_pt
+        page.set_dimensions(self.w_pt, self.h_pt)
 
     def header(self):
         """
@@ -899,7 +892,7 @@ class FPDF(GraphicsStateMixin):
         else:
             self.draw_color = drawing.DeviceRGB(r / 255, g / 255, b / 255)
         if self.page > 0:
-            self._out(self.draw_color.pdf_repr().upper())
+            self._out(self.draw_color.serialize().upper())
 
     def set_fill_color(self, r, g=-1, b=-1):
         """
@@ -918,7 +911,7 @@ class FPDF(GraphicsStateMixin):
         else:
             self.fill_color = drawing.DeviceRGB(r / 255, g / 255, b / 255)
         if self.page > 0:
-            self._out(self.fill_color.pdf_repr().lower())
+            self._out(self.fill_color.serialize().lower())
 
     def set_text_color(self, r, g=-1, b=-1):
         """
@@ -1758,19 +1751,19 @@ class FPDF(GraphicsStateMixin):
         if font["OS/2"].usWeightClass >= 600:
             flags |= FontDescriptorFlags.FORCE_BOLD
 
-        desc = {
-            "Ascent": round(font["hhea"].ascent * scale),
-            "Descent": round(font["hhea"].descent * scale),
-            "CapHeight": round(cap_height * scale),
-            "Flags": flags.value,
-            "FontBBox": (
+        desc = PDFFontDescriptor(
+            ascent=round(font["hhea"].ascent * scale),
+            descent=round(font["hhea"].descent * scale),
+            cap_height=round(cap_height * scale),
+            flags=flags,
+            font_b_box=(
                 f"[{font['head'].xMin * scale:.0f} {font['head'].yMin * scale:.0f}"
                 f" {font['head'].xMax * scale:.0f} {font['head'].yMax * scale:.0f}]"
             ),
-            "ItalicAngle": int(font["post"].italicAngle),
-            "StemV": round(50 + int(pow((font["OS/2"].usWeightClass / 65), 2))),
-            "MissingWidth": default_width,
-        }
+            italic_angle=int(font["post"].italicAngle),
+            stem_v=round(50 + int(pow((font["OS/2"].usWeightClass / 65), 2))),
+            missing_width=default_width,
+        )
 
         # a map unicode_char -> char_width
         char_widths = defaultdict(lambda: default_width)
@@ -1956,7 +1949,7 @@ class FPDF(GraphicsStateMixin):
         The destination must be defined using `FPDF.set_link()`.
         """
         link_index = len(self.links) + 1
-        self.links[link_index] = DestinationXYZ(page=1)
+        self.links[link_index] = DestinationXYZ(page=1, top=self.h_pt)
         return link_index
 
     def set_link(self, link, y=0, x=0, page=-1, zoom="null"):
@@ -1975,7 +1968,10 @@ class FPDF(GraphicsStateMixin):
                 Currently ignored by Sumatra PDF Reader, but observed by Adobe Acrobat reader.
         """
         self.links[link] = DestinationXYZ(
-            self.page if page == -1 else page, x=x, y=y, zoom=zoom
+            self.page if page == -1 else page,
+            top=self.h_pt - y * self.k,
+            left=x * self.k,
+            zoom=zoom,
         )
 
     @check_page
@@ -1996,25 +1992,32 @@ class FPDF(GraphicsStateMixin):
             border_width (int): thickness of an optional black border surrounding the link.
                 Not all PDF readers honor this: Acrobat renders it but not Sumatra.
         """
-        link = Annotation(
+        action, dest = None, None
+        if link:
+            if isinstance(link, str):
+                action = URIAction(link)
+            else:  # Dest type ending of annotation entry
+                assert (
+                    link in self.links
+                ), f"Link with an invalid index: {link} (doc #links={len(self.links)})"
+                dest = self.links[link]
+        link_annot = AnnotationDict(
             "Link",
             x=x * self.k,
             y=self.h_pt - y * self.k,
             width=w * self.k,
             height=h * self.k,
-            link=link,
+            action=action,
+            dest=dest,
             border_width=border_width,
         )
-        self.annots[self.page].append(link)
+        self.pages[self.page].annots.append(link_annot)
         if alt_text is not None:
             # Note: the spec indicates that a /StructParent could be added **inside* this /Annot,
             # but tests with Adobe Acrobat Reader reveal that the page /StructParents inserted below
             # is enough to link the marked content in the hierarchy tree with this annotation link.
-            page_object_id = object_id_for_page(self.page)
-            self._add_marked_content(
-                page_object_id, struct_type="/Link", alt_text=alt_text
-            )
-        return link
+            self._add_marked_content(struct_type="/Link", alt_text=alt_text)
+        return link_annot
 
     def embed_file(
         self,
@@ -2037,7 +2040,7 @@ class FPDF(GraphicsStateMixin):
             compress (bool): enabled zlib compression of the file - False by default
             checksum (bool): insert a MD5 checksum of the file content - False by default
 
-        Returns: a string representing the internal file name
+        Returns: a PDFEmbeddedFile instance, with a .basename string attribute representing the internal file name
         """
         if file_path:
             if bytes:
@@ -2058,18 +2061,20 @@ class FPDF(GraphicsStateMixin):
                 raise ValueError(
                     "'basename' is required if 'file_path' is not provided"
                 )
-        already_embedded_basenames = set(file.basename for file in self.embedded_files)
+        already_embedded_basenames = set(
+            file.basename() for file in self.embedded_files
+        )
         if basename in already_embedded_basenames:
             raise ValueError(f"{basename} has already been embedded in this file")
-        self.embedded_files.append(
-            EmbeddedFile(
-                basename=basename,
-                bytes=bytes,
-                modification_date=modification_date,
-                **kwargs,
-            )
+        embedded_file = PDFEmbeddedFile(
+            basename=basename,
+            contents=bytes,
+            modification_date=modification_date,
+            **kwargs,
         )
-        return basename
+        self.embedded_files.append(embedded_file)
+        self._set_min_pdf_version("1.4")
+        return embedded_file
 
     @check_page
     def file_attachment_annotation(
@@ -2094,18 +2099,18 @@ class FPDF(GraphicsStateMixin):
             compress (bool): enabled zlib compression of the file - False by default
             checksum (bool): insert a MD5 checksum of the file content - False by default
         """
-        embedded_file_name = self.embed_file(file_path, **kwargs)
-        annotation = Annotation(
+        embedded_file = self.embed_file(file_path, **kwargs)
+        annotation = AnnotationDict(
             "FileAttachment",
             x * self.k,
             self.h_pt - y * self.k,
             w * self.k,
             h * self.k,
-            embedded_file_name=embedded_file_name,
+            file_spec=embedded_file.file_spec(),
             name=FileAttachmentAnnotationName.coerce(name) if name else None,
             flags=tuple(AnnotationFlag.coerce(flag) for flag in flags),
         )
-        self.annots[self.page].append(annotation)
+        self.pages[self.page].annots.append(annotation)
         return annotation
 
     @check_page
@@ -2124,7 +2129,7 @@ class FPDF(GraphicsStateMixin):
             name (fpdf.enums.AnnotationName, str): optional icon that shall be used in displaying the annotation
             flags (Tuple[fpdf.enums.AnnotationFlag], Tuple[str]): optional list of flags defining annotation properties
         """
-        annotation = Annotation(
+        annotation = AnnotationDict(
             "Text",
             x * self.k,
             self.h_pt - y * self.k,
@@ -2134,7 +2139,7 @@ class FPDF(GraphicsStateMixin):
             name=AnnotationName.coerce(name) if name else None,
             flags=tuple(AnnotationFlag.coerce(flag) for flag in flags),
         )
-        self.annots[self.page].append(annotation)
+        self.pages[self.page].annots.append(annotation)
         return annotation
 
     @check_page
@@ -2149,7 +2154,7 @@ class FPDF(GraphicsStateMixin):
             w (float): width of the link rectangle
             h (float): height of the link rectangle
         """
-        annotation = Annotation(
+        annotation = AnnotationDict(
             "Action",
             x * self.k,
             self.h_pt - y * self.k,
@@ -2157,7 +2162,7 @@ class FPDF(GraphicsStateMixin):
             h * self.k,
             action=action,
         )
-        self.annots[self.page].append(annotation)
+        self.pages[self.page].annots.append(annotation)
         return annotation
 
     @contextmanager
@@ -2191,7 +2196,7 @@ class FPDF(GraphicsStateMixin):
                 modification_time=modification_time,
                 page=page,
             )
-            self._text_quad_points = defaultdict(list)
+        self._text_quad_points = defaultdict(list)
         self._record_text_quad_points = False
 
     add_highlight = highlight  # For backward compatibilty
@@ -2224,6 +2229,7 @@ class FPDF(GraphicsStateMixin):
             modification_time (datetime): date and time when the annotation was most recently modified
             page (int): index of the page where this annotation is added
         """
+        self._set_min_pdf_version("1.6")
         type = TextMarkupType.coerce(type).value
         if modification_time is None:
             modification_time = self.creation_date
@@ -2233,7 +2239,7 @@ class FPDF(GraphicsStateMixin):
         y_min = min(quad_points[1::2])
         x_max = max(quad_points[0::2])
         y_max = max(quad_points[1::2])
-        annotation = Annotation(
+        annotation = AnnotationDict(
             type,
             contents=text,
             x=y_min,
@@ -2244,9 +2250,8 @@ class FPDF(GraphicsStateMixin):
             modification_time=modification_time,
             title=title,
             quad_points=quad_points,
-            page=page,
         )
-        self.annots[page].append(annotation)
+        self.pages[page].annots.append(annotation)
         return annotation
 
     @check_page
@@ -2270,7 +2275,7 @@ class FPDF(GraphicsStateMixin):
         y_min = min(ink_list[1::2])
         x_max = max(ink_list[0::2])
         y_max = max(ink_list[1::2])
-        annotation = Annotation(
+        annotation = AnnotationDict(
             "Ink",
             x=y_min,
             y=y_max,
@@ -2279,11 +2284,10 @@ class FPDF(GraphicsStateMixin):
             ink_list=ink_list,
             color=color,
             border_width=border_width,
-            page=self.page,
             contents=contents,
             title=title,
         )
-        self.annots[self.page].append(annotation)
+        self.pages[self.page].annots.append(annotation)
         return annotation
 
     @check_page
@@ -2325,7 +2329,7 @@ class FPDF(GraphicsStateMixin):
                 self._add_quad_points(x, y, w, h)
         attr_l = []
         if self.fill_color != self.text_color:
-            attr_l.append(f"{self.text_color.pdf_repr().lower()}")
+            attr_l.append(f"{self.text_color.serialize().lower()}")
         if attr_l:
             sl = ["q"] + attr_l + sl + ["Q"]
         self._out(" ".join(sl))
@@ -2801,7 +2805,7 @@ class FPDF(GraphicsStateMixin):
             s_start += dx
 
             if self.fill_color != self.text_color:
-                sl.append(self.text_color.pdf_repr().lower())
+                sl.append(self.text_color.serialize().lower())
 
             # do this once in advance
             u_space = escape_parens(" ".encode("utf-16-be").decode("latin-1"))
@@ -3660,31 +3664,28 @@ class FPDF(GraphicsStateMixin):
         Can receive as named arguments any of the entries described in section 14.7.2 'Structure Hierarchy'
         of the PDF spec: iD, a, c, r, lang, e, actualText
         """
-        page_object_id = object_id_for_page(self.page)
-        mcid = self.struct_builder.next_mcid_for_page(page_object_id)
-        marked_content = self._add_marked_content(
-            page_object_id, struct_type="/Figure", mcid=mcid, **kwargs
+        mcid = self.struct_builder.next_mcid_for_page(self.page)
+        struct_elem = self._add_marked_content(
+            struct_type="/Figure", mcid=mcid, **kwargs
         )
         start_page = self.page
         self._out(f"/P <</MCID {mcid}>> BDC")
-        yield marked_content
+        yield struct_elem
         if self.page != start_page:
             raise FPDFException("A page jump occured inside a marked sequence")
         self._out("EMC")
 
-    def _add_marked_content(self, page_object_id, **kwargs):
+    def _add_marked_content(self, **kwargs):
         """
         Can receive as named arguments any of the entries described in section 14.7.2 'Structure Hierarchy'
         of the PDF spec: iD, a, c, r, lang, e, actualText
         """
-        struct_parents_id = self._struct_parents_id_per_page.get(page_object_id)
-        if struct_parents_id is None:
-            struct_parents_id = len(self._struct_parents_id_per_page)
-            self._struct_parents_id_per_page[page_object_id] = struct_parents_id
-        marked_content = MarkedContent(page_object_id, struct_parents_id, **kwargs)
-        self.struct_builder.add_marked_content(marked_content)
+        struct_elem, spid = self.struct_builder.add_marked_content(
+            page_number=self.page, **kwargs
+        )
+        self.pages[self.page].struct_parents = spid
         self._set_min_pdf_version("1.4")  # due to using /MarkInfo
-        return marked_content
+        return struct_elem
 
     @check_page
     def ln(self, h=None):
@@ -3844,7 +3845,7 @@ class FPDF(GraphicsStateMixin):
         self._sign_hashalgo = hashalgo
         self._sign_time = signing_time or self.creation_date
 
-        annotation = Annotation(
+        annotation = PDFAnnotation(
             "Widget",
             field_type="Sig",
             x=0,
@@ -3860,40 +3861,22 @@ class FPDF(GraphicsStateMixin):
                 reason=reason,
             ),
         )
-        self.annots_as_obj[self.page].append(annotation)
-
-    def _final_pdf_version(self):
-        """
-        Internal method used to compute the final 1.X PDF version
-        once the document has been finalized, based on the PDF features used.
-        """
-        if self.page_mode == PageMode.USE_ATTACHMENTS:
-            self._set_min_pdf_version("1.6")
-        elif self.page_layout in (PageLayout.TWO_PAGE_LEFT, PageLayout.TWO_PAGE_RIGHT):
-            self._set_min_pdf_version("1.5")
-        elif self.page_mode == PageMode.USE_OC:
-            self._set_min_pdf_version("1.5")
-        elif self.embedded_files:
-            self._set_min_pdf_version("1.4")
-        return self.pdf_version
+        self.pages[self.page].annots.append(annotation)
 
     def _substitute_page_number(self):
-        nb = self.pages_count  # total number of pages
         substituted = False
         # Replace number of pages in fonts using subsets (unicode)
         alias = self.str_alias_nb_pages.encode("utf-16-be")
-        encoded_nb = str(nb).encode("utf-16-be")
+        encoded_nb = str(self.pages_count).encode("utf-16-be")
         for page in self.pages.values():
-            new_content = page["content"].replace(alias, encoded_nb)
-            substituted |= page["content"] != new_content
-            page["content"] = new_content
+            substituted |= alias in page.contents
+            page.contents = page.contents.replace(alias, encoded_nb)
         # Now repeat for no pages in non-subset fonts
         alias = self.str_alias_nb_pages.encode("latin-1")
-        encoded_nb = str(nb).encode("latin-1")
+        encoded_nb = str(self.pages_count).encode("latin-1")
         for page in self.pages.values():
-            new_content = page["content"].replace(alias, encoded_nb)
-            substituted |= page["content"] != new_content
-            page["content"] = new_content
+            substituted |= alias in page.contents
+            page.contents = page.contents.replace(alias, encoded_nb)
         if substituted:
             LOGGER.debug(
                 "Substitution of '%s' was performed in the document",
@@ -3919,18 +3902,17 @@ class FPDF(GraphicsStateMixin):
         del self.footer
         del self.header
 
-    def file_id(self, buffer, creation_date):
+    def file_id(self):
         """
-        Args:
-            buffer (bytearray): resulting output buffer
-            creation_date (datetime): PDF document creation date
-
         This method can be overridden in inherited classes
         in order to define a custom file identifier.
         Its output must have the format "<hex_string1><hex_string2>".
         If this method returns a falsy value (None, empty string),
         no /ID will be inserted in the generated PDF document.
         """
+        return -1
+
+    def _default_file_id(self, buffer):
         # Quoting the PDF 1.7 spec, section 14.4 File Identifiers:
         # > The value of this entry shall be an array of two byte strings.
         # > The first byte string shall be a permanent identifier
@@ -3941,8 +3923,8 @@ class FPDF(GraphicsStateMixin):
         # > When a file is first written, both identifiers shall be set to the same value.
         id_hash = hashlib.new("md5", usedforsecurity=False)  # nosec B324
         id_hash.update(buffer)
-        if creation_date:
-            id_hash.update(creation_date.strftime("%Y%m%d%H%M%S").encode("utf8"))
+        if self.creation_date:
+            id_hash.update(self.creation_date.strftime("%Y%m%d%H%M%S").encode("utf8"))
         hash_hex = id_hash.hexdigest().upper()
         return f"<{hash_hex}><{hash_hex}>"
 
@@ -3969,7 +3951,7 @@ class FPDF(GraphicsStateMixin):
             s = s.encode("latin1")
         if not self.page:
             raise FPDFException("No page open, you need to call add_page() first")
-        self.pages[self.page]["content"] += s + b"\n"
+        self.pages[self.page].contents += s + b"\n"
 
     @check_page
     def interleaved2of5(self, txt, x, y, w=1, h=10):
@@ -4278,8 +4260,8 @@ class FPDF(GraphicsStateMixin):
             raise ValueError(
                 f"Incoherent hierarchy: cannot start a level {level} section after a level {self._outline[-1].level} one"
             )
-        dest = DestinationXYZ(self.page, y=self.y)
-        struct_elem = None
+        dest = DestinationXYZ(self.page, top=self.h_pt - self.y * self.k)
+        outline_struct_elem = None
         if self.section_title_styles:
             # We first check if adding this multi-cell will trigger a page break:
             with self.offset_rendering() as pdf:
@@ -4295,8 +4277,8 @@ class FPDF(GraphicsStateMixin):
             if pdf.page_break_triggered:
                 # If so, we trigger a page break manually beforehand:
                 self.add_page()
-            with self._marked_sequence(title=name) as marked_content:
-                struct_elem = self.struct_builder.struct_elem_per_mc[marked_content]
+            with self._marked_sequence(title=name) as struct_elem:
+                outline_struct_elem = struct_elem
                 with self._apply_style(self.section_title_styles[level]):
                     self.multi_cell(
                         w=self.epw,
@@ -4305,7 +4287,9 @@ class FPDF(GraphicsStateMixin):
                         new_x=XPos.LMARGIN,
                         new_y=YPos.NEXT,
                     )
-        self._outline.append(OutlineSection(name, level, self.page, dest, struct_elem))
+        self._outline.append(
+            OutlineSection(name, level, self.page, dest, outline_struct_elem)
+        )
 
     @contextmanager
     def _apply_style(self, title_style):
@@ -4360,8 +4344,11 @@ class FPDF(GraphicsStateMixin):
             self.footer()
             self.in_footer = False
             # Generating .buffer based on .pages:
-            output_producer = OutputProducer(self)
-            self.buffer = output_producer.bufferize()
+            if self._toc_placeholder:
+                self._insert_table_of_contents()
+            if self.str_alias_nb_pages:
+                self._substitute_page_number()
+            self.buffer = OutputProducer(self).bufferize()
         if name:
             if isinstance(name, os.PathLike):
                 name.write_bytes(self.buffer)

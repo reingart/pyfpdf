@@ -82,7 +82,7 @@ class TestUtilities:
     def test_render_primitive(self, primitive, result):
         assert fpdf.drawing.render_pdf_primitive(primitive) == result
 
-    # Add check for bad primitives: class without pdf_repr, dict with non-Name
+    # Add check for bad primitives: class without serialize, dict with non-Name
     # keys. Check for proper escaping of Name and string edge cases
     @pytest.mark.parametrize("primitive, error_type", parameters.pdf_bad_primitives)
     def test_error_on_bad_primitive(self, primitive, error_type):
@@ -162,8 +162,8 @@ class TestColors:
         assert cmyk.colors == (1, 1, 1, 0)
         assert cmyk_a.colors == (1, 1, 1, 0)
 
-        assert cmyk.pdf_repr() == "1 1 1 0 k"
-        assert cmyk_a.pdf_repr() == "1 1 1 0 k"
+        assert cmyk.serialize() == "1 1 1 0 k"
+        assert cmyk_a.serialize() == "1 1 1 0 k"
 
         with pytest.raises(ValueError):
             fpdf.drawing.DeviceCMYK(c=2, m=1, y=1, k=0)
@@ -421,7 +421,7 @@ class TestStyles:
 
         auto_pdf_cmp.draw_path(open_path_drawing)
 
-    def test_dictionary_generation(self):
+    def test_serialize_to_pdf_dict(self):
         style = fpdf.drawing.GraphicsStyle()
 
         style.fill_opacity = 0.5
@@ -432,7 +432,7 @@ class TestStyles:
         style.stroke_cap_style = "butt"
 
         assert (
-            style.to_pdf_dict()
+            style.serialize()
             == "<< /Type /ExtGState\n/ca 0.5\n/BM /Lighten\n/CA 0.75\n/LW 2\n/LC 0\n/LJ 1 >>"
         )
 

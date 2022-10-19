@@ -45,7 +45,16 @@ LOREM_IPSUM = (
 )
 
 
-def assert_pdf_equal(actual, expected, tmp_path, at_epoch=True, generate=False):
+def assert_pdf_equal(
+    actual,
+    expected,
+    tmp_path,
+    at_epoch=True,
+    generate=False,
+    ignore_id_changes=False,
+    ignore_original_obj_ids=False,
+    ignore_xref_offets=False,
+):
     """
     This compare the output of a `FPDF` instance (or `Template` instance),
     with the provided PDF file.
@@ -101,6 +110,15 @@ def assert_pdf_equal(actual, expected, tmp_path, at_epoch=True, generate=False):
         (tmp_path / "expected_qpdf.pdf").write_bytes(expected_qpdf)
         actual_lines = actual_qpdf.splitlines()
         expected_lines = expected_qpdf.splitlines()
+        if ignore_id_changes:
+            actual_lines = filter_out_doc_id(actual_lines)
+            expected_lines = filter_out_doc_id(expected_lines)
+        if ignore_original_obj_ids:
+            actual_lines = filter_out_original_obj_ids(actual_lines)
+            expected_lines = filter_out_original_obj_ids(expected_lines)
+        if ignore_xref_offets:
+            actual_lines = filter_out_xref_offets(actual_lines)
+            expected_lines = filter_out_xref_offets(expected_lines)
         if actual_lines != expected_lines:
             # It is important to reduce the size of both list of bytes here,
             # to avoid .assertSequenceEqual to take forever to finish, that itself calls difflib.ndiff,
@@ -112,6 +130,18 @@ def assert_pdf_equal(actual, expected, tmp_path, at_epoch=True, generate=False):
         actual_hash = hashlib.md5(actual_pdf_path.read_bytes()).hexdigest()
         expected_hash = hashlib.md5(expected_pdf_path.read_bytes()).hexdigest()
         assert actual_hash == expected_hash, f"{actual_hash} != {expected_hash}"
+
+
+def filter_out_doc_id(lines):
+    return [line for line in lines if not line.startswith(b"  /ID [<")]
+
+
+def filter_out_original_obj_ids(lines):
+    return [line for line in lines if not line.startswith(b"%% Original object ID: ")]
+
+
+def filter_out_xref_offets(lines):
+    return [line for line in lines if not line.endswith(b" 00000 n ")]
 
 
 def check_signature(pdf, trusted_cert_paths):
