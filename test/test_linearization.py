@@ -17,4 +17,4 @@ def test_linearization(tmp_path):
     pdf.image(
         HERE / "image/png_images/66ac49ef3f48ac9482049e1ab57a53e9.png", x=150, y=150
     )
-    assert_pdf_equal(pdf, HERE / "rotation.pdf", tmp_path, linearize=True)
+    assert_pdf_equal(pdf, HERE / "linearization.pdf", tmp_path, linearize=True)

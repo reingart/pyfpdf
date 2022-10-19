@@ -127,6 +127,8 @@ def assert_pdf_equal(
             actual_lines = subst_streams_with_hashes(actual_lines)
             expected_lines = subst_streams_with_hashes(expected_lines)
         assert actual_lines == expected_lines
+        if linearize:
+            _run_cmd("qpdf", "--check-linearization", str(actual_pdf_path))
     else:  # Fallback to hash comparison
         actual_hash = hashlib.md5(actual_pdf_path.read_bytes()).hexdigest()
         expected_hash = hashlib.md5(expected_pdf_path.read_bytes()).hexdigest()
@@ -202,13 +204,14 @@ def _qpdf(input_pdf_filepath):
         # Lucas (2021/01/06) : this conversion of UNIX file paths to Windows ones is only needed
         # for my development environment: Cygwin, a UNIX system, with a qpdf Windows binary. Sorry for the kludge!
         input_pdf_filepath = (
-            check_output(["cygpath", "-w", str(input_pdf_filepath)]).decode().strip()
+            _run_cmd("cygpath", "-w", str(input_pdf_filepath)).decode().strip()
         )
+    return _run_cmd("qpdf", "--deterministic-id", "--qdf", str(input_pdf_filepath), "-")
+
+
+def _run_cmd(*args):
     try:
-        return check_output(
-            ["qpdf", "--deterministic-id", "--qdf", str(input_pdf_filepath), "-"],
-            stderr=PIPE,
-        )
+        return check_output(args, stderr=PIPE)
     except CalledProcessError as error:
         print(f"\nqpdf STDERR: {error.stderr.decode().strip()}")
         raise
