@@ -72,6 +72,7 @@ from .graphics_state import GraphicsStateMixin
 from .html import HTML2FPDF
 from .image_parsing import SUPPORTED_IMAGE_FILTERS, get_img_info, load_image
 from .line_break import Fragment, MultiLineBreak, TextLine
+from .linearization import LinearizedOutputProducer
 from .output import OutputProducer, PDFFontDescriptor, PDFPage, ZOOM_CONFIGS
 from .outline import OutlineSection
 from .recorder import FPDFRecorder
@@ -4316,7 +4317,7 @@ class FPDF(GraphicsStateMixin):
         self.text_color = prev_text_color
         self.underline = prev_underline
 
-    def output(self, name="", dest=""):
+    def output(self, name="", dest="", linearize=False):
         """
         Output PDF to some destination.
         The method first calls [close](close.md) if necessary to terminate the document.
@@ -4348,7 +4349,10 @@ class FPDF(GraphicsStateMixin):
                 self._insert_table_of_contents()
             if self.str_alias_nb_pages:
                 self._substitute_page_number()
-            self.buffer = OutputProducer(self).bufferize()
+            output_producer = (
+                LinearizedOutputProducer(self) if linearize else OutputProducer(self)
+            )
+            self.buffer = output_producer.bufferize()
         if name:
             if isinstance(name, os.PathLike):
                 name.write_bytes(self.buffer)

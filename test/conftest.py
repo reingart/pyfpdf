@@ -49,6 +49,7 @@ def assert_pdf_equal(
     actual,
     expected,
     tmp_path,
+    linearize=False,
     at_epoch=True,
     generate=False,
     ignore_id_changes=False,
@@ -88,7 +89,7 @@ def assert_pdf_equal(
             "When passing `True` to `generate`"
             "a pathlib.Path must be provided as the `expected` parameter"
         )
-        actual_pdf.output(expected.open("wb"))
+        actual_pdf.output(expected.open("wb"), linearize=linearize)
         return
     if isinstance(expected, pathlib.Path):
         expected_pdf_path = expected
@@ -99,10 +100,10 @@ def assert_pdf_equal(
                 pdf_file.write(expected)
             else:
                 expected.set_creation_date(EPOCH)
-                expected.output(pdf_file)
+                expected.output(pdf_file, linearize=linearize)
     actual_pdf_path = tmp_path / "actual.pdf"
     with actual_pdf_path.open("wb") as pdf_file:
-        actual_pdf.output(pdf_file)
+        actual_pdf.output(pdf_file, linearize=linearize)
     if QPDF_AVAILABLE:  # Favor qpdf-based comparison, as it helps a lot debugging:
         actual_qpdf = _qpdf(actual_pdf_path)
         expected_qpdf = _qpdf(expected_pdf_path)
@@ -144,7 +145,7 @@ def filter_out_xref_offets(lines):
     return [line for line in lines if not line.endswith(b" 00000 n ")]
 
 
-def check_signature(pdf, trusted_cert_paths):
+def check_signature(pdf, trusted_cert_paths, linearize=False):
     # pylint: disable=import-outside-toplevel
     from endesive import pdf as endesive_pdf
 
@@ -152,7 +153,7 @@ def check_signature(pdf, trusted_cert_paths):
     for cert_filepath in trusted_cert_paths:
         with open(cert_filepath, encoding="utf8") as cert_file:
             trusted_certs.append(cert_file.read())
-    results = endesive_pdf.verify(pdf.output(), trusted_certs)
+    results = endesive_pdf.verify(pdf.output(linearize=linearize), trusted_certs)
     for hash_ok, signature_ok, cert_ok in results:
         assert signature_ok
         assert hash_ok

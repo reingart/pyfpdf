@@ -2,7 +2,8 @@
 """
 This module is in work-in-progress state.
 Hint tables / hint streams have not been implemented yet,
-and there are a few "TODO" comment remaining
+and there are a few "TODO" comment remaining.
+cf. https://github.com/PyFPDF/fpdf2/issues/62
 """
 from .output import ContentWithoutID, OutputProducer, PDFHeader
 from .sign import sign_content
@@ -41,11 +42,12 @@ class PDFXrefAndTrailer(ContentWithoutID):
     def __init__(self, output_builder):
         self.output_builder = output_builder
         self.count = output_builder.obj_id + 1
-        self.first_xref = None
-        self.main_xref = None
+        self.start_obj_id = 1
         # Must be set before the call to serialize():
         self.catalog_obj = None
         self.info_obj = None
+        self.first_xref = None
+        self.main_xref = None
         # Computed at serialize() time based on output_builder.buffer size:
         self.startxref = None
 
@@ -68,23 +70,14 @@ class PDFXrefAndTrailer(ContentWithoutID):
                 self.startxref.rjust(12, " "),
             )
         out.append("xref")
-        out.append(
-            f"{(self.main_xref.count - self.count) if self.is_first_xref else 0} {self.count}"
-        )
-        if self.is_first_xref:
-            # Cross-reference table for objects belonging to the first page
-            # as well as for the document catalogue and document-level
-            # objects appearing before the first page.
-            # Additionally, this cross-reference table shall contain entries
-            # for the linearization parameter dictionary (at the beginning)
-            # and the primary hint stream (at the end).
-            for obj_id in range(1, self.count):  # TODO: is this range correct?
-                out.append(f"{builder.offsets[obj_id]:010} 00000 n ")
-        else:  # => .is_main_xref is True
+        out.append(f"{0 if self.start_obj_id == 1 else self.start_obj_id} {self.count}")
+        if not self.is_first_xref:
             out.append("0000000000 65535 f ")
-            start_obj_id = self.first_xref.count if self.is_main_xref else 1
-            for obj_id in range(start_obj_id, self.count):
-                out.append(f"{builder.offsets[obj_id]:010} 00000 n ")
+        assert (
+            len(builder.offsets) > 1
+        ), "TODO: how to know the offsets in the 1st xref at this stage?"
+        for obj_id in range(self.start_obj_id, self.start_obj_id + self.count):
+            out.append(f"{builder.offsets[obj_id]:010} 00000 n ")
         out.append("trailer")
         out.append("<<")
         if self.is_main_xref:
@@ -159,6 +152,11 @@ class LinearizedOutputProducer(OutputProducer):
         #   + The entire outline hierarchy, if the PageMode entry in the catalogue is UseOutlines
         #   + All objects that the page object refers to [including] Contents, Resources, Annots
         # TODO
+
+        first_xref.count = self.obj_id + 1
+        first_xref_pdf_objs = list(self.pdf_objs)
+        self.obj_id = 0
+
         # Part 7: Remaining pages
         page_objs.extend(self._add_pages(slice(1, None)))
         # Part 8: Shared objects for all pages except the first
@@ -182,6 +180,15 @@ class LinearizedOutputProducer(OutputProducer):
         main_xref = PDFXrefAndTrailer(self)
         self.pdf_objs.append(main_xref)
 
+        # Re-assigning IDs of all PDF objects in the 1st xref table:
+        first_xref.start_obj_id = self.obj_id + 1
+        for pdf_obj in first_xref_pdf_objs:
+            if (
+                not isinstance(pdf_obj, ContentWithoutID)
+                and pdf_obj is not hint_stream_obj
+            ):
+                self.obj_id += 1
+                pdf_obj.obj_id = self.obj_id
         # The hint streams shall be assigned the last object numbers in the file:
         self.obj_id += 1
         hint_stream_obj.id = self.obj_id
@@ -261,7 +268,7 @@ class LinearizedOutputProducer(OutputProducer):
         self.buffer = buffer_subst(
             self.buffer,
             MAIN_XREF_1ST_ENTRY_OFFSET_PLACEHOLDER,
-            f"{self.offsets[first_xref.count]: 12d}",
+            f"{self.offsets[main_xref.start_obj_id]: 12d}",
         )
         self.buffer = buffer_subst(
             self.buffer,
