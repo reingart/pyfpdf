@@ -1,4 +1,4 @@
-    Changelog
+Changelog
 ---------
 
 All notable changes to this project will be documented in this file.
@@ -16,22 +16,23 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.6.0] - not released yet
+## [2.6.1] - not released yet
+
+## [2.6.0] - 2022-11-20
 ### Added
 - demonstration Jupyter notebook: [tutorial/notebook.ipynb](https://github.com/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb)
 - new [`.default_page_dimensions`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.default_page_dimensions) property on `FPDF` instances
-- support for description list (`<dl>`), description titles (`<dt>`), and description details (`<dd>`) in `write_html()` - thanks to @yk-jp
+- support for description list (`<dl>`), description titles (`<dt>`), description details (`<dd>`) and code blocks (`<code></code>`) in `write_html()` - thanks to @yk-jp & @seanpmulholland
 - support for monochromatic images (PIL `image.mode == '1'`) thanks to @GerardoAllende
 - the 1000+ unit tests suite is now executed under Linux **<ins>and</ins>** Windows, with extra timing & memory usage checks ensuring we control `fpdf2` resource usage
-- New translation of the tutorial in [עברית](https://pyfpdf.github.io/fpdf2/Tutorial-he.html), thanks to @TzviGreenfeld
-- New documentation for using [PyPDF2](https://github.com/py-pdf/PyPDF2) with `fpdf2`, added by @devdev29: https://pyfpdf.github.io/fpdf2/CombineWithPyPDF2.html
-- the `write_html()` method now supports `<code></code>` blocks.
+- new translation of the tutorial in [עברית](https://pyfpdf.github.io/fpdf2/Tutorial-he.html), thanks to @TzviGreenfeld
+- new documentation for using [PyPDF2](https://github.com/py-pdf/PyPDF2) with `fpdf2`, added by @devdev29: https://pyfpdf.github.io/fpdf2/CombineWithPyPDF2.html
 ### Deprecated
 - `HTMLMixin` is deprecated, and not needed anymore: **the `write_html()` method is now natively available in the `FPDF` class** - thanks to @yk-jp
 ### Removed
 - `open()` & `close()` methods, that were only used internally and should never have been called by end-user code
 ### Fixed
-- After an "empty" cell(), ln() applied a line height of zero [#601](https://github.com/PyFPDF/fpdf2/issues/601)
+- after an "empty" `cell()`, `ln()` applied a line height of zero [#601](https://github.com/PyFPDF/fpdf2/issues/601)
 - when using `multi_cell()` with `max_line_height` to render multiline text, the last line is now rendered like all the others
 - templates don't leak graphics state changes to their surroundings anymore; [#570](https://github.com/PyFPDF/fpdf2/issues/570)
 - automatic page break is never performed on an empty page (when the Y position is at the top margin)
