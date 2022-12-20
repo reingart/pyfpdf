@@ -173,7 +173,7 @@ COLOR_DICT = {
 
 
 def px2mm(px):
-    return int(px) * 25.4 / 72
+    return px * 25.4 / 72
 
 
 def color_as_decimal(color="#000000"):
@@ -501,8 +501,11 @@ class HTML2FPDF(HTMLParser):
             self.pdf.ln(self.h)
         if tag == "p":
             self.pdf.ln(self.h)
-            if attrs:
+            if "align" in attrs:
                 self.align = attrs.get("align")
+            if "line-height" in attrs:
+                line_height = float(attrs.get("line-height"))
+                self.h = px2mm(self.font_size) * line_height
         if tag in self.heading_sizes:
             self.font_stack.append((self.font_face, self.font_size, self.font_color))
             self.heading_level = int(tag[1:])
@@ -605,8 +608,8 @@ class HTML2FPDF(HTMLParser):
         if tag == "tfoot":
             self.tfoot = {}
         if tag == "img" and "src" in attrs:
-            width = px2mm(attrs.get("width", 0))
-            height = px2mm(attrs.get("height", 0))
+            width = px2mm(int(attrs.get("width", 0)))
+            height = px2mm(int(attrs.get("height", 0)))
             if self.pdf.y + height > self.pdf.page_break_trigger:
                 self.pdf.add_page(same=True)
             y = self.pdf.get_y()
@@ -710,6 +713,7 @@ class HTML2FPDF(HTMLParser):
         if tag == "p":
             self.pdf.ln(self.h)
             self.align = ""
+            self.h = px2mm(self.font_size)
         if tag in ("ul", "ol"):
             self.indent -= 1
             self.bullet.pop()
@@ -772,7 +776,7 @@ class HTML2FPDF(HTMLParser):
             self.font_face = face
         if size:
             self.font_size = size
-            self.h = size / 72 * 25.4
+            self.h = px2mm(size)
             LOGGER.debug("H %s", self.h)
         style = "".join(s for s in ("b", "i", "u") if self.style.get(s)).upper()
         if (self.font_face, style) != (self.pdf.font_family, self.pdf.font_style):
