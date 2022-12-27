@@ -18,6 +18,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.6.1] - not released yet
 ### Added
+* ensured support for Python 3.11
 * the `x` parameter of [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image) now accepts a value of `"C"` / `Align.C` / `"R"` / `Align.R` to horizontally position the image centered or aligned right
 * support for `[]()` links when `markdown=True`
 * support for `line-height` attribute of paragraph (`<p>`) in `write_html()` - thanks to @Bubbu0129
@@ -28,6 +29,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 ### Fixed
 * a `ValueError: Incoherent hierarchy` could be raised when using `write_html()` with some headings hierarchy
 * performance issue with adding large images with `FlateDecode` image filter
+* image (`<img>`) without `height` attribute overlaps with the following content [#632](https://github.com/PyFPDF/fpdf2/issues/632)
 
 ## [2.6.0] - 2022-11-20
 ### Added
