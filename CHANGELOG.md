@@ -18,7 +18,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.6.1] - not released yet
 ### Added
-* support for PDF encryption (RC4 and AES-128): https://pyfpdf.github.io/fpdf2/Encryption.html
+* support for PDF encryption (RC4 and AES-128): https://pyfpdf.github.io/fpdf2/Encryption.html - thanks to @andersonhc
 * ensured support for Python 3.11
 * the `x` parameter of [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image) now accepts a value of `"C"` / `Align.C` / `"R"` / `Align.R` to horizontally position the image centered or aligned right
 * support for `[]()` links when `markdown=True`
@@ -28,10 +28,10 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
   Hence calling `set_link()` is not needed anymore after creating a link with `add_link()`.
 * `write_html()` now generates warnings for unclosed HTML tags, unless `warn_on_tags_not_matching=False` is set
 ### Fixed
-* a `ValueError: Incoherent hierarchy` could be raised when using `write_html()` with some headings hierarchy
-* performance issue with adding large images with `FlateDecode` image filter
+* `write_html`: a `ValueError: Incoherent hierarchy` could be raised with some headings hierarchy
 * `write_html`: `<img>` without `height` attribute overlaps with the following content [#632](https://github.com/PyFPDF/fpdf2/issues/632) - thanks to @Bubbu0129
-* Fix support for upper case font file name [#638](https://github.com/PyFPDF/fpdf2/issues/638)
+* performance issue with adding large images with `FlateDecode` image filter
+* fix support for upper case font file name [#638](https://github.com/PyFPDF/fpdf2/issues/638) - thanks to @CY-Qiu
 
 ## [2.6.0] - 2022-11-20
 ### Added
