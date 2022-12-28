@@ -1,8 +1,9 @@
+# pylint: disable=protected-access
 from pathlib import Path
 
 from fpdf import FPDF
 from fpdf.enums import AccessPermission, EncryptionMethod
-from test.conftest import assert_pdf_equal, EPOCH
+from test.conftest import assert_pdf_equal
 
 HERE = Path(__file__).resolve().parent
 
@@ -44,7 +45,7 @@ def test_encryption_rc4(tmp_path):
     pdf.set_font("helvetica", size=12)
     pdf.cell(txt="hello world")
     pdf.set_encryption(owner_password="fpdf2", permissions=AccessPermission.all())
-    assert_pdf_equal(pdf, HERE / "encryption_rc4.pdf", tmp_path, at_epoch=True)
+    assert_pdf_equal(pdf, HERE / "encryption_rc4.pdf", tmp_path)
 
 
 def test_encryption_rc4_permissions(tmp_path):
@@ -58,9 +59,7 @@ def test_encryption_rc4_permissions(tmp_path):
         owner_password="fpdf2",
         permissions=AccessPermission.PRINT_LOW_RES | AccessPermission.PRINT_HIGH_RES,
     )
-    assert_pdf_equal(
-        pdf, HERE / "encryption_rc4_permissions.pdf", tmp_path, at_epoch=True
-    )
+    assert_pdf_equal(pdf, HERE / "encryption_rc4_permissions.pdf", tmp_path)
 
 
 def test_no_encryption(tmp_path):
@@ -80,7 +79,13 @@ def test_no_encryption(tmp_path):
         encryption_method=EncryptionMethod.NO_ENCRYPTION,
         permissions=AccessPermission.none(),
     )
-    assert_pdf_equal(pdf, HERE / "no_encryption.pdf", tmp_path, at_epoch=True)
+    assert_pdf_equal(pdf, HERE / "no_encryption.pdf", tmp_path)
+
+
+def test_encryption_empty_user_password(tmp_path):
+    pdf = FPDF()
+    pdf.set_encryption(owner_password="fpdf2", user_password="")
+    assert_pdf_equal(pdf, HERE / "encryption_empty_user_password.pdf", tmp_path)
 
 
 def test_encryption_rc4_user_password(tmp_path):
@@ -100,9 +105,7 @@ def test_encryption_rc4_user_password(tmp_path):
         user_password="654321",
         permissions=AccessPermission.PRINT_LOW_RES | AccessPermission.PRINT_HIGH_RES,
     )
-    assert_pdf_equal(
-        pdf, HERE / "encryption_rc4_user_password.pdf", tmp_path, at_epoch=True
-    )
+    assert_pdf_equal(pdf, HERE / "encryption_rc4_user_password.pdf", tmp_path)
 
 
 def test_encryption_aes128(tmp_path):
@@ -127,7 +130,7 @@ def test_encryption_aes128(tmp_path):
         permissions=AccessPermission.none(),
     )
     pdf._security_handler.get_initialization_vector = fixed_iv
-    assert_pdf_equal(pdf, HERE / "encryption_aes128.pdf", tmp_path, at_epoch=True)
+    assert_pdf_equal(pdf, HERE / "encryption_aes128.pdf", tmp_path)
 
 
 def test_encrypt_metadata(tmp_path):
@@ -146,4 +149,4 @@ def test_encrypt_metadata(tmp_path):
         encrypt_metadata=True,
     )
     pdf.set_xmp_metadata(XMP_METADATA)
-    assert_pdf_equal(pdf, HERE / "encrypt_metadata.pdf", tmp_path, at_epoch=True)
+    assert_pdf_equal(pdf, HERE / "encrypt_metadata.pdf", tmp_path)

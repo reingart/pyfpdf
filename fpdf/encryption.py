@@ -8,10 +8,13 @@ from .syntax import create_dictionary_string as pdf_dict, build_obj_dict
 
 # try to use cryptography for AES encryption
 try:
-    from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+    from cryptography.hazmat.primitives.ciphers import Cipher, modes
+    from cryptography.hazmat.primitives.ciphers.algorithms import AES128
     from cryptography.hazmat.primitives.padding import PKCS7
-except ImportError:
-    Cipher = None
+
+    import_error = None
+except ImportError as error:
+    import_error = error
 
 
 class ARC4:
@@ -121,21 +124,21 @@ class StandardSecurityHandler:
         self.fpdf = fpdf
         self.access_permission = (
             0b11111111111111111111000011000000
-            if (permission is None)
+            if permission is None
             else (0b11111111111111111111000011000000 | permission)
         )
         self.owner_password = owner_password
-        self.user_password = user_password if (user_password) else ""
-        self.encryption_method = (
-            encryption_method if (encryption_method) else EncryptionMethod.RC4
-        )
+        self.user_password = user_password if user_password else ""
+        self.encryption_method = encryption_method
         self.cf = None
         self.key_length = 128
 
         if self.encryption_method == EncryptionMethod.AES_128:
-            if Cipher is None:
+            if import_error:
                 raise EnvironmentError(
-                    "cryptography not available - Try: 'pip install cryptography' or use another encryption method"
+                    "cryptography module not available"
+                    " - Try: 'pip install cryptography' or use RC4 encryption method"
+                    f" - Import error was: {import_error}"
                 )
             self.v = 4
             self.r = 4
@@ -215,9 +218,9 @@ class StandardSecurityHandler:
         padder = PKCS7(self.key_length).padder()
         padded_data = padder.update(data)
         padded_data += padder.finalize()
-        cipher = Cipher(algorithms.AES128(key), modes.CBC(iv))
-        e = cipher.encryptor()
-        data = e.update(padded_data) + e.finalize()
+        cipher = Cipher(AES128(key), modes.CBC(iv))
+        encryptor = cipher.encryptor()
+        data = encryptor.update(padded_data) + encryptor.finalize()
         iv.extend(data)
         return iv
 

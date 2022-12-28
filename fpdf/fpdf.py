@@ -55,6 +55,7 @@ from .enums import (
     Align,
     AnnotationFlag,
     AnnotationName,
+    EncryptionMethod,
     FileAttachmentAnnotationName,
     PageLayout,
     PageMode,
@@ -368,12 +369,25 @@ class FPDF(GraphicsStateMixin):
         self,
         owner_password,
         user_password=None,
-        encryption_method=None,
+        encryption_method=EncryptionMethod.RC4,
         permissions=AccessPermission.all(),
         encrypt_metadata=False,
     ):
         """ "
-        Creates a security handler that will be used at output() to encrypt the document streams and strings
+        Activate encryption of the document content.
+
+        Args:
+            owner_password (str): mandatory. The owner password allows to perform any change on the document,
+                including removing all encryption and access permissions.
+            user_password (str): optional. If a user password is set, the content of the document will be encrypted
+                and a password prompt displayed when a user opens the document.
+                The document will only be displayed after either the user or owner password is entered.
+            encryption_method (fpdf.enums.EncryptionMethod, str): algorithm to be used to encrypt the document.
+                Defaults to RC4.
+            permissions (fpdf.enums.AccessPermission): specify access permissions granted
+                when the document is opened with user access. Defaults to ALL.
+            encrypt_metadata (bool): whether to also encrypt document metadata (author, creation date, etc.).
+                Defaults to False.
         """
         self._security_handler = StandardSecurityHandler(
             self,

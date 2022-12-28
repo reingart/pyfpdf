@@ -16,9 +16,7 @@ class SignatureFlag(IntEnum):
 
 
 class CoerciveEnum(Enum):
-    """
-    An enumeration that provides a helper to coerce strings into enumeration members.
-    """
+    "An enumeration that provides a helper to coerce strings into enumeration members."
 
     @classmethod
     def coerce(cls, value):
@@ -300,9 +298,7 @@ class TextMarkupType(CoerciveEnum):
 
 
 class BlendMode(CoerciveEnum):
-    """
-    An enumeration of the named standard named blend functions supported by PDF.
-    """
+    "An enumeration of the named standard named blend functions supported by PDF."
 
     NORMAL = Name("Normal")
     '''"Selects the source color, ignoring the backdrop."'''
@@ -513,9 +509,7 @@ class PathPaintRule(CoerciveEnum):
 
 
 class ClippingPathIntersectionRule(CoerciveEnum):
-    """
-    An enumeration of the PDF drawing directives that define a path as a clipping path.
-    """
+    "An enumeration of the PDF drawing directives that define a path as a clipping path."
 
     NONZERO = "W"
     """
@@ -589,9 +583,7 @@ class StrokeJoinStyle(CoerciveIntEnum):
 
 
 class PDFStyleKeys(Enum):
-    """
-    An enumeration of the graphics state parameter dictionary keys.
-    """
+    "An enumeration of the graphics state parameter dictionary keys."
 
     FILL_ALPHA = Name("ca")
     BLEND_MODE = Name("BM")  # shared between stroke and fill
@@ -641,35 +633,35 @@ class FontDescriptorFlags(Flag):
 
 
 class AccessPermission(IntFlag):
-    """Permissin flags will translate as a integer on the encryption dictionary"""
+    "Permission flags will translate as an integer on the encryption dictionary"
 
     PRINT_LOW_RES = 0b000000000100
-    """ Print the document """
+    "Print the document"
 
     MODIFY = 0b000000001000
-    """ Modify the contents of the document """
+    "Modify the contents of the document"
 
     COPY = 0b000000010000
-    """ Copy or extract text and graphics from the document """
+    "Copy or extract text and graphics from the document"
 
     ANNOTATION = 0b000000100000
-    """ Add or modify text annotations """
+    "Add or modify text annotations"
 
     FILL_FORMS = 0b000100000000
-    """ Fill in existing interactive form fields """
+    "Fill in existing interactive form fields"
 
     COPY_FOR_ACCESSIBILITY = 0b001000000000
-    """ Extract text and graphics in support of accessibility to users with disabilities """
+    "Extract text and graphics in support of accessibility to users with disabilities"
 
     ASSEMBLE = 0b010000000000
-    """ Insert, rotate or delete pages and create bookmarks or thumbnail images """
+    "Insert, rotate or delete pages and create bookmarks or thumbnail images"
 
     PRINT_HIGH_RES = 0b100000000000
-    """ Print document at the highest resolution """
+    "Print document at the highest resolution"
 
     @classmethod
     def all(cls):
-        """All flags enabled"""
+        "All flags enabled"
         result = 0
         for permission in list(AccessPermission):
             result = result | permission
@@ -677,12 +669,12 @@ class AccessPermission(IntFlag):
 
     @classmethod
     def none(cls):
-        """All flags disabled"""
+        "All flags disabled"
         return 0
 
 
 class EncryptionMethod(Enum):
-    """Algorithm to be used to encrypt the document"""
+    "Algorithm to be used to encrypt the document"
 
     NO_ENCRYPTION = 0
     RC4 = 1
