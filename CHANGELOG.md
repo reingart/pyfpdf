@@ -30,7 +30,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 ### Fixed
 * `write_html`: a `ValueError: Incoherent hierarchy` could be raised with some headings hierarchy
 * `write_html`: `<img>` without `height` attribute overlaps with the following content [#632](https://github.com/PyFPDF/fpdf2/issues/632) - thanks to @Bubbu0129
-* performance issue with adding large images with `FlateDecode` image filter
+* performance issue with adding large images with `FlateDecode` image filter [#644](https://github.com/PyFPDF/fpdf2/pull/644) - thanks to @Markovvn1
 * fix support for upper case font file name [#638](https://github.com/PyFPDF/fpdf2/issues/638) - thanks to @CY-Qiu
 
 ## [2.6.0] - 2022-11-20
