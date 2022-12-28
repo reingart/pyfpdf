@@ -50,6 +50,7 @@ from .annotations import (
     DEFAULT_ANNOT_FLAGS,
 )
 from .deprecation import WarnOnDeprecatedModuleAttributes
+from .encryption import StandardSecurityHandler
 from .enums import (
     Align,
     AnnotationFlag,
@@ -65,6 +66,7 @@ from .enums import (
     YPos,
     Corner,
     FontDescriptorFlags,
+    AccessPermission,
     CharVPos,
 )
 from .errors import FPDFException, FPDFPageFormatException, FPDFUnicodeEncodingException
@@ -349,6 +351,7 @@ class FPDF(GraphicsStateMixin):
         self.compress = True  # switch enabling pages content compression
         self.pdf_version = "1.3"  # Set default PDF version No.
         self.creation_date = datetime.now(timezone.utc)
+        self._security_handler = None
 
         self._current_draw_context = None
         self._drawing_graphics_state_registry = drawing.GraphicsStateDictRegistry()
@@ -360,6 +363,26 @@ class FPDF(GraphicsStateMixin):
 
         # final buffer holding the PDF document in-memory - defined only after calling output():
         self.buffer = None
+
+    def set_encryption(
+        self,
+        owner_password,
+        user_password=None,
+        encryption_method=None,
+        permissions=AccessPermission.all(),
+        encrypt_metadata=False,
+    ):
+        """ "
+        Creates a security handler that will be used at output() to encrypt the document streams and strings
+        """
+        self._security_handler = StandardSecurityHandler(
+            self,
+            owner_password=owner_password,
+            user_password=user_password,
+            permission=permissions,
+            encryption_method=encryption_method,
+            encrypt_metadata=encrypt_metadata,
+        )
 
     def write_html(self, text, *args, **kwargs):
         """
