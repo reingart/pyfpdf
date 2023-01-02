@@ -13,8 +13,8 @@ def test_skew(tmp_path):
     img_filepath = HERE / "image/png_images/66ac49ef3f48ac9482049e1ab57a53e9.png"
     with pdf.skew(ax=45, x=x, y=y):
         pdf.image(img_filepath, x=x, y=y)
-    with pdf.skew(ax=45, ay=30, x=x+20, y=y-20):
-        pdf.image(img_filepath, x=x+20, y=y-20)
+    with pdf.skew(ax=45, ay=30, x=x + 20, y=y - 20):
+        pdf.image(img_filepath, x=x + 20, y=y - 20)
     pdf.set_line_width(2)
     pdf.set_draw_color(240)
     pdf.set_fill_color(r=230, g=30, b=180)

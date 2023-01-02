@@ -19,7 +19,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 ## [2.6.1] - not released yet
 ### Added
 * support for PDF **encryption** (RC4 and AES-128): [documentation page](https://pyfpdf.github.io/fpdf2/Encryption.html) - thanks to @andersonhc
-* [`FPDF.skew()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.skew) - Documentation: [documentation page](https://pyfpdf.github.io/fpdf2/Transformations.html) - thanks to @erap129
+* [`FPDF.skew()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.skew) - New method: [documentation page](https://pyfpdf.github.io/fpdf2/Transformations.html) - thanks to @erap129
 * ensured support for Python 3.11
 * [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image): the `x` parameter now accepts a value of `"C"` / `Align.C` / `"R"` / `Align.R` to horizontally position the image centered or aligned right
 * [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image): dimensions can now be provided to set the intrinsic image width & height before storing it in the PDF
