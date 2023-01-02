@@ -2470,6 +2470,40 @@ class FPDF(GraphicsStateMixin):
 
     @check_page
     @contextmanager
+    def skew(self, ax=0, ay=0, x=None, y=None):
+        """
+        This method allows to perform a skew transformation originating from a given center.
+        It must be used as a context-manager using `with`:
+
+            with skew(ax=15, ay=15, x=x, y=y):
+                pdf.something()
+
+        The skew transformation affects all elements which are printed inside the indented
+        context (with the exception of clickable areas).
+
+        Args:
+            ax (float): angle of skew in the horizontal direction in degrees
+            ay (float): angle of skew in the vertical direction in degrees
+            x (float): abscissa of the center of the skew transformation
+            y (float): ordinate of the center of the skew transformation
+        """
+        lim_val = 2**32
+        if x is None:
+            x = self.x
+        if y is None:
+            y = self.y
+        ax = max(min(math.tan(ax * (math.pi / 180)), lim_val), -lim_val)
+        ay = max(min(math.tan(ay * (math.pi / 180)), lim_val), -lim_val)
+        cx, cy = x * self.k, (self.h - y) * self.k
+        with self.local_context():
+            self._out(
+                f"1 {ay:.5f} {ax:.5f} 1 {cx:.2f} {cy:.2f} cm "
+                f"1 0 0 1 -{cx:.2f} -{cy:.2f} cm"
+            )
+            yield
+
+    @check_page
+    @contextmanager
     def local_context(
         self,
         font_family=None,

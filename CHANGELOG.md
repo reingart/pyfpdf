@@ -18,6 +18,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.6.1] - not released yet
 ### Added
+* `skew` function (similar to `rotation`), along with relevant unit tests and documentation. - thanks to @erap129
 * support for PDF encryption (RC4 and AES-128): https://pyfpdf.github.io/fpdf2/Encryption.html - thanks to @andersonhc
 * ensured support for Python 3.11
 * [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image): the `x` parameter of now accepts a value of `"C"` / `Align.C` / `"R"` / `Align.R` to horizontally position the image centered or aligned right
