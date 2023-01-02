@@ -215,6 +215,11 @@ This will fill transparent areas of your images with color (usually black).
 _cf._ also documentation on [controlling transparency](Transparency.md).
 
 
+## Page background ##
+
+_cf._ [Per-page format, orientation and background](PageFormatAndOrientation.md#per-page-format-orientation-and-background)
+
+
 ## Sharing the image cache among FPDF instances ##
 
 Image parsing is often the most CPU & memory intensive step when inserting pictures in a PDF.

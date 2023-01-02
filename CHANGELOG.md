@@ -18,10 +18,10 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.6.1] - not released yet
 ### Added
-* `skew` function (similar to `rotation`), along with relevant unit tests and documentation. - thanks to @erap129
-* support for PDF encryption (RC4 and AES-128): https://pyfpdf.github.io/fpdf2/Encryption.html - thanks to @andersonhc
+* support for PDF **encryption** (RC4 and AES-128): [documentation page](https://pyfpdf.github.io/fpdf2/Encryption.html) - thanks to @andersonhc
+* [`FPDF.skew()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.skew) - Documentation: [documentation page](https://pyfpdf.github.io/fpdf2/Transformations.html) - thanks to @erap129
 * ensured support for Python 3.11
-* [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image): the `x` parameter of now accepts a value of `"C"` / `Align.C` / `"R"` / `Align.R` to horizontally position the image centered or aligned right
+* [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image): the `x` parameter now accepts a value of `"C"` / `Align.C` / `"R"` / `Align.R` to horizontally position the image centered or aligned right
 * [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image): dimensions can now be provided to set the intrinsic image width & height before storing it in the PDF
 * [`FPDF.cell()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.cell) & [`FPDF.multi_cell()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell): support for `[]()` hyperlinks when `markdown=True`
 * [`FPDF.write_html()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html): support for `line-height` attribute of paragraph (`<p>`) - thanks to @Bubbu0129
