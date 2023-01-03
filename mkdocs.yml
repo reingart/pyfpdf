@@ -119,12 +119,12 @@ nav:
 - 'Graphics Content':
   - 'Images':                         'Images.md'
   - 'Shapes':                         'Shapes.md'
+  - 'Transformations':                'Transformations.md'
   - 'Transparency':                   'Transparency.md'
   - 'Barcodes':                       'Barcodes.md'
   - 'Drawing':                        'Drawing.md'
   - 'SVG':                            'SVG.md'
   - 'Charts & Graphs':                'Maths.md'
-  - 'Transformations':                'Transformations.md'
 - 'PDF Features':
   - 'Links':                          'Links.md'
   - 'Metadata':                       'Metadata.md'
@@ -142,7 +142,7 @@ nav:
   - 'Usage in web APIs':              'UsageInWebAPI.md'
   - 'Database storage':               'DatabaseStorage.md'
 - 'Development':
-  - 'Development Guidelines':         'Development.md'
+  - 'Development guidelines':         'Development.md'
   - 'Logging':                        'Logging.md'
 - 'API':                            'https://pyfpdf.github.io/fpdf2/fpdf/'
 - 'FAQ':                            'FAQ.md'

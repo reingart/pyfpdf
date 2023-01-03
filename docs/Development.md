@@ -1,10 +1,10 @@
-# Development #
+# Development
 
 This page has summary information about developing the PyPDF library.
 
 [TOC]
 
-## History ##
+## History
 
 This project, `fpdf2` is a _fork_ of the `PyFPDF` project, which can be found
 [on GitHub at reingart/pyfpdf](https://github.com/reingart/pyfpdf)
@@ -29,7 +29,7 @@ for the [`cell()` method](fpdf/fpdf.html#fpdf.fpdf.FPDF.cell), the default value
 It used to be `0` and is now set to the current value of `FPDF.font_size`.
 
 
-## Usage ##
+## Usage
 
 - [PyPI download stats](https://pypistats.org/packages/fpdf2) - Downloads per release on [Pepy](https://pepy.tech/project/fpdf2)
 - packages using `fpdf2` can be listed using [GitHub Dependency graph: Dependents](https://github.com/PyFPDF/fpdf2/network/dependents),
@@ -37,7 +37,7 @@ It used to be `0` and is now set to the current value of `FPDF.font_size`.
 Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2).
 
 
-## Repository structure ##
+## Repository structure
 
   * `.github/` - GitHub Actions configuration
   * `docs/` - documentation folder
@@ -56,8 +56,7 @@ Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2)
   * `.banditrc.yml` - configuration for [bandit](https://pypi.org/project/bandit/)
   * `.pylintrc` - configuration for [Pylint](http://pylint.pycqa.org/en/latest/)
 
-## Installing fpdf2 from a local git repository ##
-
+## Installing fpdf2 from a local git repository
 ```
 pip install --editable $path/to/fpdf/repo
 ```
@@ -65,8 +64,7 @@ pip install --editable $path/to/fpdf/repo
 This will link the installed Python package to the repository location,
 basically meaning any changes to the code package will get reflected directly in your environment.
 
-## Code auto-formatting ##
-
+## Code auto-formatting
 We use [black](https://github.com/psf/black) as a code prettifier.
 This _"uncomprimising Python code formatter"_ must be installed
 in your development environment in order to auto-format source code before any commit:
@@ -75,8 +73,7 @@ pip install black
 black .  # inside fpdf2 root directory
 ```
 
-## Linting ##
-
+## Linting
 We use [pylint](https://github.com/PyCQA/pylint/) as a static code analyzer
 to detect potential issues in the code.
 
@@ -84,7 +81,7 @@ In case of special "false positive" cases,
 checks can be disabled locally with `#pylint disable=XXX` code comments,
 or globally through the `.pylintrc` file.
 
-## Pre-commit hook ##
+## Pre-commit hook
 If you use a UNIX system, you can place the following shell code
 in `.git/hooks/pre-commit` in order to always invoke `black` & `pylint`
 before every commit:
@@ -114,10 +111,9 @@ or `black` detect non-properly formatted code.
 In the later case though, it will auto-format your code
 and you will just have to run `git commit -a` again.
 
-## Testing ##
+## Testing
 
 ### Running tests
-
 To run tests, `cd` into `fpdf2` repository, install the dependencies using
 `pip install -r test/requirements.txt`,  and run `pytest`.
 
@@ -130,7 +126,6 @@ If you do not want to run tests for all versions of python, run `tox -e py39`
 (or your version of Python).
 
 ### Why is a test failing?
-
 If there are some failing tests after you made a code change,
 it is usually because **there are difference between an expected PDF generated and the actual one produced**.
 
@@ -155,7 +150,6 @@ expected_qpdf.pdf
 ```
 
 ### assert_pdf_equal & writing new tests
-
 When a unit test generates a PDF, it is recommended to use the `assert_pdf_equal`
 utility function in order to validate the output.
 It relies on the very handy [qpdf](https://github.com/qpdf/qpdf) CLI program
@@ -172,8 +166,7 @@ check the output in case of a failed test.
 In order to generate a "reference" PDF file, simply call `assert_pdf_equal`
 once with `generate=True`.
 
-## GitHub pipeline ##
-
+## GitHub pipeline
 A [GitHub Actions](https://help.github.com/en/actions/reference) pipeline
 is executed on every commit on the `master` branch, and for every _Pull Request_.
 
@@ -182,8 +175,7 @@ static code analysis with `pylint`, unit tests...
 _Pull Requests_ submitted must pass all those checks in order to be approved.
 Ask maintainers through comments if some errors in the pipeline seem obscure to you.
 
-### Release checklist ###
-
+### Release checklist
 1. complete `CHANGELOG.md` and add the version & date of the new release
 2. bump `FPDF_VERSION` in `fpdf/fpdf.py`
 3. `git commit` & `git push`
@@ -192,8 +184,7 @@ Ask maintainers through comments if some errors in the pipeline seem obscure to 
 It will create a new `git` tag.
 6. Announce the release on [r/pythonnews](https://www.reddit.com/r/pythonnews/)
 
-## Documentation ##
-
+## Documentation
 The standalone documentation is in the `docs` subfolder,
 written in [Markdown](https://daringfireball.net/projects/markdown/).
 Building instructions are contained in the configuration file `mkdocs.yml`
@@ -216,8 +207,7 @@ To preview the API documentation, launch a local rendering server with:
 
     pdoc --html -o public/ fpdf --http :
 
-## PDF spec & new features ##
-
+## PDF spec & new features
 The **PDF 1.7 spec** is available on Adobe website:
 [PDF32000_2008.pdf](https://opensource.adobe.com/dc-acrobat-sdk-docs/standards/pdfstandards/pdf/PDF32000_2008.pdf).
 
@@ -225,3 +215,28 @@ It may be intimidating at first, but while technical, it is usually quite clear 
 
 It is also a great place to look for new features for `fpdf2`:
 there are still many PDF features that this library does not support.
+
+## Useful tools to manipulate PDFs
+
+### qpdf
+
+[qpdf](https://qpdf.sourceforge.io/) is a very powerful tool to analyze PDF documents.
+
+One of it most useful features is the [QDF mode](https://qpdf.readthedocs.io/en/stable/qdf.html) that can convert any PDF file to a human-readable, decompressed & annotated new PDF document:
+
+```
+qpdf --qdf doc.pdf doc-qdf.pdf
+```
+
+This is extremely useful to peek into the PDF document structure.
+
+### set_pdf_xref.py
+
+[set_pdf_xref.py](https://github.com/Lucas-C/dotfiles_and_notes/blob/master/languages/python/set_pdf_xref.py) is a small Python script that can **rebuild a PDF xref table**.
+
+This is very useful, as a PDF with an invalid xref cannot be opened.
+An xref table is basically an index of the document internal sections.
+When manually modifying a PDF file (for example one produced by `qpdf --qdf`),
+if the characters count in any of its sections changes, the xref table must be rebuilt.
+
+With `set_pdf_xref.py doc.pdf --inplace`, you can change some values inside any PDF file, and then quickly make it valid again to be viewed in a PDF viewer.
