@@ -145,7 +145,6 @@ def test_inserting_same_page_link_twice(tmp_path):
         h=pdf.eph,
         link=pdf.add_link(page=2),
     )
-    assert pdf.add_link(page=2) == pdf.add_link(page=2)
     assert_pdf_equal(pdf, HERE / "inserting_same_page_link_twice.pdf", tmp_path)
 
 

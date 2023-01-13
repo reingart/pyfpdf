@@ -2005,12 +2005,9 @@ class FPDF(GraphicsStateMixin):
             left=x * self.k,
             zoom=zoom,
         )
-        try:
-            return next(i for i, l in self.links.items() if l == link)
-        except StopIteration:
-            link_index = len(self.links) + 1
-            self.links[link_index] = link
-            return link_index
+        link_index = len(self.links) + 1
+        self.links[link_index] = link
+        return link_index
 
     def set_link(self, link, y=0, x=0, page=-1, zoom="null"):
         """
