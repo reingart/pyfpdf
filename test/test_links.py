@@ -160,3 +160,12 @@ def test_inserting_link_to_non_exising_page():
     )
     with pytest.raises(ValueError):
         pdf.output()
+
+
+def test_inserting_link_with_no_page_number():
+    pdf = FPDF()
+    link = pdf.add_link()
+    pdf.add_page()
+    pdf.set_font("helvetica", size=12)
+    with pytest.raises(ValueError):
+        pdf.cell(txt="Page 1", link=link)

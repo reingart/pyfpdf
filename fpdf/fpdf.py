@@ -2058,6 +2058,10 @@ class FPDF(GraphicsStateMixin):
                     link in self.links
                 ), f"Link with an invalid index: {link} (doc #links={len(self.links)})"
                 dest = self.links[link]
+                if not dest.page_number:
+                    raise ValueError(
+                        f"Cannot insert link {link} with no page number assigned"
+                    )
         link_annot = AnnotationDict(
             "Link",
             x=x * self.k,
