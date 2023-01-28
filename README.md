@@ -242,7 +242,7 @@ Contributions of any kind welcome!
 
 [![Contributors map](https://pyfpdf.github.io/fpdf2/contributors-map-small.png)](https://pyfpdf.github.io/fpdf2/contributors.html)
 
-_(screenshot from June 2021, click on the map above to access an up-to-date online version)_
+_(screenshot from January 2023, click on the map above to access an up-to-date online version)_
 
 ## Community, related tools, alternative libraries
 
