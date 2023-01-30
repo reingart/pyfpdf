@@ -16,6 +16,7 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
+## [2.6.2] - Not released yet
 ### Added
 - new translation of the tutorial in [简体中文](https://pyfpdf.github.io/fpdf2/Tutorial-zh.html) - thanks to @Bubbu0129
 ### Fixed
