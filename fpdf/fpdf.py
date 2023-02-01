@@ -1353,7 +1353,6 @@ class FPDF(GraphicsStateMixin):
             point_7 = (x, y + h - r)
 
         if style.is_fill:
-
             self.polyline(
                 [
                     point_1,

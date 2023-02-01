@@ -167,6 +167,7 @@ def render_pdf_primitive(primitive):
 # rendering procedure not to emit an explicit alpha field for this graphics state,
 # causing it to be inherited from the parent.
 
+
 # this weird inheritance is used because for some reason normal NamedTuple usage doesn't
 # allow overriding __new__, even though it works just as expected this way.
 class DeviceRGB(
