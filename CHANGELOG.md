@@ -20,7 +20,8 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 ### Added
 - new translation of the tutorial in [简体中文](https://pyfpdf.github.io/fpdf2/Tutorial-zh.html) - thanks to @Bubbu0129
 ### Fixed
-- hyperlinks were not working on encrypted files
+- hyperlinks were not working on encrypted files - thanks to @andersonhc
+- all `TitleStyle` constructor parameters are now effectively optional
 
 ## [2.6.1] - 2023-01-13
 ### Added

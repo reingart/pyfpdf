@@ -4427,7 +4427,11 @@ class FPDF(GraphicsStateMixin):
     def _apply_style(self, title_style):
         prev_font = (self.font_family, self.font_style, self.font_size_pt)
         self.set_font(
-            title_style.font_family, title_style.font_style, title_style.font_size_pt
+            title_style.font_family or self.font_family,
+            title_style.font_style
+            if title_style.font_style is not None
+            else self.font_style,
+            title_style.font_size_pt or self.font_size_pt,
         )
         prev_text_color = self.text_color
         if title_style.color is not None:
