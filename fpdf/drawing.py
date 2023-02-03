@@ -1380,8 +1380,7 @@ class GraphicsStyle:
                 raise TypeError(
                     f"stroke_dash_pattern {value} must be a number or sequence of numbers"
                 ) from None
-            else:
-                result = (*accum,)
+            result = (*accum,)
 
         super().__setattr__("_stroke_dash_pattern", result)
 
