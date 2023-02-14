@@ -3561,6 +3561,7 @@ class FPDF(GraphicsStateMixin):
         title=None,
         alt_text=None,
         dims=None,
+        keep_aspect_ratio=False,
     ):
         """
         Put an image on the page.
@@ -3570,6 +3571,7 @@ class FPDF(GraphicsStateMixin):
         * one explicit dimension, the other being calculated automatically
           in order to keep the original proportions
         * no explicit dimension, in which case the image is put at 72 dpi.
+        * explicit width and height (expressed in user units) and `keep_aspect_ratio=True`
 
         **Remarks**:
         * if an image is used several times, only one copy is embedded in the file.
@@ -3602,6 +3604,9 @@ class FPDF(GraphicsStateMixin):
                 but the image will still be rendered on the page with the width (`w`) and height (`h`)
                 provided as parameters. Note also that the `.oversized_images` attribute of FPDF
                 provides an automated way to auto-adjust those intrinsic image dimensions.
+            keep_aspect_ratio (bool): ensure the image fits in the rectangle defined by `x`, `y`, `w` & `h`
+                while preserving its original aspect ratio. Defaults to False.
+                Only meaningful if both `w` & `h` are provided.
 
         Returns: an instance of `ImageInfo`
         """
@@ -3633,6 +3638,15 @@ class FPDF(GraphicsStateMixin):
         if self.oversized_images and info["usages"] == 1 and not dims:
             info = self._downscale_image(name, img, info, w, h)
 
+        if keep_aspect_ratio:
+            ratio = info.width / info.height
+            if h * ratio < w:
+                x += (w - h * ratio) / 2
+                w = h * ratio
+            else:  # => too wide, limiting width:
+                y += (h - w / ratio) / 2
+                h = w / ratio
+
         # Flowing mode
         if y is None:
             self._perform_page_break_if_need_be(h)
@@ -3641,6 +3655,10 @@ class FPDF(GraphicsStateMixin):
         if x is None:
             x = self.x
         elif not isinstance(x, Number):
+            if keep_aspect_ratio:
+                raise ValueError(
+                    "FPDF.image(): 'keep_aspect_ratio' cannot be used with an enum value provided to `x`"
+                )
             x = Align.coerce(x)
             if x == Align.C:
                 x = (self.w - w) / 2

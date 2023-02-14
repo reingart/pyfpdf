@@ -2,7 +2,8 @@
 
 When rendering an image, its size on the page can be specified in several ways:
 
-* explicit width and height (expressed in user units)
+* explicit width and height (expressed in user units).
+  The image is scaled to those dimensions, unless `keep_aspect_ratio=True` is specified.
 * one explicit dimension, the other being calculated automatically in order to keep the original proportions
 * no explicit dimension, in which case the image is put at 72 dpi
 
@@ -51,13 +52,14 @@ pdf.output("side-by-side.pdf")
 
 ### Fitting an image inside a rectangle ###
 
-This unit test demonstrates how to scale an image vertically to fill a rectangle height, keeping its aspect ratio,
-and ensuring it does overflow the rectangle width in the process:
+When you want to scale an image to fill a rectangle, while keeping its aspect ratio,
+and ensuring it does **not** overflow the rectangle width nor height in the process,
+you can set `w` / `h` and also provide `keep_aspect_ratio=True` to the [`image()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.image) method.
+
+The following unit test illustrates that:
 
 * [test_image_fit.py](https://github.com/PyFPDF/fpdf2/blob/master/test/image/test_image_fit.py)
 * resulting document: [image_fit_in_rect.pdf](https://github.com/PyFPDF/fpdf2/blob/master/test/image/image_fit_in_rect.pdf)
-
-The same approach can be used to scale an image horizontally, ensuring it does not overflow its height.
 
 ### Blending images ###
 
