@@ -3,9 +3,11 @@ from io import BytesIO
 from math import ceil
 from urllib.request import urlopen
 from pathlib import Path
+import logging
 
 try:
     from PIL import Image, TiffImagePlugin
+    from PIL import ImageCms
 
     try:
         from PIL.Image import Resampling
@@ -19,6 +21,7 @@ except ImportError:
 from .errors import FPDFException
 
 
+LOGGER = logging.getLogger(__name__)
 SUPPORTED_IMAGE_FILTERS = ("AUTO", "FlateDecode", "DCTDecode", "JPXDecode")
 
 
@@ -311,6 +314,19 @@ TIFFBitRevTable = [
 ]
 
 
+def iccp_is_valid(iccp):
+    """
+    checks the validity of an iccp profile
+    """
+    try:
+        iccp_io = BytesIO(iccp)
+        profile = ImageCms.getOpenProfile(iccp_io)
+        ImageCms.getProfileInfo(profile)
+        return True
+    except ImageCms.PyCMSError:
+        return False
+
+
 def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
     """
     Args:
@@ -353,6 +369,13 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
     w, h = img.size
     info = {}
 
+    iccp = None
+    if "icc_profile" in img.info:
+        iccp = img.info.get("icc_profile")
+        if not iccp_is_valid(iccp):
+            LOGGER.error("ICCP for %s is invalid", filename)
+            iccp = None
+
     if img_raw_data is not None and not img_altered:
         # if we can use the original image bytes directly we do (JPEG and group4 TIFF only):
         if img.format == "JPEG" and image_filter == "DCTDecode":
@@ -365,6 +388,8 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
                 "w": w,
                 "h": h,
                 "cs": colspace,
+                "iccp": iccp,
+                "dpn": dpn,
                 "bpc": bpc,
                 "f": image_filter,
                 "dp": f"/Predictor 15 /Colors {dpn} /Columns {w}",
@@ -406,6 +431,8 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
                 "data": ccittrawdata,
                 "w": w,
                 "h": h,
+                "iccp": None,
+                "dpn": dpn,
                 "cs": colspace,
                 "bpc": bpc,
                 "f": image_filter,
@@ -477,7 +504,9 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
             "w": w,
             "h": h,
             "cs": colspace,
+            "iccp": iccp,
             "bpc": bpc,
+            "dpn": dpn,
             "f": image_filter,
             "dp": dp,
         }
