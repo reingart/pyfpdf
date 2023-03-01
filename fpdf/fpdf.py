@@ -383,6 +383,7 @@ class FPDF(GraphicsStateMixin):
         self.pdf_version = "1.3"  # Set default PDF version No.
         self.creation_date = datetime.now(timezone.utc)
         self._security_handler = None
+        self._fallback_font_ids = []
 
         self._current_draw_context = None
         self._drawing_graphics_state_registry = drawing.GraphicsStateDictRegistry()
@@ -1797,7 +1798,7 @@ class FPDF(GraphicsStateMixin):
         if fontkey in self.fonts or fontkey in self.core_fonts:
             warnings.warn(f"Core font or font already added '{fontkey}': doing nothing")
             return
-        font = ttLib.TTFont(font_file_path)
+        font = ttLib.TTFont(font_file_path, fontNumber=0)
 
         scale = 1000 / font["head"].unitsPerEm
         default_width = round(scale * font["hmtx"].metrics[".notdef"][0])
@@ -1832,7 +1833,8 @@ class FPDF(GraphicsStateMixin):
 
         # a map unicode_char -> char_width
         char_widths = defaultdict(lambda: default_width)
-        for char in font.getBestCmap().keys():
+        font_cmap = font.getBestCmap().keys()
+        for char in font_cmap:
             # take glyph associated to char
             glyph = font.getBestCmap()[char]
 
@@ -1863,6 +1865,7 @@ class FPDF(GraphicsStateMixin):
             "ttffile": font_file_path,
             "fontkey": fontkey,
             "subset": SubsetMap(map(ord, sbarr)),
+            "cmap": font_cmap,
         }
 
     def set_font(self, family=None, style="", size=0):
@@ -2003,6 +2006,21 @@ class FPDF(GraphicsStateMixin):
         self.font_stretching = stretching
         if self.page > 0:
             self._out(f"BT {stretching:.2f} Tz ET")
+
+    def set_fallback_fonts(self, fallback_fonts):
+        fallback_font_ids = []
+        for fallback_font in fallback_fonts:
+            found = False
+            for fontkey in self.fonts:
+                # will add all font styles on the same family
+                if fontkey.replace("B", "").replace("I", "") == fallback_font.lower():
+                    fallback_font_ids.append(fontkey)
+                    found = True
+            if not found:
+                raise FPDFException(
+                    f"Undefined fallback font: {fallback_font} - Use FPDF.add_font() beforehand"
+                )
+        self._fallback_font_ids = tuple(fallback_font_ids)
 
     def add_link(self, y=0, x=0, page=-1, zoom="null"):
         """
@@ -3117,7 +3135,7 @@ class FPDF(GraphicsStateMixin):
         if not txt:
             return tuple()
         if not markdown:
-            return tuple([Fragment(txt, self._get_current_graphics_state(), self.k)])
+            return self._parse_chars(txt)
         prev_font_style = self.font_style
         styled_txt_frags = tuple(self._markdown_parse(txt))
         page = self.page
@@ -3136,6 +3154,52 @@ class FPDF(GraphicsStateMixin):
         self.set_font(style=prev_font_style)
         self.page = page
         return styled_txt_frags
+
+    def _parse_chars(self, txt):
+        "Check if the font has all the necessary glyphs. If a glyph from a fallback font is used, break into fragments"
+        fragments = []
+        txt_frag = []
+        if not self.is_ttf_font or not self._fallback_font_ids:
+            return tuple([Fragment(txt, self._get_current_graphics_state(), self.k)])
+        font_glyphs = self.current_font["cmap"]
+        for char in txt:
+            if char == "\n" or ord(char) in font_glyphs:
+                txt_frag.append(char)
+            else:
+                if txt_frag:
+                    fragments.append(
+                        Fragment(txt_frag, self._get_current_graphics_state(), self.k)
+                    )
+                    txt_frag = []
+                fallback_font = self._get_fallback_font(
+                    char=char, style=self.font_style
+                )
+                if fallback_font:
+                    gstate = self._get_current_graphics_state()
+                    gstate["font_family"] = fallback_font
+                    frag = Fragment(char, gstate, self.k)
+                    frag.font = self.fonts[fallback_font]
+                    fragments.append(frag)
+                else:
+                    # no fallback font has this character.
+                    # add it anyway with the current font
+                    txt_frag.append(char)
+        if txt_frag:
+            fragments.append(
+                Fragment(txt_frag, self._get_current_graphics_state(), self.k)
+            )
+        return tuple(fragments)
+
+    def _get_fallback_font(self, char, style=""):
+        "returns which fallback font has the requested glyph"
+        if not self._fallback_font_ids:
+            return None
+        for font in self._fallback_font_ids:
+            if not self.fonts[font]["fontkey"].endswith(style):
+                continue
+            if ord(char) in self.fonts[font]["cmap"]:
+                return font
+        return None
 
     def _markdown_parse(self, txt):
         "Split some text into fragments based on styling: **bold**, __italics__, --underlined--"
@@ -3156,6 +3220,11 @@ class FPDF(GraphicsStateMixin):
             fragment = Fragment(txt_frag, gstate, self.k)
             txt_frag = []
             return fragment
+
+        if self.is_ttf_font:
+            font_glyphs = self.current_font["cmap"]
+        else:
+            font_glyphs = []
 
         while txt:
             is_marker = txt[:2] in (
@@ -3191,6 +3260,17 @@ class FPDF(GraphicsStateMixin):
                     gstate["text_color"] = self.MARKDOWN_LINK_COLOR
                 yield Fragment(list(link_text), gstate, self.k, url=link_url)
                 continue
+            if self.is_ttf_font and txt[0] != "\n" and not ord(txt[0]) in font_glyphs:
+                style = ("B" if in_bold else "") + ("I" if in_italics else "")
+                fallback_font = self._get_fallback_font(char=txt[0], style=style)
+                if fallback_font:
+                    if txt_frag:
+                        yield frag()
+                    gstate = self._get_current_graphics_state()
+                    gstate["font_family"] = fallback_font
+                    yield Fragment(txt[0], gstate, self.k)
+                    txt = txt[1:]
+                    continue
             txt_frag.append(txt[0])
             txt = txt[1:]
         if txt_frag:
