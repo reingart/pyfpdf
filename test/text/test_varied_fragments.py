@@ -40,7 +40,7 @@ class FxFPDF(FPDF):
         if text_line:
             text_lines.append(text_line)
         if not text_lines:
-            return False
+            return
         self.ws = 0  # currently only left aligned, so no word spacing
         for text_line_index, text_line in enumerate(text_lines):
             if text_line_index == 0:

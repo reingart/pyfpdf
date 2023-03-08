@@ -469,3 +469,4 @@ class MultiLineBreak:
             return CurrentLine().manual_break(self.justify)
         if current_line.width:
             return current_line.manual_break()
+        return None
