@@ -1,3 +1,6 @@
+> PyFPDF is will no longer receive updates.
+> [fpdf2](https://pypi.org/project/fpdf2/) is the official successor.
+
 pyfpdf: FPDF for Python
 =======================
 
