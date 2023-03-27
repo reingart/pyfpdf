@@ -21,7 +21,6 @@ import pytest
 from fpdf.util import get_process_rss_as_mib, print_mem_usage
 from fpdf.template import Template
 
-
 QPDF_AVAILABLE = bool(shutil.which("qpdf"))
 if not QPDF_AVAILABLE:
     warnings.warn(
@@ -262,13 +261,20 @@ def timeout_after(seconds):
 
 
 def ensure_rss_memory_below(max_in_mib):
+    """
+    Enure there is no unexpected / significant increase between
+    the process RSS memory BEFORE executing the test, and AFTER.
+    """
+
     def actual_decorator(test_func):
         @functools.wraps(test_func)
         def wrapper(*args, **kwargs):
+            start_rss_in_mib = get_process_rss_as_mib()
             test_func(*args, **kwargs)
-            rss_in_mib = get_process_rss_as_mib()
-            if rss_in_mib:
-                assert rss_in_mib < max_in_mib
+            if not start_rss_in_mib:
+                return  # not available under Windows
+            end_rss_in_mib = get_process_rss_as_mib()
+            assert (end_rss_in_mib - start_rss_in_mib) < max_in_mib
 
         return wrapper
 
@@ -279,9 +285,9 @@ def ensure_rss_memory_below(max_in_mib):
 # so we require an opt-in through a CLI argument:
 def pytest_addoption(parser):
     parser.addoption(
-        "--final-memory-usage",
+        "--trace-memory-usage",
         action="store_true",
-        help="At the end of the tests execution, display the current memory usage",
+        help="Trace the memory usage during tests execution",
     )
     parser.addoption(
         "--pympler-summary",
@@ -295,15 +301,26 @@ def pytest_addoption(parser):
     )
 
 
-@pytest.fixture(scope="session", autouse=True)
-def final_memory_usage(request):
-    yield
-    if request.config.getoption("final_memory_usage"):
+@pytest.fixture(scope="module", autouse=True)
+def module_memory_usage(request):
+    if request.config.getoption("trace_memory_usage"):
         gc.collect()
         capmanager = request.config.pluginmanager.getplugin("capturemanager")
         with capmanager.global_and_fixture_disabled():
             print("\n")
-            print_mem_usage("Final memory usage:")
+            print_mem_usage("Memory usage:")
+    yield
+
+
+@pytest.fixture(scope="session", autouse=True)
+def final_memory_usage(request):
+    yield
+    if request.config.getoption("trace_memory_usage"):
+        gc.collect()
+        capmanager = request.config.pluginmanager.getplugin("capturemanager")
+        with capmanager.global_and_fixture_disabled():
+            print("\n")
+            print_mem_usage("Memory usage:")
 
 
 @pytest.fixture(scope="session", autouse=True)

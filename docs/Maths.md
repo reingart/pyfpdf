@@ -128,25 +128,20 @@ columns = [list(df)]  # Get list of dataframe columns
 rows = df.values.tolist()  # Get list of dataframe rows
 data = columns + rows  # Combine columns and rows in one list
 
-# Start pdf creating
 pdf = FPDF()
 pdf.add_page()
 pdf.set_font("Times", size=10)
-line_height = pdf.font_size * 2.5
-col_width = pdf.epw / 4  # distribute content evenly
-
-for row in data:
-    for datum in row:
-        pdf.multi_cell(
-            col_width,
-            line_height,
-            datum,
-            border=1,
-            new_y="TOP",
-            max_line_height=pdf.font_size,
-        )
-    pdf.ln(line_height)
-pdf.output("table_with_cells.pdf")
+with pdf.table(borders_layout="MINIMAL",
+               cell_fill_color=200,  # grey
+               cell_fill_mode="ROWS",
+               line_height=pdf.font_size * 2.5,
+               text_align="CENTER",
+               width=160) as table:
+    for data_row in data:
+        row = table.row()
+        for datum in data_row:
+            row.cell(datum)
+pdf.output("table_from_pandas.pdf")
 ```
 
 Result:

@@ -108,19 +108,32 @@ class CoerciveIntFlag(IntFlag):
     @classmethod
     def coerce(cls, value):
         """
-        Attempt to coerce `value` into a member of this enumeration.
-        If value is already a member of this enumeration it is returned unchanged.
-        Otherwise, if it is a string, attempt to convert it (case insensitively, by
-        upcasing) as an enumeration name. Otherwise, if it is an int, attempt to
-        convert it as an enumeration value.
-        Otherwise, an exception is raised.
-        Args:
-            value (IntEnum, str, int): the value to be coerced.
-        Raises:
-            ValueError: if `value` is an int but not a member of this enumeration.
-            ValueError: if `value` is a string but not a member by name.
-            TypeError: if `value`'s type is neither a member of the enumeration nor an
-                int or a string.
+                Attempt to coerce `value` into a member of this enumeration.
+        <<<<<<< HEAD
+        =======
+
+        >>>>>>> Handling page breaks in tables
+                If value is already a member of this enumeration it is returned unchanged.
+                Otherwise, if it is a string, attempt to convert it (case insensitively, by
+                upcasing) as an enumeration name. Otherwise, if it is an int, attempt to
+                convert it as an enumeration value.
+        <<<<<<< HEAD
+                Otherwise, an exception is raised.
+                Args:
+                    value (IntEnum, str, int): the value to be coerced.
+        =======
+
+                Otherwise, an exception is raised.
+
+                Args:
+                    value (IntEnum, str, int): the value to be coerced.
+
+        >>>>>>> Handling page breaks in tables
+                Raises:
+                    ValueError: if `value` is an int but not a member of this enumeration.
+                    ValueError: if `value` is a string but not a member by name.
+                    TypeError: if `value`'s type is neither a member of the enumeration nor an
+                        int or a string.
         """
         if isinstance(value, cls):
             return value
@@ -226,6 +239,47 @@ class TextEmphasis(CoerciveIntFlag):
             if value.upper() == "UNDERLINE":
                 return cls.U
         return super(cls, cls).coerce(value)
+
+
+class TableBordersLayout(CoerciveEnum):
+    "Defines how to render table borders"
+
+    ALL = intern("ALL")
+    "Draw all table cells borders"
+
+    NONE = intern("NONE")
+    "Draw zero cells border"
+
+    INTERNAL = intern("INTERNAL")
+    "Draw only internal horizontal & vertical borders"
+
+    MINIMAL = intern("MINIMAL")
+    "Draw only the top horizontal border, below the headings, and internal vertical borders"
+
+    HORIZONTAL_LINES = intern("HORIZONTAL_LINES")
+    "Draw only horizontal lines"
+
+    NO_HORIZONTAL_LINES = intern("NO_HORIZONTAL_LINES")
+    "Draw all cells border except horizontal lines, after the headings"
+
+    SINGLE_TOP_LINE = intern("SINGLE_TOP_LINE")
+    "Draw only the top horizontal border, below the headings"
+
+
+class TableCellFillMode(CoerciveEnum):
+    "Defines which table cells to fill"
+
+    NONE = intern("NONE")
+    "Fill zero table cell"
+
+    ALL = intern("ALL")
+    "Fill all table cells"
+
+    ROWS = intern("ROWS")
+    "Fill only table cells in odd rows"
+
+    COLUMNS = intern("COLUMNS")
+    "Fill only table cells in odd columns"
 
 
 class RenderStyle(CoerciveEnum):
@@ -766,7 +820,3 @@ class EncryptionMethod(Enum):
     NO_ENCRYPTION = 0
     RC4 = 1
     AES_128 = 2
-
-
-# This enum is only used internally:
-__pdoc__ = {"DocumentState": False}

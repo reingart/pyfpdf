@@ -73,7 +73,7 @@ from .enums import (
     YPos,
 )
 from .errors import FPDFException, FPDFPageFormatException, FPDFUnicodeEncodingException
-from .fonts import fpdf_charwidths
+from .fonts import CORE_FONTS_CHARWIDTHS, FontStyle
 from .graphics_state import GraphicsStateMixin
 from .html import HTML2FPDF
 from .image_parsing import SUPPORTED_IMAGE_FILTERS, get_img_info, load_image
@@ -86,6 +86,7 @@ from .structure_tree import StructureTreeBuilder
 from .sign import Signature
 from .svg import Percent, SVGObject
 from .syntax import DestinationXYZ, PDFDate
+from .table import Table
 from .util import (
     escape_parens,
     get_scale_factor,
@@ -142,15 +143,27 @@ class ImageInfo(dict):
         return f"ImageInfo({d})"
 
 
-class TitleStyle(NamedTuple):
-    font_family: Optional[str] = None
-    font_style: Optional[str] = None
-    font_size_pt: Optional[int] = None
-    color: Union[int, tuple] = None  # grey scale or (red, green, blue)
-    underline: bool = False
-    t_margin: Optional[int] = None
-    l_margin: Optional[int] = None
-    b_margin: Optional[int] = None
+class TitleStyle(FontStyle):
+    def __init__(
+        self,
+        font_family: Optional[str] = None,
+        font_style: Optional[str] = None,
+        font_size_pt: Optional[int] = None,
+        color: Union[int, tuple] = None,  # grey scale or (red, green, blue),
+        underline: bool = False,
+        t_margin: Optional[int] = None,
+        l_margin: Optional[int] = None,
+        b_margin: Optional[int] = None,
+    ):
+        super().__init__(
+            font_family,
+            (font_style or "") + ("U" if underline else ""),
+            font_size_pt,
+            color,
+        )
+        self.t_margin = t_margin
+        self.l_margin = l_margin
+        self.b_margin = b_margin
 
 
 class ToCPlaceholder(NamedTuple):
@@ -933,7 +946,7 @@ class FPDF(GraphicsStateMixin):
         """
         Footer to be implemented in your own inherited class.
 
-        This is automatically called by `FPDF.add_page()` and `FPDF.close()`
+        This is automatically called by `FPDF.add_page()` and `FPDF.output()`
         and should not be called directly by the user application.
         The default implementation performs nothing: you have to override this method
         in a subclass to implement your own rendering logic.
@@ -950,15 +963,12 @@ class FPDF(GraphicsStateMixin):
         The method can be called before the first page is created and the value is retained from page to page.
 
         Args:
-            r (int): if `g` and `b` are given, this indicates the red component.
+            r (int, tuple, fpdf.drawing.DeviceGray, fpdf.drawing.DeviceRGB): if `g` and `b` are given, this indicates the red component.
                 Else, this indicates the grey level. The value must be between 0 and 255.
             g (int): green component (between 0 and 255)
             b (int): blue component (between 0 and 255)
         """
-        if (r == 0 and g == 0 and b == 0) or g == -1:
-            self.draw_color = drawing.DeviceGray(r / 255)
-        else:
-            self.draw_color = drawing.DeviceRGB(r / 255, g / 255, b / 255)
+        self.draw_color = _convert_to_drawing_color(r, g, b)
         if self.page > 0:
             self._out(self.draw_color.serialize().upper())
 
@@ -969,15 +979,12 @@ class FPDF(GraphicsStateMixin):
         The method can be called before the first page is created and the value is retained from page to page.
 
         Args:
-            r (int): if `g` and `b` are given, this indicates the red component.
+            r (int, tuple, fpdf.drawing.DeviceGray, fpdf.drawing.DeviceRGB): if `g` and `b` are given, this indicates the red component.
                 Else, this indicates the grey level. The value must be between 0 and 255.
             g (int): green component (between 0 and 255)
             b (int): blue component (between 0 and 255)
         """
-        if (r == 0 and g == 0 and b == 0) or g == -1:
-            self.fill_color = drawing.DeviceGray(r / 255)
-        else:
-            self.fill_color = drawing.DeviceRGB(r / 255, g / 255, b / 255)
+        self.fill_color = _convert_to_drawing_color(r, g, b)
         if self.page > 0:
             self._out(self.fill_color.serialize().lower())
 
@@ -988,15 +995,12 @@ class FPDF(GraphicsStateMixin):
         The method can be called before the first page is created and the value is retained from page to page.
 
         Args:
-            r (int): if `g` and `b` are given, this indicates the red component.
+            r (int, tuple, fpdf.drawing.DeviceGray, fpdf.drawing.DeviceRGB): if `g` and `b` are given, this indicates the red component.
                 Else, this indicates the grey level. The value must be between 0 and 255.
             g (int): green component (between 0 and 255)
             b (int): blue component (between 0 and 255)
         """
-        if (r == 0 and g == 0 and b == 0) or g == -1:
-            self.text_color = drawing.DeviceGray(r / 255)
-        else:
-            self.text_color = drawing.DeviceRGB(r / 255, g / 255, b / 255)
+        self.text_color = _convert_to_drawing_color(r, g, b)
 
     def get_string_width(self, s, normalized=False, markdown=False):
         """
@@ -1950,7 +1954,7 @@ class FPDF(GraphicsStateMixin):
                 "name": self.core_fonts[fontkey],
                 "up": -100,
                 "ut": 50,
-                "cw": fpdf_charwidths[fontkey],
+                "cw": CORE_FONTS_CHARWIDTHS[fontkey],
                 "fontkey": fontkey,
                 "emphasis": TextEmphasis.coerce(style),
             }
@@ -2652,20 +2656,11 @@ class FPDF(GraphicsStateMixin):
         if line_width is not None:
             self.set_line_width(line_width)
         if draw_color is not None:
-            if isinstance(draw_color, Sequence):
-                self.set_draw_color(*draw_color)
-            else:
-                self.set_draw_color(draw_color)
+            self.set_draw_color(draw_color)
         if fill_color is not None:
-            if isinstance(fill_color, Sequence):
-                self.set_fill_color(*fill_color)
-            else:
-                self.set_fill_color(fill_color)
+            self.set_fill_color(fill_color)
         if text_color is not None:
-            if isinstance(text_color, Sequence):
-                self.set_text_color(*text_color)
-            else:
-                self.set_text_color(text_color)
+            self.set_text_color(text_color)
         if dash_pattern is not None:
             self.set_dash_pattern(**dash_pattern)
         yield
@@ -3767,6 +3762,14 @@ class FPDF(GraphicsStateMixin):
         if self.oversized_images and info["usages"] == 1 and not dims:
             info = self._downscale_image(name, img, info, w, h)
 
+        # Flowing mode
+        if y is None:
+            self._perform_page_break_if_need_be(h)
+            y = self.y
+            self.y += h
+        if x is None:
+            x = self.x
+
         if keep_aspect_ratio:
             ratio = info.width / info.height
             if h * ratio < w:
@@ -3776,14 +3779,7 @@ class FPDF(GraphicsStateMixin):
                 y += (h - w / ratio) / 2
                 h = w / ratio
 
-        # Flowing mode
-        if y is None:
-            self._perform_page_break_if_need_be(h)
-            y = self.y
-            self.y += h
-        if x is None:
-            x = self.x
-        elif not isinstance(x, Number):
+        if not isinstance(x, Number):
             if keep_aspect_ratio:
                 raise ValueError(
                     "FPDF.image(): 'keep_aspect_ratio' cannot be used with an enum value provided to `x`"
@@ -4621,7 +4617,7 @@ class FPDF(GraphicsStateMixin):
             # We first check if adding this multi-cell will trigger a page break:
             with self.offset_rendering() as pdf:
                 # pylint: disable=protected-access
-                with pdf._apply_style(pdf.section_title_styles[level]):
+                with pdf._use_title_style(pdf.section_title_styles[level]):
                     pdf.multi_cell(
                         w=pdf.epw,
                         h=pdf.font_size,
@@ -4634,7 +4630,7 @@ class FPDF(GraphicsStateMixin):
                 self.add_page()
             with self._marked_sequence(title=name) as struct_elem:
                 outline_struct_elem = struct_elem
-                with self._apply_style(self.section_title_styles[level]):
+                with self._use_title_style(self.section_title_styles[level]):
                     self.multi_cell(
                         w=self.epw,
                         h=self.font_size,
@@ -4647,33 +4643,83 @@ class FPDF(GraphicsStateMixin):
         )
 
     @contextmanager
-    def _apply_style(self, title_style):
-        prev_font = (self.font_family, self.font_style, self.font_size_pt)
-        self.set_font(
-            title_style.font_family or self.font_family,
-            title_style.font_style
-            if title_style.font_style is not None
-            else self.font_style,
-            title_style.font_size_pt or self.font_size_pt,
-        )
-        prev_text_color = self.text_color
-        if title_style.color is not None:
-            if isinstance(title_style.color, Sequence):
-                self.set_text_color(*title_style.color)
-            else:
-                self.set_text_color(title_style.color)
-        prev_underline = self.underline
-        self.underline = title_style.underline
+    def _use_title_style(self, title_style: TitleStyle):
         if title_style.t_margin:
             self.ln(title_style.t_margin)
         if title_style.l_margin:
             self.set_x(title_style.l_margin)
-        yield
+        with self.use_font_style(title_style):
+            yield
         if title_style.b_margin:
             self.ln(title_style.b_margin)
-        self.set_font(*prev_font)
+
+    @contextmanager
+    def use_font_style(self, font_style: FontStyle):
+        """
+        Sets the provided `fpdf.font.FontStyle` in a local context,
+        then restore font settings back to they were initially.
+        This method must be used as a context manager using `with`:
+
+            with pdf.use_font_style(FontStyle(emphasis="BOLD", color=255, size_pt=42)):
+                put_some_text()
+        """
+        if not font_style:
+            yield
+            return
+        prev_font = (self.font_family, self.font_style, self.font_size_pt)
+        self.set_font(
+            font_style.family or self.font_family,
+            font_style.emphasis.style
+            if font_style.emphasis is not None
+            else self.font_style,
+            font_style.size_pt or self.font_size_pt,
+        )
+        prev_text_color = self.text_color
+        if font_style.color is not None and font_style.color != self.text_color:
+            self.set_text_color(font_style.color)
+        prev_fill_color = self.fill_color
+        if (
+            font_style.fill_color is not None
+            and font_style.fill_color != self.fill_color
+        ):
+            self.set_fill_color(font_style.fill_color)
+        yield
+        if (
+            font_style.fill_color is not None
+            and font_style.fill_color != prev_fill_color
+        ):
+            self.set_fill_color(prev_fill_color)
         self.text_color = prev_text_color
-        self.underline = prev_underline
+        self.set_font(*prev_font)
+
+    @check_page
+    @contextmanager
+    def table(self, *args, **kwargs):
+        """
+        Inserts a table, that can be built using the `fpdf.table.Table` object yield.
+        Detailed usage documentation: https://pyfpdf.github.io/fpdf2/Tables.html
+
+        Args:
+            rows: optional. Sequence of rows (iterable) of str to initiate the table cells with text content
+            align (str, fpdf.enums.Align): optional, default to CENTER. Sets the table horizontal position relative to the page,
+                when it's not using the full page width
+            borders_layout (str, fpdf.enums.TableBordersLayout): optional, default to ALL. Control what cell borders are drawn
+            cell_fill_color (int, tuple, fpdf.drawing.DeviceGray, fpdf.drawing.DeviceRGB): optional.
+                Defines the cells background color
+            cell_fill_mode (str, fpdf.enums.TableCellFillMode): optional. Defines which cells are filled with color in the background
+            col_widths (int, tuple): optional. Sets column width. Can be a single number or a sequence of numbers
+            first_row_as_headings (bool): optional, default to True. If False, the first row of the table
+                is not styled differently from the others
+            headings_style (fpdf.fonts.FontStyle): optional, default to bold.
+                Defines the visual style of the top headings row: size, color, emphasis...
+            line_height (number): optional. Defines how much vertical space a line of text will occupy
+            markdown (bool): optional, default to False. Enable markdown interpretation of cells textual content
+            text_align (str, fpdf.enums.Align): optional, default to JUSTIFY. Control text alignment inside cells.
+            width (number): optional. Sets the table width
+        """
+        table = Table(self, *args, **kwargs)
+        yield table
+        table.render()
 
     def output(
         self, name="", dest="", linearize=False, output_producer_class=OutputProducer
@@ -4723,6 +4769,17 @@ class FPDF(GraphicsStateMixin):
                 name.write(self.buffer)
             return None
         return self.buffer
+
+
+def _convert_to_drawing_color(r, g, b):
+    if isinstance(r, (drawing.DeviceGray, drawing.DeviceRGB)):
+        # Note: in this case, r is also a Sequence
+        return r
+    if isinstance(r, Sequence):
+        r, g, b = r
+    if (r, g, b) == (0, 0, 0) or g == -1:
+        return drawing.DeviceGray(r / 255)
+    return drawing.DeviceRGB(r / 255, g / 255, b / 255)
 
 
 def _is_svg(bytes):
