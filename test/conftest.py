@@ -303,13 +303,21 @@ def pytest_addoption(parser):
 
 @pytest.fixture(scope="module", autouse=True)
 def module_memory_usage(request):
+    start_rss_in_mib = None
     if request.config.getoption("trace_memory_usage"):
-        gc.collect()
-        capmanager = request.config.pluginmanager.getplugin("capturemanager")
-        with capmanager.global_and_fixture_disabled():
-            print("\n")
-            print_mem_usage("Memory usage:")
+        start_rss_in_mib = get_process_rss_as_mib()
     yield
+    if not start_rss_in_mib:
+        return  # not available under Windows
+    gc.collect()
+    end_rss_in_mib = get_process_rss_as_mib()
+    sign = "+" if end_rss_in_mib > start_rss_in_mib else ""
+    capmanager = request.config.pluginmanager.getplugin("capturemanager")
+    with capmanager.global_and_fixture_disabled():
+        print("\n")
+        print(
+            f"Memory bump for {request.node.name.split('/')[-1]}: {sign}{end_rss_in_mib-start_rss_in_mib:.1f} MiB"
+        )
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -320,7 +328,7 @@ def final_memory_usage(request):
         capmanager = request.config.pluginmanager.getplugin("capturemanager")
         with capmanager.global_and_fixture_disabled():
             print("\n")
-            print_mem_usage("Memory usage:")
+            print_mem_usage("Final memory usage:")
 
 
 @pytest.fixture(scope="session", autouse=True)
