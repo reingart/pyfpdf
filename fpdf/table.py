@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from numbers import Number
-from typing import List, Union
+from typing import List, Optional, Union
 
 from .enums import Align, TableBordersLayout, TableCellFillMode
 from .fonts import FontFace
@@ -345,9 +345,9 @@ class Row:
 class Cell:
     "Internal representation of a table cell"
     text: str
-    align: Union[str, Align]
-    style: FontFace
-    img: str
+    align: Optional[Union[str, Align]]
+    style: Optional[FontFace]
+    img: Optional[str]
     img_fill_width: bool
     colspan: int
 
