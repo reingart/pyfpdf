@@ -29,9 +29,10 @@ pdf = FPDF()
 If you don't know how to build a minimal reproducible example, please check this tutorial: https://stackoverflow.com/help/minimal-reproducible-example
 
 **Environment**
-* OS (Windows, Mac OSX, Linux flavour...)
-* Python version
-* `fpdf2` version used
+Please provide the following information:
+* **Operating System**: Windows, Mac OSX, Linux flavour...
+* **Python version**: you can get this information with `python --version`
+* **`fpdf2` version used**: if you installed it with `pip`, you can get this information in `pip freeze` output
 
 <!-- Bonus / recommended:
 
