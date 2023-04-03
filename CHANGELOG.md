@@ -16,7 +16,10 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.7.3] - Not released yet
+## [2.7.4] - Not released yet
+
+## [2.7.3] - 2023-04-03
+- removed a debug `print()` statement left in `output.py:OutputProducer._add_fonts()` 🤦‍♂️ - A rule was also added to `.pre-commit-config.yaml` to avoid this to happen again.
 
 ## [2.7.2] - 2023-04-03
 ### Fixed

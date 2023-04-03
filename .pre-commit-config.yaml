@@ -21,6 +21,12 @@ repos:
       - id: black
   - repo: local
     hooks:
+    -   id: no-print-in-sources
+        name: Ensure no print() statement appears in fpdf2 sources
+        language: pygrep
+        entry: print\(
+        files: ^fpdf/.*\.py$
+        exclude: fpdf/util.py
     -   id: no-generate-true
         name: Ensure no generate=True is left in a call to assert_pdf_equal()
         language: pygrep
