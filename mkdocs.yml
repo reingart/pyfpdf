@@ -1,10 +1,7 @@
 ### 
-# MkDocs Configuration File.
-# 
-# To build these docs, change to base of repository and run `mkdocs build` and
-# docs will be build into site_dir variable value in this file.
-# 
-# Alternatively, there is a script in the `scripts` folder for convenience.
+# Related docs: https://pyfpdf.github.io/fpdf2/Development.html#documentation
+#
+# material theme docs: https://squidfunk.github.io/mkdocs-material/
 ### 
 site_name: fpdf2
 site_url: https://pyfpdf.github.io/fpdf2/
