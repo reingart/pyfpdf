@@ -116,7 +116,7 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 [Παραγόμενο PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
 [Κείμενο Χωρών](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
 
-This section has changed a lot and requires a new translation: https://github.com/PyFPDF/fpdf2/issues/267
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
 
 English versions:
 

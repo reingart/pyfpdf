@@ -31,6 +31,7 @@ HERE = Path(__file__).resolve().parent
         )
     ],
 )
+@pytest.mark.timeout(15)
 def test_charmap_first_999_chars(font_filename, tmp_path):
     """
     Character Map Test

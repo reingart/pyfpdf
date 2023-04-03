@@ -137,7 +137,7 @@ Una volta che il limite inferiore della terza colonna sarà raggiunto, [accept_p
 [Risultato PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
 [Testo delle nazioni](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
 
-This section has changed a lot and requires a new translation: https://github.com/PyFPDF/fpdf2/issues/267
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
 
 English versions:
 

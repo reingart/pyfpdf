@@ -176,7 +176,7 @@ volverá a la primera columna, desencadenando un salto de página.
 [PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
 [Archivo de texto con países](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
 
-This section has changed a lot and requires a new translation: https://github.com/PyFPDF/fpdf2/issues/267
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
 
 English versions:
 

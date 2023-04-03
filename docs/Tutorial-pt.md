@@ -132,7 +132,7 @@ Quando o limite inferior da terceira coluna é alcançado, o método [accept_pag
 [PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
 [Texto dos países](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
 
-This section has changed a lot and requires a new translation: https://github.com/PyFPDF/fpdf2/issues/267
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
 
 English versions:
 

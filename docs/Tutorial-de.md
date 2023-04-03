@@ -151,7 +151,7 @@ Sobald det Text der dritten den oben beschriebenen Abstand zum Seitenende erreic
 [Erzeugtes PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
 [Länder](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
 
-This section has changed a lot and requires a new translation: https://github.com/PyFPDF/fpdf2/issues/267
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
 
 English versions:
 

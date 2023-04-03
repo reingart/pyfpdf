@@ -19,6 +19,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 ## [2.7.4] - Not released yet
 
 ## [2.7.3] - 2023-04-03
+### Fixed
 - removed a debug `print()` statement left in `output.py:OutputProducer._add_fonts()` 🤦‍♂️ - A rule was also added to `.pre-commit-config.yaml` to avoid this to happen again.
 
 ## [2.7.2] - 2023-04-03
@@ -32,7 +33,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 ## [2.7.1] - 2023-03-27
 ### Changed
 - renamed `fonts.FontStyle` to [`fonts.FontFace`](https://pyfpdf.github.io/fpdf2/fpdf/fonts.html#fpdf.fonts.FontFace), and `FPDF.use_font_style` to [`FPDF.use_font_face`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.FPDF.FPDF.use_font_face), to avoid confusions with `FPDF.font_style`
-- new translation of the tutorial in [বাংলা](https://pyfpdf.github.io/fpdf2/Tutorial-বাংলা.html) - thanks to @ssavi-ict
+- new translation of the tutorial in [বাংলা](https://pyfpdf.github.io/fpdf2/Tutorial-bn.html) - thanks to @ssavi-ict
 
 ## [2.7.0] - 2023-03-27
 ### Added
@@ -275,7 +276,7 @@ Thanks to @torque for contributing this massive new feature:
 
     5. [Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
     6. [Creating links and mixing text styles](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-6-creating-links-and-mixing-text-styles)
-- New translation of the tutorial in Hindi, thanks to @Mridulbirla13: [हिंदी संस्करण](https://pyfpdf.github.io/fpdf2/Tutorial-हिंदी.html); [Deutsch](https://pyfpdf.github.io/fpdf2/Tutorial-de.html), thanks to @digidigital; and [Italian](https://pyfpdf.github.io/fpdf2/Tutorial-it.html) thanks to @xit4; [Русский](https://pyfpdf.github.io/fpdf2/Tutorial-ru.html) thanks to @AABur; and [português](https://pyfpdf.github.io/fpdf2/Tutorial-pt.html) thanks to @fuscati; [français](https://pyfpdf.github.io/fpdf2/Tutorial-fr.html), thanks to @Tititesouris
+- New translation of the tutorial in Hindi, thanks to @Mridulbirla13: [हिंदी संस्करण](https://pyfpdf.github.io/fpdf2/Tutorial-hi.html); [Deutsch](https://pyfpdf.github.io/fpdf2/Tutorial-de.html), thanks to @digidigital; and [Italian](https://pyfpdf.github.io/fpdf2/Tutorial-it.html) thanks to @xit4; [Русский](https://pyfpdf.github.io/fpdf2/Tutorial-ru.html) thanks to @AABur; and [português](https://pyfpdf.github.io/fpdf2/Tutorial-pt.html) thanks to @fuscati; [français](https://pyfpdf.github.io/fpdf2/Tutorial-fr.html), thanks to @Tititesouris
 - While images transparency is still handled by default through the use of `SMask`,
   this can be disabled by setting `pdf.allow_images_transparency = False`
   in order to allow compliance with [PDF/A-1](https://en.wikipedia.org/wiki/PDF/A#Description)

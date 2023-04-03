@@ -2,7 +2,7 @@
 
 _New in [:octicons-tag-24: 2.6.1](https://github.com/PyFPDF/fpdf2/blob/master/CHANGELOG.md)_
 
-A PDF document can be encrypted to protect its contents.
+A PDF document can be encrypted to protect access to its contents.
 
 An owner password is mandatory. Using the owner password anyone can perform any change on the document, including removing all encryption and access permissions.
 
