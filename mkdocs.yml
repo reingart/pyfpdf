@@ -55,7 +55,7 @@ plugins:
       minify_html: true
   - redirects:
       redirect_maps:
-        'CombineWithChartingLibs.md': 'Maths.md'    
+        'CombineWithChartingLibs.md': 'Maths.md'
   #- git-committers:
   #    repository: PyFPDF/fpdf2
   #    branch: master
