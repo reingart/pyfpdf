@@ -105,7 +105,7 @@ svg_img = bar_chart.render()
 
 # Convert the SVG chart to a PNG image in a BytesIO object
 img_bytesio = BytesIO()
-cairosvg.svg2png(svg_img, write_to=img_bytesio)
+cairosvg.svg2png(svg_img, write_to=img_bytesio, dpi=96)
 
 # Set the position and size of the image in the PDF
 x = 50
@@ -154,11 +154,10 @@ bar_chart.add('Product A', [500, 750, 1000, 1250, 1500])
 bar_chart.add('Product B', [750, 1000, 1250, 1500, 1750])
 svg_img = bar_chart.render()
 
-# Convert the SVG chart to a PNG image in a BytesIO object
-svg_root = etree.fromstring(svg_img)
-drawing = SvgRenderer(svg_img).render(svg_root)
-drawing_img_byte = renderPM.drawToString(drawing, fmt='PNG')
-img_bytesio = io.BytesIO(drawing_img_byte)
+# Convert the SVG chart to a JPEG image in a BytesIO object
+drawing = SvgRenderer('').render(etree.fromstring(svg_img))
+jpg_img_bytes = renderPM.drawToString(drawing, fmt='JPG', dpi=72)
+img_bytesio = io.BytesIO(jpg_img_bytes)
 
 # Set the position and size of the image in the PDF
 x = 50
