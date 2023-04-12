@@ -56,13 +56,13 @@ Go try it **now** online in a Jupyter notebook: [![Open In Colab](https://colab.
 * [Italian](Tutorial-it.md)
 * [español](Tutorial-es.md)
 * [français](Tutorial-fr.md)
-* [हिंदी](Tutorial-हिंदी.md)
+* [हिंदी](Tutorial-hi.md)
 * [português](Tutorial-pt.md)
 * [Русский](Tutorial-ru.md)
 * [Ελληνικά](Tutorial-gr.md)
 * [עברית](Tutorial-he.md)
 * [简体中文](Tutorial-zh.md)
-* [বাংলা](Tutorial-%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE.md)
+* [বাংলা](Tutorial-bn.md)
 
 ## Installation ##
 
