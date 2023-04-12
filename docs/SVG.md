@@ -101,10 +101,11 @@ bar_chart.add('Firefox', [None, None, 0, 16.6,   25,   31, 36.4, 45.5, 46.3, 42.
 bar_chart.add('Chrome',  [None, None, None, None, None, None,    0,  3.9, 10.8, 23.8, 35.3])
 bar_chart.add('IE',      [85.8, 84.6, 84.7, 74.5,   66, 58.6, 54.7, 44.8, 36.2, 26.6, 20.1])
 bar_chart.add('Others',  [14.2, 15.4, 15.3,  8.9,    9, 10.4,  8.9,  5.8,  6.7,  6.8,  7.5])
+svg_img = bar_chart.render()
 
-# Use CairoSVG to convert PNG from SVG of barchart
-svg_img_bytesio = BytesIO()
-cairosvg.svg2png(bar_chart.render(), write_to=svg_img_byte)
+# Convert the SVG chart to a PNG image in a BytesIO object
+img_bytesio = BytesIO()
+cairosvg.svg2png(svg_img, write_to=img_bytesio)
 
 # Set the position and size of the image in the PDF
 x = 50
@@ -112,11 +113,11 @@ y = 50
 w = 100
 h = 70
 
-# Make the PDF
+# Build the PDF
 pdf = FPDF()
 pdf.add_page()
-pdf.image(svg_img_byte, x=x, y=y, w=w, h=h)
-pdf.output('bar_chart.pdf')
+pdf.image(img_bytesio, x=x, y=y, w=w, h=h)
+pdf.output('browser-usage-bar-chart.pdf')
 ```
 The above code generates a PDF with the following graph:
 ![](pygal_chart_cairo.PNG)
@@ -151,13 +152,13 @@ bar_chart.title = 'Sales by Year'
 bar_chart.x_labels = ['2016', '2017', '2018', '2019', '2020']
 bar_chart.add('Product A', [500, 750, 1000, 1250, 1500])
 bar_chart.add('Product B', [750, 1000, 1250, 1500, 1750])
-
-# Render the chart and convert it to a bytestring object
 svg_img = bar_chart.render()
+
+# Convert the SVG chart to a PNG image in a BytesIO object
 svg_root = etree.fromstring(svg_img)
 drawing = SvgRenderer(svg_img).render(svg_root)
-drawing_img_byte = renderPM.drawToString(drawing)
-img_bytes = io.BytesIO(drawing_img_byte)
+drawing_img_byte = renderPM.drawToString(drawing, fmt='PNG')
+img_bytesio = io.BytesIO(drawing_img_byte)
 
 # Set the position and size of the image in the PDF
 x = 50
@@ -165,11 +166,11 @@ y = 50
 w = 100
 h = 70
 
-# Make the PDF
+# Build the PDF
 pdf = FPDF()
 pdf.add_page()
-pdf.image(img_bytes, x=x, y=y, w=w, h=h)
-pdf.output('bar_chart_pdf.pdf')
+pdf.image(img_bytesio, x=x, y=y, w=w, h=h)
+pdf.output('sales-by-year-bar-chart.pdf')
 ```
 
 The above code generates the following output:
