@@ -6,6 +6,7 @@ Note that `FPDF` instance objects are not designed to be reusable:
 Hence, even if the `FPDF` class should be thread-safe, we recommend that you either **create an instance for every request**,
 or if you want to use a global / shared object, to only store the bytes returned from `output()`.
 
+
 ## Django ##
 [Django](https://www.djangoproject.com/) is:
 > a high-level Python web framework that encourages rapid development and clean, pragmatic design
@@ -23,6 +24,7 @@ def report(request):
     pdf.cell(txt="hello world")
     return HttpResponse(bytes(pdf.output()), content_type="application/pdf")
 ```
+
 
 ## Flask ##
 [Flask](https://flask.palletsprojects.com) is a micro web framework written in Python.
@@ -45,6 +47,7 @@ def hello_world():
     response.headers["Content-Type"] = "application/pdf"
     return response
 ```
+
 
 ## AWS lambda ##
 The following code demonstrates some minimal [AWS lambda handler function](https://docs.aws.amazon.com/lambda/latest/dg/python-handler.html)
@@ -145,14 +148,6 @@ st.download_button(
 )
 ```
 
-## Jupyter ##
-Check [tutorial/notebook.ipynb](https://github.com/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb)
-
-## web2py ##
-Usage of the original PyFPDF lib with [web2py](http://www.web2py.com/) is described here: <https://github.com/reingart/pyfpdf/blob/master/docs/Web2Py.md>
-
-`v1.7.2` of PyFPDF is included in `web2py` since release `1.85.2`: <https://github.com/web2py/web2py/tree/master/gluon/contrib/fpdf>
-
 
 ## FastAPI ##
 [FastAPI](https://fastapi.tiangolo.com/) is:
@@ -205,3 +200,13 @@ async def create_pdf(request: Request):
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 ```
+
+
+## Jupyter ##
+Check [tutorial/notebook.ipynb](https://github.com/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb)
+
+
+## web2py ##
+Usage of the original PyFPDF lib with [web2py](http://www.web2py.com/) is described here: <https://github.com/reingart/pyfpdf/blob/master/docs/Web2Py.md>
+
+`v1.7.2` of PyFPDF is included in `web2py` since release `1.85.2`: <https://github.com/web2py/web2py/tree/master/gluon/contrib/fpdf>
