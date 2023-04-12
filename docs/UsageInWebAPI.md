@@ -152,3 +152,56 @@ Check [tutorial/notebook.ipynb](https://github.com/PyFPDF/fpdf2/blob/master/tuto
 Usage of the original PyFPDF lib with [web2py](http://www.web2py.com/) is described here: <https://github.com/reingart/pyfpdf/blob/master/docs/Web2Py.md>
 
 `v1.7.2` of PyFPDF is included in `web2py` since release `1.85.2`: <https://github.com/web2py/web2py/tree/master/gluon/contrib/fpdf>
+
+
+## FastAPI ##
+[FastAPI](https://fastapi.tiangolo.com/) is:
+> a modern, fast (high-performance), web framework for building APIs with Python 3.7+ based on standard Python type hints.
+
+The following code shows how to generate a PDF file via a POST endpoint that receives a JSON object. The JSON object can be used to write into the PDF file. The generated PDF file will be returned back to the user/frontend as the response. 
+
+
+```python
+from fastapi import FastAPI, Request, Response, HTTPException, status
+from fpdf import FPDF
+
+
+app = FastAPI()
+
+
+@app.post("/send_data", status_code=status.HTTP_200_OK)
+async def create_pdf(request: Request):
+    """ 
+    POST endpoint that accepts a JSON object
+    This endpoint returns a PDF file as the response
+    """
+    try:
+        # data will read the JSON object and can be accessed like a Python Dictionary 
+        # The contents of the JSON object can be used to write into the PDF file (if needed)
+        data = await request.json()
+
+
+        # Create a sample PDF file
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Helvetica", size=24)
+        pdf.cell(txt="hello world")
+        # pdf.cell(txt=data["content"])  # Using the contents of the JSON object to write into the PDF file
+        # Use str(data["content"]) if the content is non-string type
+
+
+        # Prepare the filename and headers
+        filename = "<file_name_here>.pdf"
+        headers = {
+            "Content-Disposition": f"attachment; filename={filename}"
+        }
+
+
+        # Return the file as a response
+        return Response(content=bytes(pdf.output()), media_type="application/pdf", headers=headers)
+
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+```
