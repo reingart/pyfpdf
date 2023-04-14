@@ -85,9 +85,9 @@ pdf.output("html.pdf")
 * `<dl>`, `<dt>`, `<dd>`: description list, title, details (can be nested)
 * `<sup>`, `<sub>`: superscript and subscript text
 * `<table>`: (and `border`, `width` attributes)
-    + `<thead>`: header (opens each page)
-    + `<tfoot>`: footer (closes each page)
-    + `<tbody>`: actual rows
-    + `<tr>`: rows (with `bgcolor` attribute)
+    + `<thead>`: optional tag, wraps the table header row
+    + `<tfoot>`: optional tag, wraps the table footer row
+    + `<tbody>`: optional tag, wraps the table rows with actual content
+    + `<tr>`: rows (with `align`, `bgcolor` attributes)
     + `<th>`: heading cells (with `align`, `bgcolor`, `width` attributes)
     * `<td>`: cells (with `align`, `bgcolor`, `width` attributes)
