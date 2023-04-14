@@ -91,9 +91,3 @@ pdf.output("html.pdf")
     + `<tr>`: rows (with `bgcolor` attribute)
     + `<th>`: heading cells (with `align`, `bgcolor`, `width` attributes)
     * `<td>`: cells (with `align`, `bgcolor`, `width` attributes)
-
-**Notes**:
-
-* tables should have at least a first `<th>` row with a `width` attribute.
-* currently **table cells can only contain a single line**, _cf._ [issue 91](https://github.com/PyFPDF/fpdf2/issues/91).
-  Contributions are welcome to add support for multi-line text in them! 😊

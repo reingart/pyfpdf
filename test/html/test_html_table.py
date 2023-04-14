@@ -207,6 +207,20 @@ def test_html_table_with_only_tds(tmp_path):  # issue-740
     assert_pdf_equal(pdf, HERE / "html_table_with_only_tds.pdf", tmp_path)
 
 
+def test_html_table_with_multi_lines_text(tmp_path):  # issue-91
+    pdf = FPDF()
+    pdf.set_font_size(30)
+    pdf.add_page()
+    pdf.write_html(
+        """<table border="1"><thead><tr>
+    <th width="30%">First name</th><th width="30%">Last name</th><th width="15%">Age</th><th width="25%">City</th>
+</tr></thead><tbody><tr>
+    <td>Jean Abdul William</td><td>Smith</td><td>34</td><td>San Juan</td>
+</tr></tbody></table>"""
+    )
+    assert_pdf_equal(pdf, HERE / "html_table_with_multi_lines_text.pdf", tmp_path)
+
+
 def test_html_table_invalid(caplog):
     pdf = FPDF()
     pdf.set_font_size(30)
