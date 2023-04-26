@@ -766,10 +766,8 @@ class OutputProducer:
             iccp_pdf_i = self._ensure_iccp(info)
             color_space = PDFArray(["/ICCBased", str(iccp_pdf_i), str("0"), "R"])
         elif color_space == "DeviceCMYK":
-            decode = "[1 0 1 0 1 0 1 0]"
-            raise NotImplementedError(
-                "fpdf2 does not support DeviceCMYK ColorSpace yet - cf. issue #711"
-            )
+            if info["inverted"] is True:
+                decode = "[1 0 1 0 1 0 1 0]"
 
         decode_parms = f"<<{info['dp']} /BitsPerComponent {info['bpc']}>>"
         img_obj = PDFXObject(

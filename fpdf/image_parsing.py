@@ -115,6 +115,7 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
         raise EnvironmentError("Pillow not available - fpdf2 cannot insert images")
 
     is_pil_img = True
+    jpeg_inverted = False  # flag to check whether a cmyk image is jpeg or not, if set to True the decode array is inverted in output.py
     img_raw_data = None
     if not img or isinstance(img, (Path, str)):
         img_raw_data = load_image(filename)
@@ -146,7 +147,7 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
     if img.mode in ("P", "PA") and image_filter != "FlateDecode":
         img = img.convert("RGBA")
 
-    if img.mode not in ("1", "L", "LA", "RGB", "RGBA", "P", "PA"):
+    if img.mode not in ("1", "L", "LA", "RGB", "RGBA", "P", "PA", "CMYK"):
         img = img.convert("RGBA")
         img_altered = True
 
@@ -161,7 +162,11 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
     if img_raw_data is not None and not img_altered:
         # if we can use the original image bytes directly we do (JPEG and group4 TIFF only):
         if img.format == "JPEG" and image_filter == "DCTDecode":
-            dpn, bpc, colspace = 3, 8, "DeviceRGB"
+            if img.mode in ("RGB", "RGBA"):
+                dpn, bpc, colspace = 3, 8, "DeviceRGB"
+            elif img.mode == "CMYK":
+                dpn, bpc, colspace = 4, 8, "DeviceCMYK"
+                jpeg_inverted = True
             if img.mode == "L":
                 dpn, bpc, colspace = 1, 8, "DeviceGray"
             img_raw_data.seek(0)
@@ -174,6 +179,7 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
                 "dpn": dpn,
                 "bpc": bpc,
                 "f": image_filter,
+                "inverted": jpeg_inverted,
                 "dp": f"/Predictor 15 /Colors {dpn} /Columns {w}",
             }
         # We can directly copy the data out of a CCITT Group 4 encoded TIFF, if it
@@ -218,6 +224,7 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
                 "cs": colspace,
                 "bpc": bpc,
                 "f": image_filter,
+                "inverted": jpeg_inverted,
                 "dp": f"/BlackIs1 {str(not inverted).lower()} /Columns {w} /K -1 /Rows {h}",
             }
 
@@ -263,6 +270,9 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
             "JPXDecode",
         ):
             info["smask"] = _to_data(img, image_filter, select_slice=alpha_channel)
+    elif img.mode == "CMYK":
+        dpn, bpc, colspace = 4, 8, "DeviceCMYK"
+        info["data"] = _to_data(img, image_filter)
     elif img.mode == "RGB":
         dpn, bpc, colspace = 3, 8, "DeviceRGB"
         info["data"] = _to_data(img, image_filter)
@@ -293,6 +303,7 @@ def get_img_info(filename, img=None, image_filter="AUTO", dims=None):
             "bpc": bpc,
             "dpn": dpn,
             "f": image_filter,
+            "inverted": jpeg_inverted,
             "dp": dp,
         }
     )
