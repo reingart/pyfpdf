@@ -93,7 +93,7 @@ from .util import (
 )
 
 # Public global variables:
-FPDF_VERSION = "2.7.3"
+FPDF_VERSION = "2.7.4"
 PAGE_FORMATS = {
     "a3": (841.89, 1190.55),
     "a4": (595.28, 841.89),

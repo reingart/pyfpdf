@@ -16,7 +16,9 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.7.4] - Not released yet
+## [2.7.5] - Not released yet
+
+## [2.7.4] - 2023-04-28
 ### Added
 - [`FPDF.image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image): CMYK images can now be inserted directly by passing them into the image method. Contributed by @devdev29
 - documentation on how to embed `graphs` and `charts` generated using `Pygal` lib: [documentation section](https://pyfpdf.github.io/fpdf2/Maths.html#using-pygal) - thanks to @ssavi-ict
