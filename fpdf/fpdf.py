@@ -53,6 +53,7 @@ from .encryption import StandardSecurityHandler
 from .enums import (
     AccessPermission,
     Align,
+    Angle,
     AnnotationFlag,
     AnnotationName,
     CharVPos,
@@ -2499,7 +2500,7 @@ class FPDF(GraphicsStateMixin):
     @contextmanager
     def rotation(self, angle, x=None, y=None):
         """
-        This method allows to perform a rotation around a given center.
+        Method to perform a rotation around a given center.
         It must be used as a context-manager using `with`:
 
             with rotation(angle=90, x=x, y=y):
@@ -2540,7 +2541,7 @@ class FPDF(GraphicsStateMixin):
     @contextmanager
     def skew(self, ax=0, ay=0, x=None, y=None):
         """
-        This method allows to perform a skew transformation originating from a given center.
+        Method to perform a skew transformation originating from a given center.
         It must be used as a context-manager using `with`:
 
             with skew(ax=15, ay=15, x=x, y=y):
@@ -2566,6 +2567,42 @@ class FPDF(GraphicsStateMixin):
         with self.local_context():
             self._out(
                 f"1 {ay:.5f} {ax:.5f} 1 {cx:.2f} {cy:.2f} cm "
+                f"1 0 0 1 -{cx:.2f} -{cy:.2f} cm"
+            )
+            yield
+
+    @check_page
+    @contextmanager
+    def mirror(self, origin, angle):
+        """
+        Method to perform a reflection transformation over a given mirror line.
+        It must be used as a context-manager using `with`:
+
+            with mirror(origin=(15,15), angle="SOUTH"):
+                pdf.something()
+
+        The mirror transformation affects all elements which are rendered inside the indented
+        context (with the exception of clickable areas).
+
+        Args:
+            origin (Sequence(float, float)): a point on the mirror line
+            angle: (fpdf.enums.Angle): the direction of the mirror line
+        """
+        angle = Angle.coerce(angle)
+        x, y = origin
+
+        try:
+            theta = Angle.coerce(angle).value
+        except ValueError:
+            theta = angle
+
+        a = math.cos(math.radians(theta * 2))
+        b = math.sin(math.radians(theta * 2))
+        cx, cy = x * self.k, (self.h - y) * self.k
+
+        with self.local_context():
+            self._out(
+                f"{a:.5f} {b:.5f} {b:.5f} {a*-1:.5f} {cx:.2f} {cy:.2f} cm "
                 f"1 0 0 1 -{cx:.2f} -{cy:.2f} cm"
             )
             yield
