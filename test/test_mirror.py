@@ -16,15 +16,14 @@ def draw_mirror_line(pdf, origin, angle):
 
     Args:
         pdf (fpdf.FPDF): pdf to modify
-        origin (Sequence[float, float]): a point on the mirror line
+        origin (float, Sequence[float, float]): a point on the mirror line
         angle: (fpdf.enums.Angle): the direction of the mirror line
     """
-
-    angle = Angle.coerce(angle)
-
     x, y = origin
-
-    theta = angle.value
+    try:
+        theta = Angle.coerce(angle).value
+    except ValueError:
+        theta = angle
 
     cos_theta, sin_theta = (
         math.cos(math.radians(theta)),
@@ -69,6 +68,18 @@ def test_mirror(tmp_path):
         pdf.image(img_filepath, x=100, y=100)
 
     assert_pdf_equal(pdf, HERE / "mirror.pdf", tmp_path)
+
+
+def test_mirror_with_angle_as_number(tmp_path):
+    pdf = FPDF()
+    pdf.set_font("helvetica", size=50)
+    pdf.add_page()
+    x, y = 50, 50
+    pdf.text(x, y, txt="mirror this text")
+    with pdf.mirror((x, y), 180):
+        pdf.set_text_color(r=255, g=128, b=0)
+        pdf.text(x, y, txt="mirror this text")
+    assert_pdf_equal(pdf, HERE / "mirror_with_angle_as_number.pdf", tmp_path)
 
 
 def test_mirror_text(tmp_path):

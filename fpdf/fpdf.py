@@ -2585,12 +2585,10 @@ class FPDF(GraphicsStateMixin):
         context (with the exception of clickable areas).
 
         Args:
-            origin (Sequence(float, float)): a point on the mirror line
+            origin (float, Sequence(float, float)): a point on the mirror line
             angle: (fpdf.enums.Angle): the direction of the mirror line
         """
-        angle = Angle.coerce(angle)
         x, y = origin
-
         try:
             theta = Angle.coerce(angle).value
         except ValueError:
