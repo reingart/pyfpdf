@@ -160,7 +160,7 @@ class Fragment:
         initial_cs: bool = True,
     ):
         """
-        Return the witdth of the string with the given font/size/style/etc.
+        Return the width of the string with the given font/size/style/etc.
 
         Args:
             start (int): Index of the start character. Default start of fragment.

@@ -2651,6 +2651,11 @@ class FPDF(GraphicsStateMixin):
             border = 1
         new_x = XPos.coerce(new_x)
         new_y = YPos.coerce(new_y)
+        align = Align.coerce(align)
+        if align == Align.J:
+            raise ValueError(
+                "cell() only produces one text line, justified alignment is not possible"
+            )
         if center == "DEPRECATED":
             center = False
         else:
@@ -2659,6 +2664,8 @@ class FPDF(GraphicsStateMixin):
                 DeprecationWarning,
                 stacklevel=3,
             )
+            if align == Align.L:
+                align = Align.C
         if ln != "DEPRECATED":
             # For backwards compatibility, if "ln" is used we overwrite "new_[xy]".
             if ln == 0:
@@ -2683,11 +2690,6 @@ class FPDF(GraphicsStateMixin):
                 DeprecationWarning,
                 stacklevel=3,
             )
-        align = Align.coerce(align)
-        if align == Align.J:
-            raise ValueError(
-                "cell() only produces one text line, justified alignment is not possible"
-            )
         # Font styles preloading must be performed before any call to FPDF.get_string_width:
         txt = self.normalize_text(txt)
         styled_txt_frags = self._preload_font_styles(txt, markdown)
@@ -2707,7 +2709,6 @@ class FPDF(GraphicsStateMixin):
             align=align,
             fill=fill,
             link=link,
-            center=center,
         )
 
     def _render_styled_text_line(
@@ -2721,7 +2722,6 @@ class FPDF(GraphicsStateMixin):
         align: Align = Align.L,
         fill: bool = False,
         link: str = "",
-        center: bool = False,
     ):
         """
         Prints a cell (rectangular area) with optional borders, background color and
@@ -2756,7 +2756,6 @@ class FPDF(GraphicsStateMixin):
                 or transparent (`False`). Default value: False.
             link (str): optional link to add on the cell, internal
                 (identifier returned by `FPDF.add_link`) or external URL.
-            center (bool): **DEPRECATED since 2.5.1**: Use `align="C"` instead.
             markdown (bool): enable minimal markdown-like markup to render part
                 of text as bold / italics / underlined. Default to False.
 
@@ -2792,8 +2791,8 @@ class FPDF(GraphicsStateMixin):
             h = max_font_size
         if align == Align.X:
             self.x -= w / 2
-        if center:
-            self.x = self.l_margin + (self.epw - w) / 2
+        # if center_cell:
+        #     self.x = self.l_margin + (self.epw - w) / 2
         page_break_triggered = self._perform_page_break_if_need_be(h)
         sl = []
         k = self.k
@@ -2870,7 +2869,6 @@ class FPDF(GraphicsStateMixin):
                 word_spacing = (
                     w - self.c_margin - self.c_margin - styled_txt_width
                 ) / text_line.number_of_spaces
-
             sl.append(
                 f"BT {(self.x + dx) * k:.2f} "
                 f"{(self.h - self.y - 0.5 * h - 0.3 * max_font_size) * k:.2f} Td"
