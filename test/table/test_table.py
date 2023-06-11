@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from subprocess import Popen
 
 import pytest
 
