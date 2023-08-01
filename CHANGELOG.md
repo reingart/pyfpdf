@@ -31,6 +31,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 - the initial text color is preserved when using `FPDF.write_html()` - _cf._ [issue #846](https://github.com/PyFPDF/fpdf2/issues/846)
 - PDF metadata not encrypted - _cf._ [issue #865](https://github.com/PyFPDF/fpdf2/issues/865)
 - handle superscript and subscript correctly when rendering `TextLine`- thanks to @Tolker-KU - _cf._ [Pull Request #862](https://github.com/PyFPDF/fpdf2/pull/862)
+- make sure warnings always point to the users code - _cf._ [Pull request #869](https://github.com/PyFPDF/fpdf2/pull/869)
 ### Deprecated
 - the `center` optional parameter of [`FPDF.cell()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.cell) is **no more** deprecated, as it allows for horizontal positioning, which is different from text alignment control with `align="C"`
 
