@@ -107,6 +107,7 @@ or [open a discussion](https://github.com/PyFPDF/fpdf2/discussions).
 * [wudududu/extract-video-ppt](https://github.com/wudududu/extract-video-ppt) : create a one-page-per-frame PDF from a video or PPT file.
   `fpdf2` also has a demo script to convert a GIF into a one-page-per-frame PDF: [gif2pdf.py](https://github.com/PyFPDF/fpdf2/blob/master/tutorial/gif2pdf.py)
 * [csv2pdf](https://github.com/TECH-SAVVY-GUY/csv2pdf) : convert CSV files to PDF files easily
+* [Planet-Matriarchy-RPG-CharGen](https://github.com/ShawnDriscoll/Planet-Matriarchy-RPG-CharGen) : a PyQt based desktop application (= `.exe` under Windows) that provides a RPG character sheet generator
 
 ### Related ###
 
