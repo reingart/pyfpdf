@@ -86,10 +86,7 @@ from .sign import Signature
 from .svg import Percent, SVGObject
 from .syntax import DestinationXYZ, PDFDate
 from .table import Table
-from .util import (
-    escape_parens,
-    get_scale_factor,
-)
+from .util import get_scale_factor
 
 # Public global variables:
 FPDF_VERSION = "2.7.4"
@@ -571,6 +568,76 @@ class FPDF(GraphicsStateMixin):
         elif zoom != "default":
             raise FPDFException(f"Incorrect zoom display mode: {zoom}")
         self.page_layout = LAYOUT_ALIASES.get(layout, layout)
+
+    # Disabling this check - importing outside toplevel to check module is present
+    # pylint: disable=import-outside-toplevel, unused-import
+    def set_text_shaping(
+        self,
+        use_shaping_engine: bool = True,
+        features: dict = None,
+        direction: str = None,
+        script: str = None,
+        language: str = None,
+    ):
+        """
+        Enable or disable text shaping engine when rendering text.
+        If features, direction, script or language are not specified the shaping engine will try
+        to guess the values based on the input text.
+
+        Args:
+            use_shaping_engine: enable or disable the use of the shaping engine to process the text
+            features: a dictionary containing 4 digit OpenType features and whether each feature
+                should be enabled or disabled
+                example: features={"kern": False, "liga": False}
+            direction: the direction the text should be rendered, either "ltr" (left to right)
+                or "rtl" (right to left).
+            script: a valid OpenType script tag like "arab" or "latn"
+            language: a valid OpenType language tag like "eng" or "fra"
+        """
+        if use_shaping_engine:
+            try:
+                import uharfbuzz
+            except ImportError as exc:
+                raise FPDFException(
+                    "The uharfbuzz package could not be imported, but is required for text shaping. Try: pip install uharfbuzz"
+                ) from exc
+        else:
+            self._text_shaping = None
+            return
+        #
+        # Features must be a dictionary contaning opentype features and a boolean flag
+        # stating wether the feature should be enabled or disabled.
+        #
+        # e.g. features={"liga": True, "kern": False}
+        #
+        # https://harfbuzz.github.io/shaping-opentype-features.html
+        #
+
+        if features and not isinstance(features, dict):
+            raise FPDFException(
+                "Features must be a dictionary. See text shaping documentation"
+            )
+        if not features:
+            features = {}
+
+        # Buffer properties (direction, script and language)
+        # if the properties are not provided, Harfbuzz "guessing" logic is used.
+        # https://harfbuzz.github.io/setting-buffer-properties.html
+        # Valid harfbuzz directions are lrt (left to right), rtl (right to left),
+        # ttb (top to bottom) or btt (bottom to top)
+
+        if direction and direction not in ("ltr", "rtl"):
+            raise FPDFException(
+                "FPDF2 only accept ltr (left to right) or rtl (right to left) directions for now."
+            )
+
+        self._text_shaping = {
+            "use_shaping_engine": True,
+            "features": features,
+            "direction": direction,
+            "script": script,
+            "language": language,
+        }
 
     @property
     def page_layout(self):
@@ -2316,20 +2383,10 @@ class FPDF(GraphicsStateMixin):
         if not self.font_family:
             raise FPDFException("No font set, you need to call set_font() beforehand")
         txt = self.normalize_text(txt)
-        if self.is_ttf_font:
-            txt_mapped = ""
-            for char in txt:
-                uni = ord(char)
-                # Instead of adding the actual character to the stream its code is
-                # mapped to a position in the font's subset
-                txt_mapped += chr(self.current_font.subset.pick(uni))
-            txt2 = escape_parens(txt_mapped.encode("utf-16-be").decode("latin-1"))
-        else:
-            txt2 = escape_parens(txt)
         sl = [f"BT {x * self.k:.2f} {(self.h - y) * self.k:.2f} Td"]
         if self.text_mode != TextMode.FILL:
             sl.append(f" {self.text_mode} Tr {self.line_width:.2f} w")
-        sl.append(f"({txt2}) Tj ET")
+        sl.append(f"{self.current_font.encode_text(txt)} ET")
         if (self.underline and txt != "") or self._record_text_quad_points:
             w = self.get_string_width(txt, normalized=True, markdown=False)
             if self.underline and txt != "":
@@ -2870,8 +2927,6 @@ class FPDF(GraphicsStateMixin):
             if self.fill_color != self.text_color:
                 sl.append(self.text_color.serialize().lower())
 
-            # do this once in advance
-            u_space = escape_parens(" ".encode("utf-16-be").decode("latin-1"))
             word_spacing = 0
             if text_line.justify:
                 # Don't rely on align==Align.J here.
@@ -2913,48 +2968,28 @@ class FPDF(GraphicsStateMixin):
                     current_text_mode = frag.text_mode
                     sl.append(f"{frag.text_mode} Tr {frag.line_width:.2f} w")
 
-                if frag.is_ttf_font:
-                    mapped_text = ""
-                    for char in frag.string:
-                        uni = ord(char)
-                        mapped_text += chr(frag.font.subset.pick(uni))
-                    if word_spacing:
-                        # "Tw" only has an effect on the ASCII space character and ignores
-                        # space characters from unicode (TTF) fonts. As a workaround,
-                        # we do word spacing using an adjustment before each space.
-                        # Determine the index of the space character (" ") in the current
-                        # subset and split words whenever this mapping code is found
-                        words = mapped_text.split(chr(frag.font.subset.pick(ord(" "))))
-                        words_strl = []
-                        for word_i, word in enumerate(words):
-                            # pylint: disable=redefined-loop-name
-                            word = escape_parens(
-                                word.encode("utf-16-be").decode("latin-1")
-                            )
-                            if word_i == 0:
-                                words_strl.append(f"({word})")
-                            else:
-                                adj = -(frag_ws * frag.k) * 1000 / frag.font_size_pt
-                                words_strl.append(f"{adj:.3f}({u_space}{word})")
-                        escaped_text = " ".join(words_strl)
-                        sl.append(f"[{escaped_text}] TJ")
-                    else:
-                        escaped_text = escape_parens(
-                            mapped_text.encode("utf-16-be").decode("latin-1")
-                        )
-                        sl.append(f"({escaped_text}) Tj")
-                else:  # core fonts
-                    if frag_ws != current_ws:
-                        sl.append(f"{frag_ws * frag.k:.3f} Tw")
-                        current_ws = frag_ws
-                    escaped_text = escape_parens(frag.string)
-                    sl.append(f"({escaped_text}) Tj")
+                r_text = frag.render_pdf_text(
+                    frag_ws,
+                    current_ws,
+                    word_spacing,
+                    self.x + dx + s_width,
+                    self.y + (0.5 * h + 0.3 * max_font_size),
+                    self.h,
+                )
+                if r_text:
+                    sl.append(r_text)
+
                 frag_width = frag.get_width(
                     initial_cs=i != 0
                 ) + word_spacing * frag.characters.count(" ")
                 if frag.underline:
                     underlines.append(
-                        (self.x + dx + s_width, frag_width, frag.font, frag.font_size)
+                        (
+                            self.x + dx + s_width,
+                            frag_width,
+                            frag.font,
+                            frag.font_size,
+                        )
                     )
                 if frag.link:
                     self.link(
@@ -2964,6 +2999,8 @@ class FPDF(GraphicsStateMixin):
                         h=frag.font_size,
                         link=frag.link,
                     )
+                if not frag.is_ttf_font:
+                    current_ws = frag_ws
                 s_width += frag_width
 
             sl.append("ET")
