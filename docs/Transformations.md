@@ -1,6 +1,7 @@
 # Transformations #
 
 ## Rotation ##
+
 The [`rotation()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.rotation) context-manager
 will apply a rotation to all objects inserted in its indented block:
 ```python
