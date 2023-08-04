@@ -12,7 +12,7 @@
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[Итоговый PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[Итоговый PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 После подключения библиотеки мы создаем объект `FPDF`. Здесь используется конструктор [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) со значениями по умолчанию: страницы формата A4 портретные, единица измерения - миллиметр.
 
@@ -56,7 +56,7 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[Итоговый PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[Итоговый PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 В этом примере используются методы [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) и [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) для обработки заголовков и колонтитулов страницы. Они вызываются автоматически. Они уже существуют в классе FPDF, но ничего не делают, поэтому мы должны расширить класс и переопределить их.
 
@@ -75,9 +75,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[Итоговый PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[Итоговый PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Текст Жюля Верна](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Текст Жюля Верна](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 Метод [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) позволяет определить длину строки в текущем шрифте, которая используется здесь для расчета положения и ширины рамки, окружающей заголовок. Затем устанавливаются цвета (через [set_draw_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_draw_color), [set_fill_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_fill_color) и [set_text_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_text_color)), а толщина линии устанавливается в 1 мм (против 0,2 по умолчанию) с помощью [set_line_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_line_width). Наконец, мы выводим ячейку (последний параметр True указывает на то, что фон должен быть заполнен).
 
@@ -93,9 +93,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[Итоговый PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[Итоговый PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Текст Жюля Верна](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Текст Жюля Верна](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 Ключевым отличием от предыдущего урока является использование методов [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) и set_col.
 
@@ -109,10 +109,10 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[Итоговый PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) - 
-[Список стран](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[Итоговый PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) - 
+[Список стран](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
-_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/py-pdf/fpdf2/issues/267>_
 
 English versions:
 
@@ -129,8 +129,8 @@ English versions:
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[Итоговый PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[Итоговый PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 Новый метод, показанный здесь для печати текста - это [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write). Он очень похож на [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell), основные отличия заключаются в следующем:
 

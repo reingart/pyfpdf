@@ -12,7 +12,7 @@
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[លទ្ធផល PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[លទ្ធផល PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 បន្ទាប់ពីបញ្ចូលឯកសារដើម្បីប្រើក្នុងបណ្ណាល័យ, យើងបង្កើតទំរង់ `FPDF` មួយ។ 
 [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) ទំរង់នៃតម្លៃដើមដែលត្រូវបានប្រើទីនេះគឺ: 
@@ -66,7 +66,7 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[លទ្ធផលចេញជាឯកសារ PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[លទ្ធផលចេញជាឯកសារ PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 ឯកសារនេះបង្កើតដោយប្រើ [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) និង 
 [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) ជារបៀបនៃដំណើរបង្កើតនៃក្បាលទំព័រ និង បាតកថាទំព័រ។ ពួកវានឹងចេញមកដោយស្វ័យប្រវត្តិ។ វាមានស្រាប់មកជាមួយ FPDF ត្រាន់តែវាបង្ហាញចេញជាចន្លោះទំនេរដែលធ្វើអោយយើងមើលមិនដឹង។
@@ -91,9 +91,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[លទ្ធផលសម្រេច PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[លទ្ធផលសម្រេច PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[អត្ថបទ Jules Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[អត្ថបទ Jules Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 ប្រើ [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) ប្រវែងនៃខ្សែពុម្ភអក្សរលើពុម្ភអក្សរកំពុងប្រើ ដែលប្រើដើម្បីគណនាទីតាំងជុំវិញចំណងជើង។ ហើយដាក់ពណ៌ដោយប្រើ (via [set_draw_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_draw_color) 
 [set_fill_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_fill_color) និង 
@@ -120,9 +120,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[លទ្ធផលសម្រេច PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[លទ្ធផលសម្រេច PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[អត្ថបទ Jules Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[អត្ថបទ Jules Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 មេរៀននេះមានគន្លិះខុសគ្នាពីមេរៀនមុនៗគឺវិធីប្រើ [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) និង set_col។
 
@@ -140,8 +140,8 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[លទ្ធផលសម្រេច PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[Countries CSV data](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[លទ្ធផលសម្រេច PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[Countries CSV data](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
 មានមូលដ្ឋានក្នុងការធ្វើដោយជោគជ័យជាមួយឧទារហ៍នេះដោយដាក់ទិន្នន័យដោយប្រើ [`FPDF.table()`](https://pyfpdf.github.io/fpdf2/Tables.html). វាមានភាពសម្មាញ់និងធ្វើបានលឿន។
 
@@ -161,8 +161,8 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[លទ្ធផលសម្រេច PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[លទ្ធផលសម្រេច PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 របៀបថ្មីមួយទៀតក្នុងការបង្ហាញអត្ថបទដើម្បីបោះពុម្ភ
  [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)។ វាមានភាពស្រដៀងទៅនឹង

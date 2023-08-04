@@ -12,7 +12,7 @@ Vamos começar com um exemplo clássico:
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 Após incluirmos o ficheiro da biblioteca, criamos um objeto `FPDF`. O
 [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) construtor é construído com os seguintes parâmetros por omissão: 
@@ -65,7 +65,7 @@ Aqui temos um exemplo de duas páginas com cabeçalho, rodapé e logótipo:
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 Este exemplo usa os [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) e o [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) para processar cabeçalhos e rodapés de página. Estes são chamados automaticamente. Eles já existem na classe FPDF, mas não fazem nada, portanto, temos que os estender a classe e substituí-los.
 
@@ -88,9 +88,9 @@ Vamos continuar com um exemplo que imprime parágrafos justificados e o uso de c
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Texto de Júlio Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Texto de Júlio Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 O método [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) permite determinar o comprimento de uma string na fonte atual, e que é usada aqui para calcular a posição e a largura do quadro ao redor do título. Em seguida, as cores são definidas (via [set_draw_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_draw_color), [set_fill_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_fill_color) e [set_text_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_text_color)) e a espessura da linha é definida como 1 mm (contra 0,2 por padrão) com [set_line_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_line_width). Finalmente, produzimos a célula (se o último parâmetro for verdadeiro, indica que o plano de fundo deve ser preenchido).
 
@@ -112,9 +112,9 @@ Este exemplo é uma variante do anterior, mostrando como colocar o texto em vár
 {% include "../tutorial/tuto4.py"%}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Texto de Júlio Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Texto de Júlio Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 A principal diferença em relação ao tutorial anterior é o uso do [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) e os métodos set_col.
 
@@ -129,10 +129,10 @@ Quando o limite inferior da terceira coluna é alcançado, o método [accept_pag
 {% include "../tutorial/tuto5.py"%}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[Texto dos países](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[Texto dos países](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
-_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/py-pdf/fpdf2/issues/267>_
 
 English versions:
 
@@ -149,8 +149,8 @@ Também mostrará várias maneiras de usar diferentes estilos de texto, (negrito
 {% include "../tutorial/tuto6.py"%}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 
 

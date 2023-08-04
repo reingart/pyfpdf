@@ -12,7 +12,7 @@ Empecemos con el ejemplo clásico:
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 Luego de incluir la biblioteca, creamos un objeto `FPDF`. El constructor 
 [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) es usado aquí con los valores predeterminados: 
@@ -76,7 +76,7 @@ Aquí hay un ejemplo de dos páginas con encabezado, pie de página y logo:
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 Este ejemplo hace uso de los métodos [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) y 
 [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) para procesar encabezados y pies de página. Estos 
@@ -116,9 +116,9 @@ ilustra el uso de colores.
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Texto de Julio Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Texto de Julio Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 El método [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) permite determinar 
 la longitud de una cadena de texto en la fuente actual, usada aquí para calcular la 
@@ -151,9 +151,9 @@ Este ejemplo es una variante del anterior, mostrando cómo poner el texto en mú
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Texto de Julio Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Texto de Julio Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 La diferencia clave con el tutorial anterior es el uso de los métodos 
 [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) y set_col.
@@ -173,10 +173,10 @@ volverá a la primera columna, desencadenando un salto de página.
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[Archivo de texto con países](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[Archivo de texto con países](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
-_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/py-pdf/fpdf2/issues/267>_
 
 English versions:
 
@@ -195,8 +195,8 @@ También mostrará muchas formas en que podemos usar los diferentes estilos de t
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[PDF resultante](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[Logo de fpdf2](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[PDF resultante](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[Logo de fpdf2](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 El nuevo método mostrado aquí para imprimir texto es
  [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)

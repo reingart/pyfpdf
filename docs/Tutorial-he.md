@@ -14,7 +14,7 @@
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[תוצר](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[תוצר](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 אחרי שכללנו את קובץ הספריה, יצרנו אובייקט `FPDF`.
 הבנאי של [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF)  משתמש כאן בערכים דיפולטיביים:
@@ -62,7 +62,7 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[תוצר](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[תוצר](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 הדוגמא משתמשת במתודות [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) ו[footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) על מנת לעבד כותרות עמוד. הן נקראות אוטומטית. הן כבר קיימות במחלקה FPDF ולא עושות כלום, לכן נצטרך להרחיב את המחלקה ולדרוס אותן.
 
@@ -82,9 +82,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[תוצר](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[תוצר](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Jules Verne text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Jules Verne text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 מתודת ה[get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) מאפשרת לקבוע אורך מחרוזת בגופן הנוכחי, שבדוגמא זו משמש כדי לחשב את הפוזיציה והרוחב של המסגרת המקיפה את הכותרת. לאחר מכן מוגדרים צבעים
 (באמצעות [set_draw_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_draw_color), [set_fill_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_fill_color) ו [set_text_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_text_color)) ועובי השורה מוגדר למילימטר (בניגוד ל0.2 מילימטר כברירת מחדל) באמצעות [set_line_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_line_width). לבסוף אנחנו מדפיסים את התא (הפרמטר האחרון true מעיד שהרקע צריך להיות מלא).
@@ -102,9 +102,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[תוצר](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[תוצר](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Jules Verne text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Jules Verne text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 ההבדל העיקרי בין דוגמא זו לקודמת הוא השימוש במתודות [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) וset_col
 
@@ -118,7 +118,7 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto5.py" %}
 ```
 
-_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/py-pdf/fpdf2/issues/267>_
 
 English versions:
 
@@ -133,8 +133,8 @@ English versions:
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[תוצר](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[תוצר](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 המתודה החדשה שמשומשת כאן כדי להדפיס טקסט היא  [()write](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write). דומה מאוד ל[()multi_cell](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell), כאשר ההבדלים העיקריים הם:
 

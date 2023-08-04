@@ -170,7 +170,7 @@ def test_multi_cell_ln_3(tmp_path):
 def test_multi_cell_ln_3_table(tmp_path):
     """
     Test rendering of a table with multi-lines cell contents
-    cf. https://github.com/PyFPDF/fpdf2/issues/63
+    cf. https://github.com/py-pdf/fpdf2/issues/63
     """
     pdf = FPDF()
     pdf.add_page()

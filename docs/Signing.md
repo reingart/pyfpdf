@@ -1,6 +1,6 @@
 # Signing #
 
-_New in [:octicons-tag-24: 2.5.6](https://github.com/PyFPDF/fpdf2/blob/master/CHANGELOG.md)_
+_New in [:octicons-tag-24: 2.5.6](https://github.com/py-pdf/fpdf2/blob/master/CHANGELOG.md)_
 
 > A digital signature may be used to authenticate the identity of a user and the document’s contents.
 > It stores information about the signer and the state of the document when it was signed.
@@ -23,5 +23,5 @@ allows to add a signature based on arbitrary key & certificates, not necessarily
 
 `endesive` also provides basic code to check PDFs signatures.
 [examples/pdf-verify.py](https://github.com/m32/endesive/blob/master/examples/pdf-verify.py)
-or the [`check_signature()`](https://github.com/PyFPDF/fpdf2/blob/master/test/conftest.py#L111) function
+or the [`check_signature()`](https://github.com/py-pdf/fpdf2/blob/master/test/conftest.py#L111) function
 used in `fpdf2` unit tests can be good starting points for you, if you want to perform PDF signature control.

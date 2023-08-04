@@ -12,7 +12,7 @@
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[Παραγόμενο PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[Παραγόμενο PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 Αφού συμπεριλάβουμε το αρχείο βιβλιοθήκης, δημιουργούμε ένα αντικείμενο `FPDF`. Ο κατασκευαστής [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) χρησιμοποιείται στην προκειμένη περίπτωση με τις προκαθορισμένες τιμές: οι σελίδες έχουν διαστάσεις Α4 και η μονάδας μέτρησης είναι το χιλιοστόμετρο. Οι συγκεκριμένες τιμές μπορούν να προσδιοριστούν αναλυτικά ως εξής:
 
@@ -56,7 +56,7 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[Παραγόμενο PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[Παραγόμενο PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 Στο συγκεκριμένο παράδειγμα γίνεται χρήση των μεθόδων [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) και 
 [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) έτσι ώστε να επεξεργαστούμε τις επικεφαλίδες και τα υποσέλιδα των σελίδων ενός αρχείου. Η κλήση τους γίνεται αυτόματα. Υπάρχουν ήδη στην κλάση FPDF αλλά δεν προσφέρουν καμία λειτουργία, επομένως χρειάζεται να επεκτείνουμε την κλάση και να τις υπερκαλύψουμε.
@@ -76,9 +76,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[Παραγόμενο PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[Παραγόμενο PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Κείμενο του Jules Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Κείμενο του Jules Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 Η μέθοδος [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) επιτρέπει τον καθορισμό του μήκους μίας συμβολοσειράς στην τωρινή γραμματοσειρά, το οποίο χρησιμοποιείται στη συγκεκριμένη περίπτωση για τον υπολογισμό της θέσης και του πλάτους του πλαισίου που περιβάλλει τον τίτλο. Έπειτα ορίζονται τα χρώματα
 (μέσω [set_draw_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_draw_color),   [set_fill_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_fill_color) και 
@@ -97,9 +97,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[Παραγόμενο PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[Παραγόμενο PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Κείμενο του Jules Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Κείμενο του Jules Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 Η κύρια διαφορά από το προηγούμενο παράδειγμα είναι η χρήση των μεθόδων [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) και set_col.
 
@@ -113,10 +113,10 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[Παραγόμενο PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[Κείμενο Χωρών](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[Παραγόμενο PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[Κείμενο Χωρών](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
-_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/py-pdf/fpdf2/issues/267>_
 
 English versions:
 
@@ -133,8 +133,8 @@ English versions:
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[Παραγόμενο PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[Παραγόμενο PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 Παρατηρούμε μία νέα μέθοδο για την εκτύπωση κειμένου, την
  [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)

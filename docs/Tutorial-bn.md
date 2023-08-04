@@ -12,7 +12,7 @@ Method গুলোর সম্পূর্ণ ডকুমেন্টেশ�
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 প্রয়োজনীয় লাইব্রেরীগুলো যুক্ত করার পর, আমরা একটা `FPDF` অব্জেক্ট তৈরি করবো. 
 [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) কনস্ট্রাক্টরটি এখানে ডিফল্ট ভ্যালুগুলো ব্যবহার করছে: 
@@ -72,7 +72,7 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 এই উদাহরণটি headers এবং footers প্রসেস করার জন্য [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) এবং 
 [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) মেথডকে ব্যবহারকে দেখায়। এরা স্বয়ংক্রিয়ভাবেই চালিত হয়। 
@@ -107,9 +107,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Jules Verne text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Jules Verne text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) মেথড বর্তমান ফন্টে একটি স্ট্রিং এর 
 দৈর্ঘ্য নির্ণয় করে দেয়, যা এখানে অবস্থা এবং টাইটেল সমেত ফ্রেম ও এর আশপাশসহ উইদথ মাপজোকের জন্য ব্যবহার 
@@ -140,9 +140,9 @@ author ([set_author](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_author)) মেথড। 
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Jules Verne text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Jules Verne text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 পূর্বের টিউটরিয়ালের সাথে এর মূল পার্থক্য হলো 
 [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) এবং the set_col মেথডের ব্যবহার।
@@ -164,8 +164,8 @@ author ([set_author](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_author)) মেথড। 
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[Countries CSV data](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[Countries CSV data](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
 প্রথম উদাহরণটি [`FPDF.table()`](https://pyfpdf.github.io/fpdf2/Tables.html) এর ভেতরে ডেটা সরবরাহের মাধ্যমে 
 খুবই সাধারণভাবেই তৈরি করা যায়।  ফলাফল খুবই সাধারণ কিন্তু খুব সহজেই তৈরি করা যায় এমন।
@@ -185,8 +185,8 @@ author ([set_author](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_author)) মেথড। 
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 লিখার প্রিন্ট করার নতুন মেথড এখানে দেখানো হলো - 
  [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)

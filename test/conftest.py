@@ -295,7 +295,7 @@ def ensure_rss_memory_below(mib):
       not an absolute memory amount, and hence better checks
       the memory usage of a single test, with more isolation to other tests
     * because it does not suffer from some memory_profiler issues:
-        + https://github.com/PyFPDF/fpdf2/issues/641#issuecomment-1465730884
+        + https://github.com/py-pdf/fpdf2/issues/641#issuecomment-1465730884
         + hanging MemTimer child process sometimes preventing PyTest finalization,
           blocking in multiprocessing.util._exit_function() :
           https://github.com/python/cpython/blob/3.11/Lib/multiprocessing/util.py#L355

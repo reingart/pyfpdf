@@ -1,6 +1,6 @@
 # fpdf2 #
 
-<a href='https://github.com/PyFPDF/fpdf2'><img src='https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png' alt='Fork me on GitHub' border='0' align='right' /></a>
+<a href='https://github.com/py-pdf/fpdf2'><img src='https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png' alt='Fork me on GitHub' border='0' align='right' /></a>
 
 `fpdf2` is a library for simple & fast PDF document generation in Python.
 It is a fork and the successor of `PyFPDF` (_cf._ [history](https://pyfpdf.github.io/fpdf2/Development.html#history)).
@@ -19,7 +19,7 @@ pdf.cell(txt="hello world")
 pdf.output("hello_world.pdf")
 ```
 
-Go try it **now** online in a Jupyter notebook: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb) or [![Open In nbviewer](https://img.shields.io/badge/Open_In-nbviewer-blue?logo=jupyter)](https://nbviewer.org/github/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb)
+Go try it **now** online in a Jupyter notebook: [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/py-pdf/fpdf2/blob/master/tutorial/notebook.ipynb) or [![Open In nbviewer](https://img.shields.io/badge/Open_In-nbviewer-blue?logo=jupyter)](https://nbviewer.org/github/PyFPDF/fpdf2/blob/master/tutorial/notebook.ipynb)
 
 ## Main features ##
 
@@ -76,7 +76,7 @@ pip install fpdf2
 To get the latest, unreleased, development version straight from the development branch of this repository:
 
 ```bash
-pip install git+https://github.com/PyFPDF/fpdf2.git@master
+pip install git+https://github.com/py-pdf/fpdf2.git@master
 ```
 
 **Developement**: check the [dedicated documentation page](Development.md).
@@ -94,8 +94,8 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ### Support ###
 
-For community support, please feel free to file an [issue](https://github.com/PyFPDF/fpdf2/issues)
-or [open a discussion](https://github.com/PyFPDF/fpdf2/discussions).
+For community support, please feel free to file an [issue](https://github.com/py-pdf/fpdf2/issues)
+or [open a discussion](https://github.com/py-pdf/fpdf2/discussions).
 
 ### They use fpdf2 ###
 <!-- cf. Watchman Pypi & DavHau/pypi-deps-db -->
@@ -105,7 +105,7 @@ or [open a discussion](https://github.com/PyFPDF/fpdf2/discussions).
 * [RPA Framework](https://github.com/robocorp/rpaframework) : libraries and tools for Robotic Process Automation (RPA), designed to be used with both [Robot Framework](https://robotframework.org)
 * [Concordia](https://github.com/LibraryOfCongress/concordia) : a platform developed by the US Library of Congress for crowdsourcing transcription and tagging of text in digitized images
 * [wudududu/extract-video-ppt](https://github.com/wudududu/extract-video-ppt) : create a one-page-per-frame PDF from a video or PPT file.
-  `fpdf2` also has a demo script to convert a GIF into a one-page-per-frame PDF: [gif2pdf.py](https://github.com/PyFPDF/fpdf2/blob/master/tutorial/gif2pdf.py)
+  `fpdf2` also has a demo script to convert a GIF into a one-page-per-frame PDF: [gif2pdf.py](https://github.com/py-pdf/fpdf2/blob/master/tutorial/gif2pdf.py)
 * [csv2pdf](https://github.com/TECH-SAVVY-GUY/csv2pdf) : convert CSV files to PDF files easily
 * [Planet-Matriarchy-RPG-CharGen](https://github.com/ShawnDriscoll/Planet-Matriarchy-RPG-CharGen) : a PyQt based desktop application (= `.exe` under Windows) that provides a RPG character sheet generator
 
@@ -121,7 +121,7 @@ or [open a discussion](https://github.com/PyFPDF/fpdf2/discussions).
 
 ## Misc ##
 
-* Release notes: [CHANGELOG.md](https://github.com/PyFPDF/fpdf2/blob/master/CHANGELOG.md)
+* Release notes: [CHANGELOG.md](https://github.com/py-pdf/fpdf2/blob/master/CHANGELOG.md)
 * This library could only exist thanks to the dedication of many volunteers around the world:
-  [list & map of contributors](https://github.com/PyFPDF/fpdf2/blob/master/README.md#contributors-)
+  [list & map of contributors](https://github.com/py-pdf/fpdf2/blob/master/README.md#contributors-)
 * You can download an offline PDF version of this manual: [fpdf2-manual.pdf](fpdf2-manual.pdf)

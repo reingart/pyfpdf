@@ -13,7 +13,7 @@
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[生成的 PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[生成的 PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 引入库文件后，创建`FPDF`对象。
 [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF)
@@ -80,7 +80,7 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[生成的 PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[生成的 PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 此示例使用 
 [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) 与
@@ -120,9 +120,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[生成的 PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[生成的 PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[儒勒·凡尔纳的文本](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[儒勒·凡尔纳的文本](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 调用 [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) 
 函数设定当前字体下字符串的长度，
@@ -158,9 +158,9 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[生成的 PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[生成的 PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[儒勒·凡尔纳的文本](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[儒勒·凡尔纳的文本](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 与上一个教程的主要区别在于使用了
 [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) 
@@ -181,10 +181,10 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[生成的 PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[源文本](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[生成的 PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[源文本](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
-_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/py-pdf/fpdf2/issues/267>_
 
 English versions:
 
@@ -201,8 +201,8 @@ English versions:
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[生成的 PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2 图标](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[生成的 PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2 图标](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 此处显示的打印文本的新方法是
 [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)

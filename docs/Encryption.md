@@ -1,6 +1,6 @@
 # Encryption #
 
-_New in [:octicons-tag-24: 2.6.1](https://github.com/PyFPDF/fpdf2/blob/master/CHANGELOG.md)_
+_New in [:octicons-tag-24: 2.6.1](https://github.com/py-pdf/fpdf2/blob/master/CHANGELOG.md)_
 
 A PDF document can be encrypted to protect access to its contents.
 

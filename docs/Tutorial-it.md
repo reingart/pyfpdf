@@ -12,7 +12,7 @@ Iniziamo con un esempio comune:
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[Risultato PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[Risultato PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 Dopo aver incluso la libreria, creiamo un oggetto `FPDF`. Così facendo il costruttore 
 [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) viene utilizzato con i suoi valori di default: 
@@ -65,7 +65,7 @@ Ecco un esempio composto da due pagine con intestazione, piè di pagina e logo:
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[Risultato PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[Risultato PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 Questo esempio sfrutta i metodi [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) e 
 [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) per processare intestazioni e piè di pagina. Vengono chiamati automaticamente. Esistono nella classe FPDF ma non eseguono operazioni,
@@ -90,9 +90,9 @@ Continuiamo con un esempio che stampa paragrafi giustificati. Mostreremo anche l
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[Risultato PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[Risultato PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Testo Jules Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Testo Jules Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 Il metodo [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) permette di determinare la lunghezza di una stringa nel font selezionato, e viene utilizzato per calcolare la posizione e la larghezza della cornice intorno al titolo. Successivamente selezioniamo i colori 
 (utilizzando [set_draw_color](fpdf/fpdf.html#fpdf.fpdf.FPDF.set_draw_color),
@@ -117,9 +117,9 @@ Questo esempio è una variante del precedente, mostra come disporre il test attr
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[Risultato PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[Risultato PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Testo Jules Verne](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Testo Jules Verne](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 La differenza dal precedente tutoria è l'utilizzo dei metodi 
 [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) e set_col.
@@ -134,10 +134,10 @@ Una volta che il limite inferiore della terza colonna sarà raggiunto, [accept_p
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[Risultato PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[Testo delle nazioni](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[Risultato PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[Testo delle nazioni](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
-_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/py-pdf/fpdf2/issues/267>_
 
 English versions:
 
@@ -154,8 +154,8 @@ Saranno mostrati anche molti modi di utilizzare diversi stili di testo (grassett
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[Risultato PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[Risultato PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 Il nuovo metodo qui utilizzato per stampare testo è
  [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)

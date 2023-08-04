@@ -552,7 +552,7 @@ class OutputProducer:
                 options = ftsubset.Options(notdef_outline=True, recommended_glyphs=True)
                 # dropping some tables that currently not used:
                 options.drop_tables += [
-                    "FFTM",  # FontForge Timestamp table - cf. https://github.com/PyFPDF/fpdf2/issues/600
+                    "FFTM",  # FontForge Timestamp table - cf. https://github.com/py-pdf/fpdf2/issues/600
                     "GDEF",  # Glyph Definition table = various glyph properties used in OpenType layout processing
                     "GPOS",  # Glyph Positioning table = precise control over glyph placement
                     #          for sophisticated text layout and rendering in each script and language system

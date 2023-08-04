@@ -12,7 +12,7 @@ Methods full documentation / तरीके पूर्ण प्रलेख�
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 लाइब्रेरी फ़ाइल को शामिल करने के बाद, हम एक `FPDF` ऑब्जेक्ट बनाते हैं।
 [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) कंस्ट्रक्टर का उपयोग यहां डिफ़ॉल्ट मानों के साथ किया जाता है:
@@ -77,7 +77,7 @@ PDF `bytearray` बफ़र लौटाता है।
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 यह उदाहरण [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) और [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) को संसाधित करने के लिए header और footer लेख विधियों का उपयोग करता है।
 उन्हें स्वचालित रूप से (automatically) बुलाया जाता है। वे पहले से ही FPDF वर्ग में मौजूद हैं लेकिन कुछ नहीं करते हैं,
@@ -111,9 +111,9 @@ Logo को निर्दिष्ट करके [image](fpdf/fpdf.html#fpdf
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Jules Verne text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Jules Verne text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) विधि वर्तमान फ़ॉन्ट में एक स्ट्रिंग की लंबाई निर्धारित करने की अनुमति देती है, 
 जिसका उपयोग शीर्षक के आसपास के फ्रेम की स्थिति और चौड़ाई की गणना करने के लिए यहां किया जाता है।
@@ -140,9 +140,9 @@ Logo को निर्दिष्ट करके [image](fpdf/fpdf.html#fpdf
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Jules Verne text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Jules Verne text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 पिछले ट्यूटोरियल से मुख्य अंतर [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) और set_col विधियों का उपयोग है।
 
@@ -158,10 +158,10 @@ Logo को निर्दिष्ट करके [image](fpdf/fpdf.html#fpdf
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[Countries text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[Countries text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
-_⚠️ This section has changed a lot and requires a new translation: <https://github.com/PyFPDF/fpdf2/issues/267>_
+_⚠️ This section has changed a lot and requires a new translation: <https://github.com/py-pdf/fpdf2/issues/267>_
 
 English versions:
 
@@ -177,8 +177,8 @@ English versions:
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 टेक्स्ट प्रिंट करने के लिए यहां दिखाया गया नया तरीका [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write) है। यह बहुत हद तक [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) के समान है, मुख्य अंतर यह है:
 - पंक्ति का अंत दाएं हाशिये पर है और अगली पंक्ति बाएं हाशिये पर शुरू होती है।

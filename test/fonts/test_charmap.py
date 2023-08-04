@@ -24,7 +24,7 @@ HERE = Path(__file__).resolve().parent
 
 @pytest.mark.skipif(
     sys.version_info < (3, 8),
-    reason="fontTools dropped support for 3.7. https://github.com/PyFPDF/fpdf2/pull/863",
+    reason="fontTools dropped support for 3.7. https://github.com/py-pdf/fpdf2/pull/863",
 )
 @pytest.mark.parametrize(
     "font_filename",

@@ -12,7 +12,7 @@ Let's start with the classic example:
 {% include "../tutorial/tuto1.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto1.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto1.pdf)
 
 After including the library file, we create an `FPDF` object. The 
 [FPDF](fpdf/fpdf.html#fpdf.fpdf.FPDF) constructor is used here with the default values: 
@@ -76,7 +76,7 @@ Here is a two page example with header, footer and logo:
 {% include "../tutorial/tuto2.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto2.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto2.pdf)
 
 This example makes use of the [header](fpdf/fpdf.html#fpdf.fpdf.FPDF.header) and 
 [footer](fpdf/fpdf.html#fpdf.fpdf.FPDF.footer) methods to process page headers and footers. They
@@ -116,9 +116,9 @@ illustrates the use of colors.
 {% include "../tutorial/tuto3.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto3.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto3.pdf)
 
-[Jules Verne text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Jules Verne text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 The [get_string_width](fpdf/fpdf.html#fpdf.fpdf.FPDF.get_string_width) method allows determining
 the length of a string in the current font, which is used here to calculate the
@@ -151,9 +151,9 @@ plug-in, is to right-click and select Document Properties.
 {% include "../tutorial/tuto4.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto4.pdf)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto4.pdf)
 
-[Jules Verne text](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/20k_c1.txt)
+[Jules Verne text](https://github.com/py-pdf/fpdf2/raw/master/tutorial/20k_c1.txt)
 
 The key difference from the previous tutorial is the use of the 
 [accept_page_break](fpdf/fpdf.html#fpdf.fpdf.FPDF.accept_page_break) and the set_col methods.
@@ -176,8 +176,8 @@ This tutorial will explain how to create two different tables,
 {% include "../tutorial/tuto5.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto5.pdf) -
-[Countries CSV data](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/countries.txt)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
+[Countries CSV data](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
 The first example is achieved in the most basic way possible, feeding data to [`FPDF.table()`](https://pyfpdf.github.io/fpdf2/Tables.html). The result is rudimentary but very quick to obtain.
 
@@ -199,8 +199,8 @@ This tutorial will explain several ways to insert links inside a pdf document,
 {% include "../tutorial/tuto6.py" %}
 ```
 
-[Resulting PDF](https://github.com/PyFPDF/fpdf2/raw/master/tutorial/tuto6.pdf) -
-[fpdf2-logo](https://raw.githubusercontent.com/PyFPDF/fpdf2/master/docs/fpdf2-logo.png)
+[Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
+[fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 The new method shown here to print text is
  [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)

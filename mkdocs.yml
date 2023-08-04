@@ -8,8 +8,8 @@ site_url: https://pyfpdf.github.io/fpdf2/
 site_author: Lucas Cimon et al
 site_description: fpdf2 - minimalist PDF creation library for Python
 
-repo_url: https://github.com/PyFPDF/fpdf2
-repo_name: PyFPDF/fpdf2
+repo_url: https://github.com/py-pdf/fpdf2
+repo_name: py-pdf/fpdf2
 
 docs_dir: docs/
 site_dir: public/
@@ -59,7 +59,7 @@ plugins:
       redirect_maps:
         'CombineWithChartingLibs.md': 'Maths.md'
   #- git-committers:
-  #    repository: PyFPDF/fpdf2
+  #    repository: py-pdf/fpdf2
   #    branch: master
   - with-pdf:  # https://github.com/orzih/mkdocs-with-pdf
       output_path: fpdf2-manual.pdf
@@ -168,6 +168,6 @@ nav:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/PyFPDF/fpdf2
+      link: https://github.com/py-pdf/fpdf2
     - icon: fontawesome/brands/python
       link: https://pypi.org/project/fpdf2/
