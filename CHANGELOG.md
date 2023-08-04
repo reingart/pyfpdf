@@ -250,7 +250,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
   instead of just the very last line (_cf._ [#364](https://github.com/py-pdf/fpdf2/issues/364)), thanks to @gmischler
 - a regression: now again `multi_cell()` always renders a cell, even if `txt` is an empty string - _cf._ [#349](https://github.com/py-pdf/fpdf2/issues/349)
 - a bug with string width calculation when Markdown is enabled - _cf._ [#351](https://github.com/py-pdf/fpdf2/issues/351)
-- a few bugs when parsing some SVG files - _cf._ [#356](https://github.com/py-pdf/fpdf2/issues/356), [#358](https://github.com/PyFPDF/fpdf2/issues/358) & [#376](https://github.com/PyFPDF/fpdf2/issues/376)
+- a few bugs when parsing some SVG files - _cf._ [#356](https://github.com/py-pdf/fpdf2/issues/356), [#358](https://github.com/py-pdf/fpdf2/issues/358) & [#376](https://github.com/py-pdf/fpdf2/issues/376)
 - a bug when using `multi_cell(..., split_only=True)` inside an `unbreakable` section - _cf._ [#359](https://github.com/py-pdf/fpdf2/issues/359)
 ### Deprecated
 - The parameter `ln` to `cell()` and `multi_cell()` is now deprecated: use `new_x` and `new_y` instead.
@@ -462,7 +462,7 @@ _cf._ [documentation on Tables](https://pyfpdf.github.io/fpdf2/Tables.html#repea
 - `fpdf.FPDF_CACHE_MODE` & `fpdf.FPDF_CACHE_DIR` in favor of a configurable new `font_cache_dir` optional argument of the `fpdf.FPDF` constructor
 
 ## [2.3.0] - 2021-01-29
-Many thanks to [@eumiro](https://github.com/py-pdf/fpdf2/pulls?q=is%3Apr+author%3Aeumiro) & [@fbernhart](https://github.com/PyFPDF/fpdf2/pulls?q=is%3Apr+author%3Aeumiro) for their contributions to make `fpdf2` code cleaner!
+Many thanks to [@eumiro](https://github.com/py-pdf/fpdf2/pulls?q=is%3Apr+author%3Aeumiro) & [@fbernhart](https://github.com/py-pdf/fpdf2/pulls?q=is%3Apr+author%3Aeumiro) for their contributions to make `fpdf2` code cleaner!
 ### Added
 - `FPDF.unbreakable` : a new method providing a context-manager in which automatic page breaks are disabled.
   _cf._ https://pyfpdf.github.io/fpdf2/PageBreaks.html
