@@ -16,7 +16,9 @@ in order to get warned about deprecated features used in your code.
 
 This can also be enabled programmatically with `warnings.simplefilter('default', DeprecationWarning)`.
 
-## [2.7.5] - Not released yet
+## [2.7.6] - Not released yet
+
+## [2.7.5] - 2023-08-04
 ### Added
 - [`FPDF.set_text_shaping()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_text_shaping): new method to perform text shaping using **Harfbuzz** - [documentation](https://pyfpdf.github.io/fpdf2/TextShaping.html) - thanks to @andersonhc in [PR #820](https://github.com/PyFPDF/fpdf2/pull/820)
 - [`FPDF.mirror()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.mirror) - New method: [documentation page](https://pyfpdf.github.io/fpdf2/Transformations.html) - Contributed by @sebastiantia
