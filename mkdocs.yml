@@ -163,6 +163,7 @@ nav:
   - 'Development guidelines':         'Development.md'
   - 'Logging':                        'Logging.md'
 - 'API':                            'https://pyfpdf.github.io/fpdf2/fpdf/'
+- 'History':                        'History.md'
 - 'FAQ':                            'FAQ.md'
 
 extra:

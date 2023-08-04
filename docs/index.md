@@ -109,6 +109,14 @@ or [open a discussion](https://github.com/py-pdf/fpdf2/discussions).
 * [csv2pdf](https://github.com/TECH-SAVVY-GUY/csv2pdf) : convert CSV files to PDF files easily
 * [Planet-Matriarchy-RPG-CharGen](https://github.com/ShawnDriscoll/Planet-Matriarchy-RPG-CharGen) : a PyQt based desktop application (= `.exe` under Windows) that provides a RPG character sheet generator
 
+### Usage statistics
+
+- [PyPI download stats](https://pypistats.org/packages/fpdf2) - Downloads per release on [Pepy](https://pepy.tech/project/fpdf2)
+  - [pip trends: fpdf2 VS other PDF rendering libs](https://piptrends.com/compare/fpdf2-vs-fpdf-vs-PyPDF2-vs-borb-vs-reportlab)
+- packages using `fpdf2` can be listed using [GitHub Dependency graph: Dependents](https://github.com/py-pdf/fpdf2/network/dependents),
+[Wheelodex](https://www.wheelodex.org/projects/fpdf2/rdepends/) or [Watchman Pypi](http://www.watchman-pypi.com).
+Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2).
+
 ### Related ###
 
 * Looking for alternative libraries? Check out [this detailed list of PDF-related Python libs by Patrick Maupin (`pdfrw` author)](https://github.com/pmaupin/pdfrw#other-libraries).
