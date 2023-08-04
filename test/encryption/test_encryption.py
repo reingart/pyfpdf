@@ -263,7 +263,7 @@ def test_encryption_aes256_with_user_password(tmp_path):
     assert_pdf_equal(pdf, HERE / "encryption_aes256_user_password.pdf", tmp_path)
 
 
-def test_blank_owner_password(tmp_path):
+def test_blank_owner_password():
     pdf = FPDF()
     pdf.set_encryption(
         owner_password="",
