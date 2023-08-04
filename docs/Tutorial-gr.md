@@ -1,6 +1,6 @@
 # Πρόγραμμα Εκμάθησης #
 
-Πλήρης τεκμηρίωση των μεθόδων:  [`fpdf.FPDF` API doc](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
+Πλήρης τεκμηρίωση των μεθόδων:  [`fpdf.FPDF` API doc](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
 
 [TOC]
 
@@ -120,8 +120,8 @@ _⚠️ This section has changed a lot and requires a new translation: <https://
 
 English versions:
 
-* [Tuto 5 - Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
-* [Documentation on tables](https://pyfpdf.github.io/fpdf2/Tables.html)
+* [Tuto 5 - Creating Tables](https://py-pdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
+* [Documentation on tables](https://py-pdf.github.io/fpdf2/Tables.html)
 
 ## Μάθημα 6 - Δημιουργία συνδέσμων και μίξη στυλ κειμένου ##
 
@@ -137,22 +137,22 @@ English versions:
 [fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 Παρατηρούμε μία νέα μέθοδο για την εκτύπωση κειμένου, την
- [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
+ [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
 . Η μέθοδος αυτή, θυμίζει αρκετά την
- [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
+ [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
  , παρόλα αυτά εμφανίζει τις εξής διαφορές:
 
 - Το τέλος της γραμμής βρίσκεται στο δεξί περιθώριο και η επόμενη γραμμή ξεκινάει στο αριστερό περιθώριο.
 - Η τρέχουσα θέση μετακινείται στο τέλος του κειμένου.
 
-Αυτή η μέθοδος, επομένως μας επιτρέπει να γράψουμε ένα κομμάτι κειμένου, να αλλάξουμε τη γραμματοσειρά, και να συνεχίσουμε ακριβώς στο σημείο που είχαμε απομείνει. Από την άλλη πλευρά, το βασικό της μειονέκτημα είναι ότι δεν μπορούμε να ευθυγραμμίσουμε το κείμενο όπως με την μέθοδο [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell).
+Αυτή η μέθοδος, επομένως μας επιτρέπει να γράψουμε ένα κομμάτι κειμένου, να αλλάξουμε τη γραμματοσειρά, και να συνεχίσουμε ακριβώς στο σημείο που είχαμε απομείνει. Από την άλλη πλευρά, το βασικό της μειονέκτημα είναι ότι δεν μπορούμε να ευθυγραμμίσουμε το κείμενο όπως με την μέθοδο [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell).
 
-Στην πρώτη σελίδα του παραδείγματος χρησιμοποιήσαμε την μέθοδο [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write) για αυτό το σκοπό. Το πρώτο κομμάτι της πρότασης είναι γραμμένο ως απλό κείμενο, ενώ στη συνέχεια, αφού χρησιμοποιήσαμε την μέθοδο [set_font()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font), αλλάξαμε το στυλ κειμένου σε υπογράμμιση και κλείσαμε την πρόταση.
+Στην πρώτη σελίδα του παραδείγματος χρησιμοποιήσαμε την μέθοδο [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write) για αυτό το σκοπό. Το πρώτο κομμάτι της πρότασης είναι γραμμένο ως απλό κείμενο, ενώ στη συνέχεια, αφού χρησιμοποιήσαμε την μέθοδο [set_font()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font), αλλάξαμε το στυλ κειμένου σε υπογράμμιση και κλείσαμε την πρόταση.
 
 Για να προσθέσουμε έναν εσωτερικό σύνδεσμο ο οποίος θα κατευθύνει στην επόμενη σελίδα, χρησιμοποιήσαμε την μέθοδο 
- [add_link()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link), η οποία δημιουργεί μία επιφανεία με όνομα "link". Αν κλικάρουμε την επιφάνεια αυτή μεταφερόμαστε σε μία άλλη τοποθεσία του αρχείου.
+ [add_link()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link), η οποία δημιουργεί μία επιφανεία με όνομα "link". Αν κλικάρουμε την επιφάνεια αυτή μεταφερόμαστε σε μία άλλη τοποθεσία του αρχείου.
 
-Για να δημιουργήσουμε έναν εξωτερικό σύνδεσμο μέσω μιας εικόνας, θα χρησιμοποιήσουμε την μέθοδο [image()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image). Αυτή η μέθοδος μας δίνει την επιλογή να περάσουμε έναν σύνδεσμο ως τιμή σε μία από τις παραμέτρους της. Ο σύνδεσμος μπορεί να είναι εσωτερικός ή εξωτερικός.
+Για να δημιουργήσουμε έναν εξωτερικό σύνδεσμο μέσω μιας εικόνας, θα χρησιμοποιήσουμε την μέθοδο [image()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image). Αυτή η μέθοδος μας δίνει την επιλογή να περάσουμε έναν σύνδεσμο ως τιμή σε μία από τις παραμέτρους της. Ο σύνδεσμος μπορεί να είναι εσωτερικός ή εξωτερικός.
 
 Εναλλακτικά, μία ακόμη επιλογή για να αλλάξουμε το στυλ κειμένου και να προσθέσουμε συνδέσμους είναι η χρήση της μεθόδου  `write_html()`. Η μέθοδος αυτή, αποτελεί έναν αναλυτή html ο οποίος επιτρέπει την προσθήκη κειμένου, την αλλαγή γραμματοσειράς και την προσθήκη συνδέσμων με την χρήση της html.
 

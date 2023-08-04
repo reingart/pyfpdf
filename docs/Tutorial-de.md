@@ -1,6 +1,6 @@
 # Kurzanleitung #
 
-Vollständige Dokumentation der Methoden: [`fpdf.FPDF` API doc](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
+Vollständige Dokumentation der Methoden: [`fpdf.FPDF` API doc](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
 
 [TOC]
 
@@ -155,8 +155,8 @@ _⚠️ This section has changed a lot and requires a new translation: <https://
 
 English versions:
 
-* [Tuto 5 - Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
-* [Documentation on tables](https://pyfpdf.github.io/fpdf2/Tables.html)
+* [Tuto 5 - Creating Tables](https://py-pdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
+* [Documentation on tables](https://py-pdf.github.io/fpdf2/Tables.html)
 
 ## Lektion 6 - Links erstellen und Textstile mischen ##
 
@@ -172,8 +172,8 @@ Es wird auch gezeigt, wie man verschiedene Textstile (fett, kursiv, unterstriche
 [fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 Die hier gezeigte neue Methode zur Einbindung von Text lautet
- [`write()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write). Sie ähnelt der bereits bekannten
- [`multi_cell()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell). Die wichtigsten Unterschiede sind:
+ [`write()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write). Sie ähnelt der bereits bekannten
+ [`multi_cell()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell). Die wichtigsten Unterschiede sind:
 
 - Das Ende der Zeile befindet sich am rechten Rand und die nächste Zeile beginnt am linken
  Rand.
@@ -181,16 +181,16 @@ Die hier gezeigte neue Methode zur Einbindung von Text lautet
 
 Die Methode ermöglicht es uns somit, zuerst einen Textabschnitt zu schreiben, dann den Schriftstil zu ändern
 und genau an der Stelle fortzufahren, an der wir aufgehört haben.
-Der größte Nachteil ist jedoch, dass die von [`multi_cell()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) bekannte Möglichkeit zur Festlegung der Textausrichtung fehlt.
+Der größte Nachteil ist jedoch, dass die von [`multi_cell()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) bekannte Möglichkeit zur Festlegung der Textausrichtung fehlt.
 
-Auf der ersten Seite des Beispiels nutzen wir [`write()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write).
+Auf der ersten Seite des Beispiels nutzen wir [`write()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write).
 Der Anfang des Satzes wird in "normalem" Stil geschrieben, dann mit der Methode
- [`set_font()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font) auf Unterstreichung umgestellt und der Satz beendet.
+ [`set_font()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font) auf Unterstreichung umgestellt und der Satz beendet.
 
 Um einen internen Link hinzuzufügen, der auf die zweite Seite verweist, nutzen wir die Methode
- [`add_link()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link), die einen anklickbaren Bereich erzeugt, 
+ [`add_link()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link), die einen anklickbaren Bereich erzeugt, 
  den wir "link" nennen und der auf eine andere Stelle innerhalb des Dokuments verweist.
 
-Um einen externen Link mit Hilfe eines Bildes zu erstellen, verwenden wir [`image()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image). Es besteht die Möglichkeit, der Methode ein Linkziel als eines ihrer Argumente zu übergeben. Der Link kann sowohl einer interner als auch ein externer sein.
+Um einen externen Link mit Hilfe eines Bildes zu erstellen, verwenden wir [`image()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image). Es besteht die Möglichkeit, der Methode ein Linkziel als eines ihrer Argumente zu übergeben. Der Link kann sowohl einer interner als auch ein externer sein.
 
 Eine weitere Möglichkeit, den Schriftstil zu ändern und Links hinzuzufügen, stellt die Verwendung der Methode `write_html()` dar. Sie ist ein HTML-Parser, der das Hinzufügen von Text, Änderung des Schriftstils und Erstellen von Links mittels HTML ermöglicht.

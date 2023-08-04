@@ -4,7 +4,7 @@ Thanks for your interest in the project. Bugs filed and PRs submitted are apprec
 Some guidelines are provided like this, in HTML comments, to expedite the code review before merging your contribution.
 
 First, please make sure that you have read the documentation page on fpdf2 development:
-https://pyfpdf.github.io/fpdf2/Development.html
+https://py-pdf.github.io/fpdf2/Development.html
 
 If you're new to contributing to open source projects,
 you might find this free video course helpful: http://kcd.im/pull-request

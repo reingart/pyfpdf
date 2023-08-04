@@ -1,4 +1,4 @@
-Please check [the documentation page dedicated to development](https://pyfpdf.github.io/fpdf2/Development.html).
+Please check [the documentation page dedicated to development](https://py-pdf.github.io/fpdf2/Development.html).
 
 You will also get some guidelines whenever you start [opening an issue](https://github.com/py-pdf/fpdf2/issues)
 or [submitting a Pull Request](https://github.com/py-pdf/fpdf2/pulls).

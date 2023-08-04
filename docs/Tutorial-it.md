@@ -1,6 +1,6 @@
 # Tutorial #
 
-Documentazione completa dei metodi: [`fpdf.FPDF` API doc](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
+Documentazione completa dei metodi: [`fpdf.FPDF` API doc](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
 
 [TOC]
 
@@ -141,8 +141,8 @@ _⚠️ This section has changed a lot and requires a new translation: <https://
 
 English versions:
 
-* [Tuto 5 - Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
-* [Documentation on tables](https://pyfpdf.github.io/fpdf2/Tables.html)
+* [Tuto 5 - Creating Tables](https://py-pdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
+* [Documentation on tables](https://py-pdf.github.io/fpdf2/Tables.html)
 
 ## Tuto 6 - Creare link e mescolare stili di testo ##
 
@@ -158,30 +158,30 @@ Saranno mostrati anche molti modi di utilizzare diversi stili di testo (grassett
 [fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 Il nuovo metodo qui utilizzato per stampare testo è
- [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
+ [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
 . È molto simile a 
- [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
+ [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
  , ma con delle differenze:
 
 - La fine della linea è al margine destro e la linea successiva inizia al margine sinistro.
 - La posizione attuale si sposta alla fine del testo stampato.
 
 Il metodo quindi ci permette di scrivere un blocco di testo, cambiare lo stile del testo, e continuare a scrivere esattamente da dove eravamo rimasti. D'altro canto, il suo peggior svantaggio è che non possiamo giustificare il testo come con 
- [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
+ [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
  method.
 
 Nella prima pagina dell'esempio, abbiamo usato
- [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
+ [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
  per questo scopo. L'inizio della frase è scritta in font normale, poi utilizzando
- [set_font()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font)
+ [set_font()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font)
  siamo passati al sottolineato e abbiamo finito la frase.
 
 Per aggiungere un link interno che puntasse alla seconda pagina, abbiamo utilizzato 
- [add_link()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link)
+ [add_link()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link)
 che crea un area cliccabile che abbiamo chiamato "link"  che redirige ad un altro punto del documento.
 
 Per creare un link esterno utilizzando un'immagine, abbiamo usato
- [image()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image)
+ [image()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image)
 . Il metodo ha l'opzione di passare un link come argomento. Il link può essere sia interno che esterno.
 
 In alternativa, un'altra opzione per cambiare lo stile e aggiungere link è di utilizzare `write_html()`. È un parser hrml che permette di aggiungere testo, cambiare stile e aggiungere link utilizzando html.

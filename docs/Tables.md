@@ -146,7 +146,7 @@ Result:
 
 ![](table_with_single_top_line_layout.jpg)
 
-All the possible layout values are described there: [`TableBordersLayout`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.TableBordersLayout).
+All the possible layout values are described there: [`TableBordersLayout`](https://py-pdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.TableBordersLayout).
 
 ## Insert images
 ```python
@@ -186,7 +186,7 @@ Result:
 
 ## Adding links to cells
 ```python
-                    row.cell(..., link="https://pyfpdf.github.io/fpdf2/")
+                    row.cell(..., link="https://py-pdf.github.io/fpdf2/")
                     row.cell(..., link=pdf.add_link(page=1))
 ```
 

@@ -1,6 +1,6 @@
 विभिन्न उदाहरण जल्दी से दिखाते हैं कि fpdf2 का उपयोग कैसे करें। आपको सभी मुख्य विशेषताओं की व्याख्या मिल जाएगी।
 
-Methods full documentation / तरीके पूर्ण प्रलेखन: [`fpdf.FPDF` API doc](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
+Methods full documentation / तरीके पूर्ण प्रलेखन: [`fpdf.FPDF` API doc](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
 
 [TOC]
 
@@ -165,8 +165,8 @@ _⚠️ This section has changed a lot and requires a new translation: <https://
 
 English versions:
 
-* [Tuto 5 - Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
-* [Documentation on tables](https://pyfpdf.github.io/fpdf2/Tables.html)
+* [Tuto 5 - Creating Tables](https://py-pdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
+* [Documentation on tables](https://py-pdf.github.io/fpdf2/Tables.html)
 
 ## Tuto 6 - लिंक बनाना और टेक्स्ट शैलियों को मिलाना ##
 
@@ -180,17 +180,17 @@ English versions:
 [Resulting PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
 [fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
-टेक्स्ट प्रिंट करने के लिए यहां दिखाया गया नया तरीका [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write) है। यह बहुत हद तक [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) के समान है, मुख्य अंतर यह है:
+टेक्स्ट प्रिंट करने के लिए यहां दिखाया गया नया तरीका [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write) है। यह बहुत हद तक [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) के समान है, मुख्य अंतर यह है:
 - पंक्ति का अंत दाएं हाशिये पर है और अगली पंक्ति बाएं हाशिये पर शुरू होती है।
 - वर्तमान स्थिति पाठ के अंत में चली जाती है।
 
 इसलिए विधि हमें पाठ का एक हिस्सा लिखने, फ़ॉन्ट शैली को बदलने और ठीक उसी स्थान से जारी रखने की अनुमति देती है जहां से हमने छोड़ा था।
-दूसरी ओर, इसका मुख्य दोष यह है कि हम टेक्स्ट को जस्टिफाई नहीं कर सकते जैसे हम [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) मेथड के साथ करते हैं।
+दूसरी ओर, इसका मुख्य दोष यह है कि हम टेक्स्ट को जस्टिफाई नहीं कर सकते जैसे हम [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) मेथड के साथ करते हैं।
 
-उदाहरण के पहले पृष्ठ में, हमने इस उद्देश्य के लिए [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write) का उपयोग किया। वाक्य की शुरुआत नियमित शैली के पाठ में लिखी जाती है, फिर [set_font()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font) विधि का उपयोग करके, हमने रेखांकित करने के लिए स्विच किया और वाक्य को समाप्त किया।
+उदाहरण के पहले पृष्ठ में, हमने इस उद्देश्य के लिए [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write) का उपयोग किया। वाक्य की शुरुआत नियमित शैली के पाठ में लिखी जाती है, फिर [set_font()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font) विधि का उपयोग करके, हमने रेखांकित करने के लिए स्विच किया और वाक्य को समाप्त किया।
 
-दूसरे पृष्ठ की ओर इशारा करते हुए एक आंतरिक लिंक जोड़ने के लिए, हमने  [add_link()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link) विधि का उपयोग किया, जो एक क्लिक करने योग्य क्षेत्र बनाता है जिसे हमने "Link" नाम दिया है जो दस्तावेज़ के भीतर किसी अन्य स्थान पर निर्देशित करता है।
+दूसरे पृष्ठ की ओर इशारा करते हुए एक आंतरिक लिंक जोड़ने के लिए, हमने  [add_link()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link) विधि का उपयोग किया, जो एक क्लिक करने योग्य क्षेत्र बनाता है जिसे हमने "Link" नाम दिया है जो दस्तावेज़ के भीतर किसी अन्य स्थान पर निर्देशित करता है।
 
-Image का उपयोग करके बाहरी लिंक बनाने के लिए, हमने  [image()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image) का उपयोग किया। विधि में एक लिंक को इसके तर्कों में से एक के रूप में पारित करने का विकल्प होता है। लिंक आंतरिक या बाहरी दोनों हो सकता है।
+Image का उपयोग करके बाहरी लिंक बनाने के लिए, हमने  [image()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image) का उपयोग किया। विधि में एक लिंक को इसके तर्कों में से एक के रूप में पारित करने का विकल्प होता है। लिंक आंतरिक या बाहरी दोनों हो सकता है।
 
 एक विकल्प के रूप में, फ़ॉन्ट शैली बदलने और लिंक जोड़ने का दूसरा विकल्प `write_html()` पद्धति का उपयोग करना है। यह एक HTML पार्सर है, जो टेक्स्ट जोड़ने, फ़ॉन्ट शैली बदलने और html का उपयोग करके लिंक जोड़ने की अनुमति देता है।

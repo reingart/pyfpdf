@@ -18,7 +18,7 @@ pdf.output("signed_doc.pdf")
 
 ![](signature-valid-in-acrobat.png)
 
-The lower-level [sign()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.sign) method
+The lower-level [sign()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.sign) method
 allows to add a signature based on arbitrary key & certificates, not necessarily from a PKCS#12 file.
 
 `endesive` also provides basic code to check PDFs signatures.

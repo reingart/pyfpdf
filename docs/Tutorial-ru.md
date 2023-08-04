@@ -1,6 +1,6 @@
 # Руководство #
 
-Полная документация по методам класса **FPDF**: [`fpdf.FPDF` API doc](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
+Полная документация по методам класса **FPDF**: [`fpdf.FPDF` API doc](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
 
 [TOC]
 
@@ -116,8 +116,8 @@ _⚠️ This section has changed a lot and requires a new translation: <https://
 
 English versions:
 
-* [Tuto 5 - Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
-* [Documentation on tables](https://pyfpdf.github.io/fpdf2/Tables.html)
+* [Tuto 5 - Creating Tables](https://py-pdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
+* [Documentation on tables](https://py-pdf.github.io/fpdf2/Tables.html)
 
 ## Руководство 6 - Создание ссылок и смешивание стилей текста ##
 
@@ -132,17 +132,17 @@ English versions:
 [Итоговый PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto6.pdf) -
 [fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
-Новый метод, показанный здесь для печати текста - это [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write). Он очень похож на [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell), основные отличия заключаются в следующем:
+Новый метод, показанный здесь для печати текста - это [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write). Он очень похож на [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell), основные отличия заключаются в следующем:
 
 - Конец строки находится на правом поле, а следующая строка начинается на левом поле.
 - Текущая позиция перемещается в конец текста.
 
-Таким образом, этот метод позволяет нам написать фрагмент текста, изменить стиль шрифта и продолжить с того самого места, на котором мы остановились. С другой стороны, его главный недостаток заключается в том, что мы не можем выровнять текст, как это делается при использовании метода [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell).
+Таким образом, этот метод позволяет нам написать фрагмент текста, изменить стиль шрифта и продолжить с того самого места, на котором мы остановились. С другой стороны, его главный недостаток заключается в том, что мы не можем выровнять текст, как это делается при использовании метода [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell).
 
-На первой странице примера мы использовали для этой цели [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write). Начало предложения написано текстом обычного стиля, затем, используя метод [set_font()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font), мы переключились на подчеркивание и закончили предложение.
+На первой странице примера мы использовали для этой цели [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write). Начало предложения написано текстом обычного стиля, затем, используя метод [set_font()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font), мы переключились на подчеркивание и закончили предложение.
 
-Для добавления внутренней ссылки, указывающей на вторую страницу, мы использовали метод [add_link()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link), который создает кликабельную область, названную нами "link", которая ведет в другое место внутри документа.
+Для добавления внутренней ссылки, указывающей на вторую страницу, мы использовали метод [add_link()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link), который создает кликабельную область, названную нами "link", которая ведет в другое место внутри документа.
 
-Чтобы создать внешнюю ссылку с помощью изображения, мы использовали метод [image()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image). Этот метод имеет возможность передать ссылку в качестве одного из аргументов. Ссылка может быть как внутренней, так и внешней.
+Чтобы создать внешнюю ссылку с помощью изображения, мы использовали метод [image()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image). Этот метод имеет возможность передать ссылку в качестве одного из аргументов. Ссылка может быть как внутренней, так и внешней.
 
 В качестве альтернативы для изменения стиля шрифта и добавления ссылок можно использовать метод `write_html()`. Это парсер html, который позволяет добавлять текст, изменять стиль шрифта и добавлять ссылки с помощью html.

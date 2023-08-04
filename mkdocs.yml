@@ -1,10 +1,10 @@
 ### 
-# Related docs: https://pyfpdf.github.io/fpdf2/Development.html#documentation
+# Related docs: https://py-pdf.github.io/fpdf2/Development.html#documentation
 #
 # material theme docs: https://squidfunk.github.io/mkdocs-material/
 ### 
 site_name: fpdf2
-site_url: https://pyfpdf.github.io/fpdf2/
+site_url: https://py-pdf.github.io/fpdf2/
 site_author: Lucas Cimon et al
 site_description: fpdf2 - minimalist PDF creation library for Python
 
@@ -162,7 +162,7 @@ nav:
 - 'Development':
   - 'Development guidelines':         'Development.md'
   - 'Logging':                        'Logging.md'
-- 'API':                            'https://pyfpdf.github.io/fpdf2/fpdf/'
+- 'API':                            'https://py-pdf.github.io/fpdf2/fpdf/'
 - 'History':                        'History.md'
 - 'FAQ':                            'FAQ.md'
 

@@ -1,6 +1,6 @@
 # Tutorial #
 
-Documentación completa de los métodos: [Documentación de la API de `fpdf.FPDF`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
+Documentación completa de los métodos: [Documentación de la API de `fpdf.FPDF`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
 
 [TOC]
 
@@ -180,8 +180,8 @@ _⚠️ This section has changed a lot and requires a new translation: <https://
 
 English versions:
 
-* [Tuto 5 - Creating Tables](https://pyfpdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
-* [Documentation on tables](https://pyfpdf.github.io/fpdf2/Tables.html)
+* [Tuto 5 - Creating Tables](https://py-pdf.github.io/fpdf2/Tutorial.html#tuto-5-creating-tables)
+* [Documentation on tables](https://py-pdf.github.io/fpdf2/Tables.html)
 
 ## Tutorial 6 - Creando enlaces y combinando estilos de texto ##
 
@@ -199,9 +199,9 @@ También mostrará muchas formas en que podemos usar los diferentes estilos de t
 [Logo de fpdf2](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 El nuevo método mostrado aquí para imprimir texto es
- [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
+ [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
 . Es muy similar a
- [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
+ [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
 , siendo las diferencias clave:
  
  - El final de línea está en el margen derecho y la siguiente línea comienza en el margen
@@ -213,22 +213,22 @@ El método por tanto nos permite escribir un trozo de texto, alterar el estilo d
 Por otro lado, su principal desventaja es que no podemos justificar el texto como
  hacemos con el
  método
- [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell).
+ [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell).
 
 En la primera página del ejemplo usamos
- [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
+ [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
  para este propósito. El comienzo de la oración está escrito usando texto en estilo
  regular, luego usando el método
- [set_font()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font)
+ [set_font()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font)
  cambiamos a subrayado y terminamos la oración.
 
 Para agregar un enlace interno apuntando a la segunda página, usamos el método
- [add_link()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link)
+ [add_link()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link)
 , el cual crea un área clicable a la que nombramos "link" que redirige a
  otro lugar dentro del documento.
 
 Para crear un enlace externo usando una imagen, usamos
- [image()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image)
+ [image()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image)
 . El método tiene la
  opción de recibir un enlace como uno de sus argumentos. El enlace puede ser tanto interno
  como externo.

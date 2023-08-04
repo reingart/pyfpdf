@@ -387,7 +387,7 @@ class FPDF(GraphicsStateMixin):
     def write_html(self, text, *args, **kwargs):
         """
         Parse HTML and convert it to PDF.
-        cf. https://pyfpdf.github.io/fpdf2/HTML.html
+        cf. https://py-pdf.github.io/fpdf2/HTML.html
 
         Args:
             text (str): HTML content to render
@@ -1970,7 +1970,7 @@ class FPDF(GraphicsStateMixin):
     def set_fallback_fonts(self, fallback_fonts, exact_match=True):
         """
         Allows you to specify a list of fonts to be used if any character is not available on the font currently set.
-        Detailed documentation: https://pyfpdf.github.io/fpdf2/Unicode.html#fallback-fonts
+        Detailed documentation: https://py-pdf.github.io/fpdf2/Unicode.html#fallback-fonts
 
         Args:
             fallback_fonts: sequence of fallback font IDs
@@ -4715,7 +4715,7 @@ class FPDF(GraphicsStateMixin):
     def table(self, *args, **kwargs):
         """
         Inserts a table, that can be built using the `fpdf.table.Table` object yield.
-        Detailed usage documentation: https://pyfpdf.github.io/fpdf2/Tables.html
+        Detailed usage documentation: https://py-pdf.github.io/fpdf2/Tables.html
 
         Args:
             rows: optional. Sequence of rows (iterable) of str to initiate the table cells with text content

@@ -1,6 +1,6 @@
 # របៀបប្រើប្រាស #
 
-ឯកសារទាំងស្រុងនៃវិធីប្រើ: [`fpdf.FPDF` API doc](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
+ឯកសារទាំងស្រុងនៃវិធីប្រើ: [`fpdf.FPDF` API doc](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF)
 
 [TOC]
 
@@ -143,13 +143,13 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 [លទ្ធផលសម្រេច PDF](https://github.com/py-pdf/fpdf2/raw/master/tutorial/tuto5.pdf) -
 [Countries CSV data](https://github.com/py-pdf/fpdf2/raw/master/tutorial/countries.txt)
 
-មានមូលដ្ឋានក្នុងការធ្វើដោយជោគជ័យជាមួយឧទារហ៍នេះដោយដាក់ទិន្នន័យដោយប្រើ [`FPDF.table()`](https://pyfpdf.github.io/fpdf2/Tables.html). វាមានភាពសម្មាញ់និងធ្វើបានលឿន។
+មានមូលដ្ឋានក្នុងការធ្វើដោយជោគជ័យជាមួយឧទារហ៍នេះដោយដាក់ទិន្នន័យដោយប្រើ [`FPDF.table()`](https://py-pdf.github.io/fpdf2/Tables.html). វាមានភាពសម្មាញ់និងធ្វើបានលឿន។
 
 តារាងទីពីរយើងនឹងធ្វើអោយប្រសើរជាងមុនរួមមានដូចជា: ដាក់ពណ៌ ដោយកំណត់ប្រវែងទទឹង បន្ថយបន្ទាត់កំពស់។
  តម្រឹមចំណងជើងចេញពីកណ្តាល រៀបជួរឈរដោយការប្តូរតម្លៃប្រវែងទទឹងវា និង ការកំណត់តម្រឹមខាងស្តាំ។
  ជាងនេះទៅទៀតនោះ គឹដកបន្ទាត់ផ្តេកចេញ។
  ធ្វើបែបនេះទៅបានដោយរើសយក `borders_layout` ដែលមានជម្រើសជាច្រើននៅទីនោះ:
- [`TableBordersLayout`](https://pyfpdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.TableBordersLayout).
+ [`TableBordersLayout`](https://py-pdf.github.io/fpdf2/fpdf/enums.html#fpdf.enums.TableBordersLayout).
 
 ## មេរៀនទី 6 - បង្កើតតំណរជាមួយអត្ថបទ ##
 
@@ -165,28 +165,28 @@ pdf.cell(60, 10, 'Powered by FPDF.', new_x="LMARGIN", new_y="NEXT", align='C')
 [fpdf2-logo](https://raw.githubusercontent.com/py-pdf/fpdf2/master/docs/fpdf2-logo.png)
 
 របៀបថ្មីមួយទៀតក្នុងការបង្ហាញអត្ថបទដើម្បីបោះពុម្ភ
- [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)។ វាមានភាពស្រដៀងទៅនឹង
- [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
+ [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)។ វាមានភាពស្រដៀងទៅនឹង
+ [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
  ចំណែកភាពខុសគ្នាមាន:
 
 - ការបញ្ចប់នូវបន្ទាត់គឺតម្រឹមខាងស្តាំ ហើយការចាប់បន្ទាត់ថ្មីគឺនៅខាងឆ្វេង។
 - ទីតាំងកំពុងធ្វើការវាប្តូរទៅផ្នែកខាងចុងបំផុតនៃអត្ថបទ។
 
 ដោយហេតុនេះយើងអាចសរសេរអត្ថបទជាកំណាត់ៗបាន ដោយការកំណាត់ម៉ូដខុសៗគ្នាតាមដែលយើងចង់បាន ហើយ បន្តទៅទៀតយើងចង់ដាក់វានៅកន្លែងណាក៏បាន។
-ម្យ៉ាងវិញទៀត គុណវិបត្តិចម្បងរបស់វាគឺថាយើងមិនអាចតម្រឹម ឬ កែរអត្តបទច្រើនបន្ទាត់បានដូចយើងធ្វើវិធី [multi_cell()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) ទេ។
+ម្យ៉ាងវិញទៀត គុណវិបត្តិចម្បងរបស់វាគឺថាយើងមិនអាចតម្រឹម ឬ កែរអត្តបទច្រើនបន្ទាត់បានដូចយើងធ្វើវិធី [multi_cell()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) ទេ។
 
 គោលបំណងលើឧទារហ៍ទីមួយគឺអោយយើងរៀនប្រើ
- [write()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
+ [write()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write)
 . នៅជំហានដំបូងនៃប្រយោគ យើងបានរៀនសរសេរនូវអត្ថបទដោយដោយរចនាបែបធម្មតា ហើយបន្ទាប់ទៀតយើងប្រើវិធី
- [set_font()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font)
+ [set_font()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_font)
  តមកទៀតយើងរចនាដាក់បន្ទាត់ពីក្រោមពាក្យនៅចុងបញ្ចប់នៃប្រយោគ។
 
 របៀបដាក់នូវតំណរភ្ជាប់ទៅទំព័រទីពីរយើងអាចប្រើវិធី
- [add_link()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link)
+ [add_link()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.add_link)
 ដែលបង្កើតនូវតំបន់ដែលយើងអាចចុចបានហៅថា "link" ហើយវារត់ទៅរកទំព័រមួយផ្សេងទៀតនៅលើឯកសារដែលយើងកំពុងបើក។
 
 ដើម្បីបងតំណរទៅខាងកន្លែងផ្សេងទៀតតាមរយៈរូបភាពដោយប្រើ
- [image()](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image)
+ [image()](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image)
 . ប្រើវិធីនេះដើម្បីភ្ជាប់តំណរទៅកាន់ប្រភពមួយផ្សេងទៀត ហើយតំណរនេះអាចត្រូវបានប្រើប្រាសជាមួយប្រភពខាងក្នុង និង ខាងក្រៅ។
 
 ជំរើសមួយផ្សេងទៀតយើងអាចដាក់រចនាពុម្ភអក្សរទៅលើការដាក់តំណរភ្ជាប់តាមវិធី  `write_html()`។ អាចប្រើភាសារកូដ html  ដែលអោយយើងថែមអត្ថបទ ផ្លាស់ប្តូររចនាពុម្ភអក្សរ និង ដាក់តំណរភ្ជាប់(link) ដោយប្រើភាសា HTML។

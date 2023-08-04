@@ -14,7 +14,7 @@ or [borb](https://github.com/jorisschellekens/borb-examples/#76-exporting-html-a
 
 ## write_html usage example
 
-HTML rendering requires the use of [`FPDF.write_html()`](https://pyfpdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html):
+HTML rendering requires the use of [`FPDF.write_html()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html):
 
 ```python
 from fpdf import FPDF

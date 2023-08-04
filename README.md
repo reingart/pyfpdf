@@ -19,7 +19,7 @@
 
 # fpdf2
 
-![fpdf2 logo](https://pyfpdf.github.io/fpdf2/fpdf2-logo.png)
+![fpdf2 logo](https://py-pdf.github.io/fpdf2/fpdf2-logo.png)
 
 `fpdf2` is a PDF creation library for Python:
 
@@ -37,7 +37,7 @@ Go try it **now** online in a Jupyter notebook: [![Open In Colab](https://colab.
 
 Compared with other PDF libraries, `fpdf2` is **fast, versatile, easy to learn and to extend** ([example](https://github.com/digidigital/Extensions-and-Scripts-for-pyFPDF-fpdf2)).
 It is also entirely written in Python and has very few dependencies:
-[Pillow](https://pillow.readthedocs.io/en/stable/), [defusedxml](https://pypi.org/project/defusedxml/), & [fontTools](https://fonttools.readthedocs.io/en/latest/index.html). It is a fork and the successor of `PyFPDF` (_cf._ [history](https://pyfpdf.github.io/fpdf2/Development.html#history)).
+[Pillow](https://pillow.readthedocs.io/en/stable/), [defusedxml](https://pypi.org/project/defusedxml/), & [fontTools](https://fonttools.readthedocs.io/en/latest/index.html). It is a fork and the successor of `PyFPDF` (_cf._ [history](https://py-pdf.github.io/fpdf2/Development.html#history)).
 
 **Development status**: this project is **mature** and **actively maintained**.
 
@@ -59,30 +59,30 @@ pip install git+https://github.com/py-pdf/fpdf2.git@master
 ## Features
 
  * Python 3.7+ support
- * [Unicode](https://pyfpdf.github.io/fpdf2/Unicode.html) (UTF-8) TrueType font subset embedding
- * Internal / external [links](https://pyfpdf.github.io/fpdf2/Links.html)
+ * [Unicode](https://py-pdf.github.io/fpdf2/Unicode.html) (UTF-8) TrueType font subset embedding
+ * Internal / external [links](https://py-pdf.github.io/fpdf2/Links.html)
  * Embedding images, including transparency and alpha channel
- * Arbitrary path drawing and basic [SVG](https://pyfpdf.github.io/fpdf2/SVG.html) import
- * Embedding [barcodes](https://pyfpdf.github.io/fpdf2/Barcodes.html), [charts & graphs](https://pyfpdf.github.io/fpdf2/Maths.html), [emojis, symbols & dingbats](https://pyfpdf.github.io/fpdf2/EmojisSymbolsDingbats.html)
- * [Tables](https://pyfpdf.github.io/fpdf2/Tables.html) and also [cell / multi-cell / plaintext writing](https://pyfpdf.github.io/fpdf2/Text.html), with [automatic page breaks](https://pyfpdf.github.io/fpdf2/PageBreaks.html), line break and text justification
+ * Arbitrary path drawing and basic [SVG](https://py-pdf.github.io/fpdf2/SVG.html) import
+ * Embedding [barcodes](https://py-pdf.github.io/fpdf2/Barcodes.html), [charts & graphs](https://py-pdf.github.io/fpdf2/Maths.html), [emojis, symbols & dingbats](https://py-pdf.github.io/fpdf2/EmojisSymbolsDingbats.html)
+ * [Tables](https://py-pdf.github.io/fpdf2/Tables.html) and also [cell / multi-cell / plaintext writing](https://py-pdf.github.io/fpdf2/Text.html), with [automatic page breaks](https://py-pdf.github.io/fpdf2/PageBreaks.html), line break and text justification
  * Choice of measurement unit, page format & margins. Optional page header and footer
- * Basic [conversion from HTML to PDF](https://pyfpdf.github.io/fpdf2/HTML.html)
- * A [templating system](https://pyfpdf.github.io/fpdf2/Templates.html) to render PDFs in batches
+ * Basic [conversion from HTML to PDF](https://py-pdf.github.io/fpdf2/HTML.html)
+ * A [templating system](https://py-pdf.github.io/fpdf2/Templates.html) to render PDFs in batches
  * Images & links alternative descriptions, for accessibility
- * Table of contents & [document outline](https://pyfpdf.github.io/fpdf2/DocumentOutlineAndTableOfContents.html)
- * [Document encryption](https://pyfpdf.github.io/fpdf2/Encryption.html) & [document signing](https://pyfpdf.github.io/fpdf2/Signing.html)
- * [Annotations](https://pyfpdf.github.io/fpdf2/Annotations.html), including text highlights, and [file attachments](https://pyfpdf.github.io/fpdf2/FileAttachments.html)
- * [Presentation mode](https://pyfpdf.github.io/fpdf2/Presentations.html) with control over page display duration & transitions
+ * Table of contents & [document outline](https://py-pdf.github.io/fpdf2/DocumentOutlineAndTableOfContents.html)
+ * [Document encryption](https://py-pdf.github.io/fpdf2/Encryption.html) & [document signing](https://py-pdf.github.io/fpdf2/Signing.html)
+ * [Annotations](https://py-pdf.github.io/fpdf2/Annotations.html), including text highlights, and [file attachments](https://py-pdf.github.io/fpdf2/FileAttachments.html)
+ * [Presentation mode](https://py-pdf.github.io/fpdf2/Presentations.html) with control over page display duration & transitions
  * Optional basic Markdown-like styling: `**bold**, __italics__`
- * Can render [mathematical equations & charts](https://pyfpdf.github.io/fpdf2/Maths.html)
- * Usage examples with [Django](https://www.djangoproject.com/), [Flask](https://flask.palletsprojects.com), [FastAPI](https://fastapi.tiangolo.com/), [streamlit](https://streamlit.io/), AWS lambdas... : [Usage in web APIs](https://pyfpdf.github.io/fpdf2/UsageInWebAPI.html)
+ * Can render [mathematical equations & charts](https://py-pdf.github.io/fpdf2/Maths.html)
+ * Usage examples with [Django](https://www.djangoproject.com/), [Flask](https://flask.palletsprojects.com), [FastAPI](https://fastapi.tiangolo.com/), [streamlit](https://streamlit.io/), AWS lambdas... : [Usage in web APIs](https://py-pdf.github.io/fpdf2/UsageInWebAPI.html)
  * 1000+ unit tests running under Linux & Windows, with `qpdf`-based PDF diffing, timing & memory usage checks, and a high code coverage
 
 Our 350+ reference PDF test files, generated by `fpdf2`, are validated using 3 different checkers:
 
-[![QPDF logo](https://pyfpdf.github.io/fpdf2/qpdf-logo.svg)](https://github.com/qpdf/qpdf)
-[![PDF Checker logo](https://pyfpdf.github.io/fpdf2/pdfchecker-logo.png)](https://www.datalogics.com/products/pdf-tools/pdf-checker/)
-[![VeraPDF logo](https://pyfpdf.github.io/fpdf2/vera-logo.jpg)](https://verapdf.org)
+[![QPDF logo](https://py-pdf.github.io/fpdf2/qpdf-logo.svg)](https://github.com/qpdf/qpdf)
+[![PDF Checker logo](https://py-pdf.github.io/fpdf2/pdfchecker-logo.png)](https://www.datalogics.com/products/pdf-tools/pdf-checker/)
+[![VeraPDF logo](https://py-pdf.github.io/fpdf2/vera-logo.jpg)](https://verapdf.org)
 
 ## Please show the value
 
@@ -103,8 +103,8 @@ This library relies on community interactions. Please consider sharing a post ab
 
 ## Documentation
 
-- [Documentation Home](https://pyfpdf.github.io/fpdf2/)
-- Tutorial in several languages: [English](https://pyfpdf.github.io/fpdf2/Tutorial.html) - [Deutsch](https://pyfpdf.github.io/fpdf2/Tutorial-de.html) - [español](https://pyfpdf.github.io/fpdf2/Tutorial-es.html) - [हिंदी](https://pyfpdf.github.io/fpdf2/Tutorial-hi.html) - [português](https://pyfpdf.github.io/fpdf2/Tutorial-pt.html) - [Русский](https://pyfpdf.github.io/fpdf2/Tutorial-ru.html) - [Italian](https://pyfpdf.github.io/fpdf2/Tutorial-it.html) - [français](https://pyfpdf.github.io/fpdf2/Tutorial-fr.html) - [Ελληνικά](https://pyfpdf.github.io/fpdf2/Tutorial-gr.html) - [עברית](https://pyfpdf.github.io/fpdf2/Tutorial-he.html) - [简体中文](https://pyfpdf.github.io/fpdf2/Tutorial-zh.html) - [বাংলা](https://pyfpdf.github.io/fpdf2/Tutorial-bn.html) - [ភាសខ្មែរ](https://pyfpdf.github.io/fpdf2/Tutorial-km.md) - [日本語](https://pyfpdf.github.io/fpdf2/Tutorial-ja.html)
+- [Documentation Home](https://py-pdf.github.io/fpdf2/)
+- Tutorial in several languages: [English](https://py-pdf.github.io/fpdf2/Tutorial.html) - [Deutsch](https://py-pdf.github.io/fpdf2/Tutorial-de.html) - [español](https://py-pdf.github.io/fpdf2/Tutorial-es.html) - [हिंदी](https://py-pdf.github.io/fpdf2/Tutorial-hi.html) - [português](https://py-pdf.github.io/fpdf2/Tutorial-pt.html) - [Русский](https://py-pdf.github.io/fpdf2/Tutorial-ru.html) - [Italian](https://py-pdf.github.io/fpdf2/Tutorial-it.html) - [français](https://py-pdf.github.io/fpdf2/Tutorial-fr.html) - [Ελληνικά](https://py-pdf.github.io/fpdf2/Tutorial-gr.html) - [עברית](https://py-pdf.github.io/fpdf2/Tutorial-he.html) - [简体中文](https://py-pdf.github.io/fpdf2/Tutorial-zh.html) - [বাংলা](https://py-pdf.github.io/fpdf2/Tutorial-bn.html) - [ភាសខ្មែរ](https://py-pdf.github.io/fpdf2/Tutorial-km.md) - [日本語](https://py-pdf.github.io/fpdf2/Tutorial-ja.html)
 - Release notes: [CHANGELOG.md](https://github.com/py-pdf/fpdf2/blob/master/CHANGELOG.md)
 - A series of blog posts: [fpdf2 tag @ ludochaordic](https://chezsoi.org/lucas/blog/tag/fpdf2.html)
 
@@ -112,7 +112,7 @@ You can also have a look at the `tests/`, they're great usage examples!
 
 ## Developement
 
-Please check the [dedicated documentation page](https://pyfpdf.github.io/fpdf2/Development.html).
+Please check the [dedicated documentation page](https://py-pdf.github.io/fpdf2/Development.html).
 
 ## Contributors ✨
 
@@ -261,10 +261,10 @@ This project follows the [all-contributors](https://github.com/all-contributors/
 ([emoji key](https://allcontributors.org/docs/en/emoji-key)).
 Contributions of any kind welcome!
 
-[![Contributors map](https://pyfpdf.github.io/fpdf2/contributors-map-small.png)](https://pyfpdf.github.io/fpdf2/contributors.html)
+[![Contributors map](https://py-pdf.github.io/fpdf2/contributors-map-small.png)](https://py-pdf.github.io/fpdf2/contributors.html)
 
 _(screenshot from January 2023, click on the map above to access an up-to-date online version)_
 
 ## Community, related tools, alternative libraries
 
-More about those in [the documentation](https://pyfpdf.github.io/fpdf2/#community).
+More about those in [the documentation](https://py-pdf.github.io/fpdf2/#community).

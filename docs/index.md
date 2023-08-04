@@ -3,7 +3,7 @@
 <a href='https://github.com/py-pdf/fpdf2'><img src='https://s3.amazonaws.com/github/ribbons/forkme_right_red_aa0000.png' alt='Fork me on GitHub' border='0' align='right' /></a>
 
 `fpdf2` is a library for simple & fast PDF document generation in Python.
-It is a fork and the successor of `PyFPDF` (_cf._ [history](https://pyfpdf.github.io/fpdf2/Development.html#history)).
+It is a fork and the successor of `PyFPDF` (_cf._ [history](https://py-pdf.github.io/fpdf2/Development.html#history)).
 
 **Latest Released Version:** [![Pypi latest version](https://img.shields.io/pypi/v/fpdf2.svg)](https://pypi.python.org/pypi/fpdf2)
 
@@ -23,7 +23,7 @@ Go try it **now** online in a Jupyter notebook: [![Open In Colab](https://colab.
 
 ## Main features ##
 
-* Easy to use, with a user-friendly [API](https://pyfpdf.github.io/fpdf2/fpdf/), and easy to extend
+* Easy to use, with a user-friendly [API](https://py-pdf.github.io/fpdf2/fpdf/), and easy to extend
 * Python 3.7+ support
 * [Unicode](Unicode.md) (UTF-8) TrueType font subset embedding (Central European, Cyrillic, Greek, Baltic, Thai, Chinese, Japanese, Korean, Hindi and almost any other language in the world)
 * Internal / external [links](Links.md)
@@ -41,7 +41,7 @@ Go try it **now** online in a Jupyter notebook: [![Open In Colab](https://colab.
 * [Presentation mode](Presentations.md) with control over page display duration & transitions
 * Optional basic Markdown-like styling: `**bold**, __italics__`
 * It has very few dependencies: [Pillow](https://pillow.readthedocs.io/en/stable/), [defusedxml](https://pypi.org/project/defusedxml/), & [fonttools](https://pypi.org/project/fonttools/)
-* Can render [mathematical equations & charts](https://pyfpdf.github.io/fpdf2/Maths.html)
+* Can render [mathematical equations & charts](https://py-pdf.github.io/fpdf2/Maths.html)
 * Many example scripts available throughout this documentation, including usage examples with [Django](https://www.djangoproject.com/), [Flask](https://flask.palletsprojects.com), [FastAPI](https://fastapi.tiangolo.com/), [streamlit](https://streamlit.io/), AWS lambdas... : [Usage in web APIs](UsageInWebAPI.md)
 * Unit tests with `qpdf`-based PDF diffing, and PDF samples validation using 3 different checkers:
 
