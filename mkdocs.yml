@@ -152,8 +152,8 @@ nav:
   - 'File attachments':               'FileAttachments.md'
 - 'Mixing other libs':
   - 'Combine with borb':              'CombineWithBorb.md'
+  - 'Combine with pypdf':             'CombineWithPypdf.md'
   - 'Combine with pdfrw':             'CombineWithPdfrw.md'
-  - 'Combine with PyPDF2':            'CombineWithPyPDF2.md'
   - 'Matplotlib, Pandas, Plotly, Pygal': 'CombineWithChartingLibs.md'
   - 'Templating with Jinja':          'TemplatingWithJinja.md'
   - 'Usage in web APIs':              'UsageInWebAPI.md'

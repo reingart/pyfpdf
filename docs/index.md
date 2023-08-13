@@ -113,16 +113,15 @@ or [open a discussion](https://github.com/py-pdf/fpdf2/discussions).
 ### Usage statistics
 
 - [PyPI download stats](https://pypistats.org/packages/fpdf2) - Downloads per release on [Pepy](https://pepy.tech/project/fpdf2)
-  - [pip trends: fpdf2 VS other PDF rendering libs](https://piptrends.com/compare/fpdf2-vs-fpdf-vs-PyPDF2-vs-borb-vs-reportlab)
+  - [pip trends: fpdf2 VS other PDF rendering libs](https://piptrends.com/compare/fpdf2-vs-fpdf-vs-pypdf-vs-borb-vs-reportlab)
 - packages using `fpdf2` can be listed using [GitHub Dependency graph: Dependents](https://github.com/py-pdf/fpdf2/network/dependents),
 [Wheelodex](https://www.wheelodex.org/projects/fpdf2/rdepends/) or [Watchman Pypi](http://www.watchman-pypi.com).
 Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2).
 
 ### Related ###
 
-* Looking for alternative libraries? Check out [this detailed list of PDF-related Python libs by Patrick Maupin (`pdfrw` author)](https://github.com/pmaupin/pdfrw#other-libraries).
-  There is also [borb](https://github.com/jorisschellekens/borb), [PyPDF2](https://github.com/py-pdf/PyPDF2), [pikepdf](https://github.com/pikepdf/pikepdf), [WeasyPrint](https://github.com/Kozea/WeasyPrint), [pydyf](https://pypi.org/project/pydyf/) and [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/index.html): [features comparison](https://pymupdf.readthedocs.io/en/latest/about.html), [examples](https://github.com/pymupdf/PyMuPDF-Utilities/tree/master/examples#examples), [Jupyter notebooks](https://github.com/pymupdf/PyMuPDF-Utilities/tree/master/jupyter-notebooks).
-  We have some documentations about combining `fpdf2` with [`borb`](CombineWithBorb.md), [`pdfrw`](CombineWithPdfrw.md), & [`PyPDF2`](CombineWithPyPDF2.md).
+* Looking for alternative libraries? Check out [pypdf](https://github.com/py-pdf/pypdf), [borb](https://github.com/jorisschellekens/borb), [pikepdf](https://github.com/pikepdf/pikepdf), [WeasyPrint](https://github.com/Kozea/WeasyPrint), [pydyf](https://pypi.org/project/pydyf/) and [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/index.html): [features comparison](https://pymupdf.readthedocs.io/en/latest/about.html), [examples](https://github.com/pymupdf/PyMuPDF-Utilities/tree/master/examples#examples), [Jupyter notebooks](https://github.com/pymupdf/PyMuPDF-Utilities/tree/master/jupyter-notebooks).
+  We have some documentations about combining `fpdf2` with [`borb`](CombineWithBorb.md) & [`pypdf`](CombineWithPypdf.md).
 * [Create PDFs with Python](https://www.youtube.com/playlist?list=PLjNQtX45f0dR9K2sMJ5ad9wVjqslNBIC0) : a series of tutorial videos by bvalgard
 * [digidigital/Extensions-and-Scripts-for-pyFPDF-fpdf2](https://github.com/digidigital/Extensions-and-Scripts-for-pyFPDF-fpdf2) : scripts ported from PHP to add transpareny to elements of the page or part of an image, allow to write circular text,
    draw pie charts and bar diagrams, embed JavaScript, draw rectangles with rounded corners, draw a star shape,

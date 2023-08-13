@@ -11,7 +11,6 @@ import linecache
 import os
 import pathlib
 import shutil
-import sys
 import tracemalloc
 import warnings
 
@@ -210,12 +209,6 @@ def subst_streams_with_hashes(in_lines):
 
 
 def _qpdf(input_pdf_filepath):
-    if sys.platform == "cygwin":
-        # Lucas (2021/01/06) : this conversion of UNIX file paths to Windows ones is only needed
-        # for my development environment: Cygwin, a UNIX system, with a qpdf Windows binary. Sorry for the kludge!
-        input_pdf_filepath = (
-            _run_cmd("cygpath", "-w", str(input_pdf_filepath)).decode().strip()
-        )
     return _run_cmd(
         "qpdf",
         "--deterministic-id",
