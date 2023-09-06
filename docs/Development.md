@@ -119,6 +119,27 @@ check the output in case of a failed test.
 In order to generate a "reference" PDF file, simply call `assert_pdf_equal`
 once with `generate=True`.
 
+## Testing performances
+First, try to write a really **MINIMAL** Python script that focus strictly
+on the performance point you are investigating.
+Try to choose the input dataset so that the script execution time is between 1 and 15 seconds.
+
+Then, you can use [`cProfile`](https://docs.python.org/3/library/profile.html)
+to profile your code and produce a `.pstats` file:
+```
+python -m cProfile -o profile.pstats script.py
+```
+
+Finally, you can quickly convert this `.pstats` file into a SVG flamegraph using [`flameprof`](https://pypi.org/project/flameprof/):
+```
+pip install flameprof
+flameprof profile.pstats > script-flamegraph.svg
+```
+You will get something like this:
+![](https://user-images.githubusercontent.com/925560/265462163-069ee203-a0d4-47ae-a90b-033ff47bf169.svg)
+
+Source GitHub thread where this was produced: [issue #907](https://github.com/py-pdf/fpdf2/issues/907#issuecomment-1705219932)
+
 ## GitHub pipeline
 A [GitHub Actions](https://help.github.com/en/actions/reference) pipeline
 is executed on every commit on the `master` branch, and for every _Pull Request_.
