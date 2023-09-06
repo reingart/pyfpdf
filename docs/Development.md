@@ -159,10 +159,12 @@ that ensure that the library performances do not degrade over time,
 when refactoring are made and new features added.
 
 We have 2 test decorators to help with this:
+
 * [@ensure_exec_time_below](https://github.com/py-pdf/fpdf2/blob/2.7.5/test/conftest.py#L252)
 * [@ensure_rss_memory_below](https://github.com/py-pdf/fpdf2/blob/2.7.5/test/conftest.py#L286)
 
 As of `fpdf2` v2.7.6, we only keep 3 non-regression performance tests:
+
 * [test_intense_image_rendering() in test_perfs.py](https://github.com/py-pdf/fpdf2/blob/2.7.5/test/test_perfs.py)
 * [test_charmap_first_999_chars() in test_charmap.py](https://github.com/py-pdf/fpdf2/blob/2.7.5/test/fonts/test_charmap.py#L41)
 * [test_cell_speed_with_long_text() in test_cell.py](https://github.com/py-pdf/fpdf2/blob/master/test/text/test_cell.py#L311)
