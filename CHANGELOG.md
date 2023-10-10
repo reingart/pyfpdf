@@ -31,8 +31,8 @@ This release is the first performed from the [@py-pdf GitHub org](https://github
 This change was made for consistency between row-height governed by text or images. The old behaviour can be enforced using the new vertical alignment parameter.  
 ### Fixed
 * In multi_cells and table cells with horizontal padding, the text was not given quite enough space.
-* write_html() can now handle formatting tags within paragraphs without adding extra line breaks (except in table cells for now).
-* the font size in HTML <pre> and <code> tags is not fixed to 11 pica anymore, but adapts to the preceding text.
+* `write_html()` can now handle formatting tags within paragraphs without adding extra line breaks (except in table cells for now).
+* the font size in HTML `<pre>` and `<code>` tags is not fixed to 11 pica anymore, but adapts to the preceding text.
 * [`FPDF.ln()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.ln), when called before any text has been written, will now use the current font height instead of doing nothing -  _cf._ issue [#937](https://github.com/py-pdf/fpdf2/issues/937)
 * [`FPDF.image()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image), when provided a `BytesIO` instance, does not close it anymore - _cf._ issue [#881](https://github.com/py-pdf/fpdf2/issues/881)
 * Invalid characters were being generated when a string contains parentheses - _cf._ issue [#884](https://github.com/py-pdf/fpdf2/issues/884)
