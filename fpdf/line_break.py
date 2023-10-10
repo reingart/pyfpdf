@@ -8,8 +8,9 @@ in non-backward-compatible ways.
 """
 
 from typing import NamedTuple, Any, Optional, Union, Sequence
+from numbers import Number
 
-from .enums import CharVPos, WrapMode
+from .enums import CharVPos, WrapMode, Align
 from .errors import FPDFException
 from .fonts import CoreFont, TTFFont
 from .util import escape_parens
@@ -315,7 +316,9 @@ class TextLine(NamedTuple):
     fragments: tuple
     text_width: float
     number_of_spaces: int
-    justify: bool
+    align: Align
+    height: float
+    max_width: float
     trailing_nl: bool = False
 
 
@@ -342,16 +345,18 @@ class HyphenHint(NamedTuple):
 
 
 class CurrentLine:
-    def __init__(self, print_sh: bool = False):
+    def __init__(self, max_width: float, print_sh: bool = False):
         """
         Per-line text fragment management for use by MultiLineBreak.
             Args:
                 print_sh (bool): If true, a soft-hyphen will be rendered
                     normally, instead of triggering a line break. Default: False
         """
+        self.max_width = max_width
         self.print_sh = print_sh
         self.fragments = []
         self.width = 0
+        self.height = 0
         self.number_of_spaces = 0
 
         # automatic break hints
@@ -376,9 +381,11 @@ class CurrentLine:
         k: float,
         original_fragment_index: int,
         original_character_index: int,
+        height: float,
         url: str = None,
     ):
         assert character != NEWLINE
+        self.height = height
         if not self.fragments:
             self.fragments.append(Fragment("", graphics_state, k, url))
 
@@ -448,19 +455,21 @@ class CurrentLine:
         self.number_of_spaces = break_hint.number_of_spaces
         self.width = break_hint.line_width
 
-    def manual_break(self, justify: bool = False, trailing_nl: bool = False):
+    def manual_break(self, align: Align, trailing_nl: bool = False):
         return TextLine(
             fragments=self.fragments,
             text_width=self.width,
             number_of_spaces=self.number_of_spaces,
-            justify=(self.number_of_spaces > 0) and justify,
+            align=align,
+            height=self.height,
+            max_width=self.max_width,
             trailing_nl=trailing_nl,
         )
 
     def automatic_break_possible(self):
         return self.hyphen_break_hint is not None or self.space_break_hint is not None
 
-    def automatic_break(self, justify: bool):
+    def automatic_break(self, align: Align):
         assert self.automatic_break_possible()
         if self.hyphen_break_hint is not None and (
             self.space_break_hint is None
@@ -474,52 +483,120 @@ class CurrentLine:
                 self.hyphen_break_hint.k,
                 self.hyphen_break_hint.original_fragment_index,
                 self.hyphen_break_hint.original_character_index,
+                self.height,
             )
             return (
                 self.hyphen_break_hint.original_fragment_index,
                 self.hyphen_break_hint.original_character_index,
-                self.manual_break(justify),
+                self.manual_break(align),
             )
         self._apply_automatic_hint(self.space_break_hint)
         return (
             self.space_break_hint.original_fragment_index,
             self.space_break_hint.original_character_index,
-            self.manual_break(justify),
+            self.manual_break(align),
         )
 
 
 class MultiLineBreak:
     def __init__(
         self,
-        styled_text_fragments: Sequence,
-        justify: bool = False,
+        fragments: Sequence[Fragment],
+        max_width: Union[float, callable],
+        margins: Sequence[Number],
+        align: Align = Align.L,
         print_sh: bool = False,
         wrapmode: WrapMode = WrapMode.WORD,
+        line_height: float = 1.0,
+        skip_leading_spaces: bool = False,
     ):
-        self.styled_text_fragments = styled_text_fragments
-        self.justify = justify
+        """Accept text as Fragments, to be split into individual lines depending
+        on line width and text height.
+        Args:
+            fragments: A sequence of Fragment()s containing text.
+            max_width: Either a fixed width as float or a callback function
+                get_width(height). If a function, it gets called with the largest
+                height encountered on the current line, and must return the
+                applicable width for the line with the given height at the current
+                vertical position. The height is relevant in those cases where the
+                lateral boundaries of the enclosing TextRegion() are not vertical.
+            margins (sequence of floats): The extra clearance that may apply at the beginning
+                and/or end of a line (usually either FPDF.c_margin or 0.0 for each side).
+            align (Align): The horizontal alignment of the current text block.
+            print_sh (bool): If True, a soft-hyphen will be rendered
+                normally, instead of triggering a line break. Default: False
+            wrapmode (WrapMode): Selects word or character based wrapping.
+            line_height (float, optional): A multiplier relative to the font
+                size changing the vertical space occupied by a line of text. Default 1.0.
+            skip_leading_spaces (bool, optional): On each line, any space characters
+                at the beginning will be skipped. Default value: False.
+        """
+
+        self.fragments = fragments
+        if callable(max_width):
+            self.get_width = max_width
+        else:
+            self.get_width = lambda height: max_width
+        self.margins = margins
+        self.align = align
         self.print_sh = print_sh
         self.wrapmode = wrapmode
+        self.line_height = line_height
+        self.skip_leading_spaces = skip_leading_spaces
         self.fragment_index = 0
         self.character_index = 0
         self.idx_last_forced_break = None
 
     # pylint: disable=too-many-return-statements
-    def get_line_of_given_width(self, maximum_width: float):
+    def get_line(self):
         first_char = True  # "Tw" ignores the first character in a text object.
         idx_last_forced_break = self.idx_last_forced_break
         self.idx_last_forced_break = None
 
-        if self.fragment_index == len(self.styled_text_fragments):
+        if self.fragment_index == len(self.fragments):
             return None
 
-        current_line = CurrentLine(print_sh=self.print_sh)
-        while self.fragment_index < len(self.styled_text_fragments):
-            current_fragment = self.styled_text_fragments[self.fragment_index]
+        current_font_height = 0
+
+        max_width = self.get_width(current_font_height)
+        # The full max width will be passed on via TextLine to FPDF._render_styled_text_line().
+        current_line = CurrentLine(max_width=max_width, print_sh=self.print_sh)
+        # For line wrapping we need to use the reduced width.
+        for margin in self.margins:
+            max_width -= margin
+
+        if self.skip_leading_spaces:
+            # write_html() with TextColumns uses this, since it can't know in
+            # advance where the lines will be broken.
+            while self.fragment_index < len(self.fragments):
+                if self.character_index >= len(
+                    self.fragments[self.fragment_index].characters
+                ):
+                    self.character_index = 0
+                    self.fragment_index += 1
+                    continue
+                character = self.fragments[self.fragment_index].characters[
+                    self.character_index
+                ]
+                if character == SPACE:
+                    self.character_index += 1
+                else:
+                    break
+
+        while self.fragment_index < len(self.fragments):
+            current_fragment = self.fragments[self.fragment_index]
+
+            if current_fragment.font_size > current_font_height:
+                current_font_height = current_fragment.font_size  # document units
+                max_width = self.get_width(current_font_height)
+                current_line.max_width = max_width
+                for margin in self.margins:
+                    max_width -= margin
 
             if self.character_index >= len(current_fragment.characters):
                 self.character_index = 0
                 self.fragment_index += 1
+
                 continue
 
             character = current_fragment.characters[self.character_index]
@@ -530,23 +607,26 @@ class MultiLineBreak:
 
             if character == NEWLINE:
                 self.character_index += 1
-                return current_line.manual_break(trailing_nl=True)
-
-            if current_line.width + character_width > maximum_width:
+                if not current_line.fragments:
+                    current_line.height = current_font_height * self.line_height
+                return current_line.manual_break(
+                    Align.L if self.align == Align.J else self.align, trailing_nl=True
+                )
+            if current_line.width + character_width > max_width:
                 if character == SPACE:  # must come first, always drop a current space.
                     self.character_index += 1
-                    return current_line.manual_break(self.justify)
+                    return current_line.manual_break(self.align)
                 if self.wrapmode == WrapMode.CHAR:
-                    # If the line ends with one or more spaces, then we want to get rid of them
-                    # so it can be justified correctly.
+                    # If the line ends with one or more spaces, then we want to get
+                    # rid of them so it can be justified correctly.
                     current_line.trim_trailing_spaces()
-                    return current_line.manual_break(self.justify)
+                    return current_line.manual_break(self.align)
                 if current_line.automatic_break_possible():
                     (
                         self.fragment_index,
                         self.character_index,
                         line,
-                    ) = current_line.automatic_break(self.justify)
+                    ) = current_line.automatic_break(self.align)
                     self.character_index += 1
                     return line
                 if idx_last_forced_break == self.character_index:
@@ -554,7 +634,9 @@ class MultiLineBreak:
                         "Not enough horizontal space to render a single character"
                     )
                 self.idx_last_forced_break = self.character_index
-                return current_line.manual_break()
+                return current_line.manual_break(
+                    Align.L if self.align == Align.J else self.align
+                )
 
             current_line.add_character(
                 character,
@@ -563,11 +645,14 @@ class MultiLineBreak:
                 current_fragment.k,
                 self.fragment_index,
                 self.character_index,
+                current_font_height * self.line_height,
                 current_fragment.link,
             )
 
             self.character_index += 1
 
         if current_line.width:
-            return current_line.manual_break()
+            return current_line.manual_break(
+                Align.L if self.align == Align.J else self.align
+            )
         return None

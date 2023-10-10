@@ -76,16 +76,17 @@ from .fonts import CoreFont, CORE_FONTS, FontFace, TTFFont
 from .graphics_state import GraphicsStateMixin
 from .html import HTML2FPDF
 from .image_parsing import SUPPORTED_IMAGE_FILTERS, get_img_info, load_image
-from .line_break import Fragment, MultiLineBreak, TextLine
 from .linearization import LinearizedOutputProducer
-from .output import OutputProducer, PDFPage, ZOOM_CONFIGS
+from .line_break import Fragment, MultiLineBreak, TextLine
 from .outline import OutlineSection
+from .output import OutputProducer, PDFPage, ZOOM_CONFIGS
 from .recorder import FPDFRecorder
-from .structure_tree import StructureTreeBuilder
 from .sign import Signature
+from .structure_tree import StructureTreeBuilder
 from .svg import Percent, SVGObject
 from .syntax import DestinationXYZ, PDFDate
 from .table import Table
+from .text_region import TextRegionMixin, TextColumns
 from .util import get_scale_factor, Padding
 
 # Public global variables:
@@ -219,7 +220,7 @@ def check_page(fn):
     return wrapper
 
 
-class FPDF(GraphicsStateMixin):
+class FPDF(GraphicsStateMixin, TextRegionMixin):
     "PDF Generation class"
     MARKDOWN_BOLD_MARKER = "**"
     MARKDOWN_ITALICS_MARKER = "__"
@@ -2778,17 +2779,17 @@ class FPDF(GraphicsStateMixin):
         return self._render_styled_text_line(
             TextLine(
                 styled_txt_frags,
-                text_width=0.0,
+                text_width=0,
                 number_of_spaces=0,
-                justify=False,
+                align=Align.L if align == Align.J else align,
+                height=h,
+                max_width=w,
                 trailing_nl=False,
             ),
-            w,
             h,
             border,
             new_x=new_x,
             new_y=new_y,
-            align=align,
             fill=fill,
             link=link,
             center=center,
@@ -2797,12 +2798,10 @@ class FPDF(GraphicsStateMixin):
     def _render_styled_text_line(
         self,
         text_line: TextLine,
-        w: float = None,
         h: float = None,
         border: Union[str, int] = 0,
         new_x: XPos = XPos.RIGHT,
         new_y: YPos = YPos.TOP,
-        align: Align = Align.L,
         fill: bool = False,
         link: str = "",
         center: bool = False,
@@ -2821,8 +2820,6 @@ class FPDF(GraphicsStateMixin):
         Args:
             text_line (TextLine instance): Contains the (possibly empty) tuple of
                 fragments to render.
-            w (float): Cell width. Default value: None, meaning to fit text width.
-                If 0, the cell extends up to the right margin.
             h (float): Cell height. Default value: None, meaning an height equal
                 to the current font size.
             border: Indicates if borders must be drawn around the cell.
@@ -2832,11 +2829,6 @@ class FPDF(GraphicsStateMixin):
                 `L`: left ; `T`: top ; `R`: right ; `B`: bottom. Default value: 0.
             new_x (fpdf.enums.XPos): New current position in x after the call.
             new_y (fpdf.enums.YPos): New current position in y after the call.
-            align (fpdf.enums.Align): Allows to align the text inside the cell.
-                Possible values are:
-                `L` or empty string: left align (default value);
-                `C`: center; `X`: center around current x; `R`: right align;
-                `J`: justify (if more than one word)
             fill (bool): Indicates if the cell background must be painted (`True`)
                 or transparent (`False`). Default value: False.
             link (str): optional link to add on the cell, internal
@@ -2856,11 +2848,11 @@ class FPDF(GraphicsStateMixin):
 
         if padding is None:
             padding = Padding(0, 0, 0, 0)
-
-        if padding.left == 0 and padding.right == 0:
-            horizontal_margin = self.c_margin
-        else:
-            horizontal_margin = 0
+        l_c_margin = r_c_margin = 0
+        if padding.left == 0:
+            l_c_margin = self.c_margin
+        if padding.right == 0:
+            r_c_margin = self.c_margin
 
         styled_txt_width = text_line.text_width
         if not styled_txt_width:
@@ -2868,20 +2860,20 @@ class FPDF(GraphicsStateMixin):
                 unscaled_width = frag.get_width(initial_cs=i != 0)
                 styled_txt_width += unscaled_width
 
-        if w == 0:
-            w = self.w - self.r_margin - self.x
-        elif w is None:
+        w = text_line.max_width
+        if w is None:
             if not text_line.fragments:
                 raise ValueError(
-                    "A 'text_line' parameter with fragments must be provided if 'w' is None"
+                    "'text_line' must have fragments if 'text_line.text_width' is None"
                 )
-            w = styled_txt_width + horizontal_margin + horizontal_margin
+            w = styled_txt_width + l_c_margin + r_c_margin
+        elif w == 0:
+            w = self.w - self.r_margin - self.x
         if center:
-            self.x = (
-                self.w / 2 if align == Align.X else self.l_margin + (self.epw - w) / 2
-            )
-        if align == Align.X:
+            self.x = self.l_margin + (self.epw - w) / 2
+        elif text_line.align == Align.X:
             self.x -= w / 2
+
         max_font_size = 0  # how much height we need to accomodate.
         # currently all font sizes within a line are vertically aligned on the baseline.
         for frag in text_line.fragments:
@@ -2928,34 +2920,35 @@ class FPDF(GraphicsStateMixin):
         current_lift = 0.0
         current_char_vpos = CharVPos.LINE
         current_font = self.current_font
+        current_font_size_pt = self.font_size_pt
         current_text_mode = self.text_mode
         current_font_stretching = self.font_stretching
         current_char_spacing = self.char_spacing
+        fill_color_changed = False
+        last_used_color = self.fill_color
         if text_line.fragments:
-            if align == Align.R:
-                dx = w - horizontal_margin - styled_txt_width
-            elif align in [Align.C, Align.X]:
+            if text_line.align == Align.R:
+                dx = w - l_c_margin - styled_txt_width
+            elif text_line.align in [Align.C, Align.X]:
                 dx = (w - styled_txt_width) / 2
             else:
-                dx = horizontal_margin
+                dx = l_c_margin
             s_start += dx
-
-            if self.fill_color != self.text_color:
-                sl.append(self.text_color.serialize().lower())
-
             word_spacing = 0
-            if text_line.justify:
-                # Don't rely on align==Align.J here.
-                # If a line gets broken by an explicit '\n', then MultiLineBreak
-                # will set its justify to False (end of paragraph).
+            if text_line.align == Align.J and text_line.number_of_spaces:
                 word_spacing = (
-                    w - horizontal_margin - horizontal_margin - styled_txt_width
+                    w - l_c_margin - r_c_margin - styled_txt_width
                 ) / text_line.number_of_spaces
             sl.append(
                 f"BT {(self.x + dx) * k:.2f} "
                 f"{(self.h - self.y - 0.5 * h - 0.3 * max_font_size) * k:.2f} Td"
             )
             for i, frag in enumerate(text_line.fragments):
+                if frag.graphics_state["text_color"] != last_used_color:
+                    # allow to change color within the line of text.
+                    last_used_color = frag.graphics_state["text_color"]
+                    sl.append(last_used_color.serialize().lower())
+                    fill_color_changed = True
                 if word_spacing and frag.font_stretching != 100:
                     # Space character is already stretched, extra spacing is absolute.
                     frag_ws = word_spacing * 100 / frag.font_stretching
@@ -2967,9 +2960,15 @@ class FPDF(GraphicsStateMixin):
                 if current_char_spacing != frag.char_spacing:
                     current_char_spacing = frag.char_spacing
                     sl.append(f"{frag.char_spacing:.2f} Tc")
-                if current_font != frag.font or current_char_vpos != frag.char_vpos:
+                if (
+                    current_font != frag.font
+                    or current_font_size_pt != frag.font_size_pt
+                    or current_char_vpos != frag.char_vpos
+                ):
                     if current_char_vpos != frag.char_vpos:
                         current_char_vpos = frag.char_vpos
+                    if current_font_size_pt != frag.font_size_pt:
+                        current_font_size_pt = frag.font_size_pt
                     current_font = frag.font
                     sl.append(f"/F{frag.font.i} {frag.font_size_pt:.2f} Tf")
                 lift = frag.lift
@@ -3048,8 +3047,9 @@ class FPDF(GraphicsStateMixin):
                 or current_lift != 0.0
                 or current_char_vpos != CharVPos.LINE
                 or current_font != self.current_font
+                or current_font_size_pt != self.font_size_pt
                 or current_text_mode != self.text_mode
-                or self.fill_color != self.text_color
+                or fill_color_changed
                 or current_font_stretching != self.font_stretching
                 or current_char_spacing != self.char_spacing
             ):
@@ -3070,7 +3070,10 @@ class FPDF(GraphicsStateMixin):
         elif new_x == XPos.END:
             self.x = s_start + s_width
         elif new_x == XPos.WCONT:
-            self.x = s_start + s_width - horizontal_margin
+            if s_width:
+                self.x = s_start + s_width - r_c_margin
+            else:
+                self.x = s_start
         elif new_x == XPos.CENTER:
             self.x = s_start + s_width / 2.0
         elif new_x == XPos.LMARGIN:
@@ -3400,10 +3403,11 @@ class FPDF(GraphicsStateMixin):
             center (bool): center the cell horizontally on the page.
             padding (float or Sequence): padding to apply around the text. Default value: 0.
                 When one value is specified, it applies the same padding to all four sides.
-                When two values are specified, the first padding applies to the top and bottom, the second to the left and right.
-                When three values are specified, the first padding applies to the top, the second to the right and left, the third to the bottom.
-                When four values are specified, the paddings apply to the top, right, bottom, and left in that order (clockwise)
-                If padding for left and right ends up being non-zero then c_margin is ignored.
+                When two values are specified, the first padding applies to the top and bottom, the second to
+                the left and right. When three values are specified, the first padding applies to the top,
+                the second to the right and left, the third to the bottom. When four values are specified,
+                the paddings apply to the top, right, bottom, and left in that order (clockwise)
+                If padding for left or right ends up being non-zero then respective c_margin is ignored.
 
         Center overrides values for horizontal padding
 
@@ -3415,6 +3419,7 @@ class FPDF(GraphicsStateMixin):
         """
 
         padding = Padding.new(padding)
+        wrapmode = WrapMode.coerce(wrapmode)
 
         if split_only:
             warnings.warn(
@@ -3450,7 +3455,6 @@ class FPDF(GraphicsStateMixin):
                 )
         if not self.font_family:
             raise FPDFException("No font set, you need to call set_font() beforehand")
-        wrapmode = WrapMode.coerce(wrapmode)
         if isinstance(w, str) or isinstance(h, str):
             raise ValueError(
                 "Parameter 'w' and 'h' must be numbers, not strings."
@@ -3501,8 +3505,13 @@ class FPDF(GraphicsStateMixin):
         # Apply padding to contents
         # decrease maximum allowed width by padding
         # shift the starting point by padding
-        w = w - padding.right - padding.left
-        maximum_allowed_width = w - 2 * self.c_margin
+        maximum_allowed_width = w = w - padding.right - padding.left
+        clearance_margins = []
+        # If we don't have padding on either side, we need a clearance margin.
+        if not padding.left:
+            clearance_margins.append(self.c_margin)
+        if not padding.right:
+            clearance_margins.append(self.c_margin)
         self.x += padding.left
         self.y += padding.top
 
@@ -3529,14 +3538,16 @@ class FPDF(GraphicsStateMixin):
         text_lines = []
         multi_line_break = MultiLineBreak(
             styled_text_fragments,
-            justify=(align == Align.J),
+            maximum_allowed_width,
+            clearance_margins,
+            align=align,
             print_sh=print_sh,
             wrapmode=wrapmode,
         )
-        txt_line = multi_line_break.get_line_of_given_width(maximum_allowed_width)
-        while (txt_line) is not None:
-            text_lines.append(txt_line)
-            txt_line = multi_line_break.get_line_of_given_width(maximum_allowed_width)
+        text_line = multi_line_break.get_line()
+        while (text_line) is not None:
+            text_lines.append(text_line)
+            text_line = multi_line_break.get_line()
 
         if not text_lines:  # ensure we display at least one cell - cf. issue #349
             text_lines = [
@@ -3544,7 +3555,9 @@ class FPDF(GraphicsStateMixin):
                     "",
                     text_width=0,
                     number_of_spaces=0,
-                    justify=False,
+                    align=align,
+                    height=h,
+                    max_width=w,
                     trailing_nl=False,
                 )
             ]
@@ -3566,7 +3579,6 @@ class FPDF(GraphicsStateMixin):
             has_line_after = not is_last_line or should_render_bottom_blank_cell
             new_page = self._render_styled_text_line(
                 text_line,
-                w,
                 h=current_cell_height,
                 border="".join(
                     (
@@ -3578,7 +3590,6 @@ class FPDF(GraphicsStateMixin):
                 ),
                 new_x=new_x if not has_line_after else XPos.LEFT,
                 new_y=new_y if not has_line_after else YPos.NEXT,
-                align=Align.L if (align == Align.J and is_last_line) else align,
                 fill=fill,
                 link=link,
                 padding=padding,
@@ -3594,10 +3605,11 @@ class FPDF(GraphicsStateMixin):
                     "",
                     text_width=0,
                     number_of_spaces=0,
-                    justify=False,
+                    align=Align.L,
+                    height=h,
+                    max_width=w,
                     trailing_nl=False,
                 ),
-                w,
                 h=h,
                 border="".join(
                     (
@@ -3618,7 +3630,6 @@ class FPDF(GraphicsStateMixin):
             # pretend we started at the top of the text block on the new page.
             # cf. test_multi_cell_table_with_automatic_page_break
             prev_y = self.y
-        # pylint: disable=undefined-loop-variable
         if text_line and text_line.trailing_nl and new_y in (YPos.LAST, YPos.NEXT):
             # The line renderer can't handle trailing newlines in the text.
             self.ln()
@@ -3699,46 +3710,91 @@ class FPDF(GraphicsStateMixin):
         text_lines = []
         multi_line_break = MultiLineBreak(
             styled_text_fragments,
+            lambda h: max_width,
+            (self.c_margin, self.c_margin),
             print_sh=print_sh,
             wrapmode=wrapmode,
         )
         # first line from current x position to right margin
         first_width = self.w - self.x - self.r_margin
-        txt_line = multi_line_break.get_line_of_given_width(
-            first_width - 2 * self.c_margin,
-        )
+        max_width = first_width
+        text_line = multi_line_break.get_line()
         # remaining lines fill between margins
         full_width = self.w - self.l_margin - self.r_margin
-        fit_width = full_width - 2 * self.c_margin
-        while txt_line is not None:
-            text_lines.append(txt_line)
-            txt_line = multi_line_break.get_line_of_given_width(fit_width)
+        max_width = full_width
+        while (text_line) is not None:
+            text_lines.append(text_line)
+            text_line = multi_line_break.get_line()
         if not text_lines:
             return False
 
         for text_line_index, text_line in enumerate(text_lines):
-            if text_line_index == 0:
-                line_width = first_width
-            else:
-                line_width = full_width
+            if text_line_index > 0:
                 self.ln()
             new_page = self._render_styled_text_line(
                 text_line,
-                line_width,
                 h=h,
                 border=0,
                 new_x=XPos.WCONT,
                 new_y=YPos.TOP,
-                align=Align.L,
                 fill=False,
                 link=link,
             )
             page_break_triggered = page_break_triggered or new_page
-        # pylint: disable=undefined-loop-variable
         if text_line.trailing_nl:
             # The line renderer can't handle trailing newlines in the text.
             self.ln()
         return page_break_triggered
+
+    @check_page
+    def text_columns(
+        self,
+        text: Optional[str] = None,
+        ncols: int = 1,
+        gutter: float = 10,
+        balance: bool = False,
+        text_align: Union[Align, str] = "LEFT",
+        line_height: float = 1,
+        l_margin: float = None,
+        r_margin: float = None,
+        print_sh: bool = False,
+        wrapmode: WrapMode = WrapMode.WORD,
+        skip_leading_spaces: bool = False,
+    ):
+        """Establish a layout with multiple columns to fill with text.
+        Args:
+            text (str, optional): A first piece of text to insert.
+            ncols (int, optional): the number of columns to create. (Default: 1).
+            gutter (float, optional): The distance between the columns. (Default: 10).
+            balance: (bool, optional): Specify whether multiple columns should end at approximately
+                the same height, if they don't fill the page. (Default: False)
+            text_align (Align or str, optional): The alignment of the text within the region.
+                (Default: "LEFT")
+            line_height (float, optional): A multiplier relative to the font size changing the
+                vertical space occupied by a line of text. (Default: 1.0).
+            l_margin (float, optional): Override the current left page margin.
+            r_margin (float, optional): Override the current right page margin.
+            print_sh (bool, optional): Treat a soft-hyphen (\\u00ad) as a printable character,
+                instead of a line breaking opportunity. (Default: False)
+            wrapmode (fpdf.enums.WrapMode, optional): "WORD" for word based line wrapping,
+                "CHAR" for character based line wrapping. (Default: "WORD")
+            skip_leading_spaces (bool, optional): On each line, any space characters at the
+                beginning will be skipped if True. (Default: False)
+        """
+        return TextColumns(
+            self,
+            text=text,
+            ncols=ncols,
+            gutter=gutter,
+            balance=balance,
+            text_align=text_align,
+            line_height=line_height,
+            l_margin=l_margin,
+            r_margin=r_margin,
+            print_sh=print_sh,
+            wrapmode=wrapmode,
+            skip_leading_spaces=skip_leading_spaces,
+        )
 
     @check_page
     def image(
@@ -4783,31 +4839,33 @@ class FPDF(GraphicsStateMixin):
         Detailed usage documentation: https://py-pdf.github.io/fpdf2/Tables.html
 
         Args:
-            rows: optional. Sequence of rows (iterable) of str to initiate the table cells with text content
-            align (str, fpdf.enums.Align): optional, default to CENTER. Sets the table horizontal position relative to the page,
-                when it's not using the full page width
-            borders_layout (str, fpdf.enums.TableBordersLayout): optional, default to ALL. Control what cell borders are drawn
+            rows: optional. Sequence of rows (iterable) of str to initiate the table cells with text content.
+            align (str, fpdf.enums.Align): optional, default to CENTER. Sets the table horizontal position
+                relative to the page, when it's not using the full page width.
+            borders_layout (str, fpdf.enums.TableBordersLayout): optional, default to ALL. Control what cell
+                borders are drawn.
             cell_fill_color (int, tuple, fpdf.drawing.DeviceGray, fpdf.drawing.DeviceRGB): optional.
-                Defines the cells background color
-            cell_fill_mode (str, fpdf.enums.TableCellFillMode): optional. Defines which cells are filled with color in the background
-            col_widths (int, tuple): optional. Sets column width. Can be a single number or a sequence of numbers
+                Defines the cells background color.
+            cell_fill_mode (str, fpdf.enums.TableCellFillMode): optional. Defines which cells are filled
+                with color in the background.
+            col_widths (int, tuple): optional. Sets column width. Can be a single number or a sequence of numbers.
             first_row_as_headings (bool): optional, default to True. If False, the first row of the table
-                is not styled differently from the others
-            gutter_height (float): optional vertical space between rows
-            gutter_width (float): optional horizontal space between columns
+                is not styled differently from the others.
+            gutter_height (float): optional vertical space between rows.
+            gutter_width (float): optional horizontal space between columns.
             headings_style (fpdf.fonts.FontFace): optional, default to bold.
                 Defines the visual style of the top headings row: size, color, emphasis...
-            line_height (number): optional. Defines how much vertical space a line of text will occupy
-            markdown (bool): optional, default to False. Enable markdown interpretation of cells textual content
+            line_height (number): optional. Defines how much vertical space a line of text will occupy.
+            markdown (bool): optional, default to False. Enable markdown interpretation of cells textual content.
             text_align (str, fpdf.enums.Align): optional, default to JUSTIFY. Control text alignment inside cells.
-            width (number): optional. Sets the table width
+            width (number): optional. Sets the table width.
             wrapmode (fpdf.enums.WrapMode): "WORD" for word based line wrapping (default),
                 "CHAR" for character based line wrapping.
             padding (number, tuple, Padding): optional. Sets the cell padding. Can be a single number or a sequence
                 of numbers, default:0
-                If padding for left and right ends up being non-zero then c_margin is ignored.
-            outer_border_width (number): optional. The outer_border_width will trigger rendering of the outer border of
-                the table with the given width regardless of any other defined border styles.
+                If padding for left or right ends up being non-zero then the respective c_margin is ignored.
+            outer_border_width (number): optional. The outer_border_width will trigger rendering of the outer
+                border of the table with the given width regardless of any other defined border styles.
         """
         table = Table(self, *args, **kwargs)
         yield table

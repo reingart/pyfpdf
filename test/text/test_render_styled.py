@@ -78,23 +78,23 @@ def test_render_styled_newpos(tmp_path):
         newy = YPos.coerce(item[3])
         # pylint: disable=protected-access
         frags = doc._preload_font_styles(s, False)
-        justify = align == Align.J
-        mlb = MultiLineBreak(frags, justify=justify)
-        line = mlb.get_line_of_given_width(twidth * 1000 / doc.font_size)
-        # we need to manually rebuild our TextLine in order to force
-        # justified alignment on a single line.
-        line = TextLine(
-            fragments=line.fragments,
-            text_width=line.text_width,
-            number_of_spaces=line.number_of_spaces,
-            justify=align == Align.J,
-            trailing_nl=False,
-        )
+        mlb = MultiLineBreak(frags, twidth, [1, 1], align=align)
+        line = mlb.get_line()
+        if align == Align.J:
+            # We need to manually rebuild our TextLine in order to force
+            # justified alignment on a single line.
+            line = TextLine(
+                fragments=line.fragments,
+                text_width=line.text_width,
+                number_of_spaces=line.number_of_spaces,
+                align=Align.J,
+                height=0,
+                max_width=line.max_width,
+                trailing_nl=False,
+            )
         doc._render_styled_text_line(
             line,
-            twidth,
             border=1,
-            align=align,
             new_x=newx,
             new_y=newy,
         )

@@ -23,40 +23,34 @@ TEXT_5 = " ea sed voluptate commodo amet eiusmod incididunt"
 class FxFPDF(FPDF):
     def write_fragments(self, frags, align=Align.L):
         """Replicate the part of write() that actually renders the fragments."""
+
+        def _get_width(height):  # pylint: disable=unused-argument
+            return max_width
+
         text_lines = []
-        justify = align == Align.J
-        multi_line_break = MultiLineBreak(frags, justify=justify)
+        multi_line_break = MultiLineBreak(frags, _get_width, [1, 1], align=align)
         # first line from current x position to right margin
-        first_width = self.w - self.x - self.r_margin
-        text_line = multi_line_break.get_line_of_given_width(
-            first_width - 2 * self.c_margin
-        )
+        max_width = self.w - self.x - self.r_margin
+        text_line = multi_line_break.get_line()
         # remaining lines fill between margins
-        full_width = self.w - self.l_margin - self.r_margin
-        fit_width = full_width - 2 * self.c_margin
+        max_width = self.w - self.l_margin - self.r_margin
         while (text_line) is not None:
             text_lines.append(text_line)
-            text_line = multi_line_break.get_line_of_given_width(fit_width)
+            text_line = multi_line_break.get_line()
         if text_line:
             text_lines.append(text_line)
         if not text_lines:
             return
         self.ws = 0  # currently only left aligned, so no word spacing
         for text_line_index, text_line in enumerate(text_lines):
-            if text_line_index == 0:
-                line_width = first_width
-            else:
-                line_width = full_width
+            if text_line_index > 0:
                 self.ln()
-            is_last_line = text_line_index == len(text_lines) - 1
             self._render_styled_text_line(
                 text_line,
-                line_width,
                 h=None,
                 border=0,
                 new_x=XPos.WCONT,
                 new_y=YPos.TOP,
-                align=Align.L if (align == Align.J and is_last_line) else align,
                 fill=False,
                 link=None,
             )
