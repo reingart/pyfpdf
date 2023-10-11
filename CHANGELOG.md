@@ -21,10 +21,10 @@ This release is the first performed from the [@py-pdf GitHub org](https://github
 ### Added
 * The new experimental method `text_columns()` allows to render text within a single or multiple columns, including height balancing: [documentation](https://py-pdf.github.io/fpdf2/TextColumns.html)
 * [`FPDF.write_html()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html) now supports heading colors defined as attributes (_e.g._ `<h2 color="#00ff00">...`)
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports padding in cells
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports vertical alignment in cells 
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports outer border width for rendering the outer border of the table with a different line-width.
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports multiple heading rows.
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports padding in cells : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#table-with-multiple-heading-rows)
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports vertical alignment in cells : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#setting-vertical-alignment-of-text-in-cells)
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports outer border width for rendering the outer border of the table with a different line-width
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports multiple heading rows : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#table-with-multiple-heading-rows)
 * documentation on how to use `livereload` to enable a "watch" mode with PDF generation: [Combine with livereload](https://py-pdf.github.io/fpdf2/CombineWithLivereload.html)
 ### Changed
 * The formatting output by `write_html()` has changed in some aspects. Vertical spacing around headings and paragraphs may be slightly different, and elements at the top of the page don't have any extra spacing above anymore.
