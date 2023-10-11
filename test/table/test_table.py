@@ -18,6 +18,7 @@ TABLE_DATA = (
     ("Carlson", "Banks", "19", "Los Angeles"),
     ("Lucas", "Cimon", "31", "Angers"),
 )
+
 MULTILINE_TABLE_DATA = (
     ("Extract", "Text length"),
     (LOREM_IPSUM[:200], str(len(LOREM_IPSUM[:200]))),
@@ -26,6 +27,14 @@ MULTILINE_TABLE_DATA = (
     (LOREM_IPSUM[600:800], str(len(LOREM_IPSUM[600:800]))),
     (LOREM_IPSUM[800:1000], str(len(LOREM_IPSUM[800:1000]))),
     (LOREM_IPSUM[1000:1200], str(len(LOREM_IPSUM[1000:1200]))),
+)
+
+MULTI_HEADING_TABLE_DATA = (
+    ("Fruits", "Dairy"),
+    ("Apple", "Banana", "Cherry", "Cheese", "Milk", "Yogurt"),
+    ("1", "2", "3", "4", "5", "6"),
+    ("2", "3", "4", "5", "6", "7"),
+    ("3", "4", "5", "6", "7", "8"),
 )
 
 
@@ -493,7 +502,132 @@ def test_table_page_break_with_table_in_header(tmp_path):  # issue 943
     pdf.set_font("helvetica", "B", 8)
     pdf.add_page()
     with pdf.table() as table:
-        for i in range(1, 15):
+        for _ in range(1, 15):
             for data_row in TABLE_DATA:
                 table.row(data_row)
     assert_pdf_equal(pdf, HERE / "table_page_break_with_table_in_header.pdf", tmp_path)
+
+
+def test_table_with_multiple_headings_and_pagebreak(tmp_path):
+    pdf = FPDF()
+    pdf.set_font("Times", size=12)
+    pdf.add_page()
+    pdf.set_y(240)
+    with pdf.table(
+        num_heading_rows=2,
+    ) as table:
+        for j, rowdata in enumerate(MULTI_HEADING_TABLE_DATA):
+            if j == 0:
+                # row with colspan
+                row = table.row()
+                for cell in rowdata:
+                    row.cell(text=cell, colspan=3)
+            else:
+                table.row(cells=rowdata)
+    assert_pdf_equal(
+        pdf,
+        HERE / "table_with_multiple_headings_and_pagebreak.pdf",
+        tmp_path,
+    )
+
+
+def test_table_num_heading_rows_and_first_row_as_headings():
+    pdf = FPDF()
+    pdf.set_font("Times", size=12)
+    pdf.add_page()
+    with pytest.raises(ValueError):
+        with pdf.table(TABLE_DATA, first_row_as_headings=True, num_heading_rows=0):
+            pass
+    with pytest.raises(ValueError):
+        with pdf.table(TABLE_DATA, first_row_as_headings=False, num_heading_rows=2):
+            pass
+
+
+def test_table_with_multiple_headings_and_no_horizontal_lines(tmp_path):
+    pdf = FPDF()
+    pdf.set_font("Times", size=12)
+    pdf.add_page()
+    with pdf.table(
+        borders_layout="NO_HORIZONTAL_LINES",
+        num_heading_rows=2,
+    ) as table:
+        for j, rowdata in enumerate(MULTI_HEADING_TABLE_DATA):
+            if j == 0:
+                # row with colspan
+                row = table.row()
+                for cell in rowdata:
+                    row.cell(text=cell, colspan=3)
+            else:
+                table.row(cells=rowdata)
+    assert_pdf_equal(
+        pdf,
+        HERE / "table_with_multiple_headings_and_no_horizontal_lines.pdf",
+        tmp_path,
+    )
+
+
+def test_table_with_minimal_layout_and_multiple_headings(tmp_path):
+    pdf = FPDF()
+    pdf.set_font("Times", size=12)
+    pdf.add_page()
+    pdf.set_draw_color(100)  # dark grey
+    pdf.set_line_width(1)
+    with pdf.table(
+        borders_layout="MINIMAL",
+        num_heading_rows=2,
+    ) as table:
+        for j, rowdata in enumerate(MULTI_HEADING_TABLE_DATA):
+            if j == 0:
+                # row with colspan
+                row = table.row()
+                for cell in rowdata:
+                    row.cell(text=cell, colspan=3)
+            else:
+                table.row(cells=rowdata)
+    assert_pdf_equal(
+        pdf,
+        HERE / "table_with_minimal_layout_and_multiple_headings.pdf",
+        tmp_path,
+    )
+
+
+def test_table_with_single_top_line_layout_and_multiple_headings(tmp_path):
+    pdf = FPDF()
+    pdf.set_font("Times", size=12)
+    pdf.add_page()
+    with pdf.table(
+        borders_layout="SINGLE_TOP_LINE",
+        num_heading_rows=2,
+    ) as table:
+        for j, rowdata in enumerate(MULTI_HEADING_TABLE_DATA):
+            if j == 0:
+                # row with colspan
+                row = table.row()
+                for cell in rowdata:
+                    row.cell(text=cell, colspan=3)
+            else:
+                table.row(cells=rowdata)
+
+    assert_pdf_equal(
+        pdf,
+        HERE / "table_with_single_top_line_layout_and_multiple_headings.pdf",
+        tmp_path,
+    )
+
+
+def test_table_with_no_horizontal_lines_layout(tmp_path):
+    pdf = FPDF()
+    pdf.set_font("Times", size=12)
+    pdf.add_page()
+    with pdf.table(
+        TABLE_DATA,
+        borders_layout="NO_HORIZONTAL_LINES",
+        num_heading_rows=1,
+    ):
+        pass
+
+    assert_pdf_equal(
+        pdf,
+        HERE / "table_with_no_horizontal_lines_layout.pdf",
+        tmp_path,
+    )

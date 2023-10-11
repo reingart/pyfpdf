@@ -96,6 +96,7 @@ class Table:
         wrapmode=WrapMode.WORD,
         padding=None,
         outer_border_width=None,
+        num_heading_rows=1,
     ):
         """
         Args:
@@ -125,6 +126,9 @@ class Table:
                 If padding for left and right ends up being non-zero then c_margin is ignored.
             outer_border_width (number): optional. Sets the width of the outer borders of the table.
                 Only relevant when borders_layout is ALL or NO_HORIZONTAL_LINES. Otherwise, the border widths are controlled by FPDF.set_line_width()
+            num_heading_rows (number): optional. Sets the number of heading rows, default value is 1. If this value is not 1,
+                first_row_as_headings needs to be True if num_heading_rows>1 and False if num_heading_rows=0. For backwards compatibility,
+                first_row_as_headings is used in case num_heading_rows is 1.
         """
         self._fpdf = fpdf
         self._align = align
@@ -143,6 +147,7 @@ class Table:
         self._text_align = text_align
         self._width = fpdf.epw if width is None else width
         self._wrapmode = wrapmode
+        self._num_heading_rows = num_heading_rows
         self.rows = []
 
         if padding is None:
@@ -160,6 +165,21 @@ class Table:
                     "outer_border_width is only allowed when borders_layout is ALL or NO_HORIZONTAL_LINES"
                 )
             self._outer_border_width = 0
+
+        # check first_row_as_headings for non-default case num_heading_rows != 1
+        if self._num_heading_rows != 1:
+            if self._num_heading_rows == 0 and self._first_row_as_headings:
+                raise ValueError(
+                    "first_row_as_headings needs to be False if num_heading_rows == 0"
+                )
+            if self._num_heading_rows > 1 and not self._first_row_as_headings:
+                raise ValueError(
+                    "first_row_as_headings needs to be True if num_heading_rows > 0"
+                )
+        # for backwards compatibility, we respect the value of first_row_as_headings when num_heading_rows==1
+        else:
+            if not self._first_row_as_headings:
+                self._num_heading_rows = 0
 
         for row in rows:
             self.row(row)
@@ -184,10 +204,10 @@ class Table:
             raise ValueError(
                 "JUSTIFY is an invalid value for FPDF.table() 'align' parameter"
             )
-        if self._first_row_as_headings:
+        if self._num_heading_rows > 0:
             if not self._headings_style:
                 raise ValueError(
-                    "headings_style must be provided to FPDF.table() if first_row_as_headings=True"
+                    "headings_style must be provided to FPDF.table() if num_heading_rows>1 or first_row_as_headings=True"
                 )
             emphasis = self._headings_style.emphasis
             if emphasis is not None:
@@ -234,10 +254,11 @@ class Table:
             if row_layout_info.triggers_page_jump:
                 # pylint: disable=protected-access
                 self._fpdf._perform_page_break()
-                if self._first_row_as_headings:  # repeat headings on top:
+                # repeat headings on top:
+                for row_idx in range(self._num_heading_rows):
                     self._render_table_row(
-                        0,
-                        self._get_row_layout_info(0),
+                        row_idx,
+                        self._get_row_layout_info(row_idx),
                         cell_x_positions=cell_x_positions,
                     )
             elif i and self._gutter_height:
@@ -260,7 +281,8 @@ class Table:
             return 1
         if self._borders_layout == TableBordersLayout.NONE:
             return 0
-        columns_count = max(row.cols_count for row in self.rows)
+
+        is_rightmost_column = j == self.rows[i].column_indices[-1]
         rows_count = len(self.rows)
         border = list("LRTB")
         if self._borders_layout == TableBordersLayout.INTERNAL:
@@ -270,19 +292,19 @@ class Table:
                 border.remove("B")
             if j == 0:
                 border.remove("L")
-            if j == columns_count - 1:
+            if is_rightmost_column:
                 border.remove("R")
         if self._borders_layout == TableBordersLayout.MINIMAL:
-            if i != 1 or rows_count == 1:
+            if i == 0 or i > self._num_heading_rows or rows_count == 1:
                 border.remove("T")
-            if i != 0:
+            if i > self._num_heading_rows - 1:
                 border.remove("B")
             if j == 0:
                 border.remove("L")
-            if j == columns_count - 1:
+            if is_rightmost_column:
                 border.remove("R")
         if self._borders_layout == TableBordersLayout.NO_HORIZONTAL_LINES:
-            if i > 0 and not (i == 1 and self._first_row_as_headings):
+            if i > self._num_heading_rows:
                 border.remove("T")
             if i != rows_count - 1:
                 border.remove("B")
@@ -297,7 +319,7 @@ class Table:
         if self._borders_layout == TableBordersLayout.SINGLE_TOP_LINE:
             if rows_count == 1:
                 return 0
-            return "B" if i == 0 else 0
+            return "B" if i < self._num_heading_rows else 0
         return "".join(border)
 
     def _render_table_row(
@@ -359,7 +381,7 @@ class Table:
         text_align = cell.align or self._text_align
         if not isinstance(text_align, (Align, str)):
             text_align = text_align[j]
-        if i == 0 and self._first_row_as_headings:
+        if i < self._num_heading_rows:
             style = self._headings_style
         else:
             style = cell.style or row.style
@@ -620,6 +642,16 @@ class Row:
     @property
     def cols_count(self):
         return sum(cell.colspan for cell in self.cells)
+
+    @property
+    def column_indices(self):
+        columns_count = len(self.cells)
+        colidx = 0
+        indices = [colidx]
+        for jj in range(columns_count - 1):
+            colidx += self.cells[jj].colspan
+            indices.append(colidx)
+        return indices
 
     def cell(
         self,
