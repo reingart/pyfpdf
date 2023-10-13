@@ -23,31 +23,31 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 This release is the first performed from the [@py-pdf GitHub org](https://github.com/py-pdf), where `fpdf2` migrated.
 This release also marks the arrival of two new maintainers: Georg Mischler ([@gmischler](https://github.com/gmischler)) and Anderson Herzogenrath da Costa ([@andersonhc](https://github.com/andersonhc)).
 ### Added
-* The new experimental method `text_columns()` allows to render text within a single or multiple columns, including height balancing: [documentation](https://py-pdf.github.io/fpdf2/TextColumns.html)
-* [`FPDF.write_html()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html) now supports heading colors defined as attributes (_e.g._ `<h2 color="#00ff00">...`)
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports padding in cells : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#table-with-multiple-heading-rows)
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports vertical alignment in cells : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#setting-vertical-alignment-of-text-in-cells)
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports outer border width for rendering the outer border of the table with a different line-width
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports multiple heading rows : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#table-with-multiple-heading-rows)
-* documentation on how to use `livereload` to enable a "watch" mode with PDF generation: [Combine with livereload](https://py-pdf.github.io/fpdf2/CombineWithLivereload.html)
+* The new experimental method `text_columns()` allows to render text within a single or multiple columns, including height balancing: [documentation](https://py-pdf.github.io/fpdf2/TextColumns.html) - thanks to @gmischler
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports padding in cells : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#table-with-multiple-heading-rows) - thanks to @RubendeBruin
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports vertical alignment in cells : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#setting-vertical-alignment-of-text-in-cells) - thanks to @RubendeBruin
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports outer border width for rendering the outer border of the table with a different line-width - thanks to @RubendeBruin
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): Now supports multiple heading rows : [documentation](https://py-pdf.github.io/fpdf2/Tables.html#table-with-multiple-heading-rows) - thanks to @SandraFer
+* [`FPDF.write_html()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html) now supports heading colors defined as attributes (_e.g._ `<h2 color="#00ff00">...`) - thanks to @Lucas-C
+* documentation on how to use `livereload` to enable a "watch" mode with PDF generation: [Combine with livereload](https://py-pdf.github.io/fpdf2/CombineWithLivereload.html) - thanks to @Lucas-C
 ### Changed
-* The formatting output by `write_html()` has changed in some aspects. Vertical spacing around headings and paragraphs may be slightly different, and elements at the top of the page don't have any extra spacing above anymore.
+* [`FPDF.write_html()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html): the formatting output has changed in some aspects. Vertical spacing around headings and paragraphs may be slightly different, and elements at the top of the page don't have any extra spacing above anymore.
 * [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): If the height of a row is governed by an image, then the default vertical alignment of the other cells is "center". This was "top". 
 * variable-width non-breaking space (NBSP) support [issue #834](https://github.com/PyFPDF/fpdf2/issues/834)
 This change was made for consistency between row-height governed by text or images. The old behaviour can be enforced using the new vertical alignment parameter.  
 ### Fixed
-* In multi_cells and table cells with horizontal padding, the text was not given quite enough space.
-* `write_html()` can now handle formatting tags within paragraphs without adding extra line breaks (except in table cells for now).
-* the font size in HTML `<pre>` and `<code>` tags is not fixed to 11 pica anymore, but adapts to the preceding text.
-* [`FPDF.ln()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.ln), when called before any text has been written, will now use the current font height instead of doing nothing -  _cf._ issue [#937](https://github.com/py-pdf/fpdf2/issues/937)
-* [`FPDF.image()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image), when provided a `BytesIO` instance, does not close it anymore - _cf._ issue [#881](https://github.com/py-pdf/fpdf2/issues/881)
-* Invalid characters were being generated when a string contains parentheses - _cf._ issue [#884](https://github.com/py-pdf/fpdf2/issues/884)
-* Frozen Glyph dataclass was causing problems for FPDFRecorder with TTF fonts - _cf._ issue [#890](https://github.com/py-pdf/fpdf2/issues/890)
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table) & [`FPDF.multi_cell()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell): when some horizontal padding was set, the text was not given quite enough space - thanks to @gmischler
+* [`FPDF.write_html()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html) can now handle formatting tags within paragraphs without adding extra line breaks (except in table cells for now) - thanks to @gmischler
+* [`FPDF.write_html()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.write_html): the font size in HTML `<pre>` and `<code>` tags is not fixed to 11 pica anymore, but adapts to the preceding text - thanks to @gmischler
+* [`FPDF.ln()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.ln), when called before any text has been written, will now use the current font height instead of doing nothing - thanks to @gmischler -  _cf._ issue [#937](https://github.com/py-pdf/fpdf2/issues/937)
+* [`FPDF.image()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.image), when provided a `BytesIO` instance, does not close it anymore - _cf._ issue [#881](https://github.com/py-pdf/fpdf2/issues/881) - thanks to @Lucas-C
+* Invalid characters were being generated when a string contains parentheses - thanks to @andersonhc - _cf._ issue [#884](https://github.com/py-pdf/fpdf2/issues/884)
+* Frozen Glyph dataclass was causing problems for FPDFRecorder with TTF fonts - thanks to @andersonhc - _cf._ issue [#890](https://github.com/py-pdf/fpdf2/issues/890)
 * Edge case when parsing a Markdown link followed by a newline - _cf._ issue [#916](https://github.com/py-pdf/fpdf2/issues/916), and when bold/italics/underline markers are repeated
 * Zoom not set correctly when a numeric value was set in [`set_display_mode()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.set_display_mode) - _cf._ issue [#926](https://github.com/py-pdf/fpdf2/issues/926)
-* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): images no longer overlap with cell borders - _cf._ issue [#892](https://github.com/py-pdf/fpdf2/issues/892)
-* Encryption of strings containing non-latin characters - _cf._ issue [#933](https://github.com/py-pdf/fpdf2/issues/933)
-* Handling of fragments with zero-length - _cf._ issue [#902](https://github.com/py-pdf/fpdf2/issues/902)
+* [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): images no longer overlap with cell borders - thanks to @RubendeBruin - _cf._ issue [#892](https://github.com/py-pdf/fpdf2/issues/892)
+* Encryption of strings containing non-latin characters - thanks to @andersonhc - _cf._ issue [#933](https://github.com/py-pdf/fpdf2/issues/933)
+* Handling of fragments with zero-length - thanks to @SaiHarshaK - _cf._ issue [#902](https://github.com/py-pdf/fpdf2/issues/902)
 ### Deprecated
 * to improve naming consistency, the `txt` parameters of `FPDF.cell()`, `FPDF.multi_cell()`, `FPDF.text()` & `FPDF.write()` have been renamed to `text`
 
