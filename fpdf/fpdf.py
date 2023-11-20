@@ -3499,6 +3499,7 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
         if w == 0:
             w = self.w - self.r_margin - self.x
 
+        # Store the starting position before applying padding
         prev_x, prev_y = self.x, self.y
 
         # Apply padding to contents
@@ -3511,7 +3512,8 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
             clearance_margins.append(self.c_margin)
         if not padding.right:
             clearance_margins.append(self.c_margin)
-        self.x += padding.left
+        if align != Align.X:
+            self.x += padding.left
         self.y += padding.top
 
         # Center overrides padding
@@ -3519,6 +3521,7 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
             self.x = (
                 self.w / 2 if align == Align.X else self.l_margin + (self.epw - w) / 2
             )
+            prev_x = self.x
 
         # Calculate text length
         text = self.normalize_text(text)
@@ -3526,7 +3529,6 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
         styled_text_fragments = self._preload_font_styles(normalized_string, markdown)
 
         prev_font_style, prev_underline = self.font_style, self.underline
-        prev_x, prev_y = self.x, self.y
         total_height = 0
 
         if not border:
@@ -3562,6 +3564,7 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
             ]
         should_render_bottom_blank_cell = False
         for text_line_index, text_line in enumerate(text_lines):
+            is_first_line = text_line_index == 0
             is_last_line = text_line_index == len(text_lines) - 1
             should_render_bottom_blank_cell = False
             if max_line_height is not None and h > max_line_height:
@@ -3581,7 +3584,7 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
                 h=current_cell_height,
                 border="".join(
                     (
-                        "T" if "T" in border and text_line_index == 0 else "",
+                        "T" if "T" in border and is_first_line else "",
                         "L" if "L" in border else "",
                         "R" if "R" in border else "",
                         "B" if "B" in border and not has_line_after else "",
@@ -3591,13 +3594,18 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
                 new_y=new_y if not has_line_after else YPos.NEXT,
                 fill=fill,
                 link=link,
-                padding=padding,
+                padding=Padding(
+                    padding.top if is_first_line else 0,
+                    padding.right,
+                    padding.bottom if not has_line_after else 0,
+                    padding.left,
+                ),
             )
             page_break_triggered = page_break_triggered or new_page
             total_height += current_cell_height
             if not is_last_line and align == Align.X:
                 # prevent cumulative shift to the left
-                self.x = prev_x + padding.left
+                self.x = prev_x
         if should_render_bottom_blank_cell:
             new_page = self._render_styled_text_line(
                 TextLine(
@@ -3644,8 +3652,10 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
                 self.current_font = self.fonts[self.font_family + self.font_style]
             self.underline = prev_underline
 
-        # move right by right padding
-        self.x += padding.right
+        if new_x == XPos.RIGHT:  # move right by right padding to align outer RHS edge
+            self.x += padding.right
+        elif new_x == XPos.LEFT:  # move left by left padding to align outer LHS edge
+            self.x -= padding.left
 
         output = MethodReturnValue.coerce(output)
         return_value = ()
