@@ -15,6 +15,7 @@ from io import BytesIO
 from .annotations import PDFAnnotation
 from .enums import SignatureFlag
 from .errors import FPDFException
+from .image_datastructures import RasterImageInfo
 from .outline import build_outline_objs
 from .sign import Signature, sign_content
 from .syntax import (
@@ -692,7 +693,9 @@ class OutputProducer:
 
     def _add_images(self):
         img_objs_per_index = {}
-        for img in sorted(self.fpdf.images.values(), key=lambda img: img["i"]):
+        for img in sorted(
+            self.fpdf.image_cache.images.values(), key=lambda img: img["i"]
+        ):
             if img["usages"] > 0:
                 img_objs_per_index[img["i"]] = self._add_image(img)
         return img_objs_per_index
@@ -706,7 +709,7 @@ class OutputProducer:
         if iccp_i in self.iccp_i_to_pdf_i:
             return self.iccp_i_to_pdf_i[iccp_i]
         iccp_content = None
-        for iccp_c, i in self.fpdf.icc_profiles.items():
+        for iccp_c, i in self.fpdf.image_cache.icc_profiles.items():
             if iccp_i == i:
                 iccp_content = iccp_c
                 break
@@ -950,6 +953,31 @@ class OutputProducer:
         LOGGER.debug("Final size summary of the biggest document sections:")
         for label, section_size in self.sections_size_per_trace_label.items():
             LOGGER.debug("- %s: %s", label, _sizeof_fmt(section_size))
+
+
+def stream_content_for_raster_image(
+    info: RasterImageInfo,
+    x,
+    y,
+    w,
+    h,
+    keep_aspect_ratio=False,
+    scale=1,
+    pdf_height_to_flip=None,
+):
+    if keep_aspect_ratio:
+        x, y, w, h = info.scale_inside_box(x, y, w, h)
+    if pdf_height_to_flip:
+        stream_h = h
+        stream_y = pdf_height_to_flip - h - y
+    else:
+        stream_h = -h
+        stream_y = y + h
+    return (
+        f"q {w * scale:.2f} 0 0 {stream_h * scale:.2f}"
+        f" {x * scale:.2f} {stream_y * scale:.2f} cm"
+        f" /I{info['i']} Do Q"
+    )
 
 
 def _tt_font_widths(font):

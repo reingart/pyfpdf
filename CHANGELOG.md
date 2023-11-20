@@ -18,6 +18,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 
 ## [2.7.7] - Not released yet
 ### Added
+* basic support for `<image>` elements in SVG vector graphics inserted
 * SVG importing now supports clipping paths, and `defs` tags anywhere in the SVG file
 * [`FPDF.fonts.FontFace`](https://py-pdf.github.io/fpdf2/fpdf/fonts.html#fpdf.fonts.FontFace): Now has a static `combine` method that allows overriding a default FontFace (e.g. for specific cells in a table). Unspecified properties of the override FontFace retain the values of the default.
 * [`TextColumns()`](https://py-pdf.github.io/fpdf2/TextColumns.html) can now have images inserted (both raster and vector).
@@ -32,6 +33,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 * [`FPDF.multi_cell()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) has improved handling of `new_x` and `new_y` when `padding` is non-zero.
 * [`FPDF.multi_cell(fill=True)`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell) now avoids overlapping multiline strings when `padding` is non-zero.
 ### Changed
+* the public `.images`, `.icc_profiles` & `.image_filter` attributes of `FPDF` instances have been moved inside a nested `FPDF.image_cache` attribute
 * [`FPDF.table()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.table): If cell styles are provided for cells in heading rows, combine the cell style as an override with the overall heading style.
 
 ## [2.7.6] - 2023-10-11
