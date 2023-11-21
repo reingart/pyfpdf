@@ -868,6 +868,11 @@ class SVGObject:
                     clip_id = None
                 for child_ in child:
                     self.build_clipping_path(child_, clip_id)
+            else:
+                LOGGER.warning(
+                    "Ignoring unsupported SVG tag: <%s> (contributions are welcome to add support for it)",
+                    child.tag,
+                )
 
     # this assumes xrefs only reference already-defined ids.
     # I don't know if this is required by the SVG spec.
