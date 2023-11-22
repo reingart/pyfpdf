@@ -181,6 +181,15 @@ Regarding performance, `cairosvg` is generally faster than `svglib` when it come
 Additionally, `cairosvg` offers various options for optimizing the rendering performance, such as disabling certain features, like fonts or filters.
 
 
+## Warning logs ##
+
+The `fpdf.svg` module produces `WARNING` log messages for **unsupported** SVG tags & attributes.
+If need be, you can suppress those logs:
+
+```python
+logging.getLogger("fpdf.svg").propagate = False
+```
+
 ## Supported SVG Features ##
 
 - groups (`<g>`)
@@ -192,6 +201,7 @@ Additionally, `cairosvg` offers various options for optimizing the rendering per
 - basic stroke styling
 - inline CSS styling via `style="..."` attributes
 - clipping paths
+
 
 ## Currently Unsupported Notable SVG Features ##
 

@@ -72,3 +72,12 @@ Similarly, you can omit verbose logs from `fontTools.ttLib.ttFont`:
 ```python
 logging.getLogger('fontTools.ttLib.ttFont').level = logging.WARN
 ```
+
+## Warning logs for unsupported SVG features ##
+
+The `fpdf.svg` module produces `WARNING` log messages for **unsupported** SVG tags & attributes.
+If need be, you can suppress those logs:
+
+```python
+logging.getLogger("fpdf.svg").propagate = False
+```
