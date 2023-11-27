@@ -2236,6 +2236,44 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
         return annotation
 
     @check_page
+    def free_text_annotation(
+        self,
+        x,
+        y,
+        text,
+        w=1,
+        h=1,
+        name=None,
+        flags=DEFAULT_ANNOT_FLAGS,
+        default_appearance=False,
+    ):
+        """
+        Puts a free text annotation on a rectangular area of the page.
+
+        Args:
+            x (float): horizontal position (from the left) to the left side of the link rectangle
+            y (float): vertical position (from the top) to the bottom side of the link rectangle
+            text (str): text to display
+            w (float): optional width of the link rectangle
+            h (float): optional height of the link rectangle
+            name (fpdf.enums.AnnotationName, str): optional icon that shall be used in displaying the annotation
+            flags (Tuple[fpdf.enums.AnnotationFlag], Tuple[str]): optional list of flags defining annotation properties
+        """
+        annotation = AnnotationDict(
+            "FreeText",
+            x * self.k,
+            self.h_pt - y * self.k,
+            w * self.k,
+            h * self.k,
+            contents=text,
+            name=AnnotationName.coerce(name) if name else None,
+            flags=tuple(AnnotationFlag.coerce(flag) for flag in flags),
+            default_appearance=default_appearance,
+        )
+        self.pages[self.page].annots.append(annotation)
+        return annotation
+
+    @check_page
     def add_action(self, action, x, y, w, h):
         """
         Puts an Action annotation on a rectangular area of the page.
