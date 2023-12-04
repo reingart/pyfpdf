@@ -70,21 +70,23 @@ TIFFBitRevTable = [
 def preload_image(image_cache: ImageCache, name, dims=None):
     """
     Read an image and load it into memory.
-    For raster images: Following this call, the image is inserted in `.images`,
-    and following calls to this method (or `FPDF.image`) will return (or re-use)
-    the same cached values, without re-reading the image.
-    For vector images: The data is loaded and the metadata extracted.
+
+    For raster images: following this call, the image is inserted in `image_cache.images`,
+    and following calls to `FPDF.image()` will re-use the same cached values, without re-reading the image.
+
+    For vector images: the data is loaded and the metadata extracted.
 
     Args:
+        image_cache: an `ImageCache` instance, usually the `.image_cache` attribute of a `FPDF` instance.
         name: either a string representing a file path to an image, an URL to an image,
-            an io.BytesIO, or a instance of `PIL.Image.Image`
+            an io.BytesIO, or a instance of `PIL.Image.Image`.
         dims (Tuple[float]): optional dimensions as a tuple (width, height) to resize the image
             (raster only) before storing it in the PDF.
 
-    Returns: A tuple, consisting of the name, the image data, and an instance of a
-        subclass of `ImageInfo`,
+    Returns: A tuple, consisting of 3 values: the name, the image data,
+        and an instance of a subclass of `ImageInfo`.
     """
-    # Identify and load SVG data.
+    # Identify and load SVG data:
     if str(name).endswith(".svg"):
         return get_svg_info(name, load_image(str(name)), image_cache=image_cache)
     if isinstance(name, bytes) and _is_svg(name.strip()):
