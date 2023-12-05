@@ -4179,6 +4179,24 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
             info = lowres_info
         return info
 
+    def preload_image(self, name, dims=None):
+        """
+        Read an image and load it into memory.
+
+        .. deprecated:: 2.7.7
+            Use `fpdf.image_parsing.preload_image` instead.
+        """
+        warnings.warn(
+            (
+                "FPDF.preload_image() is deprecated since v2.7.7 "
+                "and will be removed in a future release. "
+                "Use `fpdf.image_parsing.preload_image` instead."
+            ),
+            DeprecationWarning,
+            stacklevel=get_stack_level(),
+        )
+        return preload_image(self.image_cache, name, dims)
+
     @contextmanager
     def _marked_sequence(self, **kwargs):
         """
