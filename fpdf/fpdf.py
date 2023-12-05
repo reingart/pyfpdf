@@ -2236,6 +2236,54 @@ class FPDF(GraphicsStateMixin, TextRegionMixin):
         return annotation
 
     @check_page
+    def free_text_annotation(
+        self,
+        text,
+        x=None,
+        y=None,
+        w=None,
+        h=None,
+        flags=DEFAULT_ANNOT_FLAGS,
+    ):
+        """
+        Puts a free text annotation on a rectangular area of the page.
+
+        Args:
+            text (str): text to display
+            x (float): optional horizontal position (from the left) to the left side of the link rectangle.
+                Default value: None, meaning the current abscissa is used
+            y (float): vertical position (from the top) to the bottom side of the link rectangle.
+                Default value: None, meaning the current ordinate is used
+            w (float): optional width of the link rectangle. Default value: None, meaning the length of text in user unit
+            h (float): optional height of the link rectangle. Default value: None, meaning an height equal
+                to the current font size
+            flags (Tuple[fpdf.enums.AnnotationFlag], Tuple[str]): optional list of flags defining annotation properties
+        """
+        if not self.font_family:
+            raise FPDFException("No font set, you need to call set_font() beforehand")
+        if x is None:
+            x = self.x
+        if y is None:
+            y = self.y
+        if h is None:
+            h = self.font_size
+        if w is None:
+            w = self.get_string_width(text, normalized=True, markdown=False)
+
+        annotation = AnnotationDict(
+            "FreeText",
+            x * self.k,
+            self.h_pt - y * self.k,
+            w * self.k,
+            h * self.k,
+            contents=text,
+            flags=tuple(AnnotationFlag.coerce(flag) for flag in flags),
+            default_appearance=f"({self.draw_color.serialize()} /F{self.current_font.i} {self.font_size_pt:.2f} Tf)",
+        )
+        self.pages[self.page].annots.append(annotation)
+        return annotation
+
+    @check_page
     def add_action(self, action, x, y, w, h):
         """
         Puts an Action annotation on a rectangular area of the page.

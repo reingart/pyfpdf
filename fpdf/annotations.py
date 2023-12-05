@@ -44,6 +44,7 @@ class AnnotationMixin:
         file_spec: str = None,
         field_type: str = None,
         value=None,
+        default_appearance: str = None,  # for free text annotations
     ):
         self.type = Name("Annot")
         self.subtype = Name(subtype)
@@ -71,6 +72,7 @@ class AnnotationMixin:
             else None
         )
         self.f_s = file_spec
+        self.d_a = default_appearance
 
 
 class PDFAnnotation(AnnotationMixin, PDFObject):
@@ -100,6 +102,7 @@ class AnnotationDict(AnnotationMixin):
         "name",
         "ink_list",
         "f_s",
+        "d_a",
     )
 
     def serialize(self, _security_handler=None, _obj_id=None):
