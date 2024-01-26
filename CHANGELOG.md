@@ -24,6 +24,9 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 * non-bold `TitleStyle` is now rendered as non-bold even when the current font is bold
 * calling `.table()` inside the `render_toc_function`
 * using `.set_text_shaping(True)` & `.offset_rendering()`
+* Fixed gutter handing when a pagebreak occurs within a table with header rows - thanks to @mjasperse
+### Changed
+* Outer table borders are now drawn continuously for nonzero `gutter_width`/`gutter_height`, with spacing applied inside the border similar to HTML tables - thanks to @mjasperse - cf. [#1071](https://github.com/py-pdf/fpdf2/issues/1071)
 
 ## [2.7.7] - 2023-12-10
 ### Added
