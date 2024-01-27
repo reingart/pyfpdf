@@ -717,6 +717,9 @@ def draw_box_borders(pdf, x1, y1, x2, y2, border, fill_color=None):
     y2 *= k
     y1 *= k
 
+    if isinstance(border, str) and set(border).issuperset("LTRB"):
+        border = 1
+
     if fill_color:
         op = "B" if border == 1 else "f"
         sl.append(f"{x1:.2f} {y2:.2f} " f"{x2 - x1:.2f} {y1 - y2:.2f} re {op}")
