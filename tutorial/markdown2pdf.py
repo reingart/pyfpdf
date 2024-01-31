@@ -33,7 +33,7 @@ Inline `code span`
 A table:
 
 | Foo | Bar | Baz |
-|:--- |:---:| ---:|
+| ---:|:---:|:--- |
 | Foo | Bar | Baz |
 
 Some horizontal thematic breaks:
