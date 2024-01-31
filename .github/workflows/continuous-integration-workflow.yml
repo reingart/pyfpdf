@@ -72,6 +72,9 @@ jobs:
         # As build_contributors_html_page.py can hang due to GitHub rate-limiting,
         # we only execute this on master for now. And it should always be executed for one Python version only.
         if: github.ref == 'refs/heads/master' && matrix.python-version == '3.12' && matrix.platform == 'ubuntu-latest'
+        env:
+          # Needed by contributors/build_contributors_html_page.py:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p public/
           # Setting PDF manual version:
