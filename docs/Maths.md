@@ -144,5 +144,5 @@ Result:
 If you have trouble with the SVG export, you can also render the matplotlib figure as pixels:
 
 ```python
-{% include "../tutorial/equation_matplotlib_png.py" %}
+{% include "../tutorial/equation_matplotlib_raster.py" %}
 ```
