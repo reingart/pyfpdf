@@ -355,3 +355,23 @@ def test_html_table_with_data_that_contains_entity_names(tmp_path):  # issue 101
         HERE / "html_table_with_data_that_contains_entity_names.pdf",
         tmp_path,
     )
+
+
+def test_html_table_honoring_align(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.write_html(
+        """<table>
+          <tr>
+            <th align="right">Foo</th>
+            <th align="center">Bar</th>
+            <th align="left">Baz</th>
+          </tr>
+          <tr>
+            <td align="right">Foo</td>
+            <td align="center">Bar</td>
+            <td align="left">Baz</td>
+          </tr>
+        </table>"""
+    )
+    assert_pdf_equal(pdf, HERE / "html_table_honoring_align.pdf", tmp_path)
