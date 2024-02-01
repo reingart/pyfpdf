@@ -33,4 +33,4 @@ print(msg)
 
 Result:
 
-![](docs/markdown2pdf_unicode.png)
+![](markdown2pdf_unicode.png)
