@@ -117,6 +117,8 @@ or [open a discussion](https://github.com/py-pdf/fpdf2/discussions).
 [Wheelodex](https://www.wheelodex.org/projects/fpdf2/rdepends/) or [Watchman Pypi](http://www.watchman-pypi.com).
 Some are also listed on [its libraries.io page](https://libraries.io/pypi/fpdf2).
 
+[![Star history](https://api.star-history.com/svg?repos=py-pdf/fpdf2)](https://star-history.com/#py-pdf/fpdf2)
+
 ### Related ###
 
 * Looking for alternative libraries? Check out [pypdf](https://github.com/py-pdf/pypdf), [borb](https://github.com/jorisschellekens/borb), [pikepdf](https://github.com/pikepdf/pikepdf), [WeasyPrint](https://github.com/Kozea/WeasyPrint), [pydyf](https://pypi.org/project/pydyf/) and [PyMuPDF](https://pymupdf.readthedocs.io/en/latest/index.html): [features comparison](https://pymupdf.readthedocs.io/en/latest/about.html), [examples](https://github.com/pymupdf/PyMuPDF-Utilities/tree/master/examples#examples), [Jupyter notebooks](https://github.com/pymupdf/PyMuPDF-Utilities/tree/master/jupyter-notebooks).
