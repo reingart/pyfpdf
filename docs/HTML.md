@@ -40,8 +40,16 @@ pdf.write_html("""
   </section>
   <section>
     <h2>Other section title</h2>
-    <ul><li>unordered</li><li>list</li><li>items</li></ul>
-    <ol><li>ordered</li><li>list</li><li>items</li></ol>
+    <ul type="circle">
+      <li>unordered</li>
+      <li>list</li>
+      <li>items</li>
+    </ul>
+    <ol start="3" type="i">
+      <li>ordered</li>
+      <li>list</li>
+      <li>items</li>
+    </ol>
     <br>
     <br>
     <pre>i am preformatted text.</pre>
@@ -68,6 +76,45 @@ pdf.write_html("""
   </section>
 """)
 pdf.output("html.pdf")
+```
+
+
+## Styling HTML tags globally
+
+The style of several HTML tags (`<a>`, `<blockquote>`, `<code>`, `<pre>`, `<h1>`, `<h2>`, `<h3>`...) can be set globally, for the whole HTML document, by passing `tag_styles` to `FPDF.write_html()`:
+
+```python
+from fpdf import FPDF, FontFace
+
+pdf = FPDF()
+pdf.add_page()
+pdf.write_html("""
+  <h1>Big title</h1>
+  <section>
+    <h2>Section title</h2>
+    <p>Hello world!</p>
+  </section>
+""", tag_styles={
+    "h1": FontFace(color=(148, 139, 139), size_pt=32),
+    "h2": FontFace(color=(148, 139, 139), size_pt=24),
+})
+pdf.output("html_styled.pdf")
+```
+
+Similarly, the indentation of several HTML tags (`<blockquote>`, `<dd>`, `<li>`) can be set globally, for the whole HTML document, by passing `tag_indents` to `FPDF.write_html()`:
+
+```python
+from fpdf import FPDF
+
+pdf = FPDF()
+pdf.add_page()
+pdf.write_html("""
+  <dl>
+      <dt>Term</dt>
+      <dd>Definition</dd>
+  </dl>
+""", tag_indents={"dd": 5})
+pdf.output("html_dd_indented.pdf")
 ```
 
 
