@@ -1,10 +1,35 @@
+# my files
+.env
+.DS_Store
+
+# codecov.io
+coverage.xml
+
+htmlcov
+public
+tutorial/invoice.pdf
+PDF_Checker/
+verapdf/
+pdfchecker-aggregated.json
+verapdf-aggregated.json
+
+contributors/contributors.html
+
 *.py[cod]
 
 # C extensions
 *.so
 
+# virtualenv
+include/
+local/
+
+# vscode
+.vscode
+
 # Packages
 *.egg
+.eggs
 *.egg-info
 dist
 build
@@ -20,6 +45,7 @@ lib64
 
 # Installer logs
 pip-log.txt
+pip-selfcheck.json
 
 # Unit test / coverage reports
 .coverage
@@ -33,3 +59,11 @@ nosetests.xml
 .mr.developer.cfg
 .project
 .pydevproject
+
+# Idea
+.idea
+
+# Vim backup and swap files
+*.*~
+*.swo
+*.swp

@@ -1,0 +1,10 @@
+include CHANGELOG.md
+include CONTRIBUTING.md
+include CONTRIBUTORS.md
+include LICENSE
+exclude MANIFEST.in
+include README.md
+
+recursive-include fpdf     *
+recursive-exclude fpdf     *.pyc
+recursive-exclude test     *

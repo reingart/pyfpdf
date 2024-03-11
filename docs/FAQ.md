@@ -1,65 +1,77 @@
+# FAQ #
+
+See [Project Home](index.md) for an overall introduction.
+
 [TOC]
 
-Apologies in advance: Spanish is our main language, so there may be errors or 
-inaccuracies with our written English.
+## What is fpdf2? ##
 
-See [Project Home](https://github.com/reingart/pyfpdf) for an overall 
-introduction.
+`fpdf2` is a library with low-level primitives to easily generate PDF documents.
 
-# What is FPDF? #
+This is similar to [ReportLab](https://www.reportlab.com)'s graphics canvas,
+but with some methods to output "fluid" cells
+("flowables" that can span multiple rows, pages, tables, columns, etc).
 
-[FPDF](http://www.fpdf.org) (and PyFPDF) is a library with low-level primitives
-to easily generate PDF documents. This is similar to ReportLab's graphics canvas,
-but with some methods to output "fluid" cells ("flowables" that can span 
-multiple rows, pages, tables, columns, etc.). It has several methods ("hooks") 
-that can be redefined, to fine-control headers, footers, etc.
+It has methods ("hooks") that can be implemented in a subclass: `headers` and `footers`.
 
-Originally developed in PHP several years ago (as a free alternative to 
-proprietary C libraries), it has been ported to many programming languages, 
+Originally developed in PHP several years ago (as a free alternative to proprietary C libraries),
+it has been ported to many programming languages,
 including ASP, C++, Java, Pl/SQL, Ruby, Visual Basic, and of course, Python.
 
 For more information see: <http://www.fpdf.org/en/links.php>
 
-# What is this library **not**? #
+## What is this library **not**? ##
 
 This library is not a:
 
-  * charts or widgets library (but you can import PNG or JPG images, use PIL or any
-    other library, or draw the figures yourself; see examples)
-  * "flexible page layout engine" like 
-    [Reportlab](http://www.reportlab.com/opensource/) PLATYPUS (but it can do 
-    columns, chapters, etc.; see the [Tutorial](Tutorial.md))
-  * XML or object definition language like 
-    [Geraldo Reports](http://www.geraldoreports.org/), Jasper Reports or similar
-    (but look at [write_html](reference/write_html.md) for simple HTML reports and 
-    [Templates](Templates.md) for fill-in-the-blank documents)
-  * PDF text extractor, converter, splitter or similar. Look at 
-    [pyPdf](https://pypi.python.org/pypi/pyPdf).
+  * charts or widgets library.
+    But you can import PNG or JPG images, use PIL or any other library, or draw the figures yourself.
 
-# How does this library compare to ...? #
+  * "flexible page layout engine" like [Reportlab](http://www.reportlab.com/opensource/) PLATYPUS.
+    But it can do columns, chapters, etc.; see the [Tutorial](Tutorial.md).
 
-Compared to other solutions, this library should be easier to use and adapt for
-most common documents (no need to use a page layout engine, style sheets, 
-templates, or stories...), with full control over the generated PDF document 
-(including advanced features and extensions).
+  * XML or object definition language like [Geraldo Reports](http://www.geraldoreports.org/), Jasper Reports, or similar.
+    But look at [write_html](HTML.md) for simple HTML reports and [Templates](Templates.md) for fill-in-the-blank documents.
 
-It is smaller (a source folder less than 200K) and compilation or external 
-libraries are not required.
+  * PDF text extractor, converter, splitter or similar.
 
-It includes cell and multi\_cell primitives to draw fluid document like 
-invoices, listings and reports, and includes basic support for HTML rendering.
+## How does this library compare to ...? ##
 
-# What does the code look like? #
+The API is geared toward giving the user access to features of the Portable
+Document Format as they are described in the Adobe PDF Reference Manual, this
+bypasses needless complexities for simpler use cases.
+
+It is small:
+```
+$ du -sh fpdf
+1,6M    fpdf
+
+$ scc fpdf
+───────────────────────────────────────────────────────────────────────────────
+Language                 Files     Lines   Blanks  Comments     Code Complexity
+Python                      21     16879      480       571    15828        462
+```
+
+It includes [`cell()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.cell) and [`multi_cell()`](fpdf/fpdf.html#fpdf.fpdf.FPDF.multi_cell)
+primitives to draw fluid document like invoices, listings and reports, and includes basic support for HTML rendering.
+
+> Compared to other solutions, this library should be easier to use and adapt
+> for most common documents (no need to use a page layout engine, style
+> sheets, templates, or stories...), with full control over the generated PDF
+> document (including advanced features and extensions).
+
+Check also the list of features on the [home page](index.md).
+
+## What does the code look like? ##
 
 Following is an example similar to the Reportlab one in the book of web2py. Note
 the simplified import and usage:
 (<http://www.web2py.com/book/default/chapter/09?search=pdf#ReportLab-and-PDF>)
 
-PyFPDF:
 ```python
 from fpdf import FPDF
 
-def get_me_a_pyfpdf():
+def get_me_a_pdf():
     title = "This The Doc Title"
     heading = "First Paragraph"
     text = 'bla ' * 10000
@@ -67,16 +79,18 @@ def get_me_a_pyfpdf():
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font('Times', 'B', 15)
-    pdf.cell(w=210, h=9, txt=title, border=0, ln=1, align='C', fill=0)
+    pdf.cell(w=210, h=9, text=title, border=0,
+            new_x="LMARGIN", new_y="NEXT", align='C', fill=False)
     pdf.set_font('Times', 'B', 15)
-    pdf.cell(w=0, h=6, txt=heading, border=0, ln=1, align='L', fill=0)
+    pdf.cell(w=0, h=6, text=heading, border=0,
+            new_x="LMARGIN", new_y="NEXT", align='L', fill=False)
     pdf.set_font('Times', '', 12)
-    pdf.multi_cell(w=0, h=5, txt=text)
+    pdf.multi_cell(w=0, h=5, text=text)
     response.headers['Content-Type'] = 'application/pdf'
-    return pdf.output(dest='S')
+    return pdf.output()
 ```
 
-Reportlab:
+With Reportlab:
 ```python
 from reportlab.platypus import *
 from reportlab.lib.styles import getSampleStyleSheet
@@ -108,41 +122,25 @@ def get_me_a_pdf():
     return data
 ```
 
-# Does this library have any framework integration? #
+## Does this library have any framework integration? ##
 
-Yes, if you use web2py, you can make simple HTML reports that can be viewed in a
-browser, or downloaded as PDF.
+Yes, if you use web2py, you can make simple HTML reports that can be viewed in a browser,
+or downloaded as PDF.
 
-Also, using web2py DAL, you can easily set up a templating engine for PDF 
-documents.
+Also, using web2py DAL, you can easily set up a templating engine for PDF  documents.
 
 Look at [Web2Py](Web2Py.md) for examples.
 
-# What is the development status of this library? #
+## What is the development status of this library? ##
 
-This library was improved over the years since the initial port from PHP. Some 
-code is in early development stages (mainly UTF-8 support and some advanced 
-features). The good news is that PHP versions and examples are available from
-a long time ago, so migration and some bug-fixes are easy.
+This library was improved over the years since the initial port from PHP.
+As of 2021, it is **stable** and actively maintained, with bug fixes and new features developped regularly.
 
-Said that, a former version is working successfully and is commercially 
-supported since late 2008 for electronic invoice templates compliant with AFIP
-(Argentina IRS) normative, in several environments (Linux, Windows, etc.). It 
-was originally included in 
-[PyRece](http://code.google.com/p/pyafipws/wiki/ProjectSummary), with thousands 
-downloads to date.
+In contrast, [`write_html`](HTML.md) support is not complete, so it must be considered in beta state.
 
-For further information see:
+## What is the license of this library (fpdf2)? ##
 
-  * <http://www.pyafipws.com.ar/>
-  * <http://code.google.com/p/pyafipws/>
-  * <http://groups.google.com/group/pyafipws>
-
-In contrast, _write_html_ support is not complete, so it must be considered in 
-alpha state. Further enhancements using web2py helpers and an XML parser will 
-enable parsing more complex HTML files.
-
-# What is the license of this library (pyfpdf)? #
+LGPL v3.0.
 
 Original FPDF uses a permissive license:
 <http://www.fpdf.org/en/FAQ.php#q1>
@@ -161,8 +159,8 @@ FPDF version 1.6's license.txt says:
 
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED.
 
-The fpdf.py library is a revision of a port by Max Pat. The original source uses the same
-licence: <http://www.fpdf.org/dl.php?id=94>
+The original `fpdf.py` library was a revision of a port by Max Pat.
+The original source uses the same licence: <http://www.fpdf.org/dl.php?id=94>
 
 ```python
 # * Software: FPDF
@@ -185,4 +183,3 @@ MIT licence for Java port, etc.): <http://www.fpdf.org/en/links.php>
 Other FPDF derivatives also choose LGPL, such as 
 [sFPDF](http://www.fpdf.org/en/script/script91.php) by 
 [Ian Back](mailto:ian@bpm1.com?subject=sFPDF).
-
