@@ -1,0 +1,48 @@
+from fpdf import FPDF
+
+# إنشاء فئة PDF مخصصة
+class PDF(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 14)
+        self.cell(0, 10, "Application for Mining Supervisor Position", ln=True, align="C")
+        self.ln(5)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Arial", "I", 8)
+        self.cell(0, 10, f"Page {self.page_no()}", 0, 0, "C")
+
+    def add_letter_body(self, body_text):
+        self.set_font("Arial", size=12)
+        self.multi_cell(0, 10, body_text)
+
+# إنشاء ملف PDF
+pdf = PDF()
+pdf.add_page()
+
+# نص الرسالة
+body = """
+To: MAADEN
+Human Resources Department
+
+Subject: Application for Mining Supervisor Position
+
+Dear Hiring Team,
+
+I am writing to express my interest in the Mining Supervisor position at your esteemed company. Although I do not have direct experience in the mining industry, I bring a strong background in related fields that share many of the operational, safety, and leadership demands required in mining environments.
+
+Throughout my career, I have worked in heavy industry, field operations, geological exploration, drilling and excavation, sample analysis, environmental risk assessment, use of advanced technologies, occupational safety procedures, waste management, project planning and execution, human resource management, and equipment maintenance, where I was responsible for supervising teams, ensuring project timelines were met, and maintaining high safety and quality standards on-site. These experiences have equipped me with solid problem-solving skills, team management abilities, and a deep understanding of operational efficiency in dynamic and often challenging work environments.
+
+I am eager to transition into the mining sector and apply my transferable skills while continuing to learn and grow within your organization. I am confident that my dedication, adaptability, and leadership qualities will make me a valuable asset to your team.
+
+Please find my resume attached for your review. I would be grateful for the opportunity to discuss how I can contribute to your team's success.
+
+Sincerely,
+RASHED SULIMAN ALFEHAID
+"""
+
+# إضافة النص إلى PDF
+pdf.add_letter_body(body)
+
+# حفظ الملف
+pdf.output("Mining_Supervisor_Application_Rashed_Alfehaid.pdf")
