@@ -1,0 +1,46 @@
+from fpdf import FPDF
+
+class PDF(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 12)
+        self.cell(0, 10, "Investigación: La poesía peruana en la segunda mitad del siglo XX", ln=True, align="C")
+        self.ln(5)
+
+    def chapter_title(self, title):
+        self.set_font("Arial", "B", 12)
+        self.set_text_color(0, 0, 128)
+        self.cell(0, 10, title, ln=True)
+        self.set_text_color(0, 0, 0)
+
+    def chapter_body(self, body):
+        self.set_font("Arial", "", 11)
+        self.multi_cell(0, 10, body)
+        self.ln()
+
+pdf = PDF()
+pdf.set_auto_page_break(auto=True, margin=15)
+pdf.add_page()
+
+contenido = {
+    "Introducción": """La poesía peruana de la segunda mitad del siglo XX experimentó una intensa renovación estética y temática...""",
+
+    "Contexto histórico y literario": """Durante las décadas de 1950 a 1970, el Perú vivía tensiones sociales, procesos de migración interna...""",
+
+    "Jorge Eduardo Eielson": """Poeta, artista plástico y vanguardista...""",
+
+    "Antonio Cisneros": """Figura clave de la Generación del 60...""",
+
+    "José Watanabe": """Poeta de origen andino-japonés...""",
+
+    "Comparación entre los tres poetas": """Eielson representa la experimentación formal...""",
+
+    "Conclusión": """La segunda mitad del siglo XX marcó una época dorada para la poesía peruana...""",
+
+    "Bibliografía sugerida": """- Chueca, Luis Fernando. *Poesía peruana del siglo XX*.\n- Historia de las literaturas en el Perú, Vol. 4.\n- Repositorio PUCP: https://repositorio.pucp.edu.pe"""
+}
+
+for titulo, texto in contenido.items():
+    pdf.chapter_title(titulo)
+    pdf.chapter_body(texto)
+
+pdf.output("Investigacion_Poesia_Peruana_Siglo_XX.pdf")
