@@ -1,0 +1,470 @@
+from pathlib import Path
+
+import pytest
+from fpdf import FPDF, FPDFException
+from test.conftest import assert_pdf_equal, LOREM_IPSUM
+
+HERE = Path(__file__).resolve().parent
+FONTS_DIR = HERE.parent / "fonts"
+PNG_DIR = HERE.parent / "image/png_images"
+SVG_DIR = HERE.parent / "svg/svg_sources"
+
+
+def test_tcols_align(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=12)
+    col = pdf.text_columns()
+    with col:
+        col.write(text=LOREM_IPSUM[:100])
+        pdf.set_font("Times", size=12)
+        col.write(text=LOREM_IPSUM[100:200])
+        pdf.set_font("Courier", size=12)
+        col.write(text=LOREM_IPSUM[200:300])
+    pdf.set_font("Helvetica", style="I", size=12)
+    with col:
+        with col.paragraph(text_align="J", top_margin=pdf.font_size * 2) as par:
+            par.write(text=LOREM_IPSUM[:100])
+            pdf.set_font("Times", style="I", size=12)
+            par.write(text=LOREM_IPSUM[100:200])
+            pdf.set_font("Courier", style="I", size=12)
+            par.write(text=LOREM_IPSUM[200:300])
+    pdf.set_font("Helvetica", style="B", size=12)
+    with col:
+        with col.paragraph(text_align="R", top_margin=pdf.font_size * 2) as par:
+            par.write(text=LOREM_IPSUM[:100])
+            pdf.set_font("Times", style="B", size=12)
+            par.write(text=LOREM_IPSUM[100:200])
+            pdf.set_font("Courier", style="B", size=12)
+            par.write(text=LOREM_IPSUM[200:300])
+    pdf.set_font("Helvetica", style="BI", size=12)
+    with col:
+        with col.paragraph(text_align="C", top_margin=pdf.font_size * 2) as par:
+            par.write(text=LOREM_IPSUM[:100])
+            pdf.set_font("Times", style="BI", size=12)
+            par.write(text=LOREM_IPSUM[100:200])
+            pdf.set_font("Courier", style="BI", size=12)
+            par.write(text=LOREM_IPSUM[200:300])
+    assert_pdf_equal(pdf, HERE / "tcols_align.pdf", tmp_path)
+
+
+def test_tcols_3cols(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.t_margin = 50
+    pdf.set_auto_page_break(True, 100)
+    pdf.set_font("Helvetica", size=6)
+    cols = pdf.text_columns(
+        text=LOREM_IPSUM,
+        text_align="J",
+        img=SVG_DIR / "SVG_logo.svg",
+        img_fill_width=True,
+        ncols=3,
+        gutter=5,
+    )
+    with cols:
+        pdf.set_font("Times", size=8)
+        cols.write(text=LOREM_IPSUM)
+        pdf.set_font("Courier", size=10)
+        cols.write(text=LOREM_IPSUM)
+        pdf.set_font("Helvetica", size=12)
+        cols.write(text=LOREM_IPSUM)
+        pdf.set_font("Times", size=14)
+        cols.write(text=LOREM_IPSUM)
+        pdf.set_font("Courier", size=16)
+        cols.write(text=LOREM_IPSUM)
+    assert_pdf_equal(pdf, HERE / "tcols_3cols.pdf", tmp_path)
+
+
+def test_tcols_balance(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_auto_page_break(True, 100)
+    pdf.set_font("Helvetica", size=6)
+    cols_2 = pdf.text_columns(text_align="J", ncols=2, gutter=10, balance=True)
+    cols_3 = pdf.text_columns(text_align="J", ncols=3, gutter=5, balance=True)
+    with cols_2:
+        pdf.set_font("Times", size=8)
+        cols_2.write(text=LOREM_IPSUM[:300])
+    with cols_3:
+        pdf.set_font("Courier", size=10)
+        cols_3.write(text=LOREM_IPSUM[300:600])
+    with cols_2:
+        pdf.set_font("Helvetica", size=12)
+        cols_2.write(text=LOREM_IPSUM[600:900])
+    with cols_3:
+        pdf.set_font("Times", size=14)
+        cols_3.write(text=LOREM_IPSUM[:300])
+    assert_pdf_equal(pdf, HERE / "tcols_balance.pdf", tmp_path)
+
+
+def test_tcols_charwrap(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("courier", size=16)
+    col = pdf.text_columns(l_margin=50, r_margin=50)
+    # wrapmode on paragraph
+    with col.paragraph(wrapmode="CHAR", bottom_margin=pdf.font_size) as par:
+        par.write(text=LOREM_IPSUM[:500])
+    col.render()
+    # wrapmode on column
+    with pdf.text_columns(
+        l_margin=50,
+        r_margin=50,
+        wrapmode="CHAR",
+    ) as col:
+        with col.paragraph() as par:
+            par.write(text=LOREM_IPSUM[500:1000])
+    assert_pdf_equal(pdf, HERE / "tcols_charwrap.pdf", tmp_path)
+
+
+def test_tcols_images(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=12)
+    cols = pdf.text_columns(ncols=3, text_align="J")
+    left, right = cols.current_x_extents(pdf.y, 0)
+    pdf.line(left, pdf.t_margin, left, pdf.h - pdf.b_margin)
+    pdf.line(right, pdf.t_margin, right, pdf.h - pdf.b_margin)
+    with cols:
+        cols.write(text="Images at Native Size\n(Raster 72 dpi, SVG 90 dpi)\n\n")
+        cols.write(text=LOREM_IPSUM[:100])
+        cols.image(PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png")
+        cols.write(text=LOREM_IPSUM[100:200])
+        cols.image(SVG_DIR / "SVG_logo.svg")
+        cols.write(text=LOREM_IPSUM[200:300])
+
+        cols.new_column()
+        cols.write(text="Images at Full Column Width\n\n")
+        cols.write(text=LOREM_IPSUM[:100])
+        cols.image(
+            PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png",
+            fill_width=True,
+        )
+        cols.write(text=LOREM_IPSUM[100:200])
+        cols.image(SVG_DIR / "SVG_logo.svg", fill_width=True)
+        cols.write(text=LOREM_IPSUM[200:300])
+
+        cols.new_column()
+        cols.write(text="Images Aligned Right and Center\n\n")
+        cols.write(text=LOREM_IPSUM[:100])
+        cols.image(
+            PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png",
+            align="RIGHT",
+        )
+        cols.write(text=LOREM_IPSUM[100:200])
+        cols.image(SVG_DIR / "SVG_logo.svg", align="CENTER")
+        cols.write(text=LOREM_IPSUM[200:300])
+
+        cols.new_column()
+        cols.write(text="Images at Size 50x20\ntop/bottom margin\n\n")
+        cols.write(text=LOREM_IPSUM[:100])
+        cols.image(
+            PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png",
+            width=50,
+            height=20,
+            top_margin=10,
+        )
+        cols.write(text=LOREM_IPSUM[100:200])
+        cols.image(
+            SVG_DIR / "SVG_logo.svg",
+            width=50,
+            height=20,
+            bottom_margin=10,
+        )
+        cols.write(text=LOREM_IPSUM[200:300])
+
+        cols.new_column()
+        cols.write(text="Images at Size 50x20 and keep_aspect_ratio=True\n\n")
+        cols.write(text=LOREM_IPSUM[:100])
+        cols.image(
+            PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png",
+            width=50,
+            height=20,
+            keep_aspect_ratio=True,
+        )
+        cols.write(text=LOREM_IPSUM[100:200])
+        cols.image(
+            SVG_DIR / "SVG_logo.svg",
+            width=50,
+            height=20,
+            keep_aspect_ratio=True,
+        )
+        cols.write(text=LOREM_IPSUM[200:300])
+
+        cols.new_column()
+        cols.write(text="Images at Size 20x50 and keep_aspect_ratio=True\n\n")
+        cols.write(text=LOREM_IPSUM[:100])
+        cols.image(
+            PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png",
+            width=20,
+            height=50,
+            keep_aspect_ratio=True,
+        )
+        cols.write(text=LOREM_IPSUM[100:200])
+        cols.image(
+            SVG_DIR / "SVG_logo.svg",
+            width=20,
+            height=50,
+            keep_aspect_ratio=True,
+        )
+        cols.write(text=LOREM_IPSUM[200:300])
+
+        cols.new_column()
+        cols.write(text="Column break by image\n\n")
+        cols.write(text=LOREM_IPSUM[:100])
+        cols.image(
+            PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png",
+            fill_width=True,
+        )
+        cols.write(text=LOREM_IPSUM[100:200])
+        cols.image(SVG_DIR / "SVG_logo.svg", fill_width=True)
+        cols.write(text=LOREM_IPSUM[200:300])
+        cols.image(
+            PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png",
+            fill_width=True,
+        )
+        cols.image(SVG_DIR / "SVG_logo.svg", fill_width=True)
+
+    assert_pdf_equal(pdf, HERE / "tcols_images.pdf", tmp_path)
+
+
+def test_tcols_no_font():
+    pdf = FPDF()
+    pdf.add_page()
+    with pytest.raises(FPDFException) as error:
+        col = pdf.text_columns()
+        col.write("something")
+    expected_msg = "No font set, you need to call set_font() beforehand"
+    assert str(error.value) == expected_msg
+    with pytest.raises(FPDFException) as error:
+        col.ln()
+    expected_msg = "No font set, you need to call set_font() beforehand"
+    assert str(error.value) == expected_msg
+
+
+def test_tcols_bad_uses():
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("courier", size=16)
+    col = pdf.text_columns()
+    # recursive text region context
+    with col:
+        col.write("something")
+        with pytest.raises(FPDFException) as error:
+            with col:
+                pass
+    expected_msg = "Unable to enter the same TextColumns context recursively."
+    assert str(error.value) == expected_msg
+    # recursive use of paragraph context
+    with col.paragraph() as par:
+        par.write("something")
+        with pytest.raises(FPDFException) as error:
+            col.paragraph()
+    expected_msg = "Unable to nest paragraphs."
+    assert str(error.value) == expected_msg
+    # writing to column while we have an explicit paragraph active
+    with col.paragraph() as par:
+        par.write("something")
+        with pytest.raises(FPDFException) as error:
+            col.write("else")
+    expected_msg = "Conflicts with active paragraph. Either close the current paragraph or write your text inside it."
+    assert str(error.value) == expected_msg
+    # ending a non-existent paragraph
+    with pytest.raises(FPDFException) as error:
+        col.end_paragraph()
+    expected_msg = "No active paragraph to end."
+    assert str(error.value) == expected_msg
+    # column with negative width
+    with pytest.raises(FPDFException) as error:
+        col = pdf.text_columns(l_margin=150, r_margin=150)
+    expected_msg = (
+        "TextColumns(): Right limit (60.00155555555551) lower than left limit (150)."
+    )
+    assert str(error.value) == expected_msg
+    # invalid alignment values
+    with pytest.raises(ValueError) as error:
+        col = pdf.text_columns(text_align="X_CENTER")
+    expected_msg = (
+        "Text_align must be 'LEFT', 'CENTER', 'RIGHT', or 'JUSTIFY', not 'X_CENTER'."
+    )
+    assert str(error.value) == expected_msg
+    with pytest.raises(ValueError) as error:
+        with pdf.text_columns() as col:
+            par = col.paragraph(text_align="X_CENTER")
+    assert str(error.value) == expected_msg
+    with pytest.raises(ValueError) as error:
+        with pdf.text_columns() as col:
+            col.image(name="foo", align="JUSTIFY")
+    expected_msg = "Align must be 'LEFT', 'CENTER', or 'RIGHT', not 'JUSTIFY'."
+    assert str(error.value) == expected_msg
+    # Wrong call sequence for ImageParagraph.
+    with pdf.text_columns() as col:
+        col.image(name=PNG_DIR / "ac6343a98f8edabfcc6e536dd75aacb0.png")
+        with pytest.raises(RuntimeError) as error:
+            col._paragraphs[-1].render(1, 2, 3)  # pylint: disable=protected-access
+    expected_msg = "ImageParagraph.build_line() must be called before render()."
+    assert str(error.value) == expected_msg
+
+
+def test_tcols_break_top_margin(tmp_path):  # regression test for #1214
+    """Ensure that the top/bottom margins of a paragraph trigger
+    a column break.
+    """
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=14)
+    pdf.set_top_margin(50)
+    pdf.set_auto_page_break(True, 50)
+    pdf.rect(pdf.l_margin, pdf.t_margin, pdf.epw, pdf.eph)
+
+    with pdf.text_columns(text_align="J", ncols=2) as cols:
+        for _ in range(3):
+            with cols.paragraph(
+                text_align="J",
+                bottom_margin=pdf.font_size * 5,
+                top_margin=pdf.font_size * 5,
+            ) as par:
+                par.write(text=LOREM_IPSUM)
+    assert_pdf_equal(pdf, HERE / "tcols_break_top_margin.pdf", tmp_path)
+
+
+def test_paragraph_emphasis(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=32)
+    column = pdf.text_columns()
+    # Paragraph 1:
+    par = column.paragraph()
+    par.write(text="Un.")
+    column.end_paragraph()
+    # Paragraph 2:
+    pdf.set_font(style="B")
+    par = column.paragraph()
+    par.write(text="Deux.")
+    pdf.set_font(style="I")
+    par.write(text="Trois.")
+    column.end_paragraph()
+    column.render()
+    assert_pdf_equal(pdf, HERE / "paragraph_emphasis.pdf", tmp_path)
+
+
+def test_paragraph_first_line_indent(tmp_path):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Times", size=12)
+    with pdf.text_columns() as cols:
+        with cols.paragraph(first_line_indent=10, text_align="J") as paragraph:
+            paragraph.write(text=LOREM_IPSUM)
+    assert_pdf_equal(pdf, HERE / "paragraph_first_line_indent.pdf", tmp_path)
+
+
+def test_text_columns_with_text_shaping(tmp_path):  # issue 1439
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_text_shaping(True)
+    pdf.set_font("Times", "", 14)
+    with pdf.text_columns(ncols=2) as cols:
+        cols.write("Lorem ipsum dolor sit amet")
+        cols.new_column()
+        cols.write("Lorem ipsum dolor sit amet")
+    assert_pdf_equal(pdf, HERE / "text_columns_with_text_shaping.pdf", tmp_path)
+
+
+def test_text_columns_with_shorter_2nd_column(tmp_path):  # issue 1442
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_text_shaping(True)
+    pdf.set_font("Times", size=14)
+    pdf.write(text="Headline")
+    pdf.ln()
+    pdf.ln()
+    with pdf.text_columns(ncols=2) as cols:
+        cols.write(
+            "Lorem ipsum dolor sit amet, consetetur sadipscing elitr,"
+            " sed diam nonumy eirmod tempor invidunt ut labore"
+            " et dolore magna aliquyam erat, sed diam voluptua."
+        )
+        cols.new_column()
+        cols.write("Lorem ipsum dolor sit amet")
+    pdf.ln()
+    pdf.write(text="More text after columns.")
+    pdf.ln()
+    assert_pdf_equal(pdf, HERE / "text_columns_with_shorter_2nd_column.pdf", tmp_path)
+
+
+def test_tcols_font_size_does_not_leak():
+    """Regression test for issue #1804.
+
+    When a text_columns() block is the first text rendered on a page and
+    the paragraphs inside it change the font size, the caller's
+    font_size_pt should be unchanged after the context manager exits.
+    """
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=12)
+    size_before = pdf.font_size_pt
+
+    cols = pdf.text_columns()
+    with cols:
+        pdf.set_font("Helvetica", size=24)
+        with cols.paragraph() as p:
+            p.write("Large heading")
+        pdf.set_font("Helvetica", size=10)
+        with cols.paragraph() as p:
+            p.write("Small body text")
+
+    assert pdf.font_size_pt == size_before
+
+
+def test_text_columns_restore_page_font_after_context(tmp_path):
+    """Second-layer regression test for issue #1804.
+
+    Even with the Python-side font_size_pt restored, the PDF content stream
+    must also re-emit a `Tf` operator for the restored font on the next
+    text operation. Otherwise the page state still carries the last
+    paragraph's font selection and a following `pdf.cell()` silently
+    renders at the wrong size. This test exercises the full render path
+    rather than just the attribute, so the assertion is on the output PDF.
+    """
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=12)
+
+    with pdf.text_columns() as cols:
+        pdf.set_font("Helvetica", size=24)
+        cols.write("Large heading")
+        pdf.set_font("Helvetica", size=10)
+        cols.write("Small body text")
+
+    pdf.cell(text="after columns")
+    assert_pdf_equal(
+        pdf,
+        HERE / "text_columns_restore_page_font_after_context.pdf",
+        tmp_path,
+    )
+
+
+def test_tcols_ln_with_custom_height():
+    """Regression test for issue #1786.
+
+    Paragraph.ln(h) carries the custom height on the "\\n" fragment it
+    appends. That fragment is consumed by the line it terminates, but the
+    height was applied to the *following* line instead, so the extra spacing
+    appeared inside the next paragraph (between its first and second line)
+    rather than before it.
+    """
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=16)
+    with pdf.text_columns() as cols:
+        cols.write(text="A\nA")
+        cols.ln(16)
+        cols.write(text="B\nB")
+        # pylint: disable=protected-access
+        heights = [w.line.height for w in cols._paragraphs[-1].build_lines(False)]
+
+    # The 16pt gap belongs to the line the ln() terminates (the 2nd "A"),
+    # not to the first line of the next paragraph.
+    assert heights[1] == 16
+    assert heights[2] == heights[3] == heights[0]

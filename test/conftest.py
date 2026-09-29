@@ -1,0 +1,565 @@
+# pylint: disable=import-outside-toplevel
+from contextlib import contextmanager
+from datetime import datetime, timezone
+from time import perf_counter
+from timeit import timeit
+from tracemalloc import get_traced_memory, is_tracing
+from types import SimpleNamespace
+import functools
+import gc
+import hashlib
+import linecache
+import logging
+import os
+import pathlib
+import shutil
+import tracemalloc
+import zlib
+from typing import Optional
+import warnings
+
+from subprocess import check_output, CalledProcessError, PIPE
+
+import pytest
+
+from fpdf.template import Template
+
+QPDF_AVAILABLE = bool(shutil.which("qpdf"))
+if not QPDF_AVAILABLE:
+    warnings.warn(
+        "qpdf command not available on the $PATH, falling back to hash-based "
+        "comparisons in tests"
+    )
+
+USING_ZLIB_NG = (
+    hasattr(zlib, "ZLIBNG_VERSION")
+    or "zlib-ng" in getattr(zlib, "ZLIB_RUNTIME_VERSION", "").lower()
+    or "zlib-ng" in getattr(zlib, "ZLIB_VERSION", "").lower()
+)
+
+EPOCH = datetime(1969, 12, 31, 19, 00, 00).replace(tzinfo=timezone.utc)
+
+LOREM_IPSUM = (
+    "Lorem ipsum Ut nostrud irure reprehenderit anim nostrud dolore sed "
+    "ut Excepteur dolore ut sunt irure consectetur tempor eu tempor "
+    "nostrud dolore sint exercitation aliquip velit ullamco esse dolore "
+    "mollit ea sed voluptate commodo amet eiusmod incididunt Excepteur "
+    "Excepteur officia est ea dolore sed id in cillum incididunt quis ex "
+    "id aliqua ullamco reprehenderit cupidatat in quis pariatur ex et "
+    "veniam consectetur et minim minim nulla ea in quis Ut in "
+    "consectetur cillum aliquip pariatur qui quis sint reprehenderit "
+    "anim incididunt laborum dolor dolor est dolor fugiat ut officia do "
+    "dolore deserunt nulla voluptate officia mollit elit consequat ad "
+    "aliquip non nulla dolor nisi magna consectetur anim sint officia "
+    "sit tempor anim do laboris ea culpa eu veniam sed cupidatat in anim "
+    "fugiat culpa enim Ut cillum in exercitation magna nostrud aute "
+    "proident laboris est ullamco nulla occaecat nulla proident "
+    "consequat in ut labore non sit id cillum ut ea quis est ut dolore "
+    "nisi aliquip aute pariatur ullamco ut cillum Duis nisi elit sit "
+    "cupidatat do Ut aliqua irure sunt sunt proident sit aliqua in "
+    "dolore Ut in sint sunt exercitation aliquip elit velit dolor nisi "
+)
+
+EMOJI_TEST_TEXT = (
+    "Remember the days when we had to rely on simple text-based emoticons like :-) or :D to show our feelings online? Those little "
+    "symbols paved the way for a whole universe of expressive visuals 🤯. As technology advanced 🚀 and mobile devices became more "
+    "powerful 📱, the emoticon evolved into the now-iconic emoji 🚦😍! Suddenly, instead of typing <3 for love, we could send an "
+    "actual heart ❤️—and a million other icons, too. From smiling faces 😊 to dancing humans 💃, from tiny pizzas 🍕 to entire flags "
+    "🌍, emojis quickly took over every conversation! Now, we can convey jokes 🤪, excitement 🤩, or even complicated feelings 🤔 with "
+    "just a tap or two. Looking back, who knew those humble :-P and ;-) would evolve into the expressive rainbow of emojis 🌈 that color "
+    "our digital world today?"
+)
+
+# default block size from src/libImaging/Storage.c:
+PIL_MEM_BLOCK_SIZE_IN_MIB = 16
+
+
+def assert_same_file(file1, file2):
+    """
+    Assert that two files are the same, by comparing their absolute paths.
+    """
+    assert os.path.normcase(os.path.abspath(file1)) == os.path.normcase(
+        os.path.abspath(file2)
+    )
+
+
+def assert_pdf_equal(
+    actual,
+    expected,
+    tmp_path,
+    linearize=False,
+    at_epoch=True,
+    generate=False,
+    ignore_id_changes=False,
+    ignore_original_obj_ids=False,
+    ignore_xref_offsets=False,
+):
+    """
+    This compare the output of a `FPDF` instance (or `Template` instance),
+    with the provided PDF file.
+
+    The `CreationDate` of the newly generated PDF is fixed, so that it never triggers
+    a diff.
+
+    If the `qpdf` command is available on the `$PATH`, it will be used to perform the
+    comparison, as it greatly helps debugging diffs. Otherwise, a hash-based comparison
+    logic is used as a fallback.
+
+    Args:
+        actual: instance of `FPDF` or `Template`. The `output` or `render` method
+          will be called on it.
+        expected: instance of `FPDF`, `bytearray` or file path to a PDF file
+          matching the expected output
+        tmp_path (Path): temporary directory provided by pytest individually to the
+          caller test function
+        generate (bool): only generate `pdf` output to `rel_expected_pdf_filepath`
+          and return. Useful to create new tests.
+    """
+    if isinstance(actual, Template):
+        actual.render()
+        actual_pdf = actual.pdf
+    else:
+        actual_pdf = actual
+    if at_epoch:
+        actual_pdf.creation_date = EPOCH
+    if generate:
+        assert isinstance(expected, pathlib.Path), (
+            "When passing `True` to `generate`"
+            "a pathlib.Path must be provided as the `expected` parameter"
+        )
+        actual_pdf.output(expected.open("wb"), linearize=linearize)
+        return
+    # Force ignore_id_changes when Python is linked against zlib-ng,
+    # as the compressed data is not 100% identical to standard zlib.
+    # https://github.com/python/cpython/pull/131438
+    if USING_ZLIB_NG and QPDF_AVAILABLE:
+        ignore_id_changes = True
+    if isinstance(expected, pathlib.Path):
+        expected_pdf_path = expected
+    else:
+        expected_pdf_path = tmp_path / "expected.pdf"
+        with expected_pdf_path.open("wb") as pdf_file:
+            if isinstance(expected, (bytes, bytearray)):
+                pdf_file.write(expected)
+            else:
+                expected.set_creation_date(EPOCH)
+                expected.output(pdf_file, linearize=linearize)
+    actual_pdf_path = tmp_path / "actual.pdf"
+    with actual_pdf_path.open("wb") as pdf_file:
+        actual_pdf.output(pdf_file, linearize=linearize)
+    if QPDF_AVAILABLE:  # Favor qpdf-based comparison, as it helps a lot debugging:
+        actual_qpdf = _qpdf(actual_pdf_path)
+        expected_qpdf = _qpdf(expected_pdf_path)
+        (tmp_path / "actual_qpdf.pdf").write_bytes(actual_qpdf)
+        (tmp_path / "expected_qpdf.pdf").write_bytes(expected_qpdf)
+        actual_lines = actual_qpdf.splitlines()
+        expected_lines = expected_qpdf.splitlines()
+        if ignore_id_changes:
+            actual_lines = filter_out_doc_id(actual_lines)
+            expected_lines = filter_out_doc_id(expected_lines)
+        if ignore_original_obj_ids:
+            actual_lines = filter_out_original_obj_ids(actual_lines)
+            expected_lines = filter_out_original_obj_ids(expected_lines)
+        if ignore_xref_offsets:
+            actual_lines = filter_out_xref_offsets(actual_lines)
+            expected_lines = filter_out_xref_offsets(expected_lines)
+        if actual_lines != expected_lines:
+            # It is important to reduce the size of both list of bytes here,
+            # to avoid .assertSequenceEqual to take forever to finish, that itself calls difflib.ndiff,
+            # that has cubic complexity from this comment by Tim Peters: https://bugs.python.org/issue6931#msg223459
+            actual_lines = subst_streams_with_hashes(actual_lines)
+            expected_lines = subst_streams_with_hashes(expected_lines)
+        assert actual_lines == expected_lines
+        if linearize:
+            _run_cmd("qpdf", "--check-linearization", str(actual_pdf_path))
+    else:  # Fallback to hash comparison
+        actual_hash = hashlib.md5(actual_pdf_path.read_bytes()).hexdigest()
+        expected_hash = hashlib.md5(expected_pdf_path.read_bytes()).hexdigest()
+
+        assert actual_hash == expected_hash, f"{actual_hash} != {expected_hash}"
+
+
+def filter_out_doc_id(lines):
+    return [line for line in lines if not line.startswith(b"  /ID [<")]
+
+
+def filter_out_original_obj_ids(lines):
+    return [line for line in lines if not line.startswith(b"%% Original object ID: ")]
+
+
+def filter_out_xref_offsets(lines):
+    return [line for line in lines if not line.endswith(b" 00000 n ")]
+
+
+def check_signature(pdf, trusted_cert_paths, linearize=False):
+    # pylint: disable=import-outside-toplevel
+    from endesive import pdf as endesive_pdf
+
+    trusted_certs = []
+    for cert_filepath in trusted_cert_paths:
+        with open(cert_filepath, "rb") as cert_file:
+            trusted_certs.append(cert_file.read())
+    results = endesive_pdf.verify(pdf.output(linearize=linearize), trusted_certs)
+    for hash_ok, signature_ok, cert_ok in results:
+        assert signature_ok
+        assert hash_ok
+        assert cert_ok
+
+
+def subst_streams_with_hashes(in_lines):
+    """
+    This utility function reduce the length of `in_lines`, a list of bytes,
+    by replacing multi-lines streams looking like this:
+
+        stream
+        {non-printable-binary-data}endstream
+
+    by a single line with this format:
+
+        <stream with MD5 hash: abcdef0123456789>
+    """
+    out_lines, stream = [], None
+    for line in in_lines:
+        if line == b"stream":
+            assert stream is None
+            stream = bytearray()
+        elif stream == b"stream":
+            # First line of stream, we check if it is binary or not:
+            try:
+                line.decode("latin-1")
+                if not (b"\0" in line or b"\xff" in line):
+                    # It's likely to be text! No need to compact stream
+                    stream = None
+            except UnicodeDecodeError:
+                pass
+        if stream is None:
+            out_lines.append(line)
+        else:
+            stream += line
+        if line.endswith(b"endstream") and stream:
+            stream_hash = hashlib.md5(stream).hexdigest()
+            out_lines.append(f"<stream with MD5 hash: {stream_hash}>\n".encode())
+            stream = None
+    return out_lines
+
+
+def _qpdf(input_pdf_filepath):
+    return _run_cmd(
+        "qpdf",
+        "--deterministic-id",
+        "--password=fpdf2",
+        "--qdf",
+        str(input_pdf_filepath),
+        "-",
+    )
+
+
+def _run_cmd(*args):
+    try:
+        return check_output(args, stderr=PIPE)
+    except CalledProcessError as error:
+        print(f"\nqpdf STDERR: {error.stderr.decode().strip()}")
+        raise
+
+
+@contextmanager
+def time_execution():
+    """
+    Usage:
+
+        with time_execution() as duration:
+            ...
+        assert duration.seconds < 10
+    """
+    ctx = SimpleNamespace()
+    start = perf_counter()
+    yield ctx
+    ctx.seconds = perf_counter() - start
+
+
+def ensure_exec_time_below(seconds, repeats=10):
+    """
+    Unit test decorator using the standard timeit module
+    to check that average duration of the target test
+    does not get over the limit provided.
+
+    Those checks are only enabled if $CHECK_EXEC_TIME is set.
+
+    This decorator replaced pytest-timeout, and is a better fit:
+    * because it allows to know how much above the threshold the test ran
+    * because it does not cause a global PyTest interruption
+    * because it computes an average, and is hence more stable
+    """
+
+    def actual_decorator(test_func):
+        @functools.wraps(test_func)
+        def wrapper(*args, **kwargs):
+            def func_with_args():
+                test_func(*args, **kwargs)
+
+            if not os.environ.get("CHECK_EXEC_TIME"):
+                func_with_args()
+                return
+
+            total_elapsed_in_secs = timeit(func_with_args, number=repeats)
+            # Compute average:
+            avg_duration_in_secs = total_elapsed_in_secs / repeats
+            assert avg_duration_in_secs < seconds
+
+        return wrapper
+
+    return actual_decorator
+
+
+def ensure_rss_memory_below(mib):
+    """
+    Ensure there is no unexpected / significant increase between
+    the process RSS memory BEFORE executing the test, and AFTER.
+
+    Those checks are only enabled if $CHECK_RSS_MEMORY is set.
+
+    This decorator replaced memunit, and is a better fit:
+    * because it takes in consideration a difference of RSS values,
+      not an absolute memory amount, and hence better checks
+      the memory usage of a single test, with more isolation to other tests
+    * because it does not suffer from some memory_profiler issues:
+        + https://github.com/py-pdf/fpdf2/issues/641#issuecomment-1465730884
+        + hanging MemTimer child process sometimes preventing PyTest finalization,
+          blocking in multiprocessing.util._exit_function() :
+          https://github.com/python/cpython/blob/3.11/Lib/multiprocessing/util.py#L355
+
+    Sadly, we cannot use the same approach as ensure_exec_time_below()
+    of using averages, as RSS measures are made on the same process and are not independent.
+    """
+
+    def actual_decorator(test_func):
+        @functools.wraps(test_func)
+        def wrapper(*args, **kwargs):
+            if not os.environ.get("CHECK_RSS_MEMORY"):
+                test_func(*args, **kwargs)
+                return
+            start_rss_in_mib = get_process_rss_as_mib()
+            test_func(*args, **kwargs)
+            if not start_rss_in_mib:
+                return  # not available under Windows
+            end_rss_in_mib = get_process_rss_as_mib()
+            assert end_rss_in_mib - start_rss_in_mib < mib
+
+        return wrapper
+
+    return actual_decorator
+
+
+# Enabling this check creates an increase in memory usage,
+# so we require an opt-in through a CLI argument:
+def pytest_addoption(parser):
+    parser.addoption(
+        "--trace-memory-usage",
+        action="store_true",
+        help="Trace the memory usage during tests execution",
+    )
+    parser.addoption(
+        "--pympler-summary",
+        action="store_true",
+        help="At the end of the tests execution, display a summary of objects allocated in memory",
+    )
+    parser.addoption(
+        "--trace-malloc",
+        action="store_true",
+        help="Trace main memory allocations differences during the whole execution",
+    )
+
+
+def pytest_configure():
+    "Disable some loggers."
+    logging.getLogger("fpdf.svg").propagate = False
+
+
+@pytest.fixture(scope="module", autouse=True)
+def module_memory_usage(request):
+    start_rss_in_mib = None
+    if request.config.getoption("trace_memory_usage"):
+        start_rss_in_mib = get_process_rss_as_mib()
+    yield
+    if not start_rss_in_mib:
+        return  # not available under Windows
+    gc.collect()
+    end_rss_in_mib = get_process_rss_as_mib()
+    sign = "+" if end_rss_in_mib > start_rss_in_mib else ""
+    capmanager = request.config.pluginmanager.getplugin("capturemanager")
+    with capmanager.global_and_fixture_disabled():
+        print("\n")
+        print(
+            f"Memory bump for {request.node.name.split('/')[-1]}: {sign}{end_rss_in_mib-start_rss_in_mib:.1f} MiB"
+        )
+
+
+@pytest.fixture(scope="session", autouse=True)
+def final_memory_usage(request):
+    yield
+    if request.config.getoption("trace_memory_usage"):
+        gc.collect()
+        capmanager = request.config.pluginmanager.getplugin("capturemanager")
+        with capmanager.global_and_fixture_disabled():
+            print("\n")
+            print_mem_usage("Final memory usage:")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def pympler_summary(request):
+    yield
+    if request.config.getoption("pympler_summary"):
+        # pylint: disable=import-error
+        from pympler.muppy import get_objects
+        from pympler.summary import print_, summarize
+
+        gc.collect()
+        all_objects = get_objects()
+        capmanager = request.config.pluginmanager.getplugin("capturemanager")
+        with capmanager.global_and_fixture_disabled():
+            print("\n[pympler/muppy] biggest objects summary:")
+            print_(summarize(all_objects))
+
+
+@pytest.fixture(scope="session", autouse=True)
+def trace_malloc(request):
+    if not request.config.getoption("trace_malloc"):
+        yield
+        return
+    gc.collect()
+    # Top-10 recipe from: https://docs.python.org/3/library/tracemalloc.html#display-the-top-10
+    tracemalloc.start()
+    snapshot1 = tracemalloc.take_snapshot().filter_traces(
+        (
+            tracemalloc.Filter(False, linecache.__file__),
+            tracemalloc.Filter(False, tracemalloc.__file__),
+        )
+    )
+    yield
+    gc.collect()
+    snapshot2 = tracemalloc.take_snapshot().filter_traces(
+        (
+            tracemalloc.Filter(False, linecache.__file__),
+            tracemalloc.Filter(False, tracemalloc.__file__),
+        )
+    )
+    top_stats = snapshot2.compare_to(snapshot1, "lineno")
+    capmanager = request.config.pluginmanager.getplugin("capturemanager")
+    with capmanager.global_and_fixture_disabled():
+        print("[tracemalloc] Top 10 differences:")
+        for stat in top_stats[:10]:
+            print(stat)
+
+
+################################################################################
+################### Utility functions to track memory usage ####################
+################################################################################
+
+
+def print_mem_usage(prefix: str) -> None:
+    print(get_mem_usage(prefix))
+
+
+def get_mem_usage(prefix: str) -> str:
+    _collected_count = gc.collect()
+    rss = get_process_rss()
+    # heap_size, stack_size = get_process_heap_and_stack_sizes()
+    # objs_size_sum = get_gc_managed_objs_total_size()
+    pillow = get_pillow_allocated_memory()
+    # malloc_stats = "Malloc stats: " + get_pymalloc_allocated_over_total_size()
+    malloc_stats = ""
+    if is_tracing():
+        malloc_stats = "Malloc stats: " + get_tracemalloc_traced_memory()
+    return f"{prefix:<40} {malloc_stats} | Pillow: {pillow} | Process RSS: {rss}"
+
+
+def get_process_rss() -> str:
+    rss_as_mib = get_process_rss_as_mib()
+    if rss_as_mib:
+        return f"{rss_as_mib:.1f} MiB"
+    return "<unavailable>"
+
+
+def get_process_rss_as_mib() -> Optional[float]:
+    "Inspired by psutil source code"
+    pid = os.getpid()
+    try:
+        with open(f"/proc/{pid}/statm", encoding="utf8") as statm:
+            return (
+                int(statm.readline().split()[1])
+                * os.sysconf("SC_PAGE_SIZE")
+                / 1024
+                / 1024
+            )
+    except FileNotFoundError:  # /proc files only exist under Linux
+        return None
+
+
+def get_process_heap_and_stack_sizes() -> tuple[str, str]:
+    heap_size_in_mib, stack_size_in_mib = "<unavailable>", "<unavailable>"
+    pid = os.getpid()
+    try:
+        with open(f"/proc/{pid}/maps", encoding="utf8") as maps_file:
+            maps_lines = list(maps_file)
+    except FileNotFoundError:  # This file only exists under Linux
+        return heap_size_in_mib, stack_size_in_mib
+    for line in maps_lines:
+        words = line.split()
+        addr_range, path = words[0], words[-1]
+        addr_start_str, addr_end_str = addr_range.split("-")
+        addr_start, addr_end = int(addr_start_str, 16), int(addr_end_str, 16)
+        size = addr_end - addr_start
+        if path == "[heap]":
+            heap_size_in_mib = f"{size / 1024 / 1024:.1f} MiB"
+        elif path == "[stack]":
+            stack_size_in_mib = f"{size / 1024 / 1024:.1f} MiB"
+    return heap_size_in_mib, stack_size_in_mib
+
+
+def get_pymalloc_allocated_over_total_size() -> str:
+    """
+    Get PyMalloc stats from sys._debugmallocstats()
+    From experiments, not very reliable
+    """
+    try:
+        # pylint: disable=import-outside-toplevel
+        from pymemtrace.debug_malloc_stats import get_debugmallocstats
+
+        allocated, total = -1, -1
+        for line in get_debugmallocstats().decode().splitlines():
+            if line.startswith("Total"):
+                total = int(line.split()[-1].replace(",", ""))
+            elif line.startswith("# bytes in allocated blocks"):
+                allocated = int(line.split()[-1].replace(",", ""))
+        return f"{allocated / 1024 / 1024:.1f} / {total / 1024 / 1024:.1f} MiB"
+    except ImportError:
+        warnings.warn("pymemtrace could not be imported - Run: pip install pymemtrace")
+        return "<unavailable>"
+
+
+def get_gc_managed_objs_total_size() -> str:
+    "From experiments, not very reliable"
+    try:
+        # pylint: disable=import-outside-toplevel
+        from pympler.muppy import get_objects, getsizeof
+
+        objs_total_size = sum(getsizeof(obj) for obj in get_objects())
+        return f"{objs_total_size / 1024 / 1024:.1f} MiB"
+    except ImportError:
+        warnings.warn("pympler could not be imported - Run: pip install pympler")
+        return "<unavailable>"
+
+
+def get_tracemalloc_traced_memory() -> str:
+    "Requires python -X tracemalloc"
+    current, peak = get_traced_memory()
+    return f"{current / 1024 / 1024:.1f} (peak={peak / 1024 / 1024:.1f}) MiB"
+
+
+def get_pillow_allocated_memory() -> str:
+    # pylint: disable=c-extension-no-member,import-outside-toplevel
+    from PIL import Image
+
+    stats = Image.core.get_stats()  # type: ignore[attr-defined]
+    blocks_in_use = stats["allocated_blocks"] - stats["freed_blocks"]
+    return f"{blocks_in_use * PIL_MEM_BLOCK_SIZE_IN_MIB:.1f} MiB"

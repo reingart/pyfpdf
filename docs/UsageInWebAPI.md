@@ -1,0 +1,454 @@
+# Usage in web APIs
+
+Note that `FPDF` instance objects are not designed to be reusable:
+**content cannot be added** once [`output()`](https://py-pdf.github.io/fpdf2/fpdf/fpdf.html#fpdf.fpdf.FPDF.output) has been called.
+
+Hence, even if the `FPDF` class should be thread-safe, we recommend that you either **create an instance for every request**,
+or if you want to use a global / shared object, to only store the bytes returned from `output()`.
+
+
+## Django
+[Django](https://www.djangoproject.com/) is:
+> a high-level Python web framework that encourages rapid development and clean, pragmatic design
+
+There is how you can return a PDF document from a [Django view](https://docs.djangoproject.com/en/4.0/topics/http/views/):
+
+```python
+from django.http import HttpResponse
+from fpdf import FPDF
+
+def report(request):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=24)
+    pdf.cell(text="hello world")
+    return HttpResponse(bytes(pdf.output()), content_type="application/pdf")
+```
+
+
+## WSGI applications
+The following code can be placed in a `fpdf2_app.py` to make a WSGI application
+
+```python
+from fpdf import FPDF
+
+def app(environ, start_response):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=12)
+    pdf.cell(text="Hello world!")
+    data = bytes(pdf.output())
+    start_response("200 OK", [
+        ("Content-Type", "application/pdf"),
+        ("Content-Length", str(len(data)))
+    ])
+    return iter([data])
+```
+
+This script can then be served as a HTTP application using either:
+
+* the standard [`wsgiref`](https://docs.python.org/3/library/wsgiref.html) module
+* [`werkzeug.serving.run_simple`](https://werkzeug.palletsprojects.com/en/stable/serving/)
+* [Gunicorn](https://gunicorn.org/), using: `gunicorn --bind localhost:8000 fpdf2_app:app`
+* [uWSGI](https://uwsgi-docs.readthedocs.io/en/latest/), using: `uwsgi --http :8000 --module fpdf2_app:app`
+
+### Flask ##
+[Flask](https://flask.palletsprojects.com) is a micro web framework written in Python.
+
+The following code can be placed in a `app.py` file and launched using `flask run`:
+
+```python
+from flask import Flask, make_response
+from fpdf import FPDF
+
+app = Flask(__name__)
+
+@app.route("/")
+def hello_world():
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=24)
+    pdf.cell(text="hello world")
+    response = make_response(bytes(pdf.output()))
+    response.headers["Content-Type"] = "application/pdf"
+    return response
+```
+
+### Bottle
+[Bottle](https://bottlepy.org/docs/dev/index.html) is:
+> Bottle is a fast, simple and lightweight WSGI micro web-framework for Python. It is distributed as a single file module and has no dependencies other than the Python Standard Library.
+
+The following code can be placed in a `app.py` file and launched using `python3 app.py`
+
+```python
+from bottle import route, run, response
+from fpdf import FPDF
+
+@route('/')
+def hello():
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=24)
+    pdf.cell(text="hello world")
+    pdf_bytes = bytes(pdf.output())
+    
+    response.set_header('Content-Type', 'application/pdf')
+    response.status = 200
+    response.content_length = len(pdf_bytes)
+    
+    return pdf_bytes
+
+if __name__ == '__main__':
+    run(host='localhost', port=8080, debug=True)
+```
+
+### CherryPy
+[CherryPy](https://cherrypy.dev) is:
+> a pythonic, object-oriented web framework, allowing developers to build web applications in much the same way they would build any other object-oriented Python program.
+
+The following code can be placed in a `app.py` file and launched using `python3 app.py`
+
+
+```python
+import cherrypy
+from fpdf import FPDF
+
+class HelloWorld(object):
+    @cherrypy.expose
+    def index(self):
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Helvetica", size=24)
+        pdf.cell(text="hello world")
+        pdf_bytes = bytes(pdf.output())
+
+        cherrypy.response.headers['content-type'] = 'application/pdf'
+        cherrypy.response.status = 200
+
+        return pdf_bytes
+
+
+if __name__ == "__main__":
+    cherrypy.quickstart(HelloWorld())
+```
+
+
+## AWS lambda
+The following code demonstrates some minimal [AWS lambda handler function](https://docs.aws.amazon.com/lambda/latest/dg/python-handler.html)
+that returns a PDF file as binary output:
+```python
+from base64 import b64encode
+from fpdf import FPDF
+
+def handler(event, context):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=24)
+    pdf.cell(text="hello world")
+    return {
+        'statusCode': 200,
+        'headers': {
+            'Content-Type': 'application/json',
+        },
+        'body': b64encode(pdf.output()).decode('utf-8'),
+        'isBase64Encoded': True
+    }
+```
+
+This AWS lambda function can then be linked to a HTTP endpoint using [API Gateway](https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html),
+or simply exposed as a [Lambda Function URL](https://aws.amazon.com/fr/blogs/aws/announcing-aws-lambda-function-urls-built-in-https-endpoints-for-single-function-microservices/).
+More information on those pages:
+
+* [Tutorial: Creating a Lambda function with a function URL](https://docs.aws.amazon.com/lambda/latest/dg/urls-tutorial.html)
+* [Return binary media from a Lambda](https://docs.aws.amazon.com/apigateway/latest/developerguide/lambda-proxy-binary-media.html)
+
+For reference, the test lambda function was initiated using the following [AWS CLI](https://aws.amazon.com/cli/) commands:
+
+<details>
+  <summary>Creating &amp; uploading a lambda layer</summary>
+```bash
+pyv=3.8
+pip${pyv} install fpdf2 -t python/lib/python${pyv}/site-packages/
+# We use a distinct layer for Pillow:
+rm -r python/lib/python${pyv}/site-packages/{PIL,Pillow}*
+zip -r fpdf2-deps.zip python > /dev/null
+aws lambda publish-layer-version --layer-name fpdf2-deps \
+    --description "Dependencies for fpdf2 lambda" \
+    --zip-file fileb://fpdf2-deps.zip --compatible-runtimes python${pyv}
+```
+</details>
+
+<details>
+  <summary>Creating the lambda</summary>
+```bash
+AWS_ACCOUNT_ID=...
+AWS_REGION=eu-west-3
+zip -r fpdf2-test.zip lambda.py
+aws lambda create-function --function-name fpdf2-test --runtime python${pyv} \
+    --zip-file fileb://fpdf2-test.zip --handler lambda.handler \
+    --role arn:aws:iam::${AWS_ACCOUNT_ID}:role/lambda-fpdf2-role \
+    --layers arn:aws:lambda:${AWS_REGION}:770693421928:layer:Klayers-python${pyv/./}-Pillow:15 \
+             arn:aws:lambda:${AWS_REGION}:${AWS_ACCOUNT_ID}:layer:fpdf2-deps:1
+aws lambda create-function-url-config --function-name fpdf2-test --auth-type NONE
+```
+</details>
+
+Those commands do not cover the creation of the `lambda-fpdf2-role` role,
+nor configuring the lambda access permissions, for example with a `FunctionURLAllowPublicAccess` resource-based policy.
+
+
+## streamlit
+[streamlit](https://streamlit.io) is:
+> a Python library that makes it easy to create and share custom web apps for data science
+
+The following code demonstrates how to display a PDF and add a button allowing to download it:
+
+```python
+from base64 import b64encode
+from fpdf import FPDF
+import streamlit as st
+
+st.title("Demo of fpdf2 usage with streamlit")
+
+@st.cache
+def gen_pdf():
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=24)
+    pdf.cell(text="hello world")
+    return bytes(pdf.output())
+
+# Embed PDF to display it:
+base64_pdf = b64encode(gen_pdf()).decode("utf-8")
+pdf_display = f'<embed src="data:application/pdf;base64,{base64_pdf}" width="700" height="400" type="application/pdf">'
+st.markdown(pdf_display, unsafe_allow_html=True)
+
+# Add a download button:
+st.download_button(
+    label="Download PDF",
+    data=gen_pdf(),
+    file_name="file_name.pdf",
+    mime="application/pdf",
+)
+```
+
+
+## FastAPI
+[FastAPI](https://fastapi.tiangolo.com/) is:
+> a modern, fast (high-performance), web framework for building APIs with Python 3.7+ based on standard Python type hints.
+
+The following code shows how to generate a PDF file via a POST endpoint that receives a JSON object. The JSON object can be used to write into the PDF file. The generated PDF file will be returned back to the user/frontend as the response. 
+
+```python
+from fastapi import FastAPI, Request, Response, HTTPException, status
+from fpdf import FPDF
+
+
+app = FastAPI()
+
+
+@app.post("/send_data", status_code=status.HTTP_200_OK)
+async def create_pdf(request: Request):
+    """ 
+    POST endpoint that accepts a JSON object
+    This endpoint returns a PDF file as the response
+    """
+    try:
+        # data will read the JSON object and can be accessed like a Python Dictionary 
+        # The contents of the JSON object can be used to write into the PDF file (if needed)
+        data = await request.json()
+
+
+        # Create a sample PDF file
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Helvetica", size=24)
+        pdf.cell(text="hello world")
+        # pdf.cell(text=data["content"])  # Using the contents of the JSON object to write into the PDF file
+        # Use str(data["content"]) if the content is non-string type
+
+
+        # Prepare the filename and headers
+        filename = "<file_name_here>.pdf"
+        headers = {
+            "Content-Disposition": f"attachment; filename={filename}"
+        }
+
+
+        # Return the file as a response
+        return Response(content=bytes(pdf.output()), media_type="application/pdf", headers=headers)
+
+
+    except Exception as e:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+```
+
+
+## Plone
+[Plone](https://plone.org/) is:
+> a powerful open source Content Management System built on Python and the Zope application server
+
+Plone is widely used for building secure and scalable web applications. Here's how to generate and serve PDF documents with fpdf2 in Plone.
+
+### As a Browser View
+
+The most common approach is to create a browser view that generates and returns a PDF:
+
+```python
+from Products.Five import BrowserView
+from fpdf import FPDF
+
+class PDFReportView(BrowserView):
+    """Generate and serve a PDF report"""
+    
+    def __call__(self):
+        # Create PDF
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Helvetica", size=24)
+        pdf.cell(text="Hello from Plone!")
+        
+        # Add content from the context
+        pdf.ln(10)
+        pdf.set_font("Helvetica", size=12)
+        pdf.cell(text=f"Title: {self.context.Title()}")
+        
+        # Generate PDF bytes
+        pdf_bytes = bytes(pdf.output())
+        
+        # Set response headers
+        self.request.response.setHeader('Content-Type', 'application/pdf')
+        self.request.response.setHeader(
+            'Content-Disposition',
+            'attachment; filename="report.pdf"'
+        )
+        self.request.response.setHeader('Content-Length', len(pdf_bytes))
+        
+        return pdf_bytes
+```
+
+Register the view in your package's `configure.zcml`:
+
+```xml
+<browser:page
+    name="pdf-report"
+    for="*"
+    class=".views.PDFReportView"
+    permission="zope2.View"
+    />
+```
+
+The PDF can then be accessed at: `http://yoursite.com/path/to/content/@@pdf-report`
+
+### As a Custom Content Type Method
+
+For a custom Dexterity content type, you can add a method that generates PDFs:
+
+```python
+from plone.dexterity.content import Container
+from fpdf import FPDF
+
+class Report(Container):
+    """Custom content type that can generate PDF reports"""
+    
+    def generate_pdf(self):
+        """Generate PDF from content type data"""
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Helvetica", "B", 16)
+        pdf.cell(text=self.title)
+        
+        pdf.ln(10)
+        pdf.set_font("Helvetica", size=12)
+        if self.description:
+            pdf.multi_cell(0, 5, text=self.description)
+        
+        return bytes(pdf.output())
+```
+
+Then create a view to serve it:
+
+```python
+from Products.Five import BrowserView
+
+class DownloadPDFView(BrowserView):
+    """Download PDF for Report content type"""
+    
+    def __call__(self):
+        pdf_bytes = self.context.generate_pdf()
+        
+        self.request.response.setHeader('Content-Type', 'application/pdf')
+        self.request.response.setHeader(
+            'Content-Disposition',
+            f'attachment; filename="{self.context.getId()}.pdf"'
+        )
+        
+        return pdf_bytes
+```
+
+Register this view in `configure.zcml`:
+
+```xml
+<browser:page
+    name="download-pdf"
+    for=".interfaces.IReport"
+    class=".views.DownloadPDFView"
+    permission="zope2.View"
+    />
+```
+
+### With Catalog Queries
+
+Generate PDFs from catalog search results:
+
+```python
+from Products.Five import BrowserView
+from fpdf import FPDF
+
+class CatalogReportView(BrowserView):
+    """Generate PDF report from catalog query"""
+    
+    def __call__(self):
+        catalog = self.context.portal_catalog
+        results = catalog(portal_type='Document',
+                         review_state='published')
+        
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Helvetica", "B", 16)
+        pdf.cell(text="Published Documents Report")
+        
+        pdf.ln(10)
+        pdf.set_font("Helvetica", size=10)
+        
+        for brain in results:
+            pdf.cell(text=brain.Title)
+            pdf.ln()
+        
+        pdf_bytes = bytes(pdf.output())
+        
+        self.request.response.setHeader('Content-Type', 'application/pdf')
+        self.request.response.setHeader(
+            'Content-Disposition',
+            'attachment; filename="catalog-report.pdf"'
+        )
+        
+        return pdf_bytes
+```
+
+### Notes for Plone Developers
+
+- Always create a new `FPDF()` instance for each request to ensure thread safety
+- Use appropriate permissions in your ZCML configuration
+- Consider caching PDF generation for large documents using `plone.memoize`
+- For complex PDFs, consider generating them asynchronously using Celery or similar task queues
+
+
+## Jupyter
+Check [tutorial/notebook.ipynb](https://github.com/py-pdf/fpdf2/blob/master/tutorial/notebook.ipynb)
+
+
+## web2py
+Usage of [the original PyFPDF library](History.md) with [web2py](http://www.web2py.com/) is described here: <https://github.com/reingart/pyfpdf/blob/master/docs/Web2Py.md>
+
+`v1.7.2` of PyFPDF is included in `web2py` since release `1.85.2`: <https://github.com/web2py/web2py/tree/master/gluon/contrib/fpdf>

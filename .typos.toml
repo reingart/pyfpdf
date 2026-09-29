@@ -1,0 +1,35 @@
+[default]
+extend-ignore-identifiers-re = [
+    "1fpt",         # FPDF._downscale_image()
+    ".+_2nd",
+    "BUI",
+    "decode_parms",
+    "odf",          # odf.opendocument / odf.table
+    "parameter_ot",
+    "sur", "Sur",
+    "ue", "UE",
+    "FlateDecode",
+    "VAI",
+    "^TAI_THAM$",
+    "wdth", # variable font axis name.
+    "^iz$",
+]
+extend-ignore-re = [
+    "loca subsetting",
+    "np.arange",
+]
+
+[default.extend-identifiers]
+otTables = "otTables"
+
+[files]
+extend-exclude = [
+    "*.pdf",
+    "*.svg",
+    "docs/Tutorial-*.md",
+]
+
+[type.md]
+extend-ignore-words-re = [
+    "Suh",
+]

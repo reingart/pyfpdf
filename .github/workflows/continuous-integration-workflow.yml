@@ -1,0 +1,292 @@
+name: build
+
+on:  # cf. https://github.community/t/how-to-trigger-an-action-on-push-or-pull-request-but-not-both/16662
+  push:
+    branches:
+    - master
+  pull_request:
+    branches:
+    - master
+
+jobs:
+  check-reference-pdf-files:
+    runs-on: ubuntu-latest
+    permissions: {}
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.14 🔧
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: 3.14
+      - name: Install system dependencies ⚙️
+        run: sudo apt-get update --allow-releaseinfo-change && sudo apt-get install qpdf
+      - name: Check all PDF reference files used in tests ☑
+        run: |
+          # Using qpdf
+          find . -name '*.pdf' | xargs -n 1 sh -c 'qpdf --check --password=fpdf2 $0 || exit 255'
+          export PYTHONPATH=$PWD
+          # Using Datalogics PDF Checker:
+          scripts/install-pdfchecker.sh
+          time scripts/pdfchecker.py --process-all-test-pdf-files
+          scripts/pdfchecker.py --print-aggregated-report
+          # Using VeraPDF:
+          scripts/install-verapdf.sh
+          time scripts/verapdf.py --process-all-test-pdf-files
+          scripts/verapdf.py --print-aggregated-report
+          scripts/check-PDF-A-with-verapdf.sh
+  lint:
+    runs-on: ubuntu-26.04
+    permissions:
+      security-events: write  # for zizmor
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.13 🔧
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: 3.13 # guarddog / pygit2 still have issues with 3.14
+      - name: Install Python dependencies ⚙️
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install --upgrade .[dev,test]
+      # Running zizmor 1st, because it is blocking PR merge
+      - name: Run zizmor 🌈
+        run: zizmor --format=sarif . > results.sarif
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          sarif_file: results.sarif
+          category: zizmor
+      - name: Run linters 🔎
+        run: |
+          black --check .
+          pylint fpdf test tutorial/tuto*.py
+          bandit -c .banditrc.yml -r contributors/ fpdf/ tutorial/
+          semgrep scan --config auto --error --strict --exclude-rule=python.lang.security.insecure-hash-function.insecure-hash-function fpdf
+      - name: Run type checkers 🔎
+        run: |
+          mypy
+          pyright
+      - name: Scan project with grype 🔎
+        uses: anchore/scan-action@27805bf3b4e84b4a5c980df22ed233c00390a439 # v7.4.2
+        with:
+          path: "."
+          fail-build: true
+      - name: Scan project dependencies with guarddog 🐶
+        # GuardDog is very slow, we only execute it on the master branch:
+        if: github.ref == 'refs/heads/master'
+        run: |
+          pip install guarddog
+          python scripts/generate-dependencies-list.py pyproject.toml fpdf2-full-requirements.txt
+          time guarddog pypi verify fpdf2-full-requirements.txt
+          time guarddog pypi verify contributors/requirements.txt
+      - name: Spell Check Repo ✍️
+        uses: crate-ci/typos@00f422f3b19c57bc6338715ebfe3316d38768461 # v1.50.3
+  test:
+    strategy:
+      matrix:
+        python-version: ['3.10', '3.11', '3.12', '3.13', '3.14']
+        platform: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.platform }}
+    permissions: {}
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python ${{ matrix.python-version }} 🔧
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install system dependencies ⚙️
+        if: ${{ startsWith(matrix.platform, 'ubuntu') }}
+        # Ghostscript is needed for test/table/test_table_extraction.py
+        run: sudo apt-get update --allow-releaseinfo-change && sudo apt-get install ghostscript
+      - name: Install qpdf ⚙️
+        # We run the unit tests WITHOUT qpdf for a single parallel execution / Python version:
+        if: ${{ startsWith(matrix.platform, 'ubuntu') && matrix.python-version != '3.13' }}
+        run: sudo apt-get update --allow-releaseinfo-change && sudo apt-get install qpdf
+      - name: Install qpdf on Windows
+        if: startsWith(matrix.platform, 'windows')
+        shell: pwsh
+        run: |
+          choco install qpdf -y
+          qpdf --version
+      - name: Install Python dependencies ⚙️
+        # Temporarily writing a constraints file
+        # to make sure numpy 2.3.3 is used for Python 3.14
+        shell: bash
+        env:
+          PIP_BUILD_CONSTRAINT: constraints.txt
+        run: |
+          # --- Create constraints file ---
+          # It must exist before the first pip invocation, and even when empty:
+          # PIP_BUILD_CONSTRAINT applies to every pip call in this step, and pip
+          # aborts with "Could not open requirements file" if the path is missing.
+          : > "$PIP_BUILD_CONSTRAINT"
+          python -m pip install --upgrade pip setuptools wheel
+          # For Python 3.14 only - temporary solution while camelot-py
+          # update its dependencies
+          if [[ "${{ matrix.python-version }}" == "3.14" ]]; then
+            echo "numpy>=2.3.3" >> "$PIP_BUILD_CONSTRAINT"
+            echo "Added numpy>=2.3.3 to $PIP_BUILD_CONSTRAINT"
+          fi
+          # --- Install dependencies respecting constraints ---
+          pip install --upgrade .[dev,test]
+      - name: Run tests ☑
+        shell: bash
+        env:
+          CHECK_EXEC_TIME: ${{ matrix.python-version == '3.10' && 'test-enabled' || '' }}
+          CHECK_RSS_MEMORY: ${{ matrix.python-version == '3.14' && 'test-enabled' || '' }}
+        run: |
+          # Ensuring there is no `generate=True` left remaining in calls to assert_pdf_equal:
+          grep -IRF generate=True test/ && exit 1
+          # Executing all tests:
+          if [[ "${{ matrix.platform }}" == "ubuntu-latest" ]]; then
+          echo "Running with --trace-memory-usage (Ubuntu)"
+            pytest -vv --trace-memory-usage
+          else
+            echo "Running without trace-memory-usage (${{ matrix.platform }})"
+            pytest -vv
+          fi
+      - name: Upload coverage report to codecov.io ☑
+        # We only upload coverage ONCE, for a single parallel execution / Python version:
+        if: ${{ startsWith(matrix.platform, 'ubuntu') && matrix.python-version == '3.13' }}
+        run: bash <(curl -s https://codecov.io/bash)
+      - name: Run tests with the minimal versions of fpdf2 direct dependencies ☑
+        if: ${{ startsWith(matrix.platform, 'ubuntu') && matrix.python-version == '3.10' }}
+        run: |
+          # Ensuring that those minimal versions remain compatible:
+          sed -i '/requires-python/s/>=/~=/' pyproject.toml
+          sed -i 's/>=/==/' pyproject.toml
+          # Removing field not supported in pyproject.toml at the time (prevent this: ValueError - invalid pyproject.toml config):
+          sed -i '/license.*=/d' pyproject.toml
+          pip install .
+          # Targeting only a subset of tests because: A) it's faster and B) some tests are dependant on a specific version of fonttools or Pillow
+          # Deselect test involving TTF fonts due to differences with old fonttools version.
+          pytest -vv test/barcodes test/drawing test/errors test/image/test_load_image.py test/metadata test/shapes test/signing test/text_region test/utils --deselect test/drawing/test_drawing_text.py::test_text_ttf_transforms
+  doc:
+    runs-on: ubuntu-latest
+    permissions:
+      # required to deploy doc, by pushing commits to branch gh-pages:
+      contents: write
+      pages: write
+    steps:
+      - name: Harden Runner
+        # Security hardening because this is a sensitive job,
+        # where extra care should be taken NOT to leak any secret
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: block
+          allowed-endpoints:
+            github.com:443
+            api.github.com:443
+            *.githubusercontent.com:443
+            pypi.org:443
+            files.pythonhosted.org:443
+            registry.npmjs.org:443
+            api.star-history.com:443
+            cdnjs.cloudflare.com:443
+            colab.research.google.com:443
+            fonts.googleapis.com:443
+            fonts.gstatic.com:443
+            img.shields.io:443
+            unpkg.com:443
+            borbpdf.com:443
+          # Starting from api.star-history.com, the endpoints whitelist reason is the mkdocs privacy plugin
+      - name: Checkout 🛎️
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          # Required for mkdocs git-revision-date-localized plugin:
+          fetch-depth: 0
+      - name: Set up Python 3.14 🔧
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: 3.14
+      - name: Install Python dependencies ⚙️
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install --upgrade .[docs] -r contributors/requirements.txt
+      - name: Generate HTML documentation 🏗️
+        run: |
+          mkdir -p public/
+          # Setting PDF manual version:
+          VERSION=$(python -c "import importlib.metadata; print(importlib.metadata.version('fpdf2'))")
+          sed -i "s/author:.*/author: v$VERSION/" mkdocs.yml
+          cp tutorial/notebook.ipynb docs/
+          python -m mkdocs build
+          pdoc --html -o public/ fpdf --template-dir docs/pdoc
+          scripts/add_pdoc_to_search_index.py
+      - name: Build contributors map 🗺️
+        # As build_contributors_html_page.py can hang due to GitHub rate-limiting, we only execute this on master for now
+        if: github.ref == 'refs/heads/master'
+        env:
+          # Needed by contributors/build_contributors_html_page.py:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PYTHONUNBUFFERED: 1
+        run: |
+          cd contributors/
+          npm ci
+          ./build_contributors_html_page.py py-pdf/fpdf2
+          cp -t ../public/ contributors.html contributors-map-small.png
+      - name: Deploy documentation 🚀
+        if: github.ref == 'refs/heads/master'
+        uses: peaceiris/actions-gh-pages@84c30a85c19949d7eee79c4ff27748b70285e453 # v4.1.0
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: public/
+  publish:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/fpdf2
+    permissions:
+      # Trusted publishing configured there: https://pypi.org/manage/project/fpdf2/settings/publishing/
+      id-token: write
+    steps:
+      - name: Harden Runner
+        # Security hardening because this is a sensitive job,
+        # where extra care should be taken NOT to leak any secret
+        uses: step-security/harden-runner@e14015d583714f6e62063499dc959a02595150a1 # v2.21.1
+        with:
+          egress-policy: block
+          allowed-endpoints:
+            ghcr.io:443
+            github.com:443
+            *.githubusercontent.com:443
+            pypi.org:443
+            files.pythonhosted.org:443
+            *.sigstore.dev:443
+            upload.pypi.org:443
+      - name: Checkout 🛎️
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Python 3.14 🔧
+        uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
+        with:
+          python-version: '3.14'
+      - name: Build distributions for Pypi 🏗️
+        id: build
+        run: |
+          echo Versions already released on Pypi: $(curl -Ls 'https://pypi.org/pypi/fpdf2/json' | jq -r '.releases|keys[]')
+          pip install --upgrade build twine .
+          VERSION=$(python -c "import importlib.metadata; print(importlib.metadata.version('fpdf2'))")
+          echo Current code version: $VERSION
+          # Checking if current code version has already been released:
+          if ! curl -Ls 'https://pypi.org/pypi/fpdf2/json' | jq -r '.releases|keys[]' | grep "^$VERSION\$"; then echo publish=yes >> "$GITHUB_OUTPUT"; python -m build; twine check dist/*; fi
+      - name: Publish package distributions to PyPI 🚀
+        if: steps.build.outputs.publish == 'yes'
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # v1.14.2
+        # Doc: https://github.com/marketplace/actions/pypi-publish
+        with:
+          print-hash: true

@@ -1,0 +1,73 @@
+---
+exclude: ^(\.[^/]*cache(__)?/.*|(.*/)?\.coverage)$
+repos:
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.6
+    hooks:
+      - id: remove-crlf
+      - id: remove-tabs
+      - id: chmod
+        args: ['644']
+        exclude: (^(contributors|docs|scripts|tutorial)/.*\.py|\.sh)$
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-executables-have-shebangs
+      - id: check-shebang-scripts-are-executable
+  - repo: https://github.com/psf/black
+    rev: 26.3.1
+    hooks:
+      - id: black
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.45.0
+    hooks:
+      - id: typos
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: 'v1.20.0'
+    hooks:
+      - id: mypy
+        args:
+          - --config-file=./pyproject.toml
+        files: ^fpdf/.*\.py$
+        additional_dependencies:
+          - cryptography
+          - defusedxml
+          - endesive
+          - fonttools
+          - numpy
+          - Pillow
+          - uharfbuzz
+  - repo: https://github.com/RobertCraigie/pyright-python
+    rev: v1.1.408
+    hooks:
+      - id: pyright
+        files: ^fpdf/.*\.py$
+        additional_dependencies:
+          - cryptography
+          - defusedxml
+          - endesive
+          - fonttools
+          - numpy
+          - Pillow
+          - uharfbuzz
+  - repo: local
+    hooks:
+    -   id: no-print-in-sources
+        name: Ensure no print() statement appears in fpdf2 sources
+        language: pygrep
+        entry: print\(
+        files: ^fpdf/.*\.py$
+        exclude: fpdf/util.py
+    -   id: no-generate-true
+        name: Ensure no generate=True is left in a call to assert_pdf_equal()
+        language: pygrep
+        entry: generate=True
+        files: ^test/.*\.py$
+    -   id: pylint
+        name: pylint
+        # 3x faster than the official pylint hook, and has no issue with imports
+        # (tested with: time pre-commit run pylint --all-files)
+        language: system
+        entry: pylint
+        files: ^(fpdf/|test/|tutorial/tuto).*\.py$
