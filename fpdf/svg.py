@@ -99,6 +99,8 @@ TRANSFORM_GETTER = re.compile(
     r"(matrix|rotate|scale|scaleX|scaleY|skew|skewX|skewY|translate|translateX|translateY)\(([\d\.,\s+-]+)\)"
 )
 
+# One coordinate of a points attribute, with the whitespace and comma that may follow it
+COORDINATE_RE = re.compile(r"\s*([+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?)\s*,?")
 CSS_COMMENT_RE = re.compile(r"/\*.*?\*/", re.DOTALL)
 CSS_BLOCK_RE = re.compile(r"(?s)([^{}]+)\{([^{}]*)\}")
 
@@ -770,20 +772,41 @@ class ShapeBuilder:
         path.line_to(x2, y2)
         return path
 
+    @staticmethod
+    def _complete_points(points: str) -> str:
+        """The coordinate pairs of a points attribute, up to the first error.
+
+        Like an incorrect <path>, an error (an invalid coordinate or an odd number
+        of them) is rendered up to and including the last complete pair before it,
+        and nothing after it; no points renders nothing.
+        https://www.w3.org/TR/SVG11/shapes.html#PolylineElement
+        https://www.w3.org/TR/SVG11/implnote.html#PathElementImplementationNotes
+        """
+        coordinates = []
+        position = 0
+        while match := COORDINATE_RE.match(points, position):
+            coordinates.append(match.group(1))
+            position = match.end()
+        if len(coordinates) % 2:
+            coordinates.pop()
+        return " ".join(coordinates)
+
     @classmethod
     def polyline(cls, tag: "Element") -> PaintedPath:
         """Convert an SVG <polyline> into a PDF path."""
         path = cls.new_path(tag)
-        points = "M" + tag.attrib["points"]
-        svg_path_converter(path, points)
+        points = cls._complete_points(tag.attrib["points"])
+        if points:
+            svg_path_converter(path, "M" + points)
         return path
 
     @classmethod
     def polygon(cls, tag: "Element", clipping_path: bool = False) -> PaintedPath:
         """Convert an SVG <polygon> into a PDF path."""
         path = cls.new_path(tag, clipping_path)
-        points = "M" + tag.attrib["points"] + "Z"
-        svg_path_converter(path, points)
+        points = cls._complete_points(tag.attrib["points"])
+        if points:
+            svg_path_converter(path, "M" + points + "Z")
         return path
 
 

@@ -278,6 +278,30 @@ test_svg_shape_tags = (
         id="polyline no points",
     ),
     pytest.param(
+        '<polyline points="1, 0 10, 10, -20"/>',
+        [M(1, 0), L(10, 10)],
+        no_error(),
+        id="polyline odd number of coordinates",
+    ),
+    pytest.param(
+        '<polyline points="1, 0 10, 10 x 20, 20"/>',
+        [M(1, 0), L(10, 10)],
+        no_error(),
+        id="polyline stops at an invalid coordinate",
+    ),
+    pytest.param(
+        '<polyline points="1, 0 10, 10,, 20, 20"/>',
+        [M(1, 0), L(10, 10)],
+        no_error(),
+        id="polyline stops at a doubled comma",
+    ),
+    pytest.param(
+        '<polyline points=""/>',
+        [],
+        no_error(),
+        id="polyline empty points",
+    ),
+    pytest.param(
         '<polygon points="1, 0 10, 10, -20, -50"/>',
         [M(1, 0), L(10, 10), L(-20, -50), Z()],
         no_error(),
@@ -288,6 +312,24 @@ test_svg_shape_tags = (
         [],
         pytest.raises(KeyError),
         id="polygon no points",
+    ),
+    pytest.param(
+        '<polygon points="1-2 10 10-20"/>',
+        [M(1, -2), L(10, 10), Z()],
+        no_error(),
+        id="polygon odd number of compact coordinates",
+    ),
+    pytest.param(
+        '<polygon points="1-2 10 10 20 x 30 30"/>',
+        [M(1, -2), L(10, 10), Z()],
+        no_error(),
+        id="polygon stops at an invalid coordinate after an odd one",
+    ),
+    pytest.param(
+        '<polygon points=" "/>',
+        [],
+        no_error(),
+        id="polygon empty points",
     ),
     pytest.param(
         '<circle r="10" fill="rgb(100, 200)"/>',
