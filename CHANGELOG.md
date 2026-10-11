@@ -22,6 +22,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 * documentation on [generating rMQR Codes](https://py-pdf.github.io/fpdf2/Barcodes.html#rmqr-code)
 * Python 3.15 is now officially supported
 ### Fixed
+* Bulleted text-column paragraphs now honor their top margins, indented paragraphs retain the column's right boundary, and HTML list items honor their `TextStyle.t_margin` - based on [PR #1218](https://github.com/py-pdf/fpdf2/pull/1218)
 * `FPDF.write_html()` now supports CSS length units (`px`, `pt`) and surrounding whitespace in dimension attributes for `<table>`, `<td>`, `<th>`, `<hr>`, and `<img>` elements without raising `ValueError`
 * `FPDF.write_html()` supports `<ul type="square">`, the third standard HTML bullet type, instead of raising `NotImplementedError`: Unicode fonts use ▪ and core fonts fall back to the bullet - thanks to @RavSinghChandan
 * `FPDF.write_html()` accepts css `rgb(R, G, B)` colors, and colors with surrounding spaces, in `color` and `bgcolor` attributes instead of raising `ValueError` - thanks to @RavSinghChandan

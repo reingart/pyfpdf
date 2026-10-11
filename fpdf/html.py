@@ -597,8 +597,6 @@ class HTML2FPDF(HTMLParser):
         indent: Union[float, Align] = 0,
         bullet: str = "",
     ) -> None:
-        # Note that currently top_margin is ignored if bullet is also provided,
-        # due to the behaviour of TextRegion._render_column_lines()
         self._end_paragraph()
         self.align = align
         if isinstance(indent, Align):
@@ -606,7 +604,7 @@ class HTML2FPDF(HTMLParser):
             if not self.align:
                 self.align = indent
             indent = 0
-        if not top_margin and not self.follows_heading:
+        if not top_margin and not bullet and not self.follows_heading:
             top_margin = self.font_size_pt / self.pdf.k
         prev_family = self.pdf.font_family
         prev_style = self.pdf.font_style
@@ -1092,13 +1090,13 @@ class HTML2FPDF(HTMLParser):
             else:
                 b_margin = l_margin = t_margin = 0.0
             l_margin = self._normalize_l_margin(l_margin)
-            self._ln(t_margin)
             numeric_indent = 0.0 if isinstance(l_margin, Align) else l_margin
             self._new_paragraph(
                 line_height=(
                     self.line_height_stack[-1] if self.line_height_stack else None
                 ),
                 indent=numeric_indent * self.indent,
+                top_margin=t_margin,
                 bottom_margin=b_margin,
                 bullet=bullet,
             )

@@ -1181,6 +1181,31 @@ def test_bulleted_paragraphs():
     assert str(error.value) == expected_msg
 
 
+@pytest.mark.parametrize("margin", [0, 2, 10])
+@pytest.mark.parametrize("tag", ["ul", "ol"])
+def test_html_list_item_top_margin(monkeypatch, margin, tag):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Helvetica", size=12)
+    positions = {}
+    render = pdf._render_styled_text_line  # pylint: disable=protected-access
+
+    def record(line, *args, **kwargs):
+        text = "".join(fragment.string for fragment in line.fragments)
+        positions[text] = pdf.y
+        return render(line, *args, **kwargs)
+
+    monkeypatch.setattr(pdf, "_render_styled_text_line", record)
+    pdf.write_html(
+        f"<{tag}><li>First</li><li>Second</li></{tag}>",
+        tag_styles={"li": TextStyle(l_margin=10, t_margin=margin)},
+    )
+    assert positions["First"] == pytest.approx(pdf.t_margin)
+    assert positions["Second"] - positions["First"] == pytest.approx(
+        pdf.font_size + margin
+    )
+
+
 def test_html_list_vertical_margin(tmp_path):
     pdf = FPDF()
     for margin_value in (None, 4, 8, 16):
