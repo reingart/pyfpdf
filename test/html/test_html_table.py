@@ -108,6 +108,39 @@ def test_html_table_with_img_without_explicit_dimensions(tmp_path):
     )
 
 
+@pytest.mark.parametrize("row_or_cell", ["tr", "td"])
+def test_html_table_unknown_align_is_ignored(tmp_path, row_or_cell):
+    "Like browsers, an align value that is not supported, such as middle, is ignored."
+    tr_attr = ' align="middle"' if row_or_cell == "tr" else ""
+    td_attr = ' align="middle"' if row_or_cell == "td" else ""
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.write_html(f"<table><tr{tr_attr}><td{td_attr}>a</td><td>b</td></tr></table>")
+    expected = FPDF()
+    expected.add_page()
+    expected.write_html("<table><tr><td>a</td><td>b</td></tr></table>")
+    assert_pdf_equal(pdf, expected, tmp_path)
+
+
+@pytest.mark.parametrize("row_or_cell", ["tr", "th"])
+def test_html_table_unknown_align_keeps_th_centered(tmp_path, row_or_cell):
+    "An ignored align value keeps the default centered alignment of <th> cells."
+    tr_attr = ' align="middle"' if row_or_cell == "tr" else ""
+    th_attr = ' align="middle"' if row_or_cell == "th" else ""
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.write_html(
+        f"<table><tr{tr_attr}><th{th_attr}>header</th><th>b</th></tr>"
+        "<tr><td>c</td><td>d</td></tr></table>"
+    )
+    expected = FPDF()
+    expected.add_page()
+    expected.write_html(
+        "<table><tr><th>header</th><th>b</th></tr><tr><td>c</td><td>d</td></tr></table>"
+    )
+    assert_pdf_equal(pdf, expected, tmp_path)
+
+
 def test_html_table_with_imgs_captions_and_colspan(caplog, tmp_path):
     pdf = FPDF()
     pdf.add_page()

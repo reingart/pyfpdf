@@ -716,7 +716,12 @@ class HTML2FPDF(HTMLParser):
             if align is None and self.tr is not None:
                 align = self.tr.get("align")
             if align:
-                align = align.upper()
+                try:
+                    align = Align.coerce(align)
+                except ValueError:
+                    # like browsers, and like <p>, ignore a value such as "middle",
+                    # keeping the default: <th> cells are centered
+                    align = Align.C if self.td_th.get("tag") == "th" else None
             bgcolor_str = self.td_th.get("bgcolor")
             if bgcolor_str is None and self.tr is not None:
                 bgcolor_str = self.tr.get("bgcolor")
