@@ -23,6 +23,7 @@ This can also be enabled programmatically with `warnings.simplefilter('default',
 * documentation on [generating rMQR Codes](https://py-pdf.github.io/fpdf2/Barcodes.html#rmqr-code)
 * Python 3.15 is now officially supported
 ### Fixed
+* SVG images with a zero width or height disable rendering instead of using viewport dimensions. - thanks to @xiehuanyi
 * `FPDF.write_html()` uses the first available font of a `<font face>` list, like browsers, as in `face="Arial, Helvetica, sans-serif"`, with the generic `serif`, `sans-serif` and `monospace` families rendered by the core fonts, instead of raising `FPDFException: Undefined font` - thanks to @RavSinghChandan
 * SVG gradient `stop-opacity` accepts percentages, clamps out-of-range values to 0-1, and combines with the color's alpha channel instead of replacing it. - thanks to @xiehuanyi
 * SVG basic-shape coordinates and corner radii now accept absolute length units. - thanks to @xiehuanyi
